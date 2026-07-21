@@ -560,6 +560,7 @@
     .trs-qa:hover { border-color: var(--ink); background: var(--paper); }
     .trs-qa:last-child { margin-bottom: 0; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -578,6 +579,7 @@
     <button class="tab-btn nav-item" onclick="nav('shopping')">Wishlist</button>
     <button class="tab-btn nav-item" onclick="nav('travel')">Travel</button>
   </nav>
+  <button id="logoutBtn" onclick="signOut()" style="display:none; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:6px 14px; background:transparent; border:1px solid var(--ink3); color:var(--ink3); cursor:pointer; margin-left:16px; transition:all 0.15s;" onmouseover="this.style.borderColor='var(--ink)';this.style.color='var(--ink)'" onmouseout="this.style.borderColor='var(--ink3)';this.style.color='var(--ink3)'">ログアウト</button>
 </header>
 
 <!-- ══ HOME ══ -->
@@ -919,6 +921,11 @@
 <!-- ── FOOTER ── -->
 
 <script>
+// ── SUPABASE CONFIG ──
+const SUPABASE_URL      = 'https://omlaxzscsifxfkmhdfic.supabase.co/rest/v1/';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9tbGF4enNjc2lmeGZrbWhkZmljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNTgyNzIsImV4cCI6MjA5NTczNDI3Mn0.tAIUF4ZiywP0wBWXSMvBW9ZMcB0K8qXOQ_DIFCvubP8';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 // ── STATE ──
 let tasks    = JSON.parse(localStorage.getItem('hd_tasks')    || '[]');
 let txs      = JSON.parse(localStorage.getItem('hd_tx')       || '[]');
@@ -1034,7 +1041,57 @@ const SUB_CAT_COLORS = {
 // ── TASK NOTES (separate store) ──
 let taskNotes = {};
 function loadTaskNotes(){try{taskNotes=JSON.parse(localStorage.getItem('hd_task_notes')||'{}');}catch(e){taskNotes={};}}
-function saveTaskNotes(){localStorage.setItem('hd_task_notes',JSON.stringify(taskNotes));}
+function saveTaskNotes(){localStorage.setItem('hd_task_notes',JSON.stringify(taskNotes));saveToSupabase();}
+
+// ── SUPABASE SYNC ──
+async function pushToSupabase(userId) {
+  const seedFlags = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith('hd_')) seedFlags[key] = localStorage.getItem(key);
+  }
+  await sb.from('user_data').upsert({
+    user_id: userId, tasks, task_notes: taskNotes,
+    shopping, subs, txs, trips,
+    seed_flags: seedFlags, updated_at: new Date().toISOString()
+  });
+}
+
+async function syncFromSupabase(userId) {
+  const { data } = await sb.from('user_data').select('*').eq('user_id', userId).single();
+  if (!data) { await pushToSupabase(userId); return; }
+  if (Array.isArray(data.tasks))    { tasks    = data.tasks;      localStorage.setItem('hd_tasks',      JSON.stringify(tasks)); }
+  if (data.task_notes)              { taskNotes = data.task_notes; localStorage.setItem('hd_task_notes', JSON.stringify(taskNotes)); }
+  if (Array.isArray(data.shopping)) { shopping  = data.shopping;  localStorage.setItem('hd_shopping',   JSON.stringify(shopping)); }
+  if (Array.isArray(data.subs))     { subs      = data.subs;      localStorage.setItem('hd_subs',       JSON.stringify(subs)); }
+  if (Array.isArray(data.txs))      { txs       = data.txs;       localStorage.setItem('hd_tx',         JSON.stringify(txs)); }
+  if (Array.isArray(data.trips))    { trips     = data.trips;     localStorage.setItem('hd_trips',      JSON.stringify(trips)); }
+  if (data.seed_flags) Object.entries(data.seed_flags).forEach(([k,v]) => localStorage.setItem(k,v));
+}
+
+function saveToSupabase() {
+  sb.auth.getUser().then(({ data: { user } }) => { if (user) pushToSupabase(user.id); });
+}
+
+async function signIn() {
+  document.getElementById('loginBtn').textContent = 'ログイン中...';
+  document.getElementById('loginError').textContent = '';
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) {
+    document.getElementById('loginError').textContent = 'ログインに失敗しました';
+    document.getElementById('loginBtn').textContent = 'ログイン';
+    return;
+  }
+  location.reload();
+}
+
+async function signOut() {
+  await sb.auth.signOut();
+  location.reload();
+}
+
 function applyTaskNotes(){tasks.forEach(t=>{if(taskNotes[t.title]!==undefined)t.note=taskNotes[t.title];});}
 function setTaskNote(id,note){
   const t=tasks.find(t=>t.id===id);if(!t)return;
@@ -1387,7 +1444,14 @@ function seedIfEmpty() {
 }
 
 // ── INIT ──
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    document.getElementById('loginOverlay').style.display = 'flex';
+    return;
+  }
+  document.getElementById('logoutBtn').style.display = 'inline-block';
+  await syncFromSupabase(session.user.id);
   seedIfEmpty();
   seedSubsIfEmpty();
   loadTaskNotes();
@@ -1520,7 +1584,7 @@ function addTaskInSection(sec) {
     document.getElementById('taskDue').value = '';
   }
 }
-function saveTasks(){localStorage.setItem('hd_tasks',JSON.stringify(tasks));}
+function saveTasks(){localStorage.setItem('hd_tasks',JSON.stringify(tasks));saveToSupabase();}
 
 // ── SECTION CONFIG ──
 const SEC_ICONS = {
@@ -1850,7 +1914,7 @@ function toggleAddTx(){const f=document.getElementById('addTxForm');f.classList.
 function setTT(t){txType=t;document.getElementById('ttI').className='tx-tbtn income'+(t==='income'?' active':'');document.getElementById('ttE').className='tx-tbtn expense'+(t==='expense'?' active':'');}
 function addTx(){const title=document.getElementById('txTitle').value.trim();const amount=parseFloat(document.getElementById('txAmt').value);if(!title||isNaN(amount)||amount<=0)return;txs.push({id:Date.now(),type:txType,title,amount,category:document.getElementById('txCat').value,date:document.getElementById('txDate').value});saveTx();toggleAddTx();renderFinance();document.getElementById('txTitle').value='';document.getElementById('txAmt').value='';}
 function delTx(id){txs=txs.filter(t=>t.id!==id);saveTx();renderFinance();}
-function saveTx(){localStorage.setItem('hd_tx',JSON.stringify(txs));}
+function saveTx(){localStorage.setItem('hd_tx',JSON.stringify(txs));saveToSupabase();}
 function renderFinance(){
   const months='1月 2月 3月 4月 5月 6月 7月 8月 9月 10月 11月 12月'.split(' ');
   document.getElementById('monthLabel').textContent=`${vy}年 ${months[vm]}`;
@@ -1969,7 +2033,7 @@ function confirmDelShop(id){
   const s=shopping.find(s=>s.id===id);if(!s)return;
   if(confirm(`「${s.name}」を削除しますか？`))delShopItem(id);
 }
-function saveShop(){localStorage.setItem('hd_shopping',JSON.stringify(shopping));}
+function saveShop(){localStorage.setItem('hd_shopping',JSON.stringify(shopping));saveToSupabase();}
 function toggleShopExpand(id){
   if(expandedShopId===id){expandedShopId=null;shopDraft=null;}
   else{expandedShopId=id;const s=shopping.find(s=>s.id===id);if(s)shopDraft=JSON.parse(JSON.stringify(s));}
@@ -2210,7 +2274,7 @@ function editSubNote(id){
 }
 function toggleSubActive(id){const s=subs.find(s=>s.id===id);if(s){s.active=!s.active;saveSubs();renderSubs();}}
 function delSub(id){subs=subs.filter(s=>s.id!==id);saveSubs();renderSubs();}
-function saveSubs(){localStorage.setItem('hd_subs',JSON.stringify(subs));}
+function saveSubs(){localStorage.setItem('hd_subs',JSON.stringify(subs));saveToSupabase();}
 function renderSubs(){
   const active=subs.filter(s=>s.active);
   const monthly=active.reduce((sum,s)=>sum+(s.cycle==='yearly'?s.price/12:s.price),0);
@@ -2246,7 +2310,7 @@ function addTrip(){
 }
 function setTripStatus(id,status){const t=trips.find(t=>t.id===id);if(t){t.status=status;saveTrips();renderTravel();}}
 function delTrip(id){trips=trips.filter(t=>t.id!==id);saveTrips();renderTravel();}
-function saveTrips(){localStorage.setItem('hd_trips',JSON.stringify(trips));}
+function saveTrips(){localStorage.setItem('hd_trips',JSON.stringify(trips));saveToSupabase();}
 function setTripF(f,el){tripFilter=f;document.querySelectorAll('#page-travel .fchip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderTravel();}
 function renderTravel(){
   const STATUSES=['検討中','計画中','予約済み','完了'];
@@ -2288,6 +2352,18 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
   <div class="tt-tag-pop-grid" id="tagPopGrid"></div>
   <div class="tt-tag-pop-input-wrap">
     <input type="text" id="tagPopInput" class="tt-tag-pop-input" placeholder="新規タグを追加（Enter）" onkeydown="tagPopKeydown(event)">
+  </div>
+</div>
+<div id="loginOverlay" style="display:none; position:fixed; inset:0; background:var(--paper); z-index:9999; align-items:center; justify-content:center;">
+  <div style="width:380px; border:2px solid var(--rule); padding:56px 48px; background:var(--paper);">
+    <div style="font-family:'Newsreader',serif; font-size:36px; font-weight:800; font-style:italic; letter-spacing:-0.02em; margin-bottom:8px;">My Dashboard</div>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink3); margin-bottom:40px;">SIGN IN TO CONTINUE</div>
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <input type="email" id="loginEmail" placeholder="メールアドレス" style="background:var(--paper); border:1px solid var(--ink3); color:var(--ink); padding:10px 12px; font-size:14px; font-family:'Space Grotesk',sans-serif; outline:none; border-radius:0; width:100%;" onfocus="this.style.borderColor='var(--ink)'" onblur="this.style.borderColor='var(--ink3)'" onkeydown="if(event.key==='Enter')signIn()">
+      <input type="password" id="loginPassword" placeholder="パスワード" style="background:var(--paper); border:1px solid var(--ink3); color:var(--ink); padding:10px 12px; font-size:14px; font-family:'Space Grotesk',sans-serif; outline:none; border-radius:0; width:100%;" onfocus="this.style.borderColor='var(--ink)'" onblur="this.style.borderColor='var(--ink3)'" onkeydown="if(event.key==='Enter')signIn()">
+      <button onclick="signIn()" id="loginBtn" style="margin-top:8px; background:var(--ink); color:var(--paper); border:none; padding:12px; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; width:100%;">ログイン</button>
+      <div id="loginError" style="color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:11px; min-height:16px;"></div>
+    </div>
   </div>
 </div>
 </body>
