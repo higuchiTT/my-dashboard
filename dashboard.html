@@ -1092,6 +1092,23 @@ async function signOut() {
   location.reload();
 }
 
+async function updatePassword() {
+  const password = document.getElementById('resetPassword').value;
+  if (!password || password.length < 6) {
+    document.getElementById('resetError').textContent = '6文字以上で入力してください';
+    return;
+  }
+  document.getElementById('resetBtn').textContent = '更新中...';
+  const { error } = await sb.auth.updateUser({ password });
+  if (error) {
+    document.getElementById('resetError').textContent = '更新に失敗しました';
+    document.getElementById('resetBtn').textContent = 'パスワードを更新';
+    return;
+  }
+  await sb.auth.signOut();
+  location.reload();
+}
+
 function applyTaskNotes(){tasks.forEach(t=>{if(taskNotes[t.title]!==undefined)t.note=taskNotes[t.title];});}
 function setTaskNote(id,note){
   const t=tasks.find(t=>t.id===id);if(!t)return;
@@ -1448,6 +1465,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) {
     document.getElementById('loginOverlay').style.display = 'flex';
+    return;
+  }
+  if (session.user?.recovery_sent_at || new URLSearchParams(location.hash.slice(1)).get('type') === 'recovery') {
+    document.getElementById('loginOverlay').style.display = 'flex';
+    document.getElementById('resetForm').style.display = 'flex';
     return;
   }
   document.getElementById('logoutBtn').style.display = 'inline-block';
@@ -2363,6 +2385,12 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
       <input type="password" id="loginPassword" placeholder="パスワード" style="background:var(--paper); border:1px solid var(--ink3); color:var(--ink); padding:10px 12px; font-size:14px; font-family:'Space Grotesk',sans-serif; outline:none; border-radius:0; width:100%;" onfocus="this.style.borderColor='var(--ink)'" onblur="this.style.borderColor='var(--ink3)'" onkeydown="if(event.key==='Enter')signIn()">
       <button onclick="signIn()" id="loginBtn" style="margin-top:8px; background:var(--ink); color:var(--paper); border:none; padding:12px; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; width:100%;">ログイン</button>
       <div id="loginError" style="color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:11px; min-height:16px;"></div>
+    </div>
+    <div id="resetForm" style="display:none; flex-direction:column; gap:12px; margin-top:24px; padding-top:24px; border-top:1px solid rgba(26,24,20,0.15);">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink3);">新しいパスワードを設定</div>
+      <input type="password" id="resetPassword" placeholder="新しいパスワード" style="background:var(--paper); border:1px solid var(--ink3); color:var(--ink); padding:10px 12px; font-size:14px; font-family:'Space Grotesk',sans-serif; outline:none; border-radius:0; width:100%;" onfocus="this.style.borderColor='var(--ink)'" onblur="this.style.borderColor='var(--ink3)'" onkeydown="if(event.key==='Enter')updatePassword()">
+      <button onclick="updatePassword()" id="resetBtn" style="background:var(--accent); color:var(--paper); border:none; padding:12px; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; width:100%;">パスワードを更新</button>
+      <div id="resetError" style="color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:11px; min-height:16px;"></div>
     </div>
   </div>
 </div>
