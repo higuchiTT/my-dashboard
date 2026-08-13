@@ -1462,14 +1462,19 @@ function seedIfEmpty() {
 
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', async () => {
+  // リカバリートークンをURLハッシュから先に検出
+  const hashParams = new URLSearchParams(location.hash.slice(1));
+  if (hashParams.get('type') === 'recovery') {
+    const accessToken  = hashParams.get('access_token');
+    const refreshToken = hashParams.get('refresh_token') || '';
+    if (accessToken) await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+    document.getElementById('loginOverlay').style.display = 'flex';
+    document.getElementById('resetForm').style.display = 'flex';
+    return;
+  }
   const { data: { session } } = await sb.auth.getSession();
   if (!session) {
     document.getElementById('loginOverlay').style.display = 'flex';
-    return;
-  }
-  if (session.user?.recovery_sent_at || new URLSearchParams(location.hash.slice(1)).get('type') === 'recovery') {
-    document.getElementById('loginOverlay').style.display = 'flex';
-    document.getElementById('resetForm').style.display = 'flex';
     return;
   }
   document.getElementById('logoutBtn').style.display = 'inline-block';
