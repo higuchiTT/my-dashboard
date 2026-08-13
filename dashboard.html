@@ -1099,14 +1099,23 @@ async function updatePassword() {
     return;
   }
   document.getElementById('resetBtn').textContent = '更新中...';
-  const { error } = await sb.auth.updateUser({ password });
-  if (error) {
+  const accessToken = new URLSearchParams(location.hash.slice(1)).get('access_token');
+  const res = await fetch(SUPABASE_URL + '/auth/v1/user', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + accessToken
+    },
+    body: JSON.stringify({ password })
+  });
+  if (!res.ok) {
     document.getElementById('resetError').textContent = '更新に失敗しました';
     document.getElementById('resetBtn').textContent = 'パスワードを更新';
     return;
   }
   await sb.auth.signOut();
-  location.reload();
+  location.href = location.href.split('#')[0];
 }
 
 function applyTaskNotes(){tasks.forEach(t=>{if(taskNotes[t.title]!==undefined)t.note=taskNotes[t.title];});}
