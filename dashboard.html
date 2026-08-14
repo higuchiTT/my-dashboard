@@ -559,6 +559,88 @@
     .trs-qa { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 10px; border: 1px solid rgba(26,24,20,0.12); background: #fff; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink2); border-radius: 4px; margin-bottom: 6px; transition: all 0.12s; text-align: left; }
     .trs-qa:hover { border-color: var(--ink); background: var(--paper); }
     .trs-qa:last-child { margin-bottom: 0; }
+
+    .login-box { width: 380px; padding: 56px 48px; }
+
+    /* ══ RESPONSIVE — スマホ (≤640px) ══ */
+    @media (max-width: 640px) {
+
+      /* ── グローバル ── */
+      body { font-size: 13px; }
+
+      /* ── マストヘッド ── */
+      .masthead { padding: 0 10px; }
+      .masthead-title { font-size: 18px; }
+      .masthead-date { display: none; }
+      .masthead-divider { margin: 0 8px; }
+
+      /* ── タブ横スクロール ── */
+      .tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+      .tabs::-webkit-scrollbar { display: none; }
+      .tab-btn { padding: 0 10px; font-size: 15px; }
+
+      /* ── セクション共通パディング ── */
+      .sec-head-inner { padding: 10px 14px 8px; }
+      .sec-title { font-size: 28px; }
+      .page-bar { padding: 10px 14px; }
+      .add-form { padding: 14px 14px; }
+      .mnav { padding: 10px 14px; }
+      .alert { padding: 10px 14px; }
+
+      /* ── フィルターバー横スクロール ── */
+      .fbar { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+      .fbar::-webkit-scrollbar { display: none; }
+      .fchip { white-space: nowrap; }
+
+      /* ── Home ── */
+      .stat-row { grid-template-columns: 1fr; }
+      .stat-card { border-right: none; border-bottom: 1px solid var(--rule); }
+      .stat-card:last-child { border-bottom: none; }
+      .stat-number { font-size: 44px; }
+      .widget-row { grid-template-columns: 1fr; }
+      .widget-wrap { border-right: none; border-bottom: 1px solid var(--rule); padding: 18px 14px; }
+      .widget-wrap:last-child { border-bottom: none; }
+
+      /* ── ToDo（横スクロール） ── */
+      #page-todo { min-width: unset; overflow-x: auto; }
+      .todo-app { min-width: 860px; }
+
+      /* ── Ledger ── */
+      .fin-stats { grid-template-columns: 1fr 1fr; }
+      .fin-stat { padding: 12px 14px; }
+      .fin-stat:nth-child(2) { border-right: none; }
+      .fin-stat:nth-child(1),
+      .fin-stat:nth-child(2) { border-bottom: 1px solid var(--rule); }
+      .fin-layout { grid-template-columns: 1fr; }
+      .fin-col { border-right: none; border-bottom: 1px solid var(--rule); padding: 16px 14px; }
+
+      /* ── Calendar ── */
+      .cal-wrap { padding: 12px 8px; }
+      .cal-top { flex-wrap: wrap; gap: 8px; }
+      .cal-legend { margin-left: 0; }
+      .cal-day { min-height: 44px; padding: 5px 4px 4px; }
+
+      /* ── WishList サマリー ── */
+      .shop-summary { grid-template-columns: 1fr; }
+      .shop-stat { border-right: none; border-bottom: 1px solid var(--rule); padding: 12px 14px; }
+      .shop-stat:last-child { border-bottom: none; }
+      .shop-content { padding: 0 0 16px; }
+
+      /* ── Travel ── */
+      .trip-summary { grid-template-columns: 1fr 1fr; }
+      .trip-stat { padding: 12px 14px; }
+      .trip-stat:nth-child(2) { border-right: none; }
+      .trip-stat:nth-child(1),
+      .trip-stat:nth-child(2) { border-bottom: 1px solid var(--rule); }
+      .trip-content { padding: 14px; }
+      .trip-grid { grid-template-columns: 1fr; }
+      .trip-card { border-right: none; border-bottom: 1px solid var(--rule); }
+      .trip-card:last-child { border-bottom: none; }
+
+      /* ── ログインオーバーレイ ── */
+      .login-box { max-width: 90vw; padding: 36px 20px; }
+
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -1954,7 +2036,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
   </div>
 </div>
 <div id="loginOverlay" style="display:none; position:fixed; inset:0; background:var(--paper); z-index:9999; align-items:center; justify-content:center;">
-  <div style="width:380px; border:2px solid var(--rule); padding:56px 48px; background:var(--paper);">
+  <div class="login-box" style="border:2px solid var(--rule); background:var(--paper);">
     <div style="font-family:'Newsreader',serif; font-size:36px; font-weight:800; font-style:italic; letter-spacing:-0.02em; margin-bottom:8px;">My Dashboard</div>
     <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink3); margin-bottom:40px;">SIGN IN TO CONTINUE</div>
     <div style="display:flex; flex-direction:column; gap:12px;">
