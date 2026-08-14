@@ -1041,6 +1041,15 @@ const SUB_CAT_COLORS = {
 let taskNotes = {};
 function loadTaskNotes(){try{taskNotes=JSON.parse(localStorage.getItem('hd_task_notes')||'{}');}catch(e){taskNotes={};}}
 function saveTaskNotes(){localStorage.setItem('hd_task_notes',JSON.stringify(taskNotes));saveToSupabase();}
+function migrateTaskNotes(){
+  const titleSet=new Set(tasks.map(t=>t.title));
+  const isOldFormat=Object.keys(taskNotes).some(k=>titleSet.has(k));
+  if(!isOldFormat)return;
+  const newNotes={};
+  tasks.forEach(t=>{if(taskNotes[t.title]!==undefined)newNotes[t.id]=taskNotes[t.title];});
+  taskNotes=newNotes;
+  saveTaskNotes();
+}
 
 // ── SUPABASE SYNC ──
 async function pushToSupabase(userId) {
@@ -1117,10 +1126,10 @@ async function updatePassword() {
   location.href = location.href.split('#')[0];
 }
 
-function applyTaskNotes(){tasks.forEach(t=>{if(taskNotes[t.title]!==undefined)t.note=taskNotes[t.title];});}
+function applyTaskNotes(){tasks.forEach(t=>{if(taskNotes[t.id]!==undefined)t.note=taskNotes[t.id];});}
 function setTaskNote(id,note){
   const t=tasks.find(t=>t.id===id);if(!t)return;
-  taskNotes[t.title]=note;
+  taskNotes[id]=note;
   t.note=note;
   saveTaskNotes();
 }
@@ -1168,6 +1177,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('logoutBtn').style.display = 'inline-block';
   await syncFromSupabase(session.user.id);
   loadTaskNotes();
+  migrateTaskNotes();
   applyTaskNotes();
   const h = new Date().getHours();
   document.getElementById('topDate').textContent = fmtFull(new Date());
