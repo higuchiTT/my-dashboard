@@ -1216,7 +1216,7 @@ function toggleAddTask(){const f=document.getElementById('addTaskForm');f.classL
 function addTask(){
   const title=document.getElementById('taskTitle').value.trim();
   if(!title){document.getElementById('taskTitle').focus();return;}
-  const t={id:Date.now(),title,category:document.getElementById('taskCategory').value,priority:document.getElementById('taskPriority').value,due:document.getElementById('taskDue').value,done:false,createdAt:new Date().toISOString(),tags:[]};
+  const t={id:Date.now()*1000+Math.floor(Math.random()*1000),title,category:document.getElementById('taskCategory').value,priority:document.getElementById('taskPriority').value,due:document.getElementById('taskDue').value,done:false,createdAt:new Date().toISOString(),tags:[]};
   t.tags=deriveInitialTags(t);
   tasks.unshift(t);
   saveTasks();
@@ -1593,7 +1593,7 @@ function renderTasks(){
 function chMonth(d){vm+=d;if(vm>11){vm=0;vy++;}if(vm<0){vm=11;vy--;}renderFinance();}
 function toggleAddTx(){const f=document.getElementById('addTxForm');f.classList.toggle('open');if(f.classList.contains('open'))document.getElementById('txTitle').focus();}
 function setTT(t){txType=t;document.getElementById('ttI').className='tx-tbtn income'+(t==='income'?' active':'');document.getElementById('ttE').className='tx-tbtn expense'+(t==='expense'?' active':'');}
-function addTx(){const title=document.getElementById('txTitle').value.trim();const amount=parseFloat(document.getElementById('txAmt').value);if(!title||isNaN(amount)||amount<=0)return;txs.push({id:Date.now(),type:txType,title,amount,category:document.getElementById('txCat').value,date:document.getElementById('txDate').value});saveTx();toggleAddTx();renderFinance();document.getElementById('txTitle').value='';document.getElementById('txAmt').value='';}
+function addTx(){const title=document.getElementById('txTitle').value.trim();const amount=parseFloat(document.getElementById('txAmt').value);if(!title||isNaN(amount)||amount<=0)return;txs.push({id:Date.now()*1000+Math.floor(Math.random()*1000),type:txType,title,amount,category:document.getElementById('txCat').value,date:document.getElementById('txDate').value});saveTx();toggleAddTx();renderFinance();document.getElementById('txTitle').value='';document.getElementById('txAmt').value='';}
 function delTx(id){txs=txs.filter(t=>t.id!==id);saveTx();renderFinance();}
 function saveTx(){localStorage.setItem('hd_tx',JSON.stringify(txs));saveToSupabase();}
 function renderFinance(){
@@ -1701,7 +1701,7 @@ function saveNewShopDraft(){
   const statusEl=document.getElementById('ndStatus');
   const memoEl=document.getElementById('ndMemo');
   const priceVal=priceEl&&priceEl.value?parseFloat(priceEl.value):null;
-  shopping.push({id:Date.now(),name,category:catEl?catEl.value:shopCategories[0],price:priceVal,status:statusEl?statusEl.value:'検討中',candidates:[],note:memoEl?memoEl.value.trim():''});
+  shopping.push({id:Date.now()*1000+Math.floor(Math.random()*1000),name,category:catEl?catEl.value:shopCategories[0],price:priceVal,status:statusEl?statusEl.value:'検討中',candidates:[],note:memoEl?memoEl.value.trim():''});
   newShopDraft=null;saveShop();renderShopping();
 }
 function cancelNewShopDraft(){newShopDraft=null;renderShopping();}
@@ -1932,7 +1932,7 @@ function addSub(){
   const name=document.getElementById('subName').value.trim();
   const priceVal=document.getElementById('subPrice').value;
   if(!name||!priceVal){document.getElementById(name?'subPrice':'subName').focus();return;}
-  subs.push({id:Date.now(),name,category:document.getElementById('subCat').value,price:parseFloat(priceVal),cycle:document.getElementById('subCycle').value,active:true,note:document.getElementById('subNote').value.trim()});
+  subs.push({id:Date.now()*1000+Math.floor(Math.random()*1000),name,category:document.getElementById('subCat').value,price:parseFloat(priceVal),cycle:document.getElementById('subCycle').value,active:true,note:document.getElementById('subNote').value.trim()});
   saveSubs();
   document.getElementById('subName').value='';document.getElementById('subPrice').value='';document.getElementById('subNote').value='';
   toggleAddSub();renderSubs();
@@ -1984,7 +1984,7 @@ function addTrip(){
   const dest=document.getElementById('tripDest').value.trim();
   if(!dest){document.getElementById('tripDest').focus();return;}
   const b=document.getElementById('tripBudgetInput').value;
-  trips.push({id:Date.now(),dest,timing:document.getElementById('tripTiming').value.trim(),budget:b?parseFloat(b):null,status:document.getElementById('tripStatus').value,note:document.getElementById('tripNote').value.trim()});
+  trips.push({id:Date.now()*1000+Math.floor(Math.random()*1000),dest,timing:document.getElementById('tripTiming').value.trim(),budget:b?parseFloat(b):null,status:document.getElementById('tripStatus').value,note:document.getElementById('tripNote').value.trim()});
   saveTrips();
   document.getElementById('tripDest').value='';document.getElementById('tripTiming').value='';document.getElementById('tripBudgetInput').value='';document.getElementById('tripNote').value='';
   toggleAddTrip();renderTravel();
