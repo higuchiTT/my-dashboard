@@ -416,7 +416,7 @@
     /* ══ TODO 3カラムレイアウト ══ */
     #page-todo { min-width: 1400px; }
     #page-todo.active { display: block; }
-    .todo-app { display: grid; grid-template-columns: 240px 1fr 280px; min-height: calc(100vh - 50px); }
+    .todo-app { display: grid; grid-template-columns: 260px 1fr 280px; min-height: calc(100vh - 50px); }
 
     /* ── 左サイドバー ── */
     .todo-sidebar-l { background: #fafafa; border-right: 1px solid var(--rule); display: flex; flex-direction: column; padding: 0; overflow-y: auto; }
@@ -424,21 +424,21 @@
     .ts-head-icon { font-size: 22px; }
     .ts-head-title { font-family: 'Newsreader', serif; font-size: 20px; font-weight: 800; font-style: italic; }
     .ts-nav { display: flex; flex-direction: column; padding: 8px 0; }
-    .ts-nav-item { display: flex; align-items: center; gap: 0; padding: 8px 16px; border: none; background: transparent; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--ink2); transition: background 0.12s; text-align: left; }
+    .ts-nav-item { display: flex; align-items: center; gap: 0; padding: 8px 16px; border: none; background: transparent; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--ink2); transition: background 0.12s; text-align: left; width: 100%; }
     .ts-nav-item:hover { background: rgba(26,24,20,0.06); }
     .ts-nav-item.active { background: rgba(139,58,24,0.09); color: var(--accent); font-weight: 600; }
     .ts-nav-label { flex: 1; }
     .ts-nav-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--ink3); background: var(--paper3); padding: 1px 6px; border-radius: 10px; min-width: 22px; text-align: center; }
     .ts-group-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mute); padding: 12px 16px 4px; }
-    .ts-sec-nav, .ts-tag-nav { display: flex; flex-direction: column; padding: 0 0 4px; }
-    .ts-sec-item, .ts-tag-item { display: flex; align-items: center; gap: 6px; padding: 7px 16px; border: none; background: transparent; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink2); transition: background 0.12s; text-align: left; }
-    .ts-sec-item:hover, .ts-tag-item:hover { background: rgba(26,24,20,0.06); }
-    .ts-sec-item.active, .ts-tag-item.active { background: rgba(139,58,24,0.09); color: var(--accent); font-weight: 600; }
-    .ts-sec-icon { font-size: 14px; flex-shrink: 0; }
-    .ts-sec-label, .ts-tag-label { flex: 1; }
-    .ts-sec-cnt { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); }
-    .ts-see-all { padding: 6px 16px; border: none; background: transparent; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); text-align: left; letter-spacing: 0.04em; }
-    .ts-see-all:hover { color: var(--accent); }
+    .ts-sec-nav { display: flex; flex-direction: column; padding: 0 0 4px; }
+    .ts-sec-item { display: flex; align-items: center; gap: 0; padding: 7px 16px; border: none; background: transparent; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink2); transition: background 0.12s; text-align: left; width: 100%; }
+    .ts-sec-item:hover { background: rgba(26,24,20,0.06); }
+    .ts-sec-item.active { background: rgba(139,58,24,0.09); color: var(--accent); font-weight: 600; }
+    .ts-sec-cnt { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); margin-left: auto; }
+    .tv-tag-list { display: flex; flex-wrap: wrap; gap: 5px; padding: 4px 16px 12px; }
+    .tv-sidebar-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 3px; border: 1px solid rgba(26,24,20,0.15); background: transparent; cursor: pointer; font-weight: 600; transition: all 0.12s; }
+    .tv-sidebar-tag:hover { background: rgba(26,24,20,0.06); }
+    .tv-sidebar-tag.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 
     /* ── メインエリア ── */
     .todo-main { background: #fff; display: flex; flex-direction: column; overflow: hidden; }
@@ -446,101 +446,67 @@
     .tm-title { font-family: 'Newsreader', serif; font-size: 22px; font-weight: 800; font-style: italic; }
     .tm-sub { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); margin-top: 4px; }
     .tm-head-act { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-    .tm-more { padding: 6px 10px; border: 1px solid var(--ink3); background: transparent; cursor: pointer; font-size: 16px; color: var(--ink3); border-radius: 4px; line-height: 1; }
-    .tm-more:hover { border-color: var(--ink); color: var(--ink); }
     .todo-main .add-form { margin: 0; border-bottom: 1px solid var(--rule); padding: 14px 24px; background: var(--paper2); border-radius: 0; }
-    .todo-main .add-form .form-row { flex-wrap: nowrap; }
-    .tm-fbar { display: flex; align-items: center; gap: 0; border-bottom: 2px solid rgba(26,24,20,0.12); background: #fafafa; padding: 0 8px; flex-shrink: 0; min-width: 0; }
-    .tm-sort select { font-family: 'JetBrains Mono', monospace; font-size: 11px; border: 1px solid rgba(26,24,20,0.2); border-radius: 4px; padding: 5px 8px; background: #fff; color: var(--ink2); cursor: pointer; margin: 0 8px; white-space: nowrap; flex-shrink: 0; }
-    .tm-due-tabs { display: flex; align-items: stretch; flex: 1; overflow: hidden; }
-    .tm-due-tab { padding: 10px 14px; border: none; border-bottom: 2px solid transparent; background: transparent; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--ink3); transition: all 0.15s; white-space: nowrap; margin-bottom: -2px; letter-spacing: 0.04em; }
-    .tm-due-tab:hover { color: var(--ink); background: rgba(26,24,20,0.04); }
-    .tm-due-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-    .tm-tab-cnt { font-size: 10px; background: rgba(26,24,20,0.08); padding: 1px 5px; border-radius: 8px; margin-left: 4px; }
-    .tm-fbar-r { display: flex; align-items: center; gap: 4px; padding: 0 8px; flex-shrink: 0; }
-    .tm-filter-btn { padding: 5px 10px; border: 1px solid rgba(26,24,20,0.2); background: transparent; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink3); border-radius: 4px; white-space: nowrap; transition: all 0.12s; }
-    .tm-filter-btn:hover { border-color: var(--ink); color: var(--ink); }
-    .tm-table { flex: 1; overflow-y: auto; }
 
-    /* ── タスクテーブル ── */
-    .tt-head { display: grid; grid-template-columns: 36px 1fr 1fr 120px 115px 160px 36px; padding: 8px 0; border-bottom: 2px solid rgba(26,24,20,0.14); background: #fafafa; position: sticky; top: 0; z-index: 2; }
-    .tt-head > div { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink3); padding: 0 8px; display: flex; align-items: center; }
-    .tt-sec-hdr { display: flex; align-items: center; gap: 8px; padding: 6px 12px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; border-top: 1px solid rgba(26,24,20,0.1); border-bottom: 1px solid rgba(26,24,20,0.08); }
-    .tt-sec-hdr.s-today { background: #fef2f2; color: #dc2626; }
-    .tt-sec-hdr.s-thisweek { background: #fef3c7; color: #b45309; }
-    .tt-sec-hdr.s-next { background: #eff6ff; color: #1d4ed8; }
-    .tt-sec-hdr.s-undef { background: #f3f4f6; color: #6b7280; }
-    .tt-sec-icon { font-size: 14px; }
-    .tt-sec-label { font-size: 12px; }
-    .tt-sec-cnt { font-size: 11px; opacity: 0.7; margin-left: 2px; }
-    .tt-row { display: grid; grid-template-columns: 36px 1fr 1fr 120px 115px 160px 36px; border-bottom: 1px solid rgba(26,24,20,0.07); transition: background 0.12s; align-items: center; min-height: 48px; }
-    .tt-row:hover { background: rgba(26,24,20,0.03); }
-    .tt-row.done-row { opacity: 0.45; }
-    .tt-row.done-row .tt-task-title { text-decoration: line-through; }
-    .tt-row.tw-highlight { background: rgba(245,158,11,0.05); }
-    .tt-c-check { padding: 0 8px; display: flex; align-items: center; justify-content: center; }
-    .tt-c-check input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--ok); }
-    .tt-c-task { padding: 8px 8px; display: flex; align-items: center; gap: 6px; min-width: 0; }
-    .tt-task-title { font-family: 'Space Grotesk', sans-serif; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .tt-c-memo { padding: 6px 8px; display: flex; align-items: center; min-width: 0; }
-    .tt-memo-in { width: 100%; font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink2); line-height: 1.4; resize: none; overflow: hidden; min-height: 1.4em; border: none; border-bottom: 1px solid rgba(26,24,20,0.15); background: transparent; padding: 2px 4px; outline: none; transition: border-color 0.15s; }
-    .tt-memo-in:focus { border-bottom-color: var(--ink); border-bottom-width: 1.5px; }
-    .tt-memo-in::placeholder { color: var(--mute); font-style: italic; }
-    .tt-c-cat { padding: 0 8px; }
-    .tt-cat-chip { font-family: 'Space Grotesk', sans-serif; font-size: 11px; background: var(--paper3); color: var(--ink2); padding: 2px 8px; border-radius: 3px; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; }
-    .tt-cat-sel { width: 100%; font-family: 'Space Grotesk', sans-serif; font-size: 11px; background: var(--paper3); color: var(--ink2); padding: 4px 6px; border-radius: 3px; border: 1px solid transparent; outline: none; cursor: pointer; transition: border-color 0.15s; }
-    .tt-cat-sel:hover { border-color: rgba(26,24,20,0.2); }
-    .tt-cat-sel:focus { border-color: var(--ink); }
-    .tt-c-due { padding: 0 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); }
-    .tt-due-today { color: #dc2626; font-weight: 700; }
-    .tt-due-od { color: #dc2626; }
-    .tt-due-line2 { display: block; font-size: 10px; opacity: 0.8; margin-top: 1px; }
-    .tt-due-in { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); background: transparent; border: 1px solid transparent; border-radius: 3px; padding: 4px 6px; outline: none; cursor: pointer; width: 100%; transition: border-color 0.15s; }
-    .tt-due-in:hover { border-color: rgba(26,24,20,0.2); }
-    .tt-due-in:focus { border-color: var(--ink); }
-    .tt-due-in.tt-due-today { color: #dc2626; font-weight: 700; }
-    .tt-due-in.tt-due-od { color: #dc2626; }
-    .tt-due-in.tt-due-empty { color: var(--mute); }
-    .tt-c-tag { padding: 0 8px; display: flex; flex-wrap: wrap; gap: 3px; align-items: center; cursor: pointer; }
-    .tt-c-tag:hover { background: rgba(26,24,20,0.03); border-radius: 3px; }
-    .tt-tag-chip { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 1px 6px; border-radius: 2px; white-space: nowrap; font-weight: 600; }
-    .tt-tag-add-hint { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); font-style: italic; }
-    .tt-tag-pop { display: none; position: absolute; z-index: 100; background: #fff; border: 1px solid rgba(26,24,20,0.2); border-radius: 6px; padding: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); min-width: 240px; max-width: 320px; }
-    .tt-tag-pop-grid { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; max-height: 200px; overflow-y: auto; }
-    .tt-tag-pop-chip { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 3px; border: 1px solid rgba(26,24,20,0.15); background: transparent; cursor: pointer; opacity: 0.5; transition: all 0.12s; }
-    .tt-tag-pop-chip:hover { opacity: 0.85; }
-    .tt-tag-pop-chip.sel { opacity: 1; border-color: var(--ink); font-weight: 700; }
-    .tt-tag-pop-input-wrap { border-top: 1px solid rgba(26,24,20,0.1); padding-top: 8px; }
-    .tt-tag-pop-input { width: 100%; font-family: 'Space Grotesk', sans-serif; font-size: 11px; padding: 4px 6px; border: 1px solid rgba(26,24,20,0.2); border-radius: 3px; outline: none; }
-    .tt-tag-pop-input:focus { border-color: var(--ink); }
-    .tt-c-act { padding: 0 4px; display: flex; align-items: center; justify-content: center; }
-    .tt-row-more { padding: 4px 6px; border: none; background: transparent; cursor: pointer; color: var(--mute); font-size: 14px; border-radius: 3px; opacity: 0; transition: opacity 0.12s; }
-    .tt-row:hover .tt-row-more { opacity: 1; }
-    .tt-row-more:hover { background: rgba(26,24,20,0.08); color: var(--ink); }
-    .tt-add-row { display: flex; align-items: center; gap: 6px; padding: 7px 44px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mute); cursor: pointer; border-bottom: 1px solid rgba(26,24,20,0.05); transition: background 0.12s; }
-    .tt-add-row:hover { background: rgba(26,24,20,0.04); color: var(--ink3); }
+    /* ── 統計カード ── */
+    .tv-stats { display: grid; grid-template-columns: repeat(4,1fr); border-bottom: 1px solid rgba(26,24,20,0.12); background: #fafafa; flex-shrink: 0; }
+    .tv-stat-card { padding: 14px 20px; border-right: 1px solid rgba(26,24,20,0.1); }
+    .tv-stat-card:last-child { border-right: none; }
+    .tv-stat-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3); font-weight: 600; margin-bottom: 4px; }
+    .tv-stat-num { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--ink); }
+    .tv-stat-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); margin-top: 2px; }
 
-    /* タグ色 */
-    .tt-tag-chip.tag-重要 { background: rgba(220,38,38,0.12); color: #dc2626; }
-    .tt-tag-chip.tag-手続き { background: rgba(37,99,235,0.12); color: #1d4ed8; }
-    .tt-tag-chip.tag-準備 { background: rgba(234,88,12,0.12); color: #c2410c; }
-    .tt-tag-chip.tag-連絡 { background: rgba(22,163,74,0.12); color: #15803d; }
-    .tt-tag-chip.tag-見直し { background: rgba(124,58,237,0.12); color: #7c3aed; }
-    .tt-tag-chip.tag-家事 { background: rgba(219,39,119,0.12); color: #db2777; }
-    .tt-tag-chip.tag-家電 { background: rgba(219,39,119,0.12); color: #db2777; }
-    .tt-tag-chip.tag-検討 { background: rgba(6,182,212,0.12); color: #0891b2; }
-    .tt-tag-chip.tag-レジャー { background: rgba(20,184,166,0.12); color: #0d9488; }
-    .tt-tag-chip.tag-学習 { background: rgba(202,138,4,0.12); color: #a16207; }
-    .tt-tag-chip.tag-経理 { background: rgba(4,120,87,0.12); color: #047857; }
-    .tt-tag-chip.tag-買い物 { background: rgba(163,106,24,0.12); color: var(--warn); }
-    .tt-tag-chip.tag-修理 { background: rgba(107,114,128,0.12); color: #6b7280; }
+    /* ── セクション ── */
+    .tv-sections { flex: 1; overflow-y: auto; }
+    .tv-section { border-bottom: 1px solid rgba(26,24,20,0.1); }
+    .tv-sec-hdr { display: flex; align-items: center; gap: 8px; padding: 10px 24px; cursor: pointer; user-select: none; background: #fafafa; border-bottom: 1px solid rgba(26,24,20,0.08); }
+    .tv-sec-hdr:hover { background: rgba(26,24,20,0.03); }
+    .tv-sec-hdr.today-hdr { background: #fff; cursor: default; border-bottom: 2px solid var(--rule); }
+    .tv-sec-hdr.today-hdr:hover { background: #fff; }
+    .tv-sec-label { font-family: 'Newsreader', serif; font-size: 15px; font-weight: 700; font-style: italic; }
+    .tv-sec-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); }
+    .tv-sec-chevron { font-size: 11px; color: var(--mute); margin-left: auto; }
+    .tv-sec-preview { padding: 6px 24px 8px; background: #fafafa; }
+    .tv-sec-preview-item { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink3); padding: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tv-sec-preview-more { display: inline-block; margin-top: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); cursor: pointer; }
+    .tv-sec-preview-more:hover { text-decoration: underline; }
+
+    /* ── タスク行 ── */
+    .tv-row { display: flex; align-items: center; gap: 10px; padding: 10px 24px; border-bottom: 1px solid rgba(26,24,20,0.06); min-height: 44px; transition: background 0.12s; }
+    .tv-row:hover { background: rgba(26,24,20,0.02); }
+    .tv-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .tv-title { font-family: 'Space Grotesk', sans-serif; font-size: 14px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tv-pin { font-size: 14px; cursor: pointer; color: var(--mute); flex-shrink: 0; line-height: 1; padding: 2px 4px; border: none; background: transparent; }
+    .tv-pin.pinned { color: #f59e0b; }
+    .tv-pin:hover { opacity: 0.7; }
+    .tv-time { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); flex-shrink: 0; }
+    .tv-cat { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 3px; white-space: nowrap; flex-shrink: 0; color: #fff; font-weight: 600; }
+    .tv-tags { display: flex; gap: 4px; flex-shrink: 0; }
+    .tv-tag-chip { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 1px 6px; border-radius: 2px; white-space: nowrap; font-weight: 600; }
+    .tv-done-btn { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; padding: 4px 10px; border: 1px solid rgba(26,24,20,0.2); background: transparent; color: var(--ink3); cursor: pointer; border-radius: 3px; white-space: nowrap; flex-shrink: 0; transition: all 0.12s; }
+    .tv-done-btn:hover { border-color: var(--ok); color: var(--ok); }
+    .tv-done-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .tv-add-row { display: flex; align-items: center; gap: 6px; padding: 8px 24px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mute); cursor: pointer; transition: background 0.12s; border-bottom: 1px solid rgba(26,24,20,0.05); }
+    .tv-add-row:hover { background: rgba(26,24,20,0.04); color: var(--ink3); }
+
+    /* ── タグ色 (tv-) ── */
+    .tv-tag-chip.tag-重要 { background: rgba(220,38,38,0.12); color: #dc2626; }
+    .tv-tag-chip.tag-手続き { background: rgba(37,99,235,0.12); color: #1d4ed8; }
+    .tv-tag-chip.tag-準備 { background: rgba(234,88,12,0.12); color: #c2410c; }
+    .tv-tag-chip.tag-連絡 { background: rgba(22,163,74,0.12); color: #15803d; }
+    .tv-tag-chip.tag-見直し { background: rgba(124,58,237,0.12); color: #7c3aed; }
+    .tv-tag-chip.tag-家事 { background: rgba(219,39,119,0.12); color: #db2777; }
+    .tv-tag-chip.tag-検討 { background: rgba(6,182,212,0.12); color: #0891b2; }
+    .tv-tag-chip.tag-レジャー { background: rgba(20,184,166,0.12); color: #0d9488; }
+    .tv-tag-chip.tag-学習 { background: rgba(202,138,4,0.12); color: #a16207; }
+    .tv-tag-chip.tag-経理 { background: rgba(4,120,87,0.12); color: #047857; }
+    .tv-tag-chip.tag-買い物 { background: rgba(163,106,24,0.12); color: var(--warn); }
+    .tv-tag-chip.tag-修理 { background: rgba(107,114,128,0.12); color: #6b7280; }
 
     /* ── 右サイドバー ── */
     .todo-sidebar-r { background: #fafafa; border-left: 1px solid var(--rule); overflow-y: auto; }
     .trs-block { padding: 16px 16px 12px; border-bottom: 1px solid rgba(26,24,20,0.10); }
     .trs-title { font-family: 'Newsreader', serif; font-size: 15px; font-weight: 700; font-style: italic; margin-bottom: 10px; display: flex; align-items: baseline; gap: 8px; }
-    .trs-see-all { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink3); text-decoration: none; margin-left: auto; }
-    .trs-see-all:hover { color: var(--accent); }
     .trs-donut-svg { width: 140px; height: 140px; display: block; margin: 0 auto; }
     .trs-donut-num { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 26px; font-weight: 700; fill: var(--ink); }
     .trs-donut-label { font-family: 'Space Grotesk', sans-serif; font-size: 11px; fill: var(--ink3); }
@@ -549,16 +515,26 @@
     .trs-donut-legend li { display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink2); }
     .trs-donut-legend .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .trs-donut-legend .n { margin-left: auto; font-weight: 700; color: var(--ink3); }
-    .trs-rule { margin-bottom: 8px; }
-    .trs-rule-label { font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; color: var(--ink2); }
-    .trs-rule-sample { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink3); margin-top: 2px; }
     .trs-tags { display: flex; flex-wrap: wrap; gap: 5px; }
     .trs-tag-btn { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 3px; border: none; cursor: pointer; font-weight: 600; transition: opacity 0.12s; }
     .trs-tag-btn:hover { opacity: 0.75; }
     .trs-tag-btn.active { outline: 2px solid var(--ink); }
-    .trs-qa { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 10px; border: 1px solid rgba(26,24,20,0.12); background: #fff; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink2); border-radius: 4px; margin-bottom: 6px; transition: all 0.12s; text-align: left; }
-    .trs-qa:hover { border-color: var(--ink); background: var(--paper); }
-    .trs-qa:last-child { margin-bottom: 0; }
+
+    /* ── クイックメモ ── */
+    .tv-quick-memo { width: 100%; min-height: 80px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--ink); border: 1px solid rgba(26,24,20,0.15); border-radius: 4px; padding: 8px 10px; background: #fff; outline: none; resize: vertical; line-height: 1.5; box-sizing: border-box; }
+    .tv-quick-memo:focus { border-color: var(--ink3); }
+    .tv-quick-memo::placeholder { color: var(--mute); font-style: italic; }
+
+    /* ── 今後の予定 ── */
+    .tv-upcoming-item { display: flex; align-items: baseline; gap: 8px; padding: 5px 0; border-bottom: 1px dotted rgba(26,24,20,0.1); }
+    .tv-upcoming-item:last-child { border-bottom: none; }
+    .tv-upcoming-date { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink3); flex-shrink: 0; white-space: nowrap; }
+    .tv-upcoming-title { font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink2); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* ── アンドゥトースト ── */
+    .undo-toast { position:fixed; bottom:24px; right:24px; background:var(--ink); color:var(--paper); padding:12px 16px; display:flex; align-items:center; gap:12px; opacity:0; pointer-events:none; transition:opacity 0.2s; z-index:9000; border-radius:4px; font-size:13px; font-family:'Space Grotesk',sans-serif; }
+    .undo-toast.show { opacity:1; pointer-events:auto; }
+    .undo-toast button { background:transparent; border:1px solid rgba(255,255,255,0.4); color:var(--paper); padding:4px 10px; cursor:pointer; font-size:12px; border-radius:3px; font-family:'Space Grotesk',sans-serif; }
 
     .login-box { width: 380px; padding: 56px 48px; }
 
@@ -719,43 +695,46 @@
         <h3 class="ts-head-title">Todo</h3>
       </div>
 
-      <nav class="ts-nav">
-        <button class="ts-nav-item active" data-due="all" onclick="setDueFilter('all',this)">
-          <span class="ts-nav-label">すべてのタスク</span>
-          <span class="ts-nav-count" id="cntAll">0</span>
+      <div class="ts-group-label">ビュー</div>
+      <nav class="ts-nav" id="tvViewNav">
+        <button class="ts-nav-item active" data-view="null" onclick="setViewFilter(null,this)">
+          <span class="ts-nav-label">すべて</span>
+          <span class="ts-nav-count" id="tvCntAll">0</span>
         </button>
-        <button class="ts-nav-item" data-due="thisweek" onclick="setDueFilter('thisweek',this)">
-          <span class="ts-nav-label">今週中</span>
-          <span class="ts-nav-count" id="cntThisweek">0</span>
+        <button class="ts-nav-item" data-view="today" onclick="setViewFilter('today',this)">
+          <span class="ts-nav-label">今日</span>
+          <span class="ts-nav-count" id="tvCntToday">0</span>
         </button>
-        <button class="ts-nav-item" data-due="next" onclick="setDueFilter('next',this)">
-          <span class="ts-nav-label">来週以降</span>
-          <span class="ts-nav-count" id="cntNext">0</span>
+        <button class="ts-nav-item" data-view="thisweek" onclick="setViewFilter('thisweek',this)">
+          <span class="ts-nav-label">今週</span>
+          <span class="ts-nav-count" id="tvCntThisweek">0</span>
         </button>
-        <button class="ts-nav-item" data-due="undef" onclick="setDueFilter('undef',this)">
-          <span class="ts-nav-label">未定・保留</span>
-          <span class="ts-nav-count" id="cntUndef">0</span>
+        <button class="ts-nav-item" data-view="later" onclick="setViewFilter('later',this)">
+          <span class="ts-nav-label">後で</span>
+          <span class="ts-nav-count" id="tvCntLater">0</span>
+        </button>
+        <button class="ts-nav-item" data-view="undef" onclick="setViewFilter('undef',this)">
+          <span class="ts-nav-label">未定</span>
+          <span class="ts-nav-count" id="tvCntUndef">0</span>
         </button>
       </nav>
 
-      <div class="ts-group-label">セクション</div>
-      <nav class="ts-sec-nav" id="tsSecNav"></nav>
+      <div class="ts-group-label">カテゴリ</div>
+      <nav class="ts-sec-nav" id="tvCatNav"></nav>
 
       <div class="ts-group-label">タグ</div>
-      <nav class="ts-tag-nav" id="tsTagNavL"></nav>
-      <button class="ts-see-all" onclick="alert('タグ一覧は右サイドバーに表示中')">すべてのタグを見る ›</button>
+      <div class="tv-tag-list" id="tvTagNav"></div>
     </aside>
 
     <!-- メインエリア -->
     <main class="todo-main">
       <div class="tm-head">
         <div>
-          <h2 class="tm-title">タスク一覧</h2>
-          <p class="tm-sub" id="tmSub">すべてのタスクを期限順に表示しています</p>
+          <h2 class="tm-title" id="tvMainTitle">今日やること</h2>
+          <p class="tm-sub" id="tvMainDate"></p>
         </div>
         <div class="tm-head-act">
           <button class="btn btn-primary" onclick="toggleAddTask()">＋ タスクを追加</button>
-          <button class="tm-more">⋯</button>
         </div>
       </div>
 
@@ -772,60 +751,36 @@
         </div>
       </div>
 
-      <div class="tm-fbar">
-        <div class="tm-sort">
-          <select id="sortSel" onchange="setSortOrder(this.value)">
-            <option value="due">↕ 期限順</option>
-            <option value="created">↕ 作成順</option>
-            <option value="section">↕ セクション順</option>
-            <option value="priority">↕ 優先度順</option>
-          </select>
-        </div>
-        <div class="tm-due-tabs">
-          <button class="tm-due-tab active" data-due="all" onclick="setDueFilter('all',this)">すべて <span class="tm-tab-cnt" id="tabCntAll">0</span></button>
-          <button class="tm-due-tab" data-due="thisweek" onclick="setDueFilter('thisweek',this)">今週中 <span class="tm-tab-cnt" id="tabCntThisweek">0</span></button>
-          <button class="tm-due-tab" data-due="next" onclick="setDueFilter('next',this)">来週以降 <span class="tm-tab-cnt" id="tabCntNext">0</span></button>
-          <button class="tm-due-tab" data-due="undef" onclick="setDueFilter('undef',this)">未定・保留 <span class="tm-tab-cnt" id="tabCntUndef">0</span></button>
-        </div>
-        <div class="tm-fbar-r">
-          <button class="tm-filter-btn">⊟ フィルター</button>
-          <button class="tm-filter-btn">⚙ 表示設定</button>
-        </div>
-      </div>
-
-      <div class="tm-table" id="taskList"></div>
+      <div class="tv-stats" id="tvStats"></div>
+      <div class="tv-sections" id="tvSections"></div>
     </main>
 
     <!-- 右サイドバー -->
     <aside class="todo-sidebar-r">
       <div class="trs-block">
-        <h4 class="trs-title">期限のサマリー</h4>
-        <div id="trsDonut"></div>
+        <h4 class="trs-title">進捗</h4>
+        <div id="tvProgress"></div>
       </div>
 
       <div class="trs-block">
-        <h4 class="trs-title">表示ルール</h4>
-        <div class="trs-rule">
-          <div class="trs-rule-label">今週中のタスクを背景色でハイライト</div>
-          <div class="trs-rule-sample">期限が今週中のタスクを背景色で強調表示</div>
-        </div>
-        <div class="trs-rule">
-          <div class="trs-rule-label">↕ ソート</div>
-          <div class="trs-rule-sample">期限が近い順に自動ソート</div>
-        </div>
+        <h4 class="trs-title">今後の予定</h4>
+        <div id="tvUpcoming"></div>
+        <button onclick="nav('calendar')" style="margin-top:10px;width:100%;padding:7px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background:transparent;border:1px solid rgba(26,24,20,0.2);color:var(--ink3);cursor:pointer;border-radius:3px;transition:all 0.12s;" onmouseover="this.style.color='var(--ink)';this.style.borderColor='var(--ink3)'" onmouseout="this.style.color='var(--ink3)';this.style.borderColor='rgba(26,24,20,0.2)'">カレンダーを開く</button>
       </div>
 
       <div class="trs-block">
-        <h4 class="trs-title">タグ <a class="trs-see-all" href="#" onclick="return false">すべてのタグを見る ›</a></h4>
-        <div class="trs-tags" id="trsTagsR"></div>
+        <h4 class="trs-title">クイックメモ</h4>
+        <textarea class="tv-quick-memo" id="tvQuickMemo" placeholder="メモを追加" oninput="saveQuickMemo(this.value)"></textarea>
       </div>
 
       <div class="trs-block">
-        <h4 class="trs-title">クイックアクション</h4>
-        <button class="trs-qa" onclick="toggleAddTask()"><span>＋</span>タスクを追加</button>
-        <button class="trs-qa"><span>📋</span>テンプレートから追加</button>
-        <button class="trs-qa" onclick="toggleShowDone()"><span>👁</span>完了したタスクを表示</button>
-        <button class="trs-qa"><span>📁</span>アーカイブを表示</button>
+        <h4 class="trs-title">よく使うタグ</h4>
+        <div class="trs-tags" id="tvTopTags"></div>
+      </div>
+
+      <div class="trs-block">
+        <h4 class="trs-title">完了したタスク</h4>
+        <div id="tvDoneToday"></div>
       </div>
     </aside>
 
@@ -1019,12 +974,11 @@ let shopFilter = 'all', txType = 'income';
 
 // ── TODO STATE ──
 let todoState = {
-  dueFilter: 'all',
+  viewFilter: null,
   sectionFilter: null,
   tagFilter: null,
-  sortOrder: 'due',
-  showDone: false,
 };
+const tvOpenSections = { today: true, thisweek: false, later: false, undef: false };
 let vy = new Date().getFullYear(), vm = new Date().getMonth();
 let calY = new Date().getFullYear(), calM = new Date().getMonth();
 let selDay = null;
@@ -1182,7 +1136,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const h = new Date().getHours();
   document.getElementById('topDate').textContent = fmtFull(new Date());
   document.getElementById('txDate').value = today();
-  renderHome(); renderTasks(); renderFinance(); renderSubs(); renderCalendar(); renderShopping(); renderTravel(); updateBadge();
+  renderHome(); renderTodayView(); renderFinance(); renderSubs(); renderCalendar(); renderShopping(); renderTravel(); updateBadge();
 });
 
 // ── NAV ──
@@ -1192,7 +1146,7 @@ function nav(page) {
   document.getElementById('page-'+page).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(b=>{ if(b.getAttribute('onclick')===`nav('${page}')`) b.classList.add('active'); });
   if(page==='home')     renderHome();
-  if(page==='todo')     renderTasks();
+  if(page==='todo')     renderTodayView();
   if(page==='finance')  { renderFinance(); renderSubs(); }
   if(page==='calendar') renderCalendar();
   if(page==='shopping') renderShopping();
@@ -1226,377 +1180,381 @@ function toggleAddTask(){const f=document.getElementById('addTaskForm');f.classL
 function addTask(){
   const title=document.getElementById('taskTitle').value.trim();
   if(!title){document.getElementById('taskTitle').focus();return;}
-  const t={id:crypto.randomUUID(),title,category:document.getElementById('taskCategory').value,priority:document.getElementById('taskPriority').value,due:document.getElementById('taskDue').value,done:false,createdAt:new Date().toISOString(),tags:[]};
+  const t={id:crypto.randomUUID(),title,category:document.getElementById('taskCategory').value,priority:document.getElementById('taskPriority').value,due:document.getElementById('taskDue').value,done:false,createdAt:new Date().toISOString(),tags:[],isPinned:false,completedAt:null,dueTime:null};
   t.tags=deriveInitialTags(t);
   tasks.unshift(t);
   saveTasks();
   document.getElementById('taskTitle').value='';
   document.getElementById('taskDue').value='';
   toggleAddTask();
-  renderTasks();renderHome();renderCalendar();updateBadge();
+  renderTodayView();renderHome();renderCalendar();updateBadge();
 }
-function toggleTask(id){const t=tasks.find(t=>t.id===id);if(t){t.done=!t.done;saveTasks();renderTasks();renderHome();renderCalendar();updateBadge();}}
+function toggleTask(id){const t=tasks.find(t=>t.id===id);if(t){t.done=!t.done;saveTasks();renderTodayView();renderHome();renderCalendar();updateBadge();}}
 function quickDone(id){const t=tasks.find(t=>t.id===id);if(t){t.done=true;saveTasks();renderHome();updateBadge();}}
-function delTask(id){tasks=tasks.filter(t=>t.id!==id);saveTasks();renderTasks();renderHome();renderCalendar();updateBadge();}
+function delTask(id){tasks=tasks.filter(t=>t.id!==id);saveTasks();renderTodayView();renderHome();renderCalendar();updateBadge();}
 
-// ── TODO STATE FUNCTIONS ──
-function setDueFilter(f, el) {
-  todoState.dueFilter = f;
-  todoState.sectionFilter = null;
-  todoState.tagFilter = null;
-  // サイドバーと上部タブのactive更新
-  document.querySelectorAll('.ts-nav-item').forEach(b => { b.classList.toggle('active', b.dataset.due === f); });
-  document.querySelectorAll('.tm-due-tab').forEach(b => { b.classList.toggle('active', b.dataset.due === f); });
-  renderTasks();
-}
-function setSectionFilter(s) {
-  todoState.sectionFilter = (todoState.sectionFilter === s ? null : s);
-  todoState.tagFilter = null;
-  renderTasks();
-}
-function setTagFilter(t) {
-  todoState.tagFilter = (todoState.tagFilter === t ? null : t);
-  todoState.sectionFilter = null;
-  renderTasks();
-}
-function setSortOrder(o) { todoState.sortOrder = o; renderTasks(); }
-function toggleShowDone() { todoState.showDone = !todoState.showDone; renderTasks(); }
-function addTaskInSection(sec) {
-  const f = document.getElementById('addTaskForm');
-  if (!f.classList.contains('open')) { f.classList.add('open'); }
-  document.getElementById('taskTitle').focus();
-  const now = new Date();
-  if (sec === 'today') {
-    document.getElementById('taskDue').value = now.toISOString().split('T')[0];
-  } else if (sec === 'thisweek') {
-    const d = new Date(now); d.setDate(d.getDate() + 3);
-    document.getElementById('taskDue').value = d.toISOString().split('T')[0];
-  } else {
-    document.getElementById('taskDue').value = '';
-  }
-}
-function saveTasks(){localStorage.setItem('hd_tasks',JSON.stringify(tasks));saveToSupabase();}
-
-// ── SECTION CONFIG ──
-const SEC_ICONS = {
-  '仕事':'💼','手続き':'🏠','家事':'🧹','買い物':'🛒',
-  '修理':'🔧','その他':'💬','ダッシュボード改善案':'🛠'
+// ── CATEGORY COLOR MAP ──
+const CAT_COLORS = {
+  '仕事':'#3b82f6','手続き':'#8b5cf6','家事':'#10b981','買い物':'#f59e0b',
+  '修理':'#ef4444','その他':'#6b7280','ダッシュボード改善案':'#ec4899'
 };
+function getCatColor(cat) { return CAT_COLORS[cat] || '#9ca3af'; }
 
-// ── DUE CLASSIFICATION ──
-function classifyDue(t, now) {
+// ── TASK CLASSIFICATION ──
+function getTodayDate() { const n = new Date(); n.setHours(0,0,0,0); return n; }
+function getThisWeekSunday(now) {
+  const sun = new Date(now);
+  const d = sun.getDay();
+  sun.setDate(sun.getDate() + (d === 0 ? 0 : 7 - d));
+  return sun;
+}
+function classifyTask(t, now, thisSun) {
+  if (t.done) return 'done';
   if (!t.due) return 'undef';
   const d = new Date(t.due + 'T00:00:00');
-  if (d <= now) return 'today'; // 今日以前（期限切れ含む）
-  const w7 = new Date(now); w7.setDate(w7.getDate() + 7);
-  if (d <= w7) return 'thisweek';
-  const d30 = new Date(now); d30.setDate(d30.getDate() + 30);
-  if (d <= d30) return 'next';
-  return 'next';
+  if (d <= now) return 'today';
+  if (d <= thisSun) return 'thisweek';
+  return 'later';
 }
 
-// ── DUE CLASS ──
-function dueClassName(t, now) {
-  if (!t.due) return 'tt-due-empty';
-  const d = new Date(t.due + 'T00:00:00');
-  if (t.due === today()) return 'tt-due-today';
-  if (d < now) return 'tt-due-od';
-  return '';
+// ── VIEW / CAT / TAG FILTER SETTERS ──
+function setViewFilter(f, el) {
+  todoState.viewFilter = f;
+  todoState.sectionFilter = null;
+  todoState.tagFilter = null;
+  document.querySelectorAll('#tvViewNav .ts-nav-item').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === (f === null ? 'null' : f));
+  });
+  renderTodayView();
+}
+function setCatFilter(cat) {
+  todoState.sectionFilter = (todoState.sectionFilter === cat ? null : cat);
+  todoState.tagFilter = null;
+  renderTodayView();
+}
+function setTagFilter(tag) {
+  todoState.tagFilter = (todoState.tagFilter === tag ? null : tag);
+  todoState.sectionFilter = null;
+  renderTodayView();
 }
 
-// ── TAG CHIPS HTML ──
-function tagChipsHTML(tags) {
-  if (!tags || !tags.length) return '';
-  return tags.slice(0,3).map(tag => `<span class="tt-tag-chip tag-${esc(tag)}">${esc(tag)}</span>`).join('');
+// ── PIN ──
+function togglePin(id) {
+  const t = tasks.find(t => t.id === id);
+  if (!t) return;
+  t.isPinned = !t.isPinned;
+  saveTasks();
+  renderTodayView();
 }
 
-// ── TASK ROW HTML ──
-function taskRowHTML(t, now) {
-  const tags = Array.isArray(t.tags) ? t.tags : [];
-  const isThisWeek = classifyDue(t, now) === 'thisweek';
-  const rowClass = `tt-row${t.done ? ' done-row' : ''}${isThisWeek && !t.done ? ' tw-highlight' : ''}`;
-  const catOptions = ['仕事','手続き','家事','買い物','修理','ダッシュボード改善案','その他'].map(c=>`<option${t.category===c?' selected':''}>${c}</option>`).join('');
-
-  return `<div class="${rowClass}">
-    <div class="tt-c-check"><input type="checkbox" ${t.done?'checked':''} onclick="event.stopPropagation();toggleTask(${t.id})"></div>
-    <div class="tt-c-task"><span class="tt-task-title">${esc(t.title)}</span></div>
-    <div class="tt-c-memo"><textarea class="tt-memo-in" rows="1" placeholder="メモを追加" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px';saveTaskNote(${t.id},this.value)" onclick="event.stopPropagation()">${esc(t.note||'')}</textarea></div>
-    <div class="tt-c-cat"><select class="tt-cat-sel" onclick="event.stopPropagation()" onchange="saveTaskCategory(${t.id},this.value)">${catOptions}</select></div>
-    <div class="tt-c-due"><input type="date" class="tt-due-in ${dueClassName(t,now)}" value="${esc(t.due||'')}" onclick="event.stopPropagation()" onchange="saveTaskDue(${t.id},this.value)"></div>
-    <div class="tt-c-tag" onclick="event.stopPropagation();openTagEditor(${t.id},event)">${tagChipsHTML(tags)}${tags.length===0?'<span class="tt-tag-add-hint">+ タグ</span>':''}</div>
-    <div class="tt-c-act"><button class="tt-row-more" onclick="event.stopPropagation()">⋯</button></div>
-  </div>`;
+// ── COMPLETE TASK (with fade animation) ──
+function completeTask(id) {
+  const t = tasks.find(t => t.id === id);
+  if (!t || t._completing) return;
+  t._completing = true;
+  const btn = document.querySelector(`[data-task-id="${id}"] .tv-done-btn`);
+  if (btn) btn.disabled = true;
+  const row = document.querySelector(`[data-task-id="${id}"]`);
+  if (row) { row.style.opacity = '0.3'; row.style.transition = 'opacity 0.4s'; }
+  setTimeout(() => {
+    t.done = true;
+    t.completedAt = new Date().toISOString();
+    delete t._completing;
+    saveTasks();
+    renderTodayView();
+    renderHome();
+    renderCalendar();
+    updateBadge();
+    showUndoToast(id, t.title);
+  }, 600);
 }
-function saveTaskNote(id,val){setTaskNote(id,val);}
 
+// ── UNDO TOAST ──
+let _undoTimer = null;
+let _undoTaskId = null;
+function showUndoToast(id, title) {
+  _undoTaskId = id;
+  clearTimeout(_undoTimer);
+  document.getElementById('undoMsg').textContent = `「${title}」を完了しました`;
+  document.getElementById('undoToast').classList.add('show');
+  _undoTimer = setTimeout(() => {
+    document.getElementById('undoToast').classList.remove('show');
+    _undoTaskId = null;
+  }, 5000);
+}
+function undoComplete() {
+  if (!_undoTaskId) return;
+  const t = tasks.find(t => t.id === _undoTaskId);
+  if (t) { t.done = false; t.completedAt = null; saveTasks(); renderTodayView(); renderHome(); renderCalendar(); updateBadge(); }
+  clearTimeout(_undoTimer);
+  document.getElementById('undoToast').classList.remove('show');
+  _undoTaskId = null;
+}
+
+// ── QUICK MEMO ──
+function saveQuickMemo(val) { localStorage.setItem('hd_quick_memo', val); }
+function loadQuickMemo() { return localStorage.getItem('hd_quick_memo') || ''; }
+
+// ── DATA SAVE FUNCTIONS ──
+function saveTasks() { localStorage.setItem('hd_tasks', JSON.stringify(tasks)); saveToSupabase(); }
+function saveTaskNote(id, val) { setTaskNote(id, val); }
 function saveTaskCategory(id, val) {
   const t = tasks.find(t => t.id === id);
   if (!t) return;
   t.category = val;
   saveTasks();
-  renderTasks();
+  renderTodayView();
   renderHome();
   renderCalendar();
 }
-
 function saveTaskDue(id, val) {
   const t = tasks.find(t => t.id === id);
   if (!t) return;
   t.due = val;
   saveTasks();
-  renderTasks();
+  renderTodayView();
   renderHome();
   renderCalendar();
 }
 
-let editingTagsTaskId = null;
-function getAllKnownTags() {
-  const set = new Set();
-  tasks.forEach(t => (t.tags||[]).forEach(tag => set.add(tag)));
-  ['重要','手続き','準備','連絡','見直し','家事','検討','レジャー','学習','経理'].forEach(t => set.add(t));
-  return [...set];
-}
-function openTagEditor(taskId, e) {
-  editingTagsTaskId = taskId;
-  const cell = e.currentTarget || (e.target && e.target.closest('.tt-c-tag'));
-  if (!cell) return;
-  const r = cell.getBoundingClientRect();
-  const pop = document.getElementById('tagPopover');
-  pop.style.display = 'block';
-  pop.style.left = r.left + window.scrollX + 'px';
-  pop.style.top = (r.bottom + window.scrollY + 4) + 'px';
-  renderTagPopover();
-  setTimeout(() => document.addEventListener('click', closeTagEditorOnOutside), 0);
-}
-function closeTagEditorOnOutside(e) {
-  const pop = document.getElementById('tagPopover');
-  if (!pop.contains(e.target)) closeTagEditor();
-}
-function closeTagEditor() {
-  document.getElementById('tagPopover').style.display = 'none';
-  document.removeEventListener('click', closeTagEditorOnOutside);
-  editingTagsTaskId = null;
-  renderTasks();
-}
-function renderTagPopover() {
-  const t = tasks.find(x => x.id === editingTagsTaskId);
-  if (!t) return;
-  const current = new Set(t.tags || []);
-  const all = getAllKnownTags();
-  document.getElementById('tagPopGrid').innerHTML = all.map(tag => {
-    const sel = current.has(tag);
-    return `<button class="tt-tag-pop-chip${sel?' sel':''} tag-${esc(tag)}" onclick="toggleTaskTag(${t.id},'${esc(tag)}')">${esc(tag)}</button>`;
-  }).join('');
-}
-function toggleTaskTag(taskId, tag) {
-  const t = tasks.find(x => x.id === taskId);
-  if (!t) return;
-  if (!Array.isArray(t.tags)) t.tags = [];
-  const i = t.tags.indexOf(tag);
-  if (i >= 0) t.tags.splice(i, 1);
-  else t.tags.push(tag);
-  saveTasks();
-  renderTagPopover();
-}
-function tagPopKeydown(e) {
-  if (e.key !== 'Enter') return;
-  e.preventDefault();
-  const val = e.target.value.trim();
-  if (!val || !editingTagsTaskId) return;
-  toggleTaskTag(editingTagsTaskId, val);
-  e.target.value = '';
+// ── TASK ROW HTML ──
+function tvRowHTML(t) {
+  const color = getCatColor(t.category);
+  const isPinned = !!t.isPinned;
+  const tags = (t.tags || []).slice(0, 3);
+  const tagsHTML = tags.map(tag => `<span class="tv-tag-chip tag-${esc(tag)}">${esc(tag)}</span>`).join('');
+  const timeHTML = t.dueTime ? `<span class="tv-time">${esc(t.dueTime)}</span>` : '';
+  return `<div class="tv-row" data-task-id="${esc(t.id)}">
+    <div class="tv-dot" style="background:${color}"></div>
+    <div class="tv-title">${esc(t.title)}</div>
+    <button class="tv-pin${isPinned ? ' pinned' : ''}" onclick="event.stopPropagation();togglePin('${esc(t.id)}')">${isPinned ? '★' : '☆'}</button>
+    ${timeHTML}
+    <span class="tv-cat" style="background:${color}">${esc(t.category)}</span>
+    <div class="tv-tags">${tagsHTML}</div>
+    <button class="tv-done-btn" onclick="completeTask('${esc(t.id)}')">完了にする</button>
+  </div>`;
 }
 
-// ── RENDER TODO SIDEBAR ──
-function renderTodoSidebar() {
-  const now = new Date(); now.setHours(0,0,0,0);
-  const pending = tasks.filter(t => !t.done);
-  const w7 = new Date(now); w7.setDate(w7.getDate() + 7);
-  const d30 = new Date(now); d30.setDate(d30.getDate() + 30);
-
-  const counts = {
-    all: pending.length,
-    thisweek: pending.filter(t => { if (!t.due) return false; const d = new Date(t.due+'T00:00:00'); return d > now && d <= w7; }).length,
-    next: pending.filter(t => { if (!t.due) return false; const d = new Date(t.due+'T00:00:00'); return d > w7; }).length,
-    undef: pending.filter(t => !t.due).length,
-    today: pending.filter(t => { if (!t.due) return false; return new Date(t.due+'T00:00:00') <= now; }).length,
-  };
-
-  // カウント更新
-  ['All','Thisweek','Next','Undef'].forEach(k => {
-    const el = document.getElementById('cnt'+k);
-    if (el) el.textContent = counts[k.toLowerCase()];
-    const el2 = document.getElementById('tabCnt'+k);
-    if (el2) el2.textContent = counts[k.toLowerCase()];
+// ── SECTION SORT (pinned first, then by due date) ──
+function sortSectionTasks(items) {
+  return [...items].sort((a, b) => {
+    if (a.isPinned && !b.isPinned) return -1;
+    if (!a.isPinned && b.isPinned) return 1;
+    if (a.due && b.due) return new Date(a.due) - new Date(b.due);
+    if (a.due) return -1;
+    if (b.due) return 1;
+    return 0;
   });
+}
 
-  // セクションナビ
-  const secNav = document.getElementById('tsSecNav');
-  if (secNav) {
+// ── ACCORDION TOGGLE ──
+function toggleSection(key) {
+  tvOpenSections[key] = !tvOpenSections[key];
+  renderTodayView();
+}
+
+// ── OPEN ADD FORM FOR SECTION ──
+function openAddTaskForSection(sec) {
+  const f = document.getElementById('addTaskForm');
+  if (!f.classList.contains('open')) { f.classList.add('open'); }
+  document.getElementById('taskTitle').focus();
+  document.getElementById('taskDue').value = sec === 'today' ? new Date().toISOString().split('T')[0] : '';
+}
+
+// ── HELPER ──
+function updateEl(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+
+// ── PROGRESS DONUT ──
+function renderProgressDonut(todayDone, todayTotal) {
+  if (todayTotal === 0) return '<div class="trs-donut-empty">今日のタスクなし</div>';
+  const pct = Math.round((todayDone / todayTotal) * 100);
+  const r = 56, c = 2 * Math.PI * r;
+  const doneLen = (todayDone / todayTotal) * c;
+  return `<svg viewBox="0 0 160 160" class="trs-donut-svg">
+    <circle cx="80" cy="80" r="${r}" fill="none" stroke="#e5e7eb" stroke-width="16"/>
+    ${todayDone > 0 ? `<circle cx="80" cy="80" r="${r}" fill="none" stroke="#5a6b3a" stroke-width="16" stroke-dasharray="${doneLen} ${c - doneLen}" stroke-dashoffset="0" transform="rotate(-90 80 80)"/>` : ''}
+    <text x="80" y="78" text-anchor="middle" class="trs-donut-num">${pct}%</text>
+    <text x="80" y="98" text-anchor="middle" class="trs-donut-label">${todayDone}/${todayTotal}件完了</text>
+  </svg>`;
+}
+
+// ── RENDER TODAY VIEW (main todo render) ──
+function renderTodayView() {
+  const now = getTodayDate();
+  const thisSun = getThisWeekSunday(now);
+  const pending = tasks.filter(t => !t.done);
+
+  const todayTasks    = pending.filter(t => classifyTask(t, now, thisSun) === 'today');
+  const thisweekTasks = pending.filter(t => classifyTask(t, now, thisSun) === 'thisweek');
+  const laterTasks    = pending.filter(t => classifyTask(t, now, thisSun) === 'later');
+  const undefTasks    = pending.filter(t => classifyTask(t, now, thisSun) === 'undef');
+
+  // 1. 左サイドバー
+  updateEl('tvCntAll', pending.length);
+  updateEl('tvCntToday', todayTasks.length);
+  updateEl('tvCntThisweek', thisweekTasks.length);
+  updateEl('tvCntLater', laterTasks.length);
+  updateEl('tvCntUndef', undefTasks.length);
+
+  const catNav = document.getElementById('tvCatNav');
+  if (catNav) {
     const cats = [...new Set(tasks.map(t => t.category))];
-    secNav.innerHTML = cats.map(cat => {
-      const icon = SEC_ICONS[cat] || '💬';
+    catNav.innerHTML = cats.map(cat => {
       const cnt = pending.filter(t => t.category === cat).length;
       const isAct = todoState.sectionFilter === cat;
-      return `<button class="ts-sec-item${isAct?' active':''}" onclick="setSectionFilter('${esc(cat)}')">
-        <span class="ts-sec-icon">${icon}</span>
-        <span class="ts-sec-label">${esc(cat)}</span>
+      const col = getCatColor(cat);
+      return `<button class="ts-sec-item${isAct ? ' active' : ''}" onclick="setCatFilter('${esc(cat)}')">
+        <span style="width:8px;height:8px;border-radius:50%;background:${col};display:inline-block;flex-shrink:0"></span>
+        <span style="flex:1;margin-left:6px">${esc(cat)}</span>
         <span class="ts-sec-cnt">${cnt}</span>
       </button>`;
     }).join('');
   }
 
-  // タグナビ（左サイドバー上位5件）
-  const allTags = {};
-  pending.forEach(t => { (t.tags||[]).forEach(tag => { allTags[tag] = (allTags[tag]||0)+1; }); });
-  const sortedTags = Object.entries(allTags).sort((a,b)=>b[1]-a[1]);
-  const tagNavL = document.getElementById('tsTagNavL');
-  if (tagNavL) {
-    tagNavL.innerHTML = sortedTags.slice(0,5).map(([tag, cnt]) => {
+  const allTagsMap = {};
+  pending.forEach(t => { (t.tags || []).forEach(tag => { allTagsMap[tag] = (allTagsMap[tag] || 0) + 1; }); });
+  const sortedTags = Object.entries(allTagsMap).sort((a, b) => b[1] - a[1]);
+
+  const tagNav = document.getElementById('tvTagNav');
+  if (tagNav) {
+    tagNav.innerHTML = sortedTags.slice(0, 8).map(([tag]) => {
       const isAct = todoState.tagFilter === tag;
-      return `<button class="ts-tag-item${isAct?' active':''}" onclick="setTagFilter('${esc(tag)}')">
-        <span class="ts-tag-label">${esc(tag)}</span>
-        <span class="ts-sec-cnt">${cnt}</span>
-      </button>`;
+      return `<button class="tv-sidebar-tag tv-tag-chip tag-${esc(tag)}${isAct ? ' active' : ''}" onclick="setTagFilter('${esc(tag)}')">${esc(tag)}</button>`;
     }).join('');
   }
 
-  // 右サイドバー タグ
-  const trsTagsR = document.getElementById('trsTagsR');
-  if (trsTagsR) {
-    trsTagsR.innerHTML = sortedTags.map(([tag]) => {
-      const isAct = todoState.tagFilter === tag;
-      return `<button class="trs-tag-btn tt-tag-chip tag-${esc(tag)}${isAct?' active':''}" onclick="setTagFilter('${esc(tag)}')">${esc(tag)}</button>`;
-    }).join('');
+  // 2. ヘッダー
+  updateEl('tvMainTitle', '今日やること');
+  updateEl('tvMainDate', fmtFull(new Date()));
+
+  // 3. 統計カード
+  const todayAllTasks = tasks.filter(t => t.due && new Date(t.due + 'T00:00:00') <= now);
+  const todayDone = todayAllTasks.filter(t => t.done).length;
+  const todayTotal = todayAllTasks.length;
+  const pct = todayTotal > 0 ? Math.round((todayDone / todayTotal) * 100) : null;
+  const statsEl = document.getElementById('tvStats');
+  if (statsEl) {
+    statsEl.innerHTML = `
+      <div class="tv-stat-card"><div class="tv-stat-label">今日</div><div class="tv-stat-num">${todayTasks.length}</div><div class="tv-stat-sub">件</div></div>
+      <div class="tv-stat-card"><div class="tv-stat-label">今週</div><div class="tv-stat-num">${thisweekTasks.length}</div><div class="tv-stat-sub">件</div></div>
+      <div class="tv-stat-card"><div class="tv-stat-label">未定</div><div class="tv-stat-num">${undefTasks.length}</div><div class="tv-stat-sub">件</div></div>
+      <div class="tv-stat-card"><div class="tv-stat-label">進捗</div><div class="tv-stat-num">${pct !== null ? pct + '%' : '—'}</div><div class="tv-stat-sub">${todayTotal > 0 ? `${todayDone}/${todayTotal}件完了` : '今日のタスクなし'}</div></div>`;
   }
 
-  // ドーナツチャート
-  const donutEl = document.getElementById('trsDonut');
-  if (donutEl) donutEl.innerHTML = renderDonut(counts);
-}
+  // 4. フィルタリング
+  let filtered = pending;
+  if (todoState.sectionFilter) filtered = filtered.filter(t => t.category === todoState.sectionFilter);
+  if (todoState.tagFilter) filtered = filtered.filter(t => (t.tags || []).includes(todoState.tagFilter));
+  if (todoState.viewFilter === 'today')    filtered = filtered.filter(t => classifyTask(t, now, thisSun) === 'today');
+  else if (todoState.viewFilter === 'thisweek') filtered = filtered.filter(t => classifyTask(t, now, thisSun) === 'thisweek');
+  else if (todoState.viewFilter === 'later')    filtered = filtered.filter(t => classifyTask(t, now, thisSun) === 'later');
+  else if (todoState.viewFilter === 'undef')    filtered = filtered.filter(t => classifyTask(t, now, thisSun) === 'undef');
 
-// ── DONUT CHART ──
-function renderDonut(counts) {
-  const total = counts.today + (counts.thisweek||0) + (counts.next||0) + counts.undef;
-  if (!total) return '<div class="trs-donut-empty">タスクなし</div>';
-  const r = 56, c = 2 * Math.PI * r;
-  let offset = 0;
-  const segs = [
-    {key:'today',    color:'#dc2626', n:counts.today},
-    {key:'thisweek', color:'#f59e0b', n:counts.thisweek||0},
-    {key:'next',     color:'#2563eb', n:counts.next||0},
-    {key:'undef',    color:'#9ca3af', n:counts.undef},
+  // 5/6. セクション描画
+  const sections = [
+    { key:'today',    label:'📅 今日', tasks: filtered.filter(t => classifyTask(t, now, thisSun) === 'today') },
+    { key:'thisweek', label:'📆 今週', tasks: filtered.filter(t => classifyTask(t, now, thisSun) === 'thisweek') },
+    { key:'later',    label:'🗓 後で', tasks: filtered.filter(t => classifyTask(t, now, thisSun) === 'later') },
+    { key:'undef',    label:'💭 未定', tasks: filtered.filter(t => classifyTask(t, now, thisSun) === 'undef') },
   ];
-  const circles = segs.map(s => {
-    if (!s.n) return '';
-    const len = (s.n/total) * c;
-    const dasharray = `${len} ${c-len}`;
-    const dashoffset = -offset;
-    offset += len;
-    return `<circle cx="80" cy="80" r="${r}" fill="none" stroke="${s.color}" stroke-width="16" stroke-dasharray="${dasharray}" stroke-dashoffset="${dashoffset}" transform="rotate(-90 80 80)"/>`;
-  }).join('');
-  return `
-    <svg viewBox="0 0 160 160" class="trs-donut-svg">
-      ${circles}
-      <text x="80" y="78" text-anchor="middle" class="trs-donut-num">${total}</text>
-      <text x="80" y="98" text-anchor="middle" class="trs-donut-label">タスク</text>
-    </svg>
-    <ul class="trs-donut-legend">
-      <li><span class="dot" style="background:#dc2626"></span>今日<span class="n">${counts.today}</span></li>
-      <li><span class="dot" style="background:#f59e0b"></span>今週中<span class="n">${counts.thisweek||0}</span></li>
-      <li><span class="dot" style="background:#2563eb"></span>来週以降<span class="n">${counts.next||0}</span></li>
-      <li><span class="dot" style="background:#9ca3af"></span>未定・保留<span class="n">${counts.undef}</span></li>
-    </ul>
-  `;
-}
 
-// ── RENDER TASKS ──
-function renderTasks(){
-  renderTodoSidebar();
-  const now = new Date(); now.setHours(0,0,0,0);
-  const el = document.getElementById('taskList');
-  if (!el) return;
-
-  // フィルタリング
-  let list = tasks.filter(t => todoState.showDone ? true : !t.done);
-  if (todoState.sectionFilter) list = list.filter(t => t.category === todoState.sectionFilter);
-  if (todoState.tagFilter) list = list.filter(t => (t.tags||[]).includes(todoState.tagFilter));
-
-  // due filter
-  const w7 = new Date(now); w7.setDate(w7.getDate() + 7);
-  if (todoState.dueFilter === 'thisweek') {
-    list = list.filter(t => { if (!t.due) return false; const d = new Date(t.due+'T00:00:00'); return d > now && d <= w7; });
-  } else if (todoState.dueFilter === 'next') {
-    list = list.filter(t => { if (!t.due) return false; return new Date(t.due+'T00:00:00') > w7; });
-  } else if (todoState.dueFilter === 'undef') {
-    list = list.filter(t => !t.due);
-  }
-
-  // ソート
-  const po = {high:0,medium:1,low:2};
-  const catOrder = ['仕事','手続き','家事','買い物','修理','ダッシュボード改善案','その他'];
-  list.sort((a,b) => {
-    if (todoState.sortOrder === 'due') {
-      if (!a.due && !b.due) return 0;
-      if (!a.due) return 1; if (!b.due) return -1;
-      return new Date(a.due) - new Date(b.due);
-    } else if (todoState.sortOrder === 'priority') {
-      return po[a.priority] - po[b.priority];
-    } else if (todoState.sortOrder === 'section') {
-      return catOrder.indexOf(a.category) - catOrder.indexOf(b.category);
-    } else { // created
-      return new Date(b.createdAt||0) - new Date(a.createdAt||0);
+  const sectionsEl = document.getElementById('tvSections');
+  if (!sectionsEl) return;
+  let html = '';
+  sections.forEach(sec => {
+    const sorted = sortSectionTasks(sec.tasks);
+    if (sec.key === 'today') {
+      html += `<div class="tv-section">
+        <div class="tv-sec-hdr today-hdr">
+          <span class="tv-sec-label">${sec.label}</span>
+          <span class="tv-sec-count">&nbsp;(${sorted.length}件)</span>
+          <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink3)">期限が近い順</span>
+        </div>
+        <div>${sorted.map(t => tvRowHTML(t)).join('')}</div>
+        <div class="tv-add-row" onclick="openAddTaskForSection('today')">＋ タスクを追加</div>
+      </div>`;
+    } else {
+      if (!sorted.length) return;
+      const isOpen = tvOpenSections[sec.key];
+      html += `<div class="tv-section">
+        <div class="tv-sec-hdr" onclick="toggleSection('${sec.key}')">
+          <span class="tv-sec-label">${sec.label}</span>
+          <span class="tv-sec-count">&nbsp;(${sorted.length}件)</span>
+          <span class="tv-sec-chevron">${isOpen ? '▲' : '▼'}</span>
+        </div>`;
+      if (isOpen) {
+        html += `<div>${sorted.map(t => tvRowHTML(t)).join('')}</div>
+        <div class="tv-add-row" onclick="openAddTaskForSection('${sec.key}')">＋ タスクを追加</div>`;
+      } else {
+        const preview = sorted.slice(0, 3);
+        const remaining = sorted.length - 3;
+        html += `<div class="tv-sec-preview">
+          ${preview.map(t => `<span class="tv-sec-preview-item">・${esc(t.title)}</span>`).join('')}
+          ${remaining > 0 ? `<span class="tv-sec-preview-more" onclick="toggleSection('${sec.key}')">+ さらに${remaining}件を表示</span>` : ''}
+        </div>`;
+      }
+      html += `</div>`;
     }
   });
+  if (!html) html = '<div class="empty" style="padding:40px 24px"><div class="ei">✓</div><div>タスクがありません</div></div>';
+  sectionsEl.innerHTML = html;
 
-  if (!list.length) {
-    el.innerHTML = '<div class="empty" style="padding:40px"><div class="ei">✓</div><div>タスクがありません</div></div>';
-    return;
+  // 7. 右サイドバー
+  const progressEl = document.getElementById('tvProgress');
+  if (progressEl) {
+    progressEl.innerHTML = renderProgressDonut(todayDone, todayTotal) +
+      `<ul class="trs-donut-legend" style="margin-top:10px">
+        <li><span class="dot" style="background:#dc2626"></span>今日<span class="n">${todayTasks.length}</span></li>
+        <li><span class="dot" style="background:#f59e0b"></span>今週<span class="n">${thisweekTasks.length}</span></li>
+        <li><span class="dot" style="background:#2563eb"></span>後で<span class="n">${laterTasks.length}</span></li>
+        <li><span class="dot" style="background:#9ca3af"></span>未定<span class="n">${undefTasks.length}</span></li>
+      </ul>`;
   }
 
-  // セクション分け
-  const groups = [
-    { key:'today',    label:'今日',    icon:'📅', cls:'s-today',    items:[] },
-    { key:'thisweek', label:'今週中',  icon:'📆', cls:'s-thisweek', items:[] },
-    { key:'next',     label:'来週以降',icon:'📅', cls:'s-next',     items:[] },
-    { key:'undef',    label:'未定・保留',icon:'💭',cls:'s-undef',   items:[] },
-  ];
-  list.forEach(t => {
-    const cls = classifyDue(t, now);
-    const g = groups.find(g => g.key === cls);
-    if (g) g.items.push(t);
-  });
+  const days7 = '日月火水木金土'.split('');
+  const upcomingEl = document.getElementById('tvUpcoming');
+  if (upcomingEl) {
+    const items = [];
+    for (let i = 0; i <= 7; i++) {
+      const d = new Date(now); d.setDate(d.getDate() + i);
+      const ds = d.toISOString().split('T')[0];
+      tasks.filter(t => !t.done && t.due === ds)
+        .sort((a, b) => (a.dueTime || '').localeCompare(b.dueTime || ''))
+        .forEach(t => items.push({ date: d, task: t }));
+    }
+    upcomingEl.innerHTML = items.length
+      ? items.slice(0, 8).map(({ date, task: t }) => {
+          const ds2 = `${date.getMonth() + 1}/${date.getDate()}(${days7[date.getDay()]})`;
+          const ts = t.dueTime ? ` ${t.dueTime}` : '';
+          return `<div class="tv-upcoming-item"><span class="tv-upcoming-date">${ds2}${ts}</span><span class="tv-upcoming-title">${esc(t.title)}</span></div>`;
+        }).join('')
+      : '<div style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--mute);padding:6px 0">今後7日間の予定はありません</div>';
+  }
 
-  let html = `<div class="tt-head">
-    <div class="tt-h-check"></div>
-    <div class="tt-h-task">タスク</div>
-    <div class="tt-h-memo">メモ</div>
-    <div class="tt-h-cat">カテゴリ</div>
-    <div class="tt-h-due">期限</div>
-    <div class="tt-h-tag">タグ</div>
-    <div class="tt-h-act"></div>
-  </div>`;
+  const topTagsEl = document.getElementById('tvTopTags');
+  if (topTagsEl) {
+    topTagsEl.innerHTML = sortedTags.slice(0, 6).map(([tag]) => {
+      const isAct = todoState.tagFilter === tag;
+      return `<button class="trs-tag-btn tv-tag-chip tag-${esc(tag)}${isAct ? ' active' : ''}" onclick="setTagFilter('${esc(tag)}')">${esc(tag)}</button>`;
+    }).join('');
+  }
 
-  groups.forEach(g => {
-    if (!g.items.length && todoState.dueFilter !== 'all') return;
-    if (!g.items.length) return;
-    html += `<div class="tt-sec-hdr ${g.cls}">
-      <span class="tt-sec-icon">${g.icon}</span>
-      <span class="tt-sec-label">${g.label}</span>
-      <span class="tt-sec-cnt">(${g.items.length}件)</span>
-    </div>`;
-    g.items.forEach(t => { html += taskRowHTML(t, now); });
-    html += `<div class="tt-add-row" onclick="addTaskInSection('${g.key}')">＋ ${g.label}のタスクを追加</div>`;
-  });
+  const doneTodayEl = document.getElementById('tvDoneToday');
+  if (doneTodayEl) {
+    const todayStr = now.toISOString().split('T')[0];
+    const doneTodayCnt = tasks.filter(t => t.done && t.completedAt && t.completedAt.startsWith(todayStr)).length;
+    const doneAllCnt = tasks.filter(t => t.done).length;
+    doneTodayEl.innerHTML = `
+      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--ok)">${doneTodayCnt}件</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mute);margin-top:2px">今日完了</div>
+      <div style="margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3)">累計 ${doneAllCnt}件完了</div>`;
+  }
 
-  el.innerHTML = html;
-
-  setTimeout(() => {
-    document.querySelectorAll('.tt-memo-in').forEach(ta => {
-      ta.style.height = 'auto';
-      ta.style.height = ta.scrollHeight + 'px';
-    });
-  }, 0);
+  const memoEl = document.getElementById('tvQuickMemo');
+  if (memoEl && !memoEl._loaded) {
+    memoEl.value = loadQuickMemo();
+    memoEl._loaded = true;
+  }
 }
 
 // ── FINANCE ──
@@ -2039,11 +1997,9 @@ function fmtFull(d){const days='日月火水木金土'.split('');return`${d.getF
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 </script>
 
-<div id="tagPopover" class="tt-tag-pop" onclick="event.stopPropagation()">
-  <div class="tt-tag-pop-grid" id="tagPopGrid"></div>
-  <div class="tt-tag-pop-input-wrap">
-    <input type="text" id="tagPopInput" class="tt-tag-pop-input" placeholder="新規タグを追加（Enter）" onkeydown="tagPopKeydown(event)">
-  </div>
+<div id="undoToast" class="undo-toast">
+  <span id="undoMsg"></span>
+  <button onclick="undoComplete()">元に戻す</button>
 </div>
 <div id="loginOverlay" style="display:none; position:fixed; inset:0; background:var(--paper); z-index:9999; align-items:center; justify-content:center;">
   <div class="login-box" style="border:2px solid var(--rule); background:var(--paper);">
