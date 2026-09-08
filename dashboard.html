@@ -1240,7 +1240,7 @@ function setTagFilter(tag) {
 
 // ── PIN ──
 function togglePin(id) {
-  const t = tasks.find(t => t.id === id);
+  const t = tasks.find(t => String(t.id) === String(id));
   if (!t) return;
   t.isPinned = !t.isPinned;
   saveTasks();
@@ -1249,7 +1249,7 @@ function togglePin(id) {
 
 // ── COMPLETE TASK (with fade animation) ──
 function completeTask(id) {
-  const t = tasks.find(t => t.id === id);
+  const t = tasks.find(t => String(t.id) === String(id));
   if (!t || t._completing) return;
   t._completing = true;
   const btn = document.querySelector(`[data-task-id="${id}"] .tv-done-btn`);
@@ -1284,7 +1284,7 @@ function showUndoToast(id, title) {
 }
 function undoComplete() {
   if (!_undoTaskId) return;
-  const t = tasks.find(t => t.id === _undoTaskId);
+  const t = tasks.find(t => String(t.id) === String(_undoTaskId));
   if (t) { t.done = false; t.completedAt = null; saveTasks(); renderTodayView(); renderHome(); renderCalendar(); updateBadge(); }
   clearTimeout(_undoTimer);
   document.getElementById('undoToast').classList.remove('show');
