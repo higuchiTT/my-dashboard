@@ -481,7 +481,7 @@
     .tv-pin:hover { opacity: 0.7; }
     .tv-time { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); flex-shrink: 0; }
     .tv-cat { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 3px; white-space: nowrap; flex-shrink: 0; color: #fff; font-weight: 600; }
-    .tv-tags { display: flex; gap: 4px; flex-shrink: 0; }
+    .tv-tags { display: flex; gap: 4px; flex-shrink: 0; cursor: pointer; }
     .tv-tag-chip { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 1px 6px; border-radius: 2px; white-space: nowrap; font-weight: 600; }
     .tv-tag-pop { display:none; position:fixed; background:var(--paper); border:1px solid var(--rule); border-radius:4px; padding:10px; width:220px; z-index:8000; box-shadow:0 4px 16px rgba(0,0,0,0.12); }
     .tv-tag-pop.open { display:block; }
@@ -1600,7 +1600,7 @@ function openTvTagEditor(id, e) {
   document.getElementById('tvTagPopInput').value = '';
   // 位置計算
   const rect = e.currentTarget.getBoundingClientRect();
-  pop.style.top = (rect.bottom + 4 + window.scrollY) + 'px';
+  pop.style.top = (rect.bottom + 4) + 'px';
   pop.style.left = Math.min(rect.left, window.innerWidth - 230) + 'px';
   pop.classList.add('open');
   e.stopPropagation();
