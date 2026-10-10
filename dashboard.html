@@ -418,7 +418,7 @@
     .food-fbtn:hover:not(.active) { background:var(--paper2); color:var(--ink); }
     .food-summary-bar { padding:9px 40px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink3); border-bottom:1px solid rgba(26,24,20,0.1); background:rgba(139,58,24,0.04); }
     .food-summary-bar strong { color:var(--accent); }
-    .food-content { padding:24px 40px; }
+    .food-content { padding:0; }
     .food-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; }
     .food-card { background:var(--paper); border:1px solid var(--rule); cursor:pointer; transition:box-shadow 0.15s,transform 0.15s; overflow:hidden; }
     .food-card:hover { box-shadow:0 4px 16px rgba(26,24,20,0.12); transform:translateY(-2px); }
@@ -437,6 +437,48 @@
     .food-card-memo { font-family:'Newsreader',serif; font-style:italic; font-size:14px; color:var(--ink3); overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.45; }
     .food-empty { text-align:center; padding:60px 20px; color:var(--mute); }
     .food-empty .ei { font-size:2.5rem; margin-bottom:12px; opacity:0.35; }
+    /* Food calendar */
+    .food-cal-wrap { padding:0; }
+    .food-cal-top { display:flex; align-items:center; gap:10px; padding:14px 40px; border-bottom:1px solid var(--rule); }
+    .food-cal-dow-row { display:grid; grid-template-columns:repeat(7,1fr); border-top:1px solid var(--rule); border-left:1px solid var(--rule); border-right:1px solid var(--rule); }
+    .food-cal-dow { text-align:center; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; color:var(--ink3); padding:8px 4px; letter-spacing:0.06em; border-right:1px solid var(--rule); border-bottom:2px solid var(--rule); }
+    .food-cal-dow:last-child { border-right:none; }
+    .food-cal-dow:first-child { color:var(--accent); }
+    .food-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); border-left:1px solid var(--rule); }
+    .food-cal-cell { border-right:1px solid var(--rule); border-bottom:1px solid var(--rule); padding:6px; cursor:pointer; min-height:100px; position:relative; background:var(--paper); transition:background 0.15s; min-width:0; }
+    .food-cal-cell:hover:not(.food-cal-other) { background:var(--paper2); }
+    .food-cal-cell.food-cal-other { opacity:0.3; cursor:default; pointer-events:none; }
+    .food-cal-cell.food-cal-today .food-cal-num { display:inline-block; background:var(--ink); color:var(--paper); font-weight:800; padding:1px 5px; }
+    .food-cal-cell.food-cal-sel { outline:2px solid var(--accent); outline-offset:-2px; }
+    .food-cal-num { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; margin-bottom:3px; line-height:1.2; }
+    .food-cal-photos { display:grid; gap:1px; margin-bottom:3px; }
+    .food-cal-photos.n1 { grid-template-columns:1fr; }
+    .food-cal-photos.n2 { grid-template-columns:1fr 1fr; }
+    .food-cal-photos.n3 { grid-template-columns:1fr 1fr; }
+    .food-cal-photos.n4 { grid-template-columns:1fr 1fr; }
+    .food-cal-photo { overflow:hidden; position:relative; }
+    .food-cal-photo img { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; }
+    .food-cal-more-badge { position:absolute; inset:0; background:rgba(26,24,20,0.6); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; }
+    .food-cal-dishes { display:flex; flex-direction:column; gap:1px; }
+    .food-cal-dish { font-family:'Space Grotesk',sans-serif; font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.35; }
+    .food-cal-dish.home { color:var(--ok); }
+    .food-cal-dish.out  { color:var(--accent); }
+    .food-cal-more-dishes { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink3); }
+    .food-cal-photo-mob { display:none; }
+    .food-cal-dot-mob { display:none; }
+    .food-cal-day-detail { display:none; border-top:2px solid var(--rule); }
+    .food-cal-day-detail.active { display:block; }
+    .food-cal-detail-hdr { display:flex; align-items:center; justify-content:space-between; padding:12px 14px 10px; }
+    .food-cal-detail-date { font-family:'Newsreader',serif; font-size:18px; font-style:italic; font-weight:700; }
+    .food-cal-detail-photos { display:grid; grid-template-columns:1fr 1fr; gap:4px; padding:0 14px 10px; }
+    .food-cal-detail-photo { overflow:hidden; }
+    .food-cal-detail-photo img { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; }
+    .food-cal-detail-chips { display:flex; flex-wrap:wrap; gap:5px; padding:0 14px 8px; }
+    .food-cal-detail-memo { font-family:'Newsreader',serif; font-style:italic; font-size:14px; color:var(--ink3); padding:0 14px 10px; line-height:1.45; }
+    .food-cal-detail-actions { padding:0 14px 14px; }
+    .food-cal-detail-empty { padding:16px 14px; }
+    .food-list-wrap { padding:24px 40px; }
+    .food-view-btns { display:flex; gap:0; }
     /* Food modal */
     .food-modal-overlay { display:none; position:fixed; inset:0; background:rgba(26,24,20,0.55); z-index:8000; align-items:flex-start; justify-content:center; overflow-y:auto; padding:32px 16px; }
     .food-modal { background:var(--paper); width:100%; max-width:680px; margin:auto; border:1.5px solid var(--rule); }
@@ -710,13 +752,25 @@
       .food-toolbar { padding:10px 14px; gap:8px; }
       .food-search { flex:1; min-width:0; flex-basis:auto; }
       .food-summary-bar { padding:8px 14px; }
-      .food-content { padding:14px; }
+      .food-content { padding:0; }
       .food-grid { grid-template-columns:1fr; gap:14px; }
       .food-page-bar { padding:10px 14px; }
       .food-add-btn-desktop { display:none; }
       .food-fab { display:flex !important; }
       .food-modal-overlay { padding:0; align-items:flex-end; }
       .food-modal { max-width:100%; max-height:92svh; overflow-y:auto; }
+      .food-list-wrap { padding:14px; }
+      .food-cal-top { padding:10px 14px; }
+      .food-cal-cell { min-height:unset; aspect-ratio:1/1; padding:2px; }
+      .food-cal-num { font-size:9px; position:relative; z-index:1; }
+      .food-cal-photos { display:none; }
+      .food-cal-dishes { display:none; }
+      .food-cal-photo-mob { position:absolute; inset:0; display:block; overflow:hidden; }
+      .food-cal-photo-mob img { width:100%; height:100%; object-fit:cover; display:block; }
+      .food-cal-more-sm { position:absolute; bottom:2px; right:2px; background:rgba(26,24,20,0.65); color:#fff; font-family:'JetBrains Mono',monospace; font-size:8px; font-weight:700; padding:1px 3px; }
+      .food-cal-dot-mob { display:block; width:6px; height:6px; border-radius:50%; position:absolute; bottom:4px; left:50%; transform:translateX(-50%); }
+      .food-cal-dot-mob.home { background:var(--ok); }
+      .food-cal-dot-mob.out  { background:var(--accent); }
 
     }
   </style>
@@ -1066,6 +1120,10 @@
   </div>
   <div class="food-toolbar">
     <input type="text" class="food-search" id="foodSearch" placeholder="料理名・店名・メモで検索" oninput="foodSearchInput(this.value)">
+    <div class="food-view-btns">
+      <button class="food-fbtn active" onclick="setFoodView('calendar',this)">カレンダー</button>
+      <button class="food-fbtn" onclick="setFoodView('list',this)">一覧</button>
+    </div>
     <div class="food-filter-btns">
       <button class="food-fbtn active" onclick="setFoodFilter('all',this)">全部</button>
       <button class="food-fbtn" onclick="setFoodFilter('home',this)">自炊</button>
@@ -1074,7 +1132,23 @@
   </div>
   <div id="foodSearchSummary" class="food-summary-bar" style="display:none"></div>
   <div class="food-content">
-    <div class="food-grid" id="foodGrid"></div>
+    <div id="foodCalendar" class="food-cal-wrap">
+      <div class="food-cal-top">
+        <button class="mnav-btn" onclick="chFoodCal(-1)">‹</button>
+        <div class="mnav-label" id="foodCalLabel"></div>
+        <button class="mnav-btn" onclick="chFoodCal(1)">›</button>
+        <button class="btn btn-ghost btn-sm" onclick="chFoodCalToday()">今月</button>
+      </div>
+      <div class="food-cal-dow-row">
+        <div class="food-cal-dow">日</div><div class="food-cal-dow">月</div><div class="food-cal-dow">火</div>
+        <div class="food-cal-dow">水</div><div class="food-cal-dow">木</div><div class="food-cal-dow">金</div><div class="food-cal-dow">土</div>
+      </div>
+      <div class="food-cal-grid" id="foodCalGrid"></div>
+      <div id="foodDayDetail" class="food-cal-day-detail"></div>
+    </div>
+    <div id="foodListView" class="food-list-wrap" style="display:none">
+      <div class="food-grid" id="foodGrid"></div>
+    </div>
   </div>
   <button class="food-fab" id="foodFab" onclick="openFoodModalNew()">＋</button>
 </div>
@@ -2207,6 +2281,11 @@ function renderTravel(){
 // ── FOOD ──
 let foodFilter = 'all';
 let foodSearch = '';
+let foodView = 'calendar';
+let foodCalY = new Date().getFullYear();
+let foodCalM = new Date().getMonth();
+let foodCalSelDay = null;
+let _foodViewManual = false;
 let _foodModalState = null;
 let _signedUrlCache = {}; // path -> { url, expiry }
 let _foodUploading = 0;
@@ -2220,14 +2299,44 @@ function localDate(d) {
 
 function setFoodFilter(f, el) {
   foodFilter = f;
-  document.querySelectorAll('#page-food .food-fbtn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#page-food .food-filter-btns .food-fbtn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   renderFood();
 }
 
-function foodSearchInput(val) { foodSearch = val; renderFood(); }
+function foodSearchInput(val) {
+  foodSearch = val;
+  if (val.trim()) {
+    foodView = 'list';
+  } else if (!_foodViewManual) {
+    foodView = 'calendar';
+  }
+  renderFood();
+}
 
 function renderFood() {
+  const calEl = document.getElementById('foodCalendar');
+  const listEl = document.getElementById('foodListView');
+  // Sync view toggle buttons
+  document.querySelectorAll('#page-food .food-view-btns .food-fbtn').forEach(b => {
+    const isCalBtn = b.textContent.trim() === 'カレンダー';
+    b.classList.toggle('active', (foodView === 'calendar') === isCalBtn);
+  });
+  if (!calEl || !listEl) return;
+  if (foodView === 'calendar') {
+    const summaryEl = document.getElementById('foodSearchSummary');
+    if (summaryEl) summaryEl.style.display = 'none';
+    calEl.style.display = '';
+    listEl.style.display = 'none';
+    renderFoodCalendar();
+  } else {
+    calEl.style.display = 'none';
+    listEl.style.display = '';
+    renderFoodList();
+  }
+}
+
+function renderFoodList() {
   const grid = document.getElementById('foodGrid');
   const summaryEl = document.getElementById('foodSearchSummary');
   if (!grid) return;
@@ -2301,9 +2410,195 @@ function renderFood() {
   fillSignedUrls(grid);
 }
 
+// ── FOOD CALENDAR ──
+function setFoodView(v, el) {
+  foodView = v;
+  _foodViewManual = (v === 'list');
+  document.querySelectorAll('#page-food .food-view-btns .food-fbtn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderFood();
+}
+
+function chFoodCal(d) {
+  foodCalM += d;
+  if (foodCalM > 11) { foodCalM = 0; foodCalY++; }
+  if (foodCalM < 0)  { foodCalM = 11; foodCalY--; }
+  foodCalSelDay = null;
+  renderFood();
+}
+
+function chFoodCalToday() {
+  const now = new Date();
+  foodCalY = now.getFullYear();
+  foodCalM = now.getMonth();
+  foodCalSelDay = null;
+  renderFood();
+}
+
+function foodCalCellClick(dateStr) {
+  if (window.matchMedia('(max-width:640px)').matches) {
+    foodCalSelDay = (foodCalSelDay === dateStr) ? null : dateStr;
+    renderFoodCalendar();
+    if (foodCalSelDay) {
+      renderFoodDayDetail(foodCalSelDay);
+    } else {
+      const detailEl = document.getElementById('foodDayDetail');
+      if (detailEl) { detailEl.innerHTML = ''; detailEl.classList.remove('active'); }
+    }
+  } else {
+    const meal = meals.find(m => m.date === dateStr);
+    if (meal) {
+      openFoodModal(meal.id);
+    } else {
+      openFoodModalNew(dateStr);
+    }
+  }
+}
+
+function renderFoodCalendar() {
+  const months = '1月 2月 3月 4月 5月 6月 7月 8月 9月 10月 11月 12月'.split(' ');
+  const labelEl = document.getElementById('foodCalLabel');
+  if (labelEl) labelEl.textContent = `${foodCalY}年 ${months[foodCalM]}`;
+  const firstDow = new Date(foodCalY, foodCalM, 1).getDay();
+  const daysInMonth = new Date(foodCalY, foodCalM + 1, 0).getDate();
+  const prevDays = new Date(foodCalY, foodCalM, 0).getDate();
+  const todayStr = localDate();
+
+  const cells = [];
+  for (let i = firstDow - 1; i >= 0; i--) cells.push({ d: prevDays - i, m: foodCalM - 1, y: foodCalY, other: true });
+  for (let d = 1; d <= daysInMonth; d++) cells.push({ d, m: foodCalM, y: foodCalY, other: false });
+  while (cells.length % 7 !== 0) {
+    const x = cells.length - daysInMonth - firstDow + 1;
+    cells.push({ d: x, m: foodCalM + 1, y: foodCalY, other: true });
+  }
+
+  // Build meal map with filter applied
+  const mealMap = {};
+  for (const m of meals) {
+    if (foodFilter !== 'all' && !(m.dishes || []).some(d => d.type === foodFilter)) continue;
+    mealMap[m.date] = m;
+  }
+
+  const grid = document.getElementById('foodCalGrid');
+  if (!grid) return;
+
+  grid.innerHTML = cells.map(c => {
+    const ds = `${c.y}-${String(c.m + 1).padStart(2, '0')}-${String(c.d).padStart(2, '0')}`;
+    const isToday = ds === todayStr;
+    const isSel = ds === foodCalSelDay;
+    const meal = c.other ? null : mealMap[ds];
+    const cls = ['food-cal-cell', c.other ? 'food-cal-other' : '', isToday ? 'food-cal-today' : '', isSel ? 'food-cal-sel' : ''].filter(Boolean).join(' ');
+    const clickAttr = c.other ? '' : `onclick="foodCalCellClick('${esc(ds)}')"`;
+
+    const photos = meal ? (meal.photos || []) : [];
+    const dishes = meal ? (meal.dishes || []) : [];
+
+    // PC photo grid
+    let pcPhotosHTML = '';
+    if (photos.length) {
+      const showCount = Math.min(photos.length, 4);
+      const nClass = `n${showCount}`;
+      const photoItems = photos.slice(0, 4).map((p, i) => {
+        const badge = (i === 3 && photos.length > 4) ? `<div class="food-cal-more-badge">+${photos.length - 3}</div>` : '';
+        return `<div class="food-cal-photo"><img data-path="${esc(p.path)}" src="" alt="">${badge}</div>`;
+      }).join('');
+      pcPhotosHTML = `<div class="food-cal-photos ${nClass}">${photoItems}</div>`;
+    }
+
+    // Mobile: 1 photo or dot
+    let mobHTML = '';
+    if (meal) {
+      if (photos.length) {
+        const mobBadge = photos.length > 1 ? `<div class="food-cal-more-sm">+${photos.length - 1}</div>` : '';
+        mobHTML = `<div class="food-cal-photo-mob"><img data-path="${esc(photos[0].path)}" src="" alt="">${mobBadge}</div>`;
+      } else if (dishes.length) {
+        const hasOut = dishes.some(d => d.type === 'out');
+        const dotCls = hasOut ? 'out' : 'home';
+        mobHTML = `<div class="food-cal-dot-mob ${dotCls}"></div>`;
+      }
+    }
+
+    // PC dish labels
+    let dishesHTML = '';
+    if (dishes.length) {
+      const shownDishes = dishes.slice(0, 2);
+      const extra = dishes.length > 2 ? `<div class="food-cal-more-dishes">+${dishes.length - 2}品</div>` : '';
+      const dishItems = shownDishes.map(dish => {
+        const cls = dish.type === 'out' ? 'out' : 'home';
+        const label = dish.type === 'out' && dish.place ? `@${esc(dish.place)}` : esc(dish.name);
+        return `<div class="food-cal-dish ${cls}">${label}</div>`;
+      }).join('');
+      dishesHTML = `<div class="food-cal-dishes">${dishItems}${extra}</div>`;
+    }
+
+    return `<div class="${cls}" ${clickAttr}><div class="food-cal-num">${c.d}</div>${pcPhotosHTML}${mobHTML}${dishesHTML}</div>`;
+  }).join('');
+
+  fillSignedUrls(grid);
+
+  // On mobile, update day detail if a day is selected
+  if (window.matchMedia('(max-width:640px)').matches) {
+    if (foodCalSelDay) {
+      renderFoodDayDetail(foodCalSelDay);
+    } else {
+      const detailEl = document.getElementById('foodDayDetail');
+      if (detailEl) { detailEl.innerHTML = ''; detailEl.classList.remove('active'); }
+    }
+  }
+}
+
+function renderFoodDayDetail(dateStr) {
+  const detailEl = document.getElementById('foodDayDetail');
+  if (!detailEl) return;
+  if (!dateStr) {
+    detailEl.innerHTML = '';
+    detailEl.classList.remove('active');
+    return;
+  }
+  detailEl.classList.add('active');
+  const meal = meals.find(m => m.date === dateStr);
+  const d = new Date(dateStr + 'T00:00:00');
+  const days7 = '日月火水木金土'.split('');
+  const dateLabel = `${parseInt(dateStr.slice(5, 7))}月${parseInt(dateStr.slice(8, 10))}日（${days7[d.getDay()]}）`;
+
+  if (!meal) {
+    detailEl.innerHTML = `
+      <div class="food-cal-detail-hdr">
+        <div class="food-cal-detail-date">${esc(dateLabel)}</div>
+      </div>
+      <div class="food-cal-detail-empty">
+        <button class="btn btn-primary" onclick="openFoodModalNew('${esc(dateStr)}')">＋ この日の記録を追加</button>
+      </div>`;
+    return;
+  }
+
+  const photos = meal.photos || [];
+  const dishes = meal.dishes || [];
+
+  const photosHTML = photos.length ? `<div class="food-cal-detail-photos">${photos.slice(0, 4).map(p => `<div class="food-cal-detail-photo"><img data-path="${esc(p.path)}" src="" alt=""></div>`).join('')}</div>` : '';
+  const chipsHTML = dishes.map(dish => {
+    const cls = dish.type === 'out' ? 'food-chip-out' : 'food-chip-home';
+    const place = dish.type === 'out' && dish.place ? ` @${esc(dish.place)}` : '';
+    return `<span class="food-chip ${cls}">${esc(dish.name)}${place}</span>`;
+  }).join('');
+  const memoHTML = meal.memo ? `<div class="food-cal-detail-memo">${esc(meal.memo)}</div>` : '';
+
+  detailEl.innerHTML = `
+    <div class="food-cal-detail-hdr">
+      <div class="food-cal-detail-date">${esc(dateLabel)}</div>
+    </div>
+    ${photosHTML}
+    ${chipsHTML ? `<div class="food-cal-detail-chips">${chipsHTML}</div>` : ''}
+    ${memoHTML}
+    <div class="food-cal-detail-actions">
+      <button class="btn btn-ghost btn-sm" onclick="openFoodModal('${esc(meal.id)}')">編集</button>
+    </div>`;
+  fillSignedUrls(detailEl);
+}
+
 // ── FOOD MODAL ──
-function openFoodModalNew() {
-  const dateStr = localDate();
+function openFoodModalNew(dateStr) {
+  if (!dateStr) dateStr = localDate();
   const existing = meals.find(m => m.date === dateStr);
   if (existing) { openFoodModal(existing.id); return; }
   _foodModalState = { id: crypto.randomUUID(), date: dateStr, dishes: [{ id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '' }], photos: [], memo: '', isNew: true };
