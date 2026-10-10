@@ -406,7 +406,7 @@
 
     /* ── FOOD ── */
     .food-page-bar { display:flex; align-items:center; justify-content:space-between; padding:16px 40px; border-bottom:1px solid var(--rule); background:var(--paper2); }
-    .food-page-title { font-family:'Newsreader',serif; font-size:20px; font-weight:700; font-style:italic; }
+    .food-page-title { font-family:'Newsreader',serif; font-size:20px; font-weight:700; font-style:italic; margin:0; line-height:1.3; }
     .food-toolbar { display:flex; align-items:center; gap:12px; padding:12px 40px; border-bottom:1px solid var(--rule); background:var(--paper3); flex-wrap:wrap; }
     .food-search { font-family:'Space Grotesk',sans-serif; font-size:14px; padding:7px 12px; border:1px solid var(--ink3); background:var(--paper); color:var(--ink); outline:none; flex:0 0 240px; border-radius:0; }
     .food-search:focus { border-color:var(--ink); }
@@ -438,8 +438,8 @@
     .food-empty { text-align:center; padding:60px 20px; color:var(--mute); }
     .food-empty .ei { font-size:2.5rem; margin-bottom:12px; opacity:0.35; }
     /* Food calendar */
-    .food-cal-wrap { padding:0; }
-    .food-cal-top { display:flex; align-items:center; gap:10px; padding:14px 40px; border-bottom:1px solid var(--rule); }
+    .food-cal-wrap { padding:24px 40px 40px; }
+    .food-cal-top { display:flex; align-items:center; gap:10px; padding:0 0 16px; }
     .food-cal-dow-row { display:grid; grid-template-columns:repeat(7,1fr); border-top:1px solid var(--rule); border-left:1px solid var(--rule); border-right:1px solid var(--rule); }
     .food-cal-dow { text-align:center; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; color:var(--ink3); padding:8px 4px; letter-spacing:0.06em; border-right:1px solid var(--rule); border-bottom:2px solid var(--rule); }
     .food-cal-dow:last-child { border-right:none; }
@@ -466,7 +466,7 @@
     .food-cal-more-dishes { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink3); }
     .food-cal-photo-mob { display:none; }
     .food-cal-dot-mob { display:none; }
-    .food-cal-day-detail { display:none; border-top:2px solid var(--rule); }
+    .food-cal-day-detail { display:none; border-top:2px solid var(--rule); margin-top:16px; }
     .food-cal-day-detail.active { display:block; }
     .food-cal-detail-hdr { display:flex; align-items:center; justify-content:space-between; padding:12px 14px 10px; }
     .food-cal-detail-date { font-family:'Newsreader',serif; font-size:18px; font-style:italic; font-weight:700; }
@@ -760,7 +760,8 @@
       .food-modal-overlay { padding:0; align-items:flex-end; }
       .food-modal { max-width:100%; max-height:92svh; overflow-y:auto; }
       .food-list-wrap { padding:14px; }
-      .food-cal-top { padding:10px 14px; }
+      .food-cal-wrap { padding:12px 8px 24px; }
+      .food-cal-top { padding:0 0 10px; }
       .food-cal-cell { min-height:unset; aspect-ratio:1/1; padding:2px; }
       .food-cal-num { font-size:9px; position:relative; z-index:1; }
       .food-cal-photos { display:none; }
