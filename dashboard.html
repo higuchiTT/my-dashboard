@@ -470,7 +470,9 @@
     .food-cal-day-detail.active { display:block; }
     .food-cal-detail-hdr { display:flex; align-items:center; justify-content:space-between; padding:12px 14px 10px; }
     .food-cal-detail-date { font-family:'Newsreader',serif; font-size:18px; font-style:italic; font-weight:700; }
-    .food-cal-detail-photos { display:grid; grid-template-columns:1fr 1fr; gap:4px; padding:0 14px 10px; }
+    .food-cal-detail-photos { display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 200px)); gap:6px; padding:0 14px 12px; }
+    .food-cal-detail-close { background:transparent; border:none; color:var(--ink3); font-size:16px; cursor:pointer; padding:4px 8px; line-height:1; }
+    .food-cal-detail-close:hover { color:var(--ink); }
     .food-cal-detail-photo { overflow:hidden; }
     .food-cal-detail-photo img { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; }
     .food-cal-detail-chips { display:flex; flex-wrap:wrap; gap:5px; padding:0 14px 8px; }
@@ -761,6 +763,7 @@
       .food-modal { max-width:100%; max-height:92svh; overflow-y:auto; }
       .food-list-wrap { padding:14px; }
       .food-cal-wrap { padding:12px 8px 24px; }
+      .food-cal-detail-photos { grid-template-columns:1fr 1fr; gap:4px; }
       .food-cal-top { padding:0 0 10px; }
       .food-cal-cell { min-height:unset; aspect-ratio:1/1; padding:2px; }
       .food-cal-num { font-size:9px; position:relative; z-index:1; }
@@ -2437,23 +2440,17 @@ function chFoodCalToday() {
 }
 
 function foodCalCellClick(dateStr) {
-  if (window.matchMedia('(max-width:640px)').matches) {
-    foodCalSelDay = (foodCalSelDay === dateStr) ? null : dateStr;
-    renderFoodCalendar();
-    if (foodCalSelDay) {
-      renderFoodDayDetail(foodCalSelDay);
-    } else {
-      const detailEl = document.getElementById('foodDayDetail');
-      if (detailEl) { detailEl.innerHTML = ''; detailEl.classList.remove('active'); }
-    }
-  } else {
-    const meal = meals.find(m => m.date === dateStr);
-    if (meal) {
-      openFoodModal(meal.id);
-    } else {
-      openFoodModalNew(dateStr);
-    }
+  foodCalSelDay = (foodCalSelDay === dateStr) ? null : dateStr;
+  renderFoodCalendar();
+  if (foodCalSelDay) {
+    const detailEl = document.getElementById('foodDayDetail');
+    if (detailEl) detailEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
+}
+
+function closeFoodDayDetail() {
+  foodCalSelDay = null;
+  renderFoodCalendar();
 }
 
 function renderFoodCalendar() {
@@ -2537,15 +2534,7 @@ function renderFoodCalendar() {
 
   fillSignedUrls(grid);
 
-  // On mobile, update day detail if a day is selected
-  if (window.matchMedia('(max-width:640px)').matches) {
-    if (foodCalSelDay) {
-      renderFoodDayDetail(foodCalSelDay);
-    } else {
-      const detailEl = document.getElementById('foodDayDetail');
-      if (detailEl) { detailEl.innerHTML = ''; detailEl.classList.remove('active'); }
-    }
-  }
+  renderFoodDayDetail(foodCalSelDay);
 }
 
 function renderFoodDayDetail(dateStr) {
@@ -2566,6 +2555,7 @@ function renderFoodDayDetail(dateStr) {
     detailEl.innerHTML = `
       <div class="food-cal-detail-hdr">
         <div class="food-cal-detail-date">${esc(dateLabel)}</div>
+        <button class="food-cal-detail-close" onclick="closeFoodDayDetail()" title="閉じる">✕</button>
       </div>
       <div class="food-cal-detail-empty">
         <button class="btn btn-primary" onclick="openFoodModalNew('${esc(dateStr)}')">＋ この日の記録を追加</button>
@@ -2576,17 +2566,19 @@ function renderFoodDayDetail(dateStr) {
   const photos = meal.photos || [];
   const dishes = meal.dishes || [];
 
-  const photosHTML = photos.length ? `<div class="food-cal-detail-photos">${photos.slice(0, 4).map(p => `<div class="food-cal-detail-photo"><img data-path="${esc(p.path)}" src="" alt=""></div>`).join('')}</div>` : '';
+  const photosHTML = photos.length ? `<div class="food-cal-detail-photos">${photos.map(p => `<div class="food-cal-detail-photo"><img data-path="${esc(p.path)}" src="" alt=""></div>`).join('')}</div>` : '';
   const chipsHTML = dishes.map(dish => {
     const cls = dish.type === 'out' ? 'food-chip-out' : 'food-chip-home';
     const place = dish.type === 'out' && dish.place ? ` @${esc(dish.place)}` : '';
-    return `<span class="food-chip ${cls}">${esc(dish.name)}${place}</span>`;
+    const link = /^https?:\/\//.test(dish.recipeUrl || '') ? ` <a class="food-chip-link" href="${esc(dish.recipeUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🔗</a>` : '';
+    return `<span class="food-chip ${cls}">${esc(dish.name)}${place}${link}</span>`;
   }).join('');
   const memoHTML = meal.memo ? `<div class="food-cal-detail-memo">${esc(meal.memo)}</div>` : '';
 
   detailEl.innerHTML = `
     <div class="food-cal-detail-hdr">
       <div class="food-cal-detail-date">${esc(dateLabel)}</div>
+      <button class="food-cal-detail-close" onclick="closeFoodDayDetail()" title="閉じる">✕</button>
     </div>
     ${photosHTML}
     ${chipsHTML ? `<div class="food-cal-detail-chips">${chipsHTML}</div>` : ''}
