@@ -2343,7 +2343,7 @@ function renderFoodModalBody() {
       <button class="food-add-dish" onclick="addFoodDish()">＋ 料理を追加</button>
     </div>
     <div class="food-modal-section">
-      <div class="food-modal-label">写真<span class="food-photo-hint">画像をここにドラッグ＆ドロップしても追加できます</span></div>
+      <div class="food-modal-label">写真<span class="food-photo-hint">画像ファイルのドラッグ＆ドロップ、またはコピーした画像の Ctrl+V 貼り付けでも追加できます</span></div>
       <div class="food-photos-wrap" id="foodModalPhotos">
         ${foodPhotoThumbsHTML(s.photos)}
         <button class="food-photo-add-btn" id="foodAddPhotoBtn" onclick="document.getElementById('foodPhotoInput').click()">
@@ -2636,8 +2636,19 @@ function foodDrop(e) {
   const files = Array.from(e.dataTransfer.files || []).filter(f => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name));
   if (files.length) { handleFoodPhotoUpload(files); return; }
   const errEl = document.getElementById('foodPhotoError');
-  if (errEl) errEl.textContent = 'ブラウザ上の画像は直接追加できません。一度ダウンロードしてから、そのファイルをドロップしてください';
+  if (errEl) errEl.textContent = 'ブラウザ上の画像はドロップできません。画像を右クリック →「画像をコピー」→ この画面で Ctrl+V で貼り付けてください';
 }
+
+document.addEventListener('paste', e => {
+  if (!_foodModalState || !e.clipboardData) return;
+  const files = Array.from(e.clipboardData.items || [])
+    .filter(it => it.kind === 'file' && it.type.startsWith('image/'))
+    .map(it => it.getAsFile())
+    .filter(Boolean);
+  if (!files.length) return;
+  e.preventDefault();
+  handleFoodPhotoUpload(files);
+});
 
 // モーダル外にファイルを落としたとき、ブラウザが画像を開いてページ遷移するのを防ぐ
 ['dragover', 'drop'].forEach(type => window.addEventListener(type, e => {
