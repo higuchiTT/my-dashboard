@@ -474,6 +474,9 @@
     .food-photo-add-btn { display:flex; align-items:center; justify-content:center; width:80px; height:60px; border:1.5px dashed rgba(26,24,20,0.25); background:transparent; color:var(--ink3); font-size:10px; font-family:'JetBrains Mono',monospace; cursor:pointer; transition:all 0.12s; flex-direction:column; gap:2px; font-weight:700; }
     .food-photo-add-btn:hover { border-color:var(--ink3); color:var(--ink); background:var(--paper2); }
     .food-photo-error { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); margin-top:4px; min-height:16px; }
+    .food-photo-hint { font-size:11px; color:var(--ink3); margin-left:8px; font-weight:400; letter-spacing:0; text-transform:none; }
+    .food-modal.drag-over { outline:2px dashed var(--accent); outline-offset:-10px; background:var(--paper2); }
+    @media (hover:none) { .food-photo-hint { display:none; } }
     .food-memo-ta { font-family:'Space Grotesk',sans-serif; font-size:14px; padding:8px 10px; border:1px solid var(--ink3); background:var(--paper); color:var(--ink); outline:none; width:100%; resize:vertical; min-height:72px; line-height:1.5; border-radius:0; }
     .food-memo-ta:focus { border-color:var(--ink); }
     .food-memo-ta::placeholder { color:var(--mute); }
@@ -1078,7 +1081,7 @@
 
 <!-- ── FOOD MODAL ── -->
 <div id="foodModalOverlay" class="food-modal-overlay" onclick="closeFoodModal()">
-  <div class="food-modal" onclick="event.stopPropagation()">
+  <div class="food-modal" id="foodModal" onclick="event.stopPropagation()" ondragover="foodDragOver(event)" ondragleave="foodDragLeave(event)" ondrop="foodDrop(event)">
     <div class="food-modal-hdr">
       <div class="food-modal-title" id="foodModalTitle">記録を追加</div>
       <button class="food-modal-close" onclick="closeFoodModal()">✕</button>
@@ -2206,6 +2209,7 @@ let foodFilter = 'all';
 let foodSearch = '';
 let _foodModalState = null;
 let _signedUrlCache = {}; // path -> { url, expiry }
+let _foodUploading = 0;
 
 function saveMeals() { localStorage.setItem('food_meals', JSON.stringify(meals)); saveToSupabase(); }
 
@@ -2339,7 +2343,7 @@ function renderFoodModalBody() {
       <button class="food-add-dish" onclick="addFoodDish()">＋ 料理を追加</button>
     </div>
     <div class="food-modal-section">
-      <div class="food-modal-label">写真</div>
+      <div class="food-modal-label">写真<span class="food-photo-hint">画像をここにドラッグ＆ドロップしても追加できます</span></div>
       <div class="food-photos-wrap" id="foodModalPhotos">
         ${foodPhotoThumbsHTML(s.photos)}
         <button class="food-photo-add-btn" id="foodAddPhotoBtn" onclick="document.getElementById('foodPhotoInput').click()">
@@ -2348,7 +2352,7 @@ function renderFoodModalBody() {
       </div>
       <div class="food-photo-error" id="foodPhotoError"></div>
       <input type="file" id="foodPhotoInput" accept="image/*" multiple style="display:none"
-        onchange="handleFoodPhotoUpload(this.files);this.value=''">
+        onchange="handleFoodPhotoUpload(Array.from(this.files));this.value=''">
     </div>
     <div class="food-modal-section">
       <div class="food-modal-label">メモ</div>
@@ -2361,10 +2365,10 @@ function renderFoodModalBody() {
     </div>
     <div class="food-modal-ftr-right">
       <button class="btn btn-ghost" onclick="closeFoodModal()">キャンセル</button>
-      <button class="btn btn-primary" onclick="saveFoodModal()">保存</button>
+      <button class="btn btn-primary" id="foodSaveBtn" onclick="saveFoodModal()">保存</button>
     </div>
   `;
-  fillSignedUrls(document.getElementById('foodModalPhotos'));
+  renderFoodModalPhotos();
 }
 
 function foodDishRowHTML(d, i) {
@@ -2465,7 +2469,7 @@ function onFoodModalDateChange(val) {
 }
 
 function saveFoodModal() {
-  if (!_foodModalState) return;
+  if (!_foodModalState || _foodUploading > 0) return;
   _collectDishInputs();
   const dishes = _foodModalState.dishes.filter(d => d.name.trim());
   const meal = {
@@ -2531,14 +2535,20 @@ async function deleteFoodPhoto(photoId) {
   try { await sb.storage.from('meal-photos').remove([photo.path]); } catch(e) {}
   delete _signedUrlCache[photo.path];
   _foodModalState.photos = _foodModalState.photos.filter(p => String(p.id) !== String(photoId));
+  renderFoodModalPhotos();
+}
+
+function renderFoodModalPhotos() {
   const wrap = document.getElementById('foodModalPhotos');
-  if (wrap) {
-    wrap.innerHTML = foodPhotoThumbsHTML(_foodModalState.photos) +
-      `<button class="food-photo-add-btn" id="foodAddPhotoBtn" onclick="document.getElementById('foodPhotoInput').click()">
-        <span style="font-size:16px">＋</span><span>写真を追加</span>
-      </button>`;
-    fillSignedUrls(wrap);
-  }
+  if (!wrap || !_foodModalState) return;
+  const uploading = _foodUploading > 0;
+  wrap.innerHTML = foodPhotoThumbsHTML(_foodModalState.photos) +
+    `<button class="food-photo-add-btn" id="foodAddPhotoBtn" ${uploading ? 'disabled' : ''} onclick="document.getElementById('foodPhotoInput').click()">
+      ${uploading ? '<span>アップロード中…</span>' : '<span style="font-size:16px">＋</span><span>写真を追加</span>'}
+    </button>`;
+  const saveBtn = document.getElementById('foodSaveBtn');
+  if (saveBtn) { saveBtn.disabled = uploading; saveBtn.textContent = uploading ? 'アップロード中…' : '保存'; }
+  fillSignedUrls(wrap);
 }
 
 async function resizeFoodImage(file) {
@@ -2548,7 +2558,8 @@ async function resizeFoodImage(file) {
     img.onload = () => {
       URL.revokeObjectURL(url);
       const MAX = 1280;
-      let w = img.width, h = img.height;
+      let w = img.naturalWidth, h = img.naturalHeight;
+      if (!w || !h) { reject(new Error('画像サイズを取得できませんでした')); return; }
       if (w > MAX || h > MAX) {
         if (w >= h) { h = Math.round(h * MAX / w); w = MAX; }
         else { w = Math.round(w * MAX / h); h = MAX; }
@@ -2556,47 +2567,82 @@ async function resizeFoodImage(file) {
       const canvas = document.createElement('canvas');
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      canvas.toBlob(blob => { if (blob) resolve(blob); else reject(new Error('変換失敗')); }, 'image/jpeg', 0.8);
+      canvas.toBlob(blob => { if (blob) resolve(blob); else reject(new Error('JPEGへの変換に失敗しました')); }, 'image/jpeg', 0.8);
     };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('画像読み込み失敗')); };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('この形式の画像は読み込めません（HEICなど）')); };
     img.src = url;
   });
 }
 
 async function handleFoodPhotoUpload(files) {
-  if (!_foodModalState || !files || !files.length) return;
-  const btn = document.getElementById('foodAddPhotoBtn');
+  const state = _foodModalState;
+  const list = Array.from(files || []);
+  if (!state || !list.length) return;
   const errEl = document.getElementById('foodPhotoError');
-  if (btn) { btn.disabled = true; btn.textContent = 'アップロード中…'; }
   if (errEl) errEl.textContent = '';
+  const errors = [];
+  _foodUploading++;
+  renderFoodModalPhotos();
   try {
     const { data: { user } } = await sb.auth.getUser();
     if (!user) throw new Error('ログインが必要です');
-    for (const file of Array.from(files)) {
+    for (const file of list) {
       try {
         const blob = await resizeFoodImage(file);
         const photoId = crypto.randomUUID();
-        const path = `${user.id}/${_foodModalState.date}/${photoId}.jpg`;
+        const path = `${user.id}/${state.date}/${photoId}.jpg`;
         const { error } = await sb.storage.from('meal-photos').upload(path, blob, { contentType: 'image/jpeg' });
         if (error) throw error;
-        _foodModalState.photos.push({ id: photoId, path });
+        state.photos.push({ id: photoId, path });
       } catch(e) {
-        if (errEl) errEl.textContent = `エラー: ${e.message || 'アップロード失敗'}`;
+        errors.push(`${file.name}: ${e.message || 'アップロード失敗'}`);
       }
     }
   } catch(e) {
-    if (errEl) errEl.textContent = `エラー: ${e.message || 'アップロード失敗'}`;
+    errors.push(e.message || 'アップロード失敗');
   }
-  if (btn) { btn.disabled = false; btn.innerHTML = '<span style="font-size:16px">＋</span><span>写真を追加</span>'; }
-  const wrap = document.getElementById('foodModalPhotos');
-  if (wrap) {
-    wrap.innerHTML = foodPhotoThumbsHTML(_foodModalState.photos) +
-      `<button class="food-photo-add-btn" id="foodAddPhotoBtn" onclick="document.getElementById('foodPhotoInput').click()">
-        <span style="font-size:16px">＋</span><span>写真を追加</span>
-      </button>`;
-    fillSignedUrls(wrap);
+  _foodUploading--;
+  if (_foodModalState !== state) {
+    if (_foodModalState) renderFoodModalPhotos();
+    return;
   }
+  const errNow = document.getElementById('foodPhotoError');
+  if (errNow) errNow.textContent = errors.length ? `エラー: ${errors.join(' / ')}` : '';
+  renderFoodModalPhotos();
 }
+
+function _hasDraggedFiles(e) {
+  const types = e.dataTransfer ? Array.from(e.dataTransfer.types || []) : [];
+  return types.includes('Files') || types.includes('text/uri-list');
+}
+
+function foodDragOver(e) {
+  if (!_foodModalState || !_hasDraggedFiles(e)) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'copy';
+  e.currentTarget.classList.add('drag-over');
+}
+
+function foodDragLeave(e) {
+  if (e.currentTarget.contains(e.relatedTarget)) return;
+  e.currentTarget.classList.remove('drag-over');
+}
+
+function foodDrop(e) {
+  if (!_hasDraggedFiles(e)) return;
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if (!_foodModalState) return;
+  const files = Array.from(e.dataTransfer.files || []).filter(f => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name));
+  if (files.length) { handleFoodPhotoUpload(files); return; }
+  const errEl = document.getElementById('foodPhotoError');
+  if (errEl) errEl.textContent = 'ブラウザ上の画像は直接追加できません。一度ダウンロードしてから、そのファイルをドロップしてください';
+}
+
+// モーダル外にファイルを落としたとき、ブラウザが画像を開いてページ遷移するのを防ぐ
+['dragover', 'drop'].forEach(type => window.addEventListener(type, e => {
+  if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) e.preventDefault();
+}));
 
 async function fillSignedUrls(containerEl) {
   if (!containerEl) return;
