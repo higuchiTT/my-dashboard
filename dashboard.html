@@ -404,6 +404,86 @@
     .trip-sbtn.act.予約済み { background:var(--accent); color:var(--paper); border-color:var(--accent); }
     .trip-sbtn.act.完了     { background:var(--mute);   color:var(--paper); border-color:var(--mute); }
 
+    /* ── FOOD ── */
+    .food-page-bar { display:flex; align-items:center; justify-content:space-between; padding:16px 40px; border-bottom:1px solid var(--rule); background:var(--paper2); }
+    .food-page-title { font-family:'Newsreader',serif; font-size:20px; font-weight:700; font-style:italic; }
+    .food-toolbar { display:flex; align-items:center; gap:12px; padding:12px 40px; border-bottom:1px solid var(--rule); background:var(--paper3); flex-wrap:wrap; }
+    .food-search { font-family:'Space Grotesk',sans-serif; font-size:14px; padding:7px 12px; border:1px solid var(--ink3); background:var(--paper); color:var(--ink); outline:none; flex:0 0 240px; border-radius:0; }
+    .food-search:focus { border-color:var(--ink); }
+    .food-search::placeholder { color:var(--mute); }
+    .food-filter-btns { display:flex; gap:0; }
+    .food-fbtn { padding:7px 16px; font-family:'JetBrains Mono',monospace; font-size:10.5px; font-weight:600; letter-spacing:0.1em; border:1px solid var(--ink3); border-right:none; background:transparent; color:var(--ink3); cursor:pointer; transition:all 0.15s; }
+    .food-fbtn:last-child { border-right:1px solid var(--ink3); }
+    .food-fbtn.active { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+    .food-fbtn:hover:not(.active) { background:var(--paper2); color:var(--ink); }
+    .food-summary-bar { padding:9px 40px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink3); border-bottom:1px solid rgba(26,24,20,0.1); background:rgba(139,58,24,0.04); }
+    .food-summary-bar strong { color:var(--accent); }
+    .food-content { padding:24px 40px; }
+    .food-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; }
+    .food-card { background:var(--paper); border:1px solid var(--rule); cursor:pointer; transition:box-shadow 0.15s,transform 0.15s; overflow:hidden; }
+    .food-card:hover { box-shadow:0 4px 16px rgba(26,24,20,0.12); transform:translateY(-2px); }
+    .food-card-img-wrap { position:relative; width:100%; aspect-ratio:16/10; background:var(--paper3); overflow:hidden; flex-shrink:0; }
+    .food-card-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+    .food-card-img-placeholder { width:100%; aspect-ratio:16/10; background:var(--paper3); display:flex; align-items:center; justify-content:center; color:var(--mute); font-size:2.2rem; opacity:0.35; }
+    .food-photo-badge { position:absolute; bottom:6px; right:6px; background:rgba(26,24,20,0.65); color:#fff; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; padding:2px 6px; border-radius:3px; }
+    .food-card-body { padding:12px 14px 14px; }
+    .food-card-date { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); margin-bottom:8px; letter-spacing:0.04em; }
+    .food-chips { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:7px; }
+    .food-chip { font-family:'JetBrains Mono',monospace; font-size:10px; padding:2px 8px; font-weight:600; border-radius:2px; }
+    .food-chip-home { background:rgba(90,107,58,0.12); color:var(--ok); }
+    .food-chip-out  { background:rgba(139,58,24,0.12); color:var(--accent); }
+    .food-chip-link { margin-left:2px; color:var(--ink3); opacity:0.7; font-size:11px; text-decoration:none; }
+    .food-chip-link:hover { opacity:1; color:var(--accent); }
+    .food-card-memo { font-family:'Newsreader',serif; font-style:italic; font-size:14px; color:var(--ink3); overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.45; }
+    .food-empty { text-align:center; padding:60px 20px; color:var(--mute); }
+    .food-empty .ei { font-size:2.5rem; margin-bottom:12px; opacity:0.35; }
+    /* Food modal */
+    .food-modal-overlay { display:none; position:fixed; inset:0; background:rgba(26,24,20,0.55); z-index:8000; align-items:flex-start; justify-content:center; overflow-y:auto; padding:32px 16px; }
+    .food-modal { background:var(--paper); width:100%; max-width:680px; margin:auto; border:1.5px solid var(--rule); }
+    .food-modal-hdr { display:flex; align-items:center; justify-content:space-between; padding:18px 24px 14px; border-bottom:1px solid var(--rule); }
+    .food-modal-title { font-family:'Newsreader',serif; font-size:22px; font-weight:800; font-style:italic; }
+    .food-modal-close { background:transparent; border:none; font-size:18px; cursor:pointer; color:var(--ink3); padding:4px 8px; line-height:1; }
+    .food-modal-close:hover { color:var(--ink); }
+    .food-modal-body { padding:20px 24px; display:flex; flex-direction:column; gap:16px; }
+    .food-modal-section { display:flex; flex-direction:column; gap:8px; }
+    .food-modal-label { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); }
+    .food-dish-row { display:flex; gap:8px; align-items:flex-start; padding:10px 12px; background:var(--paper2); border:1px solid rgba(26,24,20,0.1); margin-bottom:6px; }
+    .food-dish-fields { display:flex; flex-direction:column; gap:6px; flex:1; min-width:0; }
+    .food-dish-row-top { display:flex; gap:8px; align-items:center; }
+    .food-dish-name { font-family:'Space Grotesk',sans-serif; font-size:14px; padding:6px 10px; border:1px solid var(--ink3); background:var(--paper); color:var(--ink); outline:none; flex:1; min-width:0; border-radius:0; }
+    .food-dish-name:focus { border-color:var(--ink); }
+    .food-dish-name::placeholder { color:var(--mute); }
+    .food-type-toggle { display:flex; flex-shrink:0; }
+    .food-type-btn { padding:5px 10px; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; border:1px solid var(--ink3); background:transparent; color:var(--ink3); cursor:pointer; transition:all 0.12s; }
+    .food-type-btn:first-child { border-right:none; }
+    .food-type-btn.active-home { background:var(--ok); color:var(--paper); border-color:var(--ok); }
+    .food-type-btn.active-out  { background:var(--accent); color:var(--paper); border-color:var(--accent); }
+    .food-dish-extra { display:flex; gap:6px; }
+    .food-dish-place,.food-dish-url { font-family:'Space Grotesk',sans-serif; font-size:13px; padding:5px 8px; border:1px solid rgba(26,24,20,0.2); background:var(--paper); color:var(--ink); outline:none; flex:1; min-width:0; border-radius:0; }
+    .food-dish-place:focus,.food-dish-url:focus { border-color:var(--ink); }
+    .food-dish-place::placeholder,.food-dish-url::placeholder { color:var(--mute); }
+    .food-dish-del { background:transparent; border:none; color:var(--mute); cursor:pointer; font-size:14px; padding:4px; flex-shrink:0; transition:color 0.12s; line-height:1; }
+    .food-dish-del:hover { color:var(--accent); }
+    .food-add-dish { background:transparent; border:1px dashed rgba(26,24,20,0.25); color:var(--ink3); font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.06em; padding:8px; cursor:pointer; width:100%; text-align:center; transition:all 0.12s; }
+    .food-add-dish:hover { border-color:var(--ink3); color:var(--ink); background:var(--paper2); }
+    .food-photos-wrap { display:flex; flex-wrap:wrap; gap:8px; align-items:flex-start; }
+    .food-photo-thumb { position:relative; width:80px; height:60px; overflow:hidden; flex-shrink:0; }
+    .food-photo-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .food-photo-del { position:absolute; top:2px; right:2px; background:rgba(26,24,20,0.65); border:none; color:#fff; width:18px; height:18px; border-radius:50%; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1; }
+    .food-photo-del:hover { background:var(--accent); }
+    .food-photo-add-btn { display:flex; align-items:center; justify-content:center; width:80px; height:60px; border:1.5px dashed rgba(26,24,20,0.25); background:transparent; color:var(--ink3); font-size:10px; font-family:'JetBrains Mono',monospace; cursor:pointer; transition:all 0.12s; flex-direction:column; gap:2px; font-weight:700; }
+    .food-photo-add-btn:hover { border-color:var(--ink3); color:var(--ink); background:var(--paper2); }
+    .food-photo-error { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); margin-top:4px; min-height:16px; }
+    .food-memo-ta { font-family:'Space Grotesk',sans-serif; font-size:14px; padding:8px 10px; border:1px solid var(--ink3); background:var(--paper); color:var(--ink); outline:none; width:100%; resize:vertical; min-height:72px; line-height:1.5; border-radius:0; }
+    .food-memo-ta:focus { border-color:var(--ink); }
+    .food-memo-ta::placeholder { color:var(--mute); }
+    .food-modal-ftr { display:flex; align-items:flex-start; justify-content:space-between; padding:14px 24px; border-top:1px solid var(--rule); gap:8px; }
+    .food-modal-ftr-right { display:flex; gap:8px; align-items:center; }
+    .food-del-confirm { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); margin-bottom:6px; }
+    .food-del-btns { display:flex; gap:6px; }
+    .food-fab { display:none; position:fixed; bottom:calc(24px + env(safe-area-inset-bottom,0px)); right:24px; width:52px; height:52px; border-radius:50%; background:var(--accent); color:var(--paper); border:none; font-size:26px; cursor:pointer; align-items:center; justify-content:center; box-shadow:0 4px 16px rgba(139,58,24,0.35); z-index:7000; transition:opacity 0.15s; line-height:1; }
+    .food-fab:hover { opacity:0.88; }
+
     /* ── FOOTER ── */
     .footer { background:var(--paper); padding:18px 40px 28px; border-top:2px solid var(--rule); margin-top:0; }
     .footer-inner { display:flex; justify-content:space-between; align-items:baseline; padding-top:12px; }
@@ -482,7 +562,7 @@
     .tv-time { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); flex-shrink: 0; }
     .tv-cat { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 3px; white-space: nowrap; flex-shrink: 0; color: #fff; font-weight: 600; }
     .tv-tags { display: flex; gap: 4px; flex-shrink: 0; cursor: pointer; }
-    .tv-tag-chip { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 1px 6px; border-radius: 2px; white-space: nowrap; font-weight: 600; }
+    .tv-tag-chip { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 1px 6px; border-radius: 2px; white-space: nowrap; font-weight: 600; cursor: pointer; }
     .tv-tag-pop { display:none; position:fixed; background:var(--paper); border:1px solid var(--rule); border-radius:4px; padding:10px; width:220px; z-index:8000; box-shadow:0 4px 16px rgba(0,0,0,0.12); }
     .tv-tag-pop.open { display:block; }
     .tv-tag-pop-grid { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px; }
@@ -623,6 +703,18 @@
       /* ── ログインオーバーレイ ── */
       .login-box { max-width: 90vw; padding: 36px 20px; }
 
+      /* ── Food ── */
+      .food-toolbar { padding:10px 14px; gap:8px; }
+      .food-search { flex:1; min-width:0; flex-basis:auto; }
+      .food-summary-bar { padding:8px 14px; }
+      .food-content { padding:14px; }
+      .food-grid { grid-template-columns:1fr; gap:14px; }
+      .food-page-bar { padding:10px 14px; }
+      .food-add-btn-desktop { display:none; }
+      .food-fab { display:flex !important; }
+      .food-modal-overlay { padding:0; align-items:flex-end; }
+      .food-modal { max-width:100%; max-height:92svh; overflow-y:auto; }
+
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -643,6 +735,7 @@
     <button class="tab-btn nav-item" onclick="nav('calendar')">Calendar</button>
     <button class="tab-btn nav-item" onclick="nav('shopping')">Wishlist</button>
     <button class="tab-btn nav-item" onclick="nav('travel')">Travel</button>
+    <button class="tab-btn nav-item" onclick="nav('food')">Food</button>
   </nav>
   <button id="logoutBtn" onclick="signOut()" style="display:none; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:6px 14px; background:transparent; border:1px solid var(--ink3); color:var(--ink3); cursor:pointer; margin-left:16px; transition:all 0.15s;" onmouseover="this.style.borderColor='var(--ink)';this.style.color='var(--ink)'" onmouseout="this.style.borderColor='var(--ink3)';this.style.color='var(--ink3)'">ログアウト</button>
 </header>
@@ -962,6 +1055,39 @@
   </div>
 </div>
 
+<!-- ══ FOOD ══ -->
+<div class="page" id="page-food">
+  <div class="food-page-bar">
+    <h2 class="food-page-title">食事記録</h2>
+    <button class="btn btn-primary food-add-btn-desktop" onclick="openFoodModalNew()">＋ 記録を追加</button>
+  </div>
+  <div class="food-toolbar">
+    <input type="text" class="food-search" id="foodSearch" placeholder="料理名・店名・メモで検索" oninput="foodSearchInput(this.value)">
+    <div class="food-filter-btns">
+      <button class="food-fbtn active" onclick="setFoodFilter('all',this)">全部</button>
+      <button class="food-fbtn" onclick="setFoodFilter('home',this)">自炊</button>
+      <button class="food-fbtn" onclick="setFoodFilter('out',this)">外食</button>
+    </div>
+  </div>
+  <div id="foodSearchSummary" class="food-summary-bar" style="display:none"></div>
+  <div class="food-content">
+    <div class="food-grid" id="foodGrid"></div>
+  </div>
+  <button class="food-fab" id="foodFab" onclick="openFoodModalNew()">＋</button>
+</div>
+
+<!-- ── FOOD MODAL ── -->
+<div id="foodModalOverlay" class="food-modal-overlay" onclick="closeFoodModal()">
+  <div class="food-modal" onclick="event.stopPropagation()">
+    <div class="food-modal-hdr">
+      <div class="food-modal-title" id="foodModalTitle">記録を追加</div>
+      <button class="food-modal-close" onclick="closeFoodModal()">✕</button>
+    </div>
+    <div class="food-modal-body" id="foodModalBody"></div>
+    <div class="food-modal-ftr" id="foodModalFtr"></div>
+  </div>
+</div>
+
 <!-- ── FOOTER ── -->
 
 <script>
@@ -976,6 +1102,7 @@ let txs      = JSON.parse(localStorage.getItem('hd_tx')       || '[]');
 let shopping = JSON.parse(localStorage.getItem('hd_shopping') || '[]');
 let subs     = JSON.parse(localStorage.getItem('hd_subs')     || '[]');
 let trips    = JSON.parse(localStorage.getItem('hd_trips')    || '[]');
+let meals    = JSON.parse(localStorage.getItem('food_meals')  || '[]');
 let tripFilter = 'all';
 let shopFilter = 'all', txType = 'income';
 
@@ -989,7 +1116,7 @@ const tvOpenSections = { today: true, thisweek: false, later: false, undef: fals
 let vy = new Date().getFullYear(), vm = new Date().getMonth();
 let calY = new Date().getFullYear(), calM = new Date().getMonth();
 let selDay = null;
-const PAGE_TITLES = { home:'ホーム', todo:'TODO', finance:'家計 / 資産', calendar:'カレンダー', shopping:'買い物リスト', travel:'旅行' };
+const PAGE_TITLES = { home:'ホーム', todo:'TODO', finance:'家計 / 資産', calendar:'カレンダー', shopping:'買い物リスト', travel:'旅行', food:'食事' };
 
 const SUB_CAT_COLORS = {
   '住居':'#6366f1','光熱費':'#f59e0b','通信':'#06b6d4','交通':'#10b981',
@@ -1021,7 +1148,7 @@ async function pushToSupabase(userId) {
   }
   await sb.from('user_data').upsert({
     user_id: userId, tasks, task_notes: taskNotes,
-    shopping, subs, txs, trips,
+    shopping, subs, txs, trips, meals,
     seed_flags: seedFlags, updated_at: new Date().toISOString()
   });
 }
@@ -1035,6 +1162,7 @@ async function syncFromSupabase(userId) {
   if (Array.isArray(data.subs))     { subs      = data.subs;      localStorage.setItem('hd_subs',       JSON.stringify(subs)); }
   if (Array.isArray(data.txs))      { txs       = data.txs;       localStorage.setItem('hd_tx',         JSON.stringify(txs)); }
   if (Array.isArray(data.trips))    { trips     = data.trips;     localStorage.setItem('hd_trips',      JSON.stringify(trips)); }
+  if (Array.isArray(data.meals))    { meals     = data.meals;     localStorage.setItem('food_meals',    JSON.stringify(meals)); }
   if (data.seed_flags) Object.entries(data.seed_flags).forEach(([k,v]) => localStorage.setItem(k,v));
 }
 
@@ -1143,7 +1271,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const h = new Date().getHours();
   document.getElementById('topDate').textContent = fmtFull(new Date());
   document.getElementById('txDate').value = today();
-  renderHome(); renderTodayView(); renderFinance(); renderSubs(); renderCalendar(); renderShopping(); renderTravel(); updateBadge();
+  renderHome(); renderTodayView(); renderFinance(); renderSubs(); renderCalendar(); renderShopping(); renderTravel(); renderFood(); updateBadge();
 });
 
 document.addEventListener('click', () => {
@@ -1162,6 +1290,7 @@ function nav(page) {
   if(page==='calendar') renderCalendar();
   if(page==='shopping') renderShopping();
   if(page==='travel')   renderTravel();
+  if(page==='food')     renderFood();
 }
 
 // ── HOME ──
@@ -1332,7 +1461,7 @@ function saveTaskDue(id, val) {
 function tvRowHTML(t) {
   const color = getCatColor(t.category);
   const isPinned = !!t.isPinned;
-  const tags = (t.tags || []).slice(0, 3);
+  const tags = [...new Set(t.tags || [])].slice(0, 3);
   const tagsHTML = tags.map(tag => `<span class="tv-tag-chip tag-${esc(tag)}">${esc(tag)}</span>`).join('');
   const timeHTML = t.dueTime ? `<span class="tv-time">${esc(t.dueTime)}</span>` : '';
   return `<div class="tv-row" data-task-id="${esc(t.id)}">
@@ -1612,6 +1741,7 @@ function tvToggleTag(tag) {
   if (!Array.isArray(t.tags)) t.tags = [];
   const idx = t.tags.indexOf(tag);
   if (idx >= 0) t.tags.splice(idx, 1); else t.tags.push(tag);
+  t.tags = [...new Set(t.tags)];
   saveTasks();
   renderTodayView();
   // ポップオーバーを再描画（選択状態を更新）
@@ -2069,6 +2199,429 @@ function renderTravel(){
         <button class="btn-kill" style="margin-left:auto" onclick="delTrip(${t.id})">✕</button>
       </div>
     </div>`).join('');
+}
+
+// ── FOOD ──
+let foodFilter = 'all';
+let foodSearch = '';
+let _foodModalState = null;
+let _signedUrlCache = {}; // path -> { url, expiry }
+
+function saveMeals() { localStorage.setItem('food_meals', JSON.stringify(meals)); saveToSupabase(); }
+
+function localDate(d) {
+  const dt = d || new Date();
+  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+}
+
+function setFoodFilter(f, el) {
+  foodFilter = f;
+  document.querySelectorAll('#page-food .food-fbtn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderFood();
+}
+
+function foodSearchInput(val) { foodSearch = val; renderFood(); }
+
+function renderFood() {
+  const grid = document.getElementById('foodGrid');
+  const summaryEl = document.getElementById('foodSearchSummary');
+  if (!grid) return;
+  const days7 = '日月火水木金土'.split('');
+  let list = [...meals].sort((a, b) => b.date.localeCompare(a.date));
+  if (foodFilter !== 'all') {
+    list = list.filter(m => (m.dishes || []).some(d => d.type === foodFilter));
+  }
+  const q = foodSearch.trim().toLowerCase();
+  if (q) {
+    list = list.filter(m => {
+      const dishText = (m.dishes || []).map(d => (d.name + ' ' + (d.place || '')).toLowerCase()).join(' ');
+      return dishText.includes(q) || (m.memo || '').toLowerCase().includes(q);
+    });
+  }
+  if (summaryEl) {
+    if (q) {
+      summaryEl.style.display = '';
+      if (list.length) {
+        const latest = list[0];
+        const latestD = new Date(latest.date + 'T00:00:00');
+        const todayD = new Date(); todayD.setHours(0,0,0,0);
+        const daysAgo = Math.round((todayD - latestD) / 86400000);
+        const daysLabel = daysAgo === 0 ? '今日' : daysAgo === 1 ? '1日前' : `${daysAgo}日前`;
+        const df = latest.date.slice(0,4) + '/' + latest.date.slice(5,7) + '/' + latest.date.slice(8,10);
+        summaryEl.innerHTML = `<strong>"${esc(q)}"</strong> — 最後は${daysLabel}（${df}）・計${list.length}回`;
+      } else {
+        summaryEl.innerHTML = `<strong>"${esc(q)}"</strong> — 記録なし`;
+      }
+    } else {
+      summaryEl.style.display = 'none';
+    }
+  }
+  if (!list.length) {
+    grid.innerHTML = `<div class="food-empty" style="grid-column:1/-1"><div class="ei">🍽</div><div>${q ? '検索結果なし' : '記録がありません'}</div></div>`;
+    return;
+  }
+  const todayStr = localDate();
+  const yesterdayStr = localDate(new Date(Date.now() - 86400000));
+  grid.innerHTML = list.map(m => {
+    const d = new Date(m.date + 'T00:00:00');
+    let dateLabel;
+    if (m.date === todayStr) dateLabel = `今日（${days7[d.getDay()]}）`;
+    else if (m.date === yesterdayStr) dateLabel = `昨日（${days7[d.getDay()]}）`;
+    else dateLabel = `${m.date.slice(0,4)}/${parseInt(m.date.slice(5,7))}/${parseInt(m.date.slice(8,10))}（${days7[d.getDay()]}）`;
+    const dishes = m.dishes || [];
+    const photos = m.photos || [];
+    let photoHTML;
+    if (photos.length) {
+      const badge = photos.length > 1 ? `<div class="food-photo-badge">+${photos.length - 1}</div>` : '';
+      photoHTML = `<div class="food-card-img-wrap"><img data-path="${esc(photos[0].path)}" src="" alt="">${badge}</div>`;
+    } else {
+      photoHTML = `<div class="food-card-img-placeholder">🍽</div>`;
+    }
+    const chipsHTML = dishes.map(dish => {
+      const cls = dish.type === 'out' ? 'food-chip-out' : 'food-chip-home';
+      const place = dish.type === 'out' && dish.place ? ` @${esc(dish.place)}` : '';
+      const isValidUrl = /^https?:\/\//.test(dish.recipeUrl || '');
+      const linkHTML = isValidUrl ? ` <a class="food-chip-link" href="${esc(dish.recipeUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🔗</a>` : '';
+      return `<span class="food-chip ${cls}">${esc(dish.name)}${place}${linkHTML}</span>`;
+    }).join('');
+    return `<div class="food-card" onclick="openFoodModal('${esc(m.id)}')">
+      ${photoHTML}
+      <div class="food-card-body">
+        <div class="food-card-date">${dateLabel}</div>
+        <div class="food-chips">${chipsHTML || '<span style="color:var(--mute);font-family:\'JetBrains Mono\',monospace;font-size:11px">料理なし</span>'}</div>
+        ${m.memo ? `<div class="food-card-memo">${esc(m.memo)}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+  fillSignedUrls(grid);
+}
+
+// ── FOOD MODAL ──
+function openFoodModalNew() {
+  const dateStr = localDate();
+  const existing = meals.find(m => m.date === dateStr);
+  if (existing) { openFoodModal(existing.id); return; }
+  _foodModalState = { id: crypto.randomUUID(), date: dateStr, dishes: [{ id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '' }], photos: [], memo: '', isNew: true };
+  document.getElementById('foodModalTitle').textContent = '記録を追加';
+  renderFoodModalBody();
+  document.getElementById('foodModalOverlay').style.display = 'flex';
+}
+
+function openFoodModal(id) {
+  const meal = meals.find(m => String(m.id) === String(id));
+  if (!meal) return;
+  _foodModalState = { ...JSON.parse(JSON.stringify(meal)), isNew: false };
+  document.getElementById('foodModalTitle').textContent = '記録を編集';
+  renderFoodModalBody();
+  document.getElementById('foodModalOverlay').style.display = 'flex';
+}
+
+function closeFoodModal() {
+  _foodModalState = null;
+  document.getElementById('foodModalOverlay').style.display = 'none';
+}
+
+function renderFoodModalBody() {
+  if (!_foodModalState) return;
+  const s = _foodModalState;
+  const dishesHTML = s.dishes.map((d, i) => foodDishRowHTML(d, i)).join('');
+  document.getElementById('foodModalBody').innerHTML = `
+    <div class="food-modal-section">
+      <div class="food-modal-label">日付</div>
+      <input type="date" id="foodModalDate" value="${esc(s.date)}"
+        style="font-family:'Space Grotesk',sans-serif;font-size:14px;padding:7px 10px;border:1px solid var(--ink3);background:var(--paper);color:var(--ink);outline:none;width:180px;border-radius:0;"
+        onchange="onFoodModalDateChange(this.value)">
+    </div>
+    <div class="food-modal-section">
+      <div class="food-modal-label">料理</div>
+      <div id="foodDishList">${dishesHTML}</div>
+      <button class="food-add-dish" onclick="addFoodDish()">＋ 料理を追加</button>
+    </div>
+    <div class="food-modal-section">
+      <div class="food-modal-label">写真</div>
+      <div class="food-photos-wrap" id="foodModalPhotos">
+        ${foodPhotoThumbsHTML(s.photos)}
+        <button class="food-photo-add-btn" id="foodAddPhotoBtn" onclick="document.getElementById('foodPhotoInput').click()">
+          <span style="font-size:16px">＋</span><span>写真を追加</span>
+        </button>
+      </div>
+      <div class="food-photo-error" id="foodPhotoError"></div>
+      <input type="file" id="foodPhotoInput" accept="image/*" multiple style="display:none"
+        onchange="handleFoodPhotoUpload(this.files);this.value=''">
+    </div>
+    <div class="food-modal-section">
+      <div class="food-modal-label">メモ</div>
+      <textarea class="food-memo-ta" id="foodModalMemo" placeholder="今日の食事についてメモ">${esc(s.memo)}</textarea>
+    </div>
+  `;
+  document.getElementById('foodModalFtr').innerHTML = `
+    <div id="foodDelConfirmWrap">
+      ${!s.isNew ? `<button class="btn btn-ghost btn-sm" style="border-color:var(--accent);color:var(--accent)" onclick="showFoodDelConfirm()">記録を削除</button>` : ''}
+    </div>
+    <div class="food-modal-ftr-right">
+      <button class="btn btn-ghost" onclick="closeFoodModal()">キャンセル</button>
+      <button class="btn btn-primary" onclick="saveFoodModal()">保存</button>
+    </div>
+  `;
+  fillSignedUrls(document.getElementById('foodModalPhotos'));
+}
+
+function foodDishRowHTML(d, i) {
+  const isOut = d.type === 'out';
+  return `<div class="food-dish-row" id="foodDish-${i}">
+    <div class="food-dish-fields">
+      <div class="food-dish-row-top">
+        <input class="food-dish-name" type="text" value="${esc(d.name)}" placeholder="料理名（必須）"
+          oninput="foodDishInput(${i},'name',this.value)">
+        <div class="food-type-toggle">
+          <button class="food-type-btn${!isOut ? ' active-home' : ''}" onclick="event.stopPropagation();setFoodDishType(${i},'home')">自炊</button>
+          <button class="food-type-btn${isOut ? ' active-out' : ''}" onclick="event.stopPropagation();setFoodDishType(${i},'out')">外食</button>
+        </div>
+      </div>
+      <div class="food-dish-extra">
+        ${isOut ? `<input class="food-dish-place" type="text" value="${esc(d.place || '')}" placeholder="店名" oninput="foodDishInput(${i},'place',this.value)">` : ''}
+        <input class="food-dish-url" type="text" value="${esc(d.recipeUrl || '')}" placeholder="レシピURL（任意）" oninput="foodDishInput(${i},'recipeUrl',this.value)">
+      </div>
+    </div>
+    <button class="food-dish-del" onclick="event.stopPropagation();removeFoodDish(${i})" title="削除">✕</button>
+  </div>`;
+}
+
+function foodPhotoThumbsHTML(photos) {
+  return (photos || []).map(p => `<div class="food-photo-thumb">
+    <img data-path="${esc(p.path)}" src="" alt="">
+    <button class="food-photo-del" onclick="event.stopPropagation();deleteFoodPhoto('${esc(p.id)}')" title="削除">✕</button>
+  </div>`).join('');
+}
+
+function foodDishInput(i, field, val) {
+  if (!_foodModalState || !_foodModalState.dishes[i]) return;
+  _foodModalState.dishes[i][field] = val;
+}
+
+function setFoodDishType(i, type) {
+  if (!_foodModalState || !_foodModalState.dishes[i]) return;
+  _foodModalState.dishes[i].type = type;
+  // collect current input values first
+  _collectDishInputs();
+  const el = document.getElementById('foodDish-' + i);
+  if (el) el.outerHTML = foodDishRowHTML(_foodModalState.dishes[i], i);
+}
+
+function addFoodDish() {
+  if (!_foodModalState) return;
+  _collectDishInputs();
+  const newDish = { id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '' };
+  _foodModalState.dishes.push(newDish);
+  const i = _foodModalState.dishes.length - 1;
+  const listEl = document.getElementById('foodDishList');
+  if (listEl) {
+    const div = document.createElement('div');
+    div.innerHTML = foodDishRowHTML(newDish, i);
+    listEl.appendChild(div.firstElementChild);
+    const nameIn = document.getElementById('foodDish-' + i)?.querySelector('.food-dish-name');
+    if (nameIn) nameIn.focus();
+  }
+}
+
+function removeFoodDish(i) {
+  if (!_foodModalState) return;
+  _collectDishInputs();
+  if (_foodModalState.dishes.length <= 1) {
+    _foodModalState.dishes[0] = { id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '' };
+  } else {
+    _foodModalState.dishes.splice(i, 1);
+  }
+  const listEl = document.getElementById('foodDishList');
+  if (listEl) listEl.innerHTML = _foodModalState.dishes.map((d, idx) => foodDishRowHTML(d, idx)).join('');
+}
+
+function _collectDishInputs() {
+  if (!_foodModalState) return;
+  _foodModalState.dishes.forEach((d, i) => {
+    const row = document.getElementById('foodDish-' + i);
+    if (!row) return;
+    const nameEl = row.querySelector('.food-dish-name');
+    if (nameEl) d.name = nameEl.value;
+    const placeEl = row.querySelector('.food-dish-place');
+    if (placeEl) d.place = placeEl.value;
+    const urlEl = row.querySelector('.food-dish-url');
+    if (urlEl) d.recipeUrl = urlEl.value;
+  });
+  const memoEl = document.getElementById('foodModalMemo');
+  if (memoEl) _foodModalState.memo = memoEl.value;
+  const dateEl = document.getElementById('foodModalDate');
+  if (dateEl) _foodModalState.date = dateEl.value;
+}
+
+function onFoodModalDateChange(val) {
+  if (!_foodModalState) return;
+  if (_foodModalState.isNew) {
+    const existing = meals.find(m => m.date === val);
+    if (existing) { openFoodModal(existing.id); return; }
+  }
+  _foodModalState.date = val;
+}
+
+function saveFoodModal() {
+  if (!_foodModalState) return;
+  _collectDishInputs();
+  const dishes = _foodModalState.dishes.filter(d => d.name.trim());
+  const meal = {
+    id: _foodModalState.id,
+    date: _foodModalState.date,
+    dishes,
+    photos: _foodModalState.photos,
+    memo: _foodModalState.memo.trim(),
+    updatedAt: new Date().toISOString()
+  };
+  const other = meals.find(m => m.date === meal.date && String(m.id) !== String(meal.id));
+  if (other) {
+    other.dishes = [...(other.dishes || []), ...meal.dishes];
+    other.photos = [...(other.photos || []), ...meal.photos];
+    other.memo = [other.memo, meal.memo].filter(Boolean).join('\n');
+    other.updatedAt = meal.updatedAt;
+    meals = meals.filter(m => String(m.id) !== String(meal.id));
+  } else {
+    const idx = meals.findIndex(m => String(m.id) === String(meal.id));
+    if (idx >= 0) meals[idx] = meal; else meals.unshift(meal);
+  }
+  saveMeals();
+  closeFoodModal();
+  renderFood();
+}
+
+function showFoodDelConfirm() {
+  const wrap = document.getElementById('foodDelConfirmWrap');
+  if (!wrap || !_foodModalState) return;
+  wrap.innerHTML = `
+    <div class="food-del-confirm">本当に削除しますか？</div>
+    <div class="food-del-btns">
+      <button class="btn btn-ghost btn-sm" onclick="cancelFoodDelConfirm()">キャンセル</button>
+      <button class="btn btn-sm" style="background:var(--accent);color:var(--paper);border:none;padding:5px 12px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;"
+        onclick="deleteFoodRecord('${esc(_foodModalState.id)}')">削除する</button>
+    </div>`;
+}
+
+function cancelFoodDelConfirm() {
+  const wrap = document.getElementById('foodDelConfirmWrap');
+  if (!wrap) return;
+  wrap.innerHTML = `<button class="btn btn-ghost btn-sm" style="border-color:var(--accent);color:var(--accent)" onclick="showFoodDelConfirm()">記録を削除</button>`;
+}
+
+async function deleteFoodRecord(id) {
+  const meal = meals.find(m => String(m.id) === String(id));
+  if (!meal) return;
+  if (meal.photos && meal.photos.length) {
+    const paths = meal.photos.map(p => p.path);
+    try { await sb.storage.from('meal-photos').remove(paths); } catch(e) {}
+    paths.forEach(p => delete _signedUrlCache[p]);
+  }
+  meals = meals.filter(m => String(m.id) !== String(id));
+  saveMeals();
+  closeFoodModal();
+  renderFood();
+}
+
+async function deleteFoodPhoto(photoId) {
+  if (!_foodModalState) return;
+  const photo = _foodModalState.photos.find(p => String(p.id) === String(photoId));
+  if (!photo) return;
+  try { await sb.storage.from('meal-photos').remove([photo.path]); } catch(e) {}
+  delete _signedUrlCache[photo.path];
+  _foodModalState.photos = _foodModalState.photos.filter(p => String(p.id) !== String(photoId));
+  const wrap = document.getElementById('foodModalPhotos');
+  if (wrap) {
+    wrap.innerHTML = foodPhotoThumbsHTML(_foodModalState.photos) +
+      `<button class="food-photo-add-btn" id="foodAddPhotoBtn" onclick="document.getElementById('foodPhotoInput').click()">
+        <span style="font-size:16px">＋</span><span>写真を追加</span>
+      </button>`;
+    fillSignedUrls(wrap);
+  }
+}
+
+async function resizeFoodImage(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const MAX = 1280;
+      let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) {
+        if (w >= h) { h = Math.round(h * MAX / w); w = MAX; }
+        else { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      canvas.toBlob(blob => { if (blob) resolve(blob); else reject(new Error('変換失敗')); }, 'image/jpeg', 0.8);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('画像読み込み失敗')); };
+    img.src = url;
+  });
+}
+
+async function handleFoodPhotoUpload(files) {
+  if (!_foodModalState || !files || !files.length) return;
+  const btn = document.getElementById('foodAddPhotoBtn');
+  const errEl = document.getElementById('foodPhotoError');
+  if (btn) { btn.disabled = true; btn.textContent = 'アップロード中…'; }
+  if (errEl) errEl.textContent = '';
+  try {
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) throw new Error('ログインが必要です');
+    for (const file of Array.from(files)) {
+      try {
+        const blob = await resizeFoodImage(file);
+        const photoId = crypto.randomUUID();
+        const path = `${user.id}/${_foodModalState.date}/${photoId}.jpg`;
+        const { error } = await sb.storage.from('meal-photos').upload(path, blob, { contentType: 'image/jpeg' });
+        if (error) throw error;
+        _foodModalState.photos.push({ id: photoId, path });
+      } catch(e) {
+        if (errEl) errEl.textContent = `エラー: ${e.message || 'アップロード失敗'}`;
+      }
+    }
+  } catch(e) {
+    if (errEl) errEl.textContent = `エラー: ${e.message || 'アップロード失敗'}`;
+  }
+  if (btn) { btn.disabled = false; btn.innerHTML = '<span style="font-size:16px">＋</span><span>写真を追加</span>'; }
+  const wrap = document.getElementById('foodModalPhotos');
+  if (wrap) {
+    wrap.innerHTML = foodPhotoThumbsHTML(_foodModalState.photos) +
+      `<button class="food-photo-add-btn" id="foodAddPhotoBtn" onclick="document.getElementById('foodPhotoInput').click()">
+        <span style="font-size:16px">＋</span><span>写真を追加</span>
+      </button>`;
+    fillSignedUrls(wrap);
+  }
+}
+
+async function fillSignedUrls(containerEl) {
+  if (!containerEl) return;
+  const imgs = containerEl.querySelectorAll('img[data-path]');
+  if (!imgs.length) return;
+  const paths = [...new Set([...imgs].map(img => img.dataset.path).filter(Boolean))];
+  const now = Date.now();
+  const needFetch = paths.filter(p => !_signedUrlCache[p] || _signedUrlCache[p].expiry <= now + 60000);
+  if (needFetch.length) {
+    try {
+      const { data } = await sb.storage.from('meal-photos').createSignedUrls(needFetch, 3600);
+      if (data) {
+        const arr = Array.isArray(data) ? data : (data.signedUrls || []);
+        arr.forEach(item => {
+          if (item && item.signedUrl && item.path) {
+            _signedUrlCache[item.path] = { url: item.signedUrl, expiry: now + 3600000 };
+          }
+        });
+      }
+    } catch(e) {}
+  }
+  imgs.forEach(img => {
+    const cached = _signedUrlCache[img.dataset.path];
+    if (cached && img.isConnected) img.src = cached.url;
+  });
 }
 
 // ── UTILS ──
