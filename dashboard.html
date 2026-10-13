@@ -878,6 +878,54 @@
 
     .login-box { width: 380px; padding: 56px 48px; }
 
+    /* ── ACCOUNTS ── */
+    .ldr-acc-summary-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:14px; }
+    .ldr-acc-net-card { padding:16px 18px; }
+    .ldr-acc-net-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink3); font-weight:600; margin-bottom:4px; }
+    .ldr-acc-net-date { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--mute); margin-bottom:8px; }
+    .ldr-acc-net-val { font-family:'JetBrains Mono',monospace; font-size:26px; font-weight:700; line-height:1; }
+    .ldr-acc-stat { padding:14px 18px; }
+    .ldr-acc-stat-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink3); font-weight:600; margin-bottom:4px; }
+    .ldr-acc-stat-val { font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:700; line-height:1; }
+    .ldr-acc-table { width:100%; border-collapse:collapse; }
+    .ldr-acc-table th { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink3); font-weight:600; padding:8px 10px; text-align:left; border-bottom:2px solid rgba(26,24,20,0.12); white-space:nowrap; }
+    .ldr-acc-table th.r { text-align:right; }
+    .ldr-acc-row { height:46px; transition:background 0.12s; }
+    .ldr-acc-row:hover { background:rgba(26,24,20,0.025); }
+    .ldr-acc-row td { padding:8px 10px; border-bottom:1px solid rgba(26,24,20,0.07); vertical-align:middle; }
+    .ldr-acc-icon-cell { display:flex; align-items:center; gap:8px; }
+    .ldr-acc-icon { width:28px; height:28px; border-radius:6px; background:var(--paper2); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--ink3); }
+    .ldr-acc-name { font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; }
+    .ldr-acc-kind-tag { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink3); background:var(--paper3); padding:1px 6px; border-radius:3px; white-space:nowrap; }
+    .ldr-acc-bal { font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; text-align:right; white-space:nowrap; }
+    .ldr-acc-bal.neg { color:var(--accent); }
+    .ldr-acc-flow { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); white-space:nowrap; }
+    .ldr-acc-more { background:transparent; border:none; font-size:15px; color:var(--mute); cursor:pointer; padding:2px 5px; border-radius:4px; line-height:1; }
+    .ldr-acc-more:hover { background:var(--paper2); color:var(--ink); }
+    .ldr-acc-more-wrap { position:relative; display:inline-block; }
+    .ldr-acc-menu { display:none; position:absolute; right:0; top:100%; background:var(--paper); border:1px solid rgba(26,24,20,0.18); border-radius:8px; box-shadow:0 4px 16px rgba(26,24,20,0.12); z-index:300; min-width:140px; overflow:hidden; white-space:nowrap; }
+    .ldr-acc-menu.open { display:block; }
+    .ldr-acc-menu button { display:block; width:100%; text-align:left; padding:9px 14px; background:transparent; border:none; border-bottom:1px solid rgba(26,24,20,0.08); font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink); cursor:pointer; }
+    .ldr-acc-menu button.danger { color:var(--accent); }
+    .ldr-acc-menu button:last-child { border-bottom:none; }
+    .ldr-acc-menu button:hover { background:var(--paper2); }
+    .ldr-acc-archived-hdr { background:transparent; border:none; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink3); cursor:pointer; padding:10px 0 4px; display:flex; align-items:center; gap:5px; }
+    .ldr-acc-archived-hdr:hover { color:var(--ink); }
+    .ldr-acc-empty { padding:40px 20px; text-align:center; }
+    .ldr-acc-empty-text { font-family:'Newsreader',serif; font-style:italic; font-size:15px; color:var(--ink3); margin-bottom:14px; }
+    /* Overview accounts mini card */
+    .ldr-acc-ov-row { display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px solid rgba(26,24,20,0.07); cursor:pointer; transition:background 0.1s; }
+    .ldr-acc-ov-row:last-of-type { border-bottom:none; }
+    .ldr-acc-ov-row:hover { opacity:0.8; }
+    .ldr-acc-ov-icon { width:22px; height:22px; border-radius:4px; background:var(--paper3); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--ink3); }
+    .ldr-acc-ov-name { font-family:'Space Grotesk',sans-serif; font-size:12px; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .ldr-acc-ov-bal { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; flex-shrink:0; }
+    .ldr-acc-ov-bal.neg { color:var(--accent); }
+    .ldr-acc-ov-chevron { color:var(--mute); font-size:11px; flex-shrink:0; }
+    .ldr-acc-net-total-row { display:flex; align-items:center; justify-content:space-between; padding:8px 10px; background:rgba(26,24,20,0.025); border-radius:6px; margin-top:8px; }
+    .ldr-acc-net-total-label { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); }
+    .ldr-acc-net-total-val { font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; }
+
     /* ══ RESPONSIVE — スマホ (≤640px) ══ */
     @media (max-width: 640px) {
 
@@ -953,6 +1001,10 @@
       .cal-top { flex-wrap: wrap; gap: 8px; }
       .cal-legend { margin-left: 0; }
       .cal-day { min-height: 44px; padding: 5px 4px 4px; }
+
+      /* ── Accounts ── */
+      .ldr-acc-summary-row { grid-template-columns: 1fr; gap:8px; }
+      .ldr-acc-table .hide-mob { display:none; }
 
       /* ── WishList サマリー ── */
       .shop-summary { grid-template-columns: 1fr; }
@@ -1202,6 +1254,7 @@
       <div class="ldr-add-menu" id="ldrAddMenu">
         <button onclick="openTxModal('expense');closeLdrAddMenu()">支出を追加</button>
         <button onclick="openTxModal('income');closeLdrAddMenu()">収入を追加</button>
+        <button onclick="openTxModal('transfer');closeLdrAddMenu()">振替を追加</button>
       </div>
     </div>
   </div>
@@ -1213,7 +1266,7 @@
     <button class="ldr-nav-btn" onclick="chMonth(1)">›</button>
     <button class="ldr-today-btn" onclick="goMonthToday()">今月</button>
     <span class="ldr-period" id="ldrPeriod"></span>
-    <select class="ldr-account-sel" disabled><option>すべての口座</option></select>
+    <select class="ldr-account-sel" id="ldrMonAccSel" onchange="event.stopPropagation();ldrSetAccFilter(this.value)"><option value="all">すべての口座</option></select>
   </div>
 
   <!-- Body: main content + guide -->
@@ -1276,26 +1329,40 @@
         <div class="ldr-step">
           <div class="ldr-step-num">3</div>
           <div>
+            <div class="ldr-step-title">支払元（口座）を選ぶ</div>
+            <div class="ldr-step-text">取引ごとにお金の出どころを選ぶと、口座ごとの残高が計算されます。</div>
+          </div>
+        </div>
+        <div class="ldr-step">
+          <div class="ldr-step-num">4</div>
+          <div>
+            <div class="ldr-step-title">振替を使う</div>
+            <div class="ldr-step-text">ATM 引き出しやカードの引き落としは「振替」で記録します。支出が二重に数えられません。</div>
+          </div>
+        </div>
+        <div class="ldr-step">
+          <div class="ldr-step-num">5</div>
+          <div>
             <div class="ldr-step-title">メモを活用する</div>
             <div class="ldr-step-text">「10月分」など補足をメモに残せます。行をクリックすると後から編集できます。</div>
           </div>
         </div>
         <div class="ldr-step">
-          <div class="ldr-step-num">4</div>
+          <div class="ldr-step-num">6</div>
           <div>
             <div class="ldr-step-title">固定費・サブスクを登録する</div>
             <div class="ldr-step-text">毎月の固定費を登録すると、月額・年額が自動で集計されます。</div>
           </div>
         </div>
         <div class="ldr-step">
-          <div class="ldr-step-num">5</div>
+          <div class="ldr-step-num">7</div>
           <div>
             <div class="ldr-step-title">予算を決める</div>
             <div class="ldr-step-text">予算タブで毎月の予算を設定すると、進捗が Overview に表示されます。特定の月だけ変えることもできます。</div>
           </div>
         </div>
         <div class="ldr-step">
-          <div class="ldr-step-num">6</div>
+          <div class="ldr-step-num">8</div>
           <div>
             <div class="ldr-step-title">月末に振り返る</div>
             <div class="ldr-step-text">収支・貯蓄率・カテゴリ別支出を見て、翌月に活かしましょう。</div>
@@ -1310,11 +1377,80 @@
           <div class="ldr-tips-item">週1回まとめて記録でも十分</div>
           <div class="ldr-tips-item">固定費はサブスクに登録しておく</div>
           <div class="ldr-tips-item">カテゴリは少なめにまとめると分析しやすい</div>
+          <div class="ldr-tips-item">カードの引き落としは銀行→カードの振替で記録しましょう</div>
         </div>
       </div>
     </aside>
     <div class="ldr-guide-collapsed" id="ldrGuideCollapsed" style="display:none" onclick="toggleLdrGuide()">
       <span class="ldr-guide-tab-label">ガイド</span>
+    </div>
+  </div>
+
+  <!-- Account add/edit modal -->
+  <div class="ldr-modal-overlay" id="ldrAccModal" onclick="if(event.target===this)closeAccModal()">
+    <div class="ldr-modal" onclick="event.stopPropagation()">
+      <div class="ldr-modal-hdr">
+        <div class="ldr-modal-title" id="ldrAccModalTitle">口座を追加</div>
+        <button class="ldr-modal-close" onclick="closeAccModal()">✕</button>
+      </div>
+      <div class="ldr-modal-body">
+        <div>
+          <label class="ldr-modal-lbl" for="ldrAccName">口座名</label>
+          <input class="ldr-modal-in" type="text" id="ldrAccName" placeholder="例: 三菱UFJ銀行">
+        </div>
+        <div>
+          <label class="ldr-modal-lbl" for="ldrAccKind">種類</label>
+          <select class="ldr-modal-in" id="ldrAccKind" onclick="event.stopPropagation()">
+            <option value="bank">銀行口座</option>
+            <option value="card">クレジットカード</option>
+            <option value="cash">現金</option>
+            <option value="emoney">電子マネー</option>
+          </select>
+        </div>
+        <div class="ldr-modal-2col">
+          <div>
+            <label class="ldr-modal-lbl" for="ldrAccOpening">開始残高 (¥)</label>
+            <input class="ldr-modal-in" type="number" id="ldrAccOpening" placeholder="0" style="font-family:'JetBrains Mono',monospace;">
+          </div>
+          <div>
+            <label class="ldr-modal-lbl" for="ldrAccOpenDate">開始日</label>
+            <input class="ldr-modal-in" type="date" id="ldrAccOpenDate">
+          </div>
+        </div>
+      </div>
+      <div class="ldr-modal-ftr">
+        <div id="ldrAccDelWrap"></div>
+        <div class="ldr-modal-ftr-r">
+          <button class="btn btn-ghost" onclick="closeAccModal()">キャンセル</button>
+          <button class="btn btn-primary" id="ldrAccSaveBtn" onclick="saveAccModal()">追加</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Balance adjust modal -->
+  <div class="ldr-modal-overlay" id="ldrBalAdjModal" onclick="if(event.target===this)closeBalAdjModal()">
+    <div class="ldr-modal" onclick="event.stopPropagation()" style="max-width:420px;">
+      <div class="ldr-modal-hdr">
+        <div class="ldr-modal-title">残高を合わせる</div>
+        <button class="ldr-modal-close" onclick="closeBalAdjModal()">✕</button>
+      </div>
+      <div class="ldr-modal-body">
+        <div id="ldrBalAdjAccName" style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;color:var(--ink);"></div>
+        <div id="ldrBalAdjCurrentRow" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink3);">現在の計算残高: <span id="ldrBalAdjCurrent" style="color:var(--ink);font-weight:700;"></span></div>
+        <div>
+          <label class="ldr-modal-lbl" for="ldrBalAdjTarget">実際の残高 (¥)</label>
+          <input class="ldr-modal-in" type="number" id="ldrBalAdjTarget" placeholder="0" style="font-family:'JetBrains Mono',monospace;" oninput="ldrBalAdjPreview()">
+        </div>
+        <div id="ldrBalAdjDiffRow" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink3);min-height:18px;"></div>
+      </div>
+      <div class="ldr-modal-ftr">
+        <div></div>
+        <div class="ldr-modal-ftr-r">
+          <button class="btn btn-ghost" onclick="closeBalAdjModal()">キャンセル</button>
+          <button class="btn btn-primary" onclick="saveBalAdj()">調整を記録</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1326,11 +1462,12 @@
         <button class="ldr-modal-close" onclick="closeTxModal()">✕</button>
       </div>
       <div class="ldr-modal-body">
-        <div>
+        <div id="ldrTxTypeRow">
           <label class="ldr-modal-lbl">種別</label>
           <div class="ui-seg" style="width:fit-content">
             <button class="ui-seg-btn" id="ldrTxTypeExp" onclick="setLdrTxType('expense',this)">支出</button>
             <button class="ui-seg-btn" id="ldrTxTypeInc" onclick="setLdrTxType('income',this)">収入</button>
+            <button class="ui-seg-btn" id="ldrTxTypeTransfer" onclick="setLdrTxType('transfer',this)">振替</button>
           </div>
         </div>
         <div class="ldr-modal-2col">
@@ -1343,11 +1480,11 @@
             <input class="ldr-modal-in" type="number" id="ldrTxAmt" placeholder="0" min="0" style="font-family:'JetBrains Mono',monospace;">
           </div>
         </div>
-        <div>
+        <div id="ldrTxTitleRow">
           <label class="ldr-modal-lbl" for="ldrTxTitle">内容</label>
           <input class="ldr-modal-in" type="text" id="ldrTxTitle" placeholder="例: スーパーで食材">
         </div>
-        <div>
+        <div id="ldrTxCatRow">
           <label class="ldr-modal-lbl" for="ldrTxCat">カテゴリ</label>
           <select class="ldr-modal-in" id="ldrTxCat">
             <option value="食費">食費</option><option value="家賃">家賃</option><option value="光熱費">光熱費</option>
@@ -1355,6 +1492,18 @@
             <option value="衣服">衣服</option><option value="日用品">日用品</option><option value="給与">給与</option>
             <option value="副収入">副収入</option><option value="その他">その他</option>
           </select>
+        </div>
+        <div id="ldrTxAccRow">
+          <label class="ldr-modal-lbl" for="ldrTxAcc">口座</label>
+          <select class="ldr-modal-in" id="ldrTxAcc" onclick="event.stopPropagation()"></select>
+        </div>
+        <div id="ldrTxFromRow" style="display:none">
+          <label class="ldr-modal-lbl" for="ldrTxFrom">出金元</label>
+          <select class="ldr-modal-in" id="ldrTxFrom" onclick="event.stopPropagation()"></select>
+        </div>
+        <div id="ldrTxToRow" style="display:none">
+          <label class="ldr-modal-lbl" for="ldrTxTo">入金先</label>
+          <select class="ldr-modal-in" id="ldrTxTo" onclick="event.stopPropagation()"></select>
         </div>
         <div>
           <label class="ldr-modal-lbl" for="ldrTxNote">メモ</label>
@@ -1559,6 +1708,11 @@ let subs     = JSON.parse(localStorage.getItem('hd_subs')     || '[]');
 let trips    = JSON.parse(localStorage.getItem('hd_trips')    || '[]');
 let meals    = JSON.parse(localStorage.getItem('food_meals')  || '[]');
 let budgets  = (()=>{try{const v=JSON.parse(localStorage.getItem('ledger_budgets'));if(v&&typeof v==='object'&&!Array.isArray(v))return v;}catch(e){}return{base:{total:null,cats:{}},months:{}};})();
+let accounts = (()=>{try{const v=JSON.parse(localStorage.getItem('ledger_accounts'));if(Array.isArray(v))return v;}catch(e){}return[];})();
+let ldrAccFilter = (()=>{try{return localStorage.getItem('ledger_acc_filter')||'all';}catch(e){return'all';}})();
+let _ldrOpenAccMenuId = null;
+let _ldrAccModalId = null;
+let _ldrBalAdjAccId = null;
 let tripFilter = 'all';
 let shopFilter = 'all';
 
@@ -1604,7 +1758,7 @@ async function pushToSupabase(userId) {
   }
   await sb.from('user_data').upsert({
     user_id: userId, tasks, task_notes: taskNotes,
-    shopping, subs, txs, trips, meals, budgets,
+    shopping, subs, txs, trips, meals, budgets, accounts,
     seed_flags: seedFlags, updated_at: new Date().toISOString()
   });
 }
@@ -1620,6 +1774,7 @@ async function syncFromSupabase(userId) {
   if (Array.isArray(data.trips))    { trips     = data.trips;     localStorage.setItem('hd_trips',      JSON.stringify(trips)); }
   if (Array.isArray(data.meals))    { meals     = data.meals;     localStorage.setItem('food_meals',    JSON.stringify(meals)); }
   if (data.budgets && typeof data.budgets==='object' && !Array.isArray(data.budgets)) { budgets = data.budgets; localStorage.setItem('ledger_budgets', JSON.stringify(budgets)); }
+  if (Array.isArray(data.accounts)) { accounts = data.accounts; localStorage.setItem('ledger_accounts', JSON.stringify(accounts)); }
   if (data.seed_flags) Object.entries(data.seed_flags).forEach(([k,v]) => localStorage.setItem(k,v));
 }
 
@@ -1735,6 +1890,7 @@ document.addEventListener('click', () => {
   closeTvTagPop();
   closeLdrAddMenu();
   closeLdrTxMenus();
+  closeAccMenus();
 });
 
 // ── NAV ──
@@ -2244,8 +2400,8 @@ let ldrTxModalType='expense'; // current modal type
 let _ldrOpenMenuId=null;      // currently open ... menu
 
 function _ldrActiveTab(){const a=document.querySelector('#ldrSubtabs .ui-seg-btn.active');return a?a.getAttribute('onclick').match(/'(\w+)'/)?.[1]||'overview':'overview';}
-function chMonth(d){vm+=d;if(vm>11){vm=0;vy++;}if(vm<0){vm=11;vy--;}const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();}
-function goMonthToday(){const n=new Date();vy=n.getFullYear();vm=n.getMonth();const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();}
+function chMonth(d){vm+=d;if(vm>11){vm=0;vy++;}if(vm<0){vm=11;vy--;}const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();else if(t==='accounts')renderAccountsPanel();}
+function goMonthToday(){const n=new Date();vy=n.getFullYear();vm=n.getMonth();const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();else if(t==='accounts')renderAccountsPanel();}
 function saveTx(){localStorage.setItem('hd_tx',JSON.stringify(txs));saveToSupabase();}
 
 // ── sub-tab navigation ──
@@ -2257,13 +2413,13 @@ function ldrTab(tab, el){
     const p=document.getElementById('ldrPanel'+t.charAt(0).toUpperCase()+t.slice(1));
     if(p)p.style.display=(t===tab?'block':'none');
   });
-  const showMon=tab==='overview'||tab==='txlist'||tab==='budget';
+  const showMon=tab==='overview'||tab==='txlist'||tab==='budget'||tab==='accounts';
   const nav=document.getElementById('ldrMonNav');
   if(nav)nav.style.display=showMon?'':'none';
   if(tab==='overview')renderFinance();
   else if(tab==='txlist')renderLdrTxList();
   else if(tab==='subs'){renderSubs();}
-  else if(tab==='accounts')renderLdrPlaceholder('ldrPanelAccounts','口座・残高','銀行・カード・現金などの口座ごとの残高と純資産を表示する予定です。');
+  else if(tab==='accounts')renderAccountsPanel();
   else if(tab==='budget')renderBudgetPanel();
   else if(tab==='import')renderLdrPlaceholder('ldrPanelImport','インポート','カード明細や銀行の CSV を取り込む予定です。');
 }
@@ -2276,6 +2432,307 @@ function restoreLdrSubtab(){
 function renderLdrPlaceholder(panelId,title,desc){
   const p=document.getElementById(panelId);if(!p)return;
   p.innerHTML=`<div class="ui-card ldr-coming-soon"><div class="ldr-coming-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12" x2="12" y2="12"/></svg></div><div class="ldr-coming-title">${esc(title)}</div><div class="ldr-coming-text">${esc(desc)}</div></div>`;
+}
+
+// ── ACCOUNTS ──
+const ACC_KIND_LABELS={bank:'銀行',card:'カード',cash:'現金',emoney:'電子マネー'};
+function _accKindSvg(kind,size){
+  size=size||14;
+  const s=`width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"`;
+  if(kind==='bank')return`<svg ${s}><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>`;
+  if(kind==='card')return`<svg ${s}><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`;
+  if(kind==='cash')return`<svg ${s}><path d="M20 12V8H6a2 2 0 0 1 0-4h14v4"/><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/><path d="M18 12a2 2 0 0 0 0 4h4v-4z"/></svg>`;
+  if(kind==='emoney')return`<svg ${s}><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>`;
+  return`<svg ${s}><circle cx="12" cy="12" r="9"/></svg>`;
+}
+function saveAccounts(){
+  localStorage.setItem('ledger_accounts',JSON.stringify(accounts));
+  saveToSupabase();
+}
+function accountBalance(acc,asOfDate){
+  let bal=acc.openingBalance||0;
+  txs.forEach(t=>{
+    if(!t.date)return;
+    if(t.date<acc.openingDate)return;
+    if(asOfDate&&t.date>asOfDate)return;
+    const aid=String(acc.id);
+    if(t.type==='income'&&String(t.accountId)===aid)bal+=t.amount;
+    else if(t.type==='expense'&&String(t.accountId)===aid)bal-=t.amount;
+    else if(t.type==='transfer'){if(String(t.fromAccountId)===aid)bal-=t.amount;else if(String(t.toAccountId)===aid)bal+=t.amount;}
+    else if(t.type==='adjust'&&String(t.accountId)===aid)bal+=t.amount;
+  });
+  return bal;
+}
+function _accAsOfDate(){
+  const now=new Date();
+  const isCurrentMonth=(vy===now.getFullYear()&&vm===now.getMonth());
+  if(isCurrentMonth)return today();
+  // Last day of the displayed month
+  const last=new Date(vy,vm+1,0);
+  return`${last.getFullYear()}-${String(last.getMonth()+1).padStart(2,'0')}-${String(last.getDate()).padStart(2,'0')}`;
+}
+function _accAsOfLabel(){
+  const now=new Date();
+  const isCurrentMonth=(vy===now.getFullYear()&&vm===now.getMonth());
+  const last=new Date(vy,vm+1,0);
+  if(isCurrentMonth)return`${vy}年${vm+1}月${now.getDate()}日時点`;
+  return`${vy}年${vm+1}月末時点`;
+}
+function _ldrUpdateAccSel(){
+  const sel=document.getElementById('ldrMonAccSel');if(!sel)return;
+  // Validate stored filter
+  if(ldrAccFilter!=='all'){const exists=accounts.find(a=>String(a.id)===ldrAccFilter&&!a.archived);if(!exists){ldrAccFilter='all';try{localStorage.setItem('ledger_acc_filter','all');}catch(e){}}}
+  const opts=`<option value="all">すべての口座</option>${accounts.filter(a=>!a.archived).map(a=>`<option value="${esc(String(a.id))}">${esc(a.name)}</option>`).join('')}`;
+  sel.innerHTML=opts;
+  sel.value=ldrAccFilter;
+}
+function ldrSetAccFilter(val){
+  ldrAccFilter=val;
+  try{localStorage.setItem('ledger_acc_filter',val);}catch(e){}
+  const t=_ldrActiveTab();
+  if(t==='overview')renderFinance();
+  else if(t==='txlist')renderLdrTxList();
+  else if(t==='accounts')renderAccountsPanel();
+}
+// ── Accounts sub-tab panel ──
+function renderAccountsPanel(){
+  const panel=document.getElementById('ldrPanelAccounts');if(!panel)return;
+  // Month nav labels
+  const ml=document.getElementById('ldrMonLabel');
+  if(ml)ml.textContent=`${vy}年 ${LDR_MONTHS[vm]}`;
+  const firstDay=new Date(vy,vm,1),lastDay=new Date(vy,vm+1,0);
+  const pEl=document.getElementById('ldrPeriod');
+  if(pEl)pEl.textContent=`${vy}年${vm+1}月${firstDay.getDate()}日 〜 ${vy}年${vm+1}月${lastDay.getDate()}日`;
+  _ldrUpdateAccSel();
+  const asOf=_accAsOfDate();
+  const asOfLabel=_accAsOfLabel();
+  const activeAccounts=accounts.filter(a=>!a.archived).sort((a,b)=>(a.order||0)-(b.order||0));
+  const archivedAccounts=accounts.filter(a=>a.archived);
+  if(!activeAccounts.length&&!archivedAccounts.length){
+    panel.innerHTML=`<div class="ldr-acc-empty ui-card" style="margin-bottom:12px;">
+      <div class="ldr-acc-empty-text">口座を登録すると、残高と純資産が表示されます</div>
+      <button class="btn btn-primary" onclick="openAccModal()">＋ 口座を追加</button>
+    </div>`;
+    return;
+  }
+  const net=activeAccounts.reduce((s,a)=>s+accountBalance(a,asOf),0);
+  const assets=activeAccounts.filter(a=>accountBalance(a,asOf)>=0).reduce((s,a)=>s+accountBalance(a,asOf),0);
+  const liabilities=activeAccounts.filter(a=>accountBalance(a,asOf)<0).reduce((s,a)=>s+Math.abs(accountBalance(a,asOf)),0);
+  // Build active account rows
+  const rowsHtml=activeAccounts.map(a=>{
+    const bal=accountBalance(a,asOf);
+    const balNeg=bal<0;
+    // This month's flow
+    const moTxs=txs.filter(t=>{if(!t.date)return false;const d=new Date(t.date);return d.getFullYear()===vy&&d.getMonth()===vm;});
+    const accId=String(a.id);
+    const moIn=moTxs.filter(t=>(t.type==='income'&&String(t.accountId)===accId)||(t.type==='transfer'&&String(t.toAccountId)===accId)).reduce((s,t)=>s+(t.type==='income'?t.amount:t.amount),0);
+    const moOut=moTxs.filter(t=>(t.type==='expense'&&String(t.accountId)===accId)||(t.type==='transfer'&&String(t.fromAccountId)===accId)).reduce((s,t)=>s+t.amount,0);
+    const flowHtml=`<span style="color:var(--ok)">+¥${fmt(moIn)}</span> / <span style="color:var(--accent)">-¥${fmt(moOut)}</span>`;
+    return`<tr class="ldr-acc-row">
+      <td><div class="ldr-acc-icon-cell"><div class="ldr-acc-icon">${_accKindSvg(a.kind)}</div><span class="ldr-acc-name">${esc(a.name)}</span></div></td>
+      <td><span class="ldr-acc-kind-tag">${esc(ACC_KIND_LABELS[a.kind]||a.kind)}</span></td>
+      <td class="ldr-acc-bal ${balNeg?'neg':''}">${balNeg?'-':''}¥${fmt(Math.abs(bal))}</td>
+      <td class="ldr-acc-flow hide-mob">${flowHtml}</td>
+      <td style="width:36px;padding:4px;" onclick="event.stopPropagation()">
+        <div class="ldr-acc-more-wrap">
+          <button class="ldr-acc-more" onclick="toggleAccMenu(event,'${esc(String(a.id))}')">⋯</button>
+          <div class="ldr-acc-menu" id="ldrAccMenu_${esc(String(a.id))}">
+            <button onclick="openAccModal('${esc(String(a.id))}');closeAccMenus()">編集</button>
+            <button onclick="openBalAdjModal('${esc(String(a.id))}');closeAccMenus()">残高を合わせる</button>
+            <button onclick="archiveAcc('${esc(String(a.id))}');closeAccMenus()">非表示にする</button>
+            <button class="danger" onclick="confirmDelAcc('${esc(String(a.id))}');closeAccMenus()">削除</button>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+  const archivedHtml=archivedAccounts.length?`<details style="margin-top:12px;">
+    <summary class="ldr-acc-archived-hdr">非表示の口座（${archivedAccounts.length}）</summary>
+    <table class="ldr-acc-table" style="margin-top:8px;"><tbody>${archivedAccounts.map(a=>{const bal=accountBalance(a,asOf);const balNeg=bal<0;return`<tr class="ldr-acc-row" style="opacity:0.6;"><td><div class="ldr-acc-icon-cell"><div class="ldr-acc-icon">${_accKindSvg(a.kind)}</div><span class="ldr-acc-name">${esc(a.name)}</span></div></td><td><span class="ldr-acc-kind-tag">${esc(ACC_KIND_LABELS[a.kind]||a.kind)}</span></td><td class="ldr-acc-bal ${balNeg?'neg':''}">${balNeg?'-':''}¥${fmt(Math.abs(bal))}</td><td></td><td style="width:36px;padding:4px;" onclick="event.stopPropagation()"><button class="btn btn-ghost btn-sm" style="font-size:10px;" onclick="unarchiveAcc('${esc(String(a.id))}')">再表示</button></td></tr>`;}).join('')}</tbody></table>
+  </details>`:''
+  panel.innerHTML=`
+<div class="ldr-acc-summary-row">
+  <div class="ui-card ldr-acc-net-card">
+    <div class="ldr-acc-net-label">純資産合計</div>
+    <div class="ldr-acc-net-date">${asOfLabel}</div>
+    <div class="ldr-acc-net-val ${net<0?'neg':''}" style="${net<0?'color:var(--accent)':''}">${net<0?'-':''}¥${fmt(Math.abs(net))}</div>
+  </div>
+  <div class="ui-card ldr-acc-stat">
+    <div class="ldr-acc-stat-label">資産（残高プラス）</div>
+    <div class="ldr-acc-stat-val" style="color:var(--ok);">¥${fmt(assets)}</div>
+  </div>
+  <div class="ui-card ldr-acc-stat">
+    <div class="ldr-acc-stat-label">負債（残高マイナス）</div>
+    <div class="ldr-acc-stat-val" style="${liabilities>0?'color:var(--accent)':''};">¥${fmt(liabilities)}</div>
+  </div>
+</div>
+<div class="ui-card" style="overflow-x:auto;margin-bottom:12px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px 10px;border-bottom:1px solid rgba(26,24,20,0.08);">
+    <span style="font-family:'Newsreader',serif;font-size:15px;font-weight:800;">口座一覧</span>
+    <button class="btn btn-primary btn-sm" onclick="openAccModal()">＋ 口座を追加</button>
+  </div>
+  <table class="ldr-acc-table">
+    <thead><tr>
+      <th style="min-width:140px;">口座名</th>
+      <th style="min-width:70px;">種類</th>
+      <th class="r" style="min-width:100px;">残高</th>
+      <th class="r hide-mob" style="min-width:130px;">今月の入出金</th>
+      <th style="width:36px;"></th>
+    </tr></thead>
+    <tbody>${rowsHtml}</tbody>
+  </table>
+  ${archivedHtml}
+</div>`;
+}
+// ── Account modal ──
+function openAccModal(accId){
+  _ldrAccModalId=accId||null;
+  const overlay=document.getElementById('ldrAccModal');if(!overlay)return;
+  overlay.classList.add('open');
+  const title=document.getElementById('ldrAccModalTitle');
+  const saveBtn=document.getElementById('ldrAccSaveBtn');
+  const delWrap=document.getElementById('ldrAccDelWrap');
+  if(accId){
+    const a=accounts.find(a=>String(a.id)===String(accId));if(!a)return;
+    if(title)title.textContent='口座を編集';
+    if(saveBtn)saveBtn.textContent='保存';
+    document.getElementById('ldrAccName').value=a.name||'';
+    document.getElementById('ldrAccKind').value=a.kind||'bank';
+    document.getElementById('ldrAccOpening').value=a.openingBalance!==undefined?a.openingBalance:'';
+    document.getElementById('ldrAccOpenDate').value=a.openingDate||today();
+    if(delWrap)delWrap.innerHTML=`<button class="btn btn-ghost btn-sm" style="border-color:var(--accent);color:var(--accent)" onclick="confirmDelAccFromModal('${esc(String(accId))}')">削除</button>`;
+  } else {
+    if(title)title.textContent='口座を追加';
+    if(saveBtn)saveBtn.textContent='追加';
+    document.getElementById('ldrAccName').value='';
+    document.getElementById('ldrAccKind').value='bank';
+    document.getElementById('ldrAccOpening').value='0';
+    document.getElementById('ldrAccOpenDate').value=today();
+    if(delWrap)delWrap.innerHTML='';
+  }
+  document.addEventListener('keydown',_ldrAccEsc);
+}
+function _ldrAccEsc(e){if(e.key==='Escape')closeAccModal();}
+function closeAccModal(){
+  const overlay=document.getElementById('ldrAccModal');if(overlay)overlay.classList.remove('open');
+  document.removeEventListener('keydown',_ldrAccEsc);
+}
+function saveAccModal(){
+  const name=document.getElementById('ldrAccName').value.trim();
+  if(!name){document.getElementById('ldrAccName').focus();return;}
+  const kind=document.getElementById('ldrAccKind').value;
+  const openingBalance=parseFloat(document.getElementById('ldrAccOpening').value)||0;
+  const openingDate=document.getElementById('ldrAccOpenDate').value||today();
+  if(_ldrAccModalId){
+    const a=accounts.find(a=>String(a.id)===String(_ldrAccModalId));
+    if(a){a.name=name;a.kind=kind;a.openingBalance=openingBalance;a.openingDate=openingDate;}
+  } else {
+    accounts.push({id:crypto.randomUUID(),name,kind,openingBalance,openingDate,archived:false,order:accounts.length});
+  }
+  saveAccounts();
+  closeAccModal();
+  ldrListInitDone=false;
+  renderAccountsPanel();
+  renderFinance();
+}
+function confirmDelAccFromModal(accId){
+  const delWrap=document.getElementById('ldrAccDelWrap');if(!delWrap)return;
+  const hasRef=txs.some(t=>String(t.accountId)===accId||String(t.fromAccountId)===accId||String(t.toAccountId)===accId);
+  if(hasRef){
+    delWrap.innerHTML=`<span class="ldr-del-confirm" style="font-size:10px;">この口座を参照する取引があります。削除する場合は取引の口座を変更してください。<br>「非表示にする」で一覧から隠せます。</span>`;
+    return;
+  }
+  delWrap.innerHTML=`<span class="ldr-del-confirm">本当に削除しますか？</span><button class="btn btn-ghost btn-sm" onclick="_resetAccDelWrap('${esc(String(accId))}')">いいえ</button><button class="btn btn-sm" style="background:var(--accent);color:var(--paper);border:none;padding:5px 12px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;" onclick="execDelAcc('${esc(String(accId))}')">削除</button>`;
+}
+function _resetAccDelWrap(accId){
+  const delWrap=document.getElementById('ldrAccDelWrap');
+  if(delWrap)delWrap.innerHTML=`<button class="btn btn-ghost btn-sm" style="border-color:var(--accent);color:var(--accent)" onclick="confirmDelAccFromModal('${esc(String(accId))}')">削除</button>`;
+}
+function execDelAcc(accId){
+  accounts=accounts.filter(a=>String(a.id)!==String(accId));
+  saveAccounts();
+  closeAccModal();
+  ldrListInitDone=false;
+  renderAccountsPanel();
+  renderFinance();
+}
+function confirmDelAcc(accId){
+  const hasRef=txs.some(t=>String(t.accountId)===accId||String(t.fromAccountId)===accId||String(t.toAccountId)===accId);
+  if(hasRef){alert('この口座を参照している取引があります。取引を削除または変更してから削除してください。「非表示にする」で一覧から隠すこともできます。');return;}
+  if(confirm('この口座を削除しますか？'))execDelAcc(accId);
+}
+function archiveAcc(accId){
+  const a=accounts.find(a=>String(a.id)===String(accId));
+  if(a){a.archived=true;saveAccounts();ldrListInitDone=false;renderAccountsPanel();renderFinance();}
+}
+function unarchiveAcc(accId){
+  const a=accounts.find(a=>String(a.id)===String(accId));
+  if(a){a.archived=false;saveAccounts();ldrListInitDone=false;renderAccountsPanel();renderFinance();}
+}
+// ── Account ... menus ──
+function toggleAccMenu(e,id){
+  e.stopPropagation();
+  const menuId='ldrAccMenu_'+id;
+  if(_ldrOpenAccMenuId&&_ldrOpenAccMenuId!==menuId){const old=document.getElementById(_ldrOpenAccMenuId);if(old)old.classList.remove('open');}
+  const m=document.getElementById(menuId);
+  if(m){m.classList.toggle('open');_ldrOpenAccMenuId=m.classList.contains('open')?menuId:null;}
+}
+function closeAccMenus(){
+  if(_ldrOpenAccMenuId){const m=document.getElementById(_ldrOpenAccMenuId);if(m)m.classList.remove('open');_ldrOpenAccMenuId=null;}
+}
+// ── Balance adjust modal ──
+function openBalAdjModal(accId){
+  _ldrBalAdjAccId=accId;
+  const a=accounts.find(a=>String(a.id)===String(accId));if(!a)return;
+  const overlay=document.getElementById('ldrBalAdjModal');if(!overlay)return;
+  overlay.classList.add('open');
+  const asOf=today();
+  const cur=accountBalance(a,asOf);
+  const nameEl=document.getElementById('ldrBalAdjAccName');
+  if(nameEl)nameEl.textContent=a.name;
+  const curEl=document.getElementById('ldrBalAdjCurrent');
+  if(curEl)curEl.textContent=(cur<0?'-':'')+'¥'+fmt(Math.abs(cur));
+  const targetEl=document.getElementById('ldrBalAdjTarget');
+  if(targetEl){targetEl.value='';targetEl.focus();}
+  const diffEl=document.getElementById('ldrBalAdjDiffRow');
+  if(diffEl)diffEl.textContent='';
+  document.addEventListener('keydown',_ldrBalAdjEsc);
+}
+function _ldrBalAdjEsc(e){if(e.key==='Escape')closeBalAdjModal();}
+function closeBalAdjModal(){
+  const overlay=document.getElementById('ldrBalAdjModal');if(overlay)overlay.classList.remove('open');
+  document.removeEventListener('keydown',_ldrBalAdjEsc);
+}
+function ldrBalAdjPreview(){
+  const a=accounts.find(a=>String(a.id)===String(_ldrBalAdjAccId));if(!a)return;
+  const cur=accountBalance(a,today());
+  const targetVal=document.getElementById('ldrBalAdjTarget').value;
+  const diffEl=document.getElementById('ldrBalAdjDiffRow');if(!diffEl)return;
+  if(targetVal===''||targetVal===null){diffEl.textContent='';return;}
+  const target=parseFloat(targetVal);
+  if(isNaN(target)){diffEl.textContent='';return;}
+  const diff=target-cur;
+  if(diff===0){diffEl.textContent='差額なし（調整は記録されません）';return;}
+  const sign=diff>0?'+':'-';
+  diffEl.innerHTML=`差額: <strong style="color:${diff>0?'var(--ok)':'var(--accent)'};">${sign}¥${fmt(Math.abs(diff))}</strong> の調整取引が作成されます`;
+}
+function saveBalAdj(){
+  const a=accounts.find(a=>String(a.id)===String(_ldrBalAdjAccId));if(!a)return;
+  const cur=accountBalance(a,today());
+  const targetVal=document.getElementById('ldrBalAdjTarget').value;
+  if(targetVal===''||targetVal===null){document.getElementById('ldrBalAdjTarget').focus();return;}
+  const target=parseFloat(targetVal);
+  if(isNaN(target)){document.getElementById('ldrBalAdjTarget').focus();return;}
+  const diff=target-cur;
+  if(diff!==0){
+    txs.push({id:crypto.randomUUID(),type:'adjust',title:'残高調整',amount:diff,accountId:String(a.id),date:today(),note:''});
+    saveTx();
+  }
+  closeBalAdjModal();
+  ldrListInitDone=false;
+  renderAccountsPanel();
+  renderFinance();
+  renderLdrTxList();
 }
 
 // ── BUDGET ──
@@ -2512,18 +2969,25 @@ function openTxModal(type,txId){
   const title=document.getElementById('ldrTxModalTitle');
   const saveBtn=document.getElementById('ldrTxSaveBtn');
   const delWrap=document.getElementById('ldrTxDelWrap');
+  // Populate account selects
+  _populateTxAccSelects(txId?txs.find(t=>String(t.id)===String(txId)):null);
   if(txId){
-    // edit
     const tx=txs.find(t=>String(t.id)===String(txId));
     if(!tx)return;
     ldrTxModalType=tx.type;
     if(title)title.textContent='取引を編集';
     if(saveBtn)saveBtn.textContent='保存';
     document.getElementById('ldrTxDate').value=tx.date||today();
-    document.getElementById('ldrTxAmt').value=tx.amount||'';
+    document.getElementById('ldrTxAmt').value=tx.type==='adjust'?Math.abs(tx.amount):tx.amount||'';
     document.getElementById('ldrTxTitle').value=tx.title||'';
     document.getElementById('ldrTxCat').value=tx.category||'その他';
     document.getElementById('ldrTxNote').value=tx.note||'';
+    // Restore account / from / to
+    const accSel=document.getElementById('ldrTxAcc');
+    const fromSel=document.getElementById('ldrTxFrom');
+    const toSel=document.getElementById('ldrTxTo');
+    if(tx.type==='transfer'){if(fromSel)fromSel.value=tx.fromAccountId||'';if(toSel)toSel.value=tx.toAccountId||'';}
+    else{if(accSel)accSel.value=tx.accountId||'';}
     if(delWrap)delWrap.innerHTML=`<button class="btn btn-ghost btn-sm" style="border-color:var(--accent);color:var(--accent)" onclick="confirmDelTx('${esc(String(txId))}')">削除</button>`;
   } else {
     if(title)title.textContent='取引を追加';
@@ -2533,11 +2997,25 @@ function openTxModal(type,txId){
     document.getElementById('ldrTxTitle').value='';
     document.getElementById('ldrTxCat').value='その他';
     document.getElementById('ldrTxNote').value='';
+    // Restore last used account
+    try{const la=localStorage.getItem('ledger_last_account')||'';const accSel=document.getElementById('ldrTxAcc');if(accSel&&la)accSel.value=la;}catch(e){}
     if(delWrap)delWrap.innerHTML='';
   }
   _setLdrTxType(ldrTxModalType);
-  setTimeout(()=>document.getElementById('ldrTxTitle').focus(),50);
+  setTimeout(()=>{const el=document.getElementById('ldrTxTitle');if(el)el.focus();},50);
   document.addEventListener('keydown',_ldrTxEsc);
+}
+function _populateTxAccSelects(existingTx){
+  const activeAcc=accounts.filter(a=>!a.archived);
+  // If editing, also include archived accounts that are referenced
+  const extraIds=new Set();
+  if(existingTx){if(existingTx.accountId)extraIds.add(String(existingTx.accountId));if(existingTx.fromAccountId)extraIds.add(String(existingTx.fromAccountId));if(existingTx.toAccountId)extraIds.add(String(existingTx.toAccountId));}
+  const allRelevant=[...activeAcc,...accounts.filter(a=>a.archived&&extraIds.has(String(a.id)))];
+  const opts=`<option value="">口座未設定</option>${allRelevant.map(a=>`<option value="${esc(String(a.id))}">${esc(a.name)}</option>`).join('')}`;
+  const accSel=document.getElementById('ldrTxAcc');if(accSel)accSel.innerHTML=opts;
+  const opts2=`<option value="">選択してください</option>${allRelevant.map(a=>`<option value="${esc(String(a.id))}">${esc(a.name)}</option>`).join('')}`;
+  const fromSel=document.getElementById('ldrTxFrom');if(fromSel)fromSel.innerHTML=opts2;
+  const toSel=document.getElementById('ldrTxTo');if(toSel)toSel.innerHTML=opts2;
 }
 function _ldrTxEsc(e){if(e.key==='Escape')closeTxModal();}
 function closeTxModal(){
@@ -2552,20 +3030,52 @@ function setLdrTxType(type,el){
 function _setLdrTxType(type){
   const expBtn=document.getElementById('ldrTxTypeExp');
   const incBtn=document.getElementById('ldrTxTypeInc');
+  const trBtn=document.getElementById('ldrTxTypeTransfer');
   if(expBtn)expBtn.classList.toggle('active',type==='expense');
   if(incBtn)incBtn.classList.toggle('active',type==='income');
+  if(trBtn)trBtn.classList.toggle('active',type==='transfer');
+  // Show/hide rows based on type
+  const isTransfer=type==='transfer';
+  const isAdjust=type==='adjust';
+  const catRow=document.getElementById('ldrTxCatRow');
+  const accRow=document.getElementById('ldrTxAccRow');
+  const fromRow=document.getElementById('ldrTxFromRow');
+  const toRow=document.getElementById('ldrTxToRow');
+  const titleRow=document.getElementById('ldrTxTitleRow');
+  const typeRow=document.getElementById('ldrTxTypeRow');
+  if(catRow)catRow.style.display=isTransfer?'none':'';
+  if(accRow)accRow.style.display=isTransfer?'none':'';
+  if(fromRow)fromRow.style.display=isTransfer?'':'none';
+  if(toRow)toRow.style.display=isTransfer?'':'none';
+  if(typeRow)typeRow.style.display=isAdjust?'none':'';
 }
 function saveTxModal(){
-  const title=document.getElementById('ldrTxTitle').value.trim();
   const amount=parseFloat(document.getElementById('ldrTxAmt').value);
-  if(!title){document.getElementById('ldrTxTitle').focus();return;}
   if(isNaN(amount)||amount<=0){document.getElementById('ldrTxAmt').focus();return;}
-  const txObj={
-    type:ldrTxModalType,title,amount,
-    category:document.getElementById('ldrTxCat').value,
-    date:document.getElementById('ldrTxDate').value,
-    note:document.getElementById('ldrTxNote').value.trim()
-  };
+  let txObj;
+  if(ldrTxModalType==='transfer'){
+    const fromId=document.getElementById('ldrTxFrom').value;
+    const toId=document.getElementById('ldrTxTo').value;
+    if(!fromId){document.getElementById('ldrTxFrom').focus();return;}
+    if(!toId){document.getElementById('ldrTxTo').focus();return;}
+    if(fromId===toId){alert('出金元と入金先は異なる口座を選んでください');return;}
+    const titleVal=document.getElementById('ldrTxTitle').value.trim()||'振替';
+    txObj={type:'transfer',title:titleVal,amount,fromAccountId:fromId,toAccountId:toId,date:document.getElementById('ldrTxDate').value,note:document.getElementById('ldrTxNote').value.trim()};
+  } else if(ldrTxModalType==='adjust'){
+    // adjust type is saved with signed amount; editing existing adjust
+    const titleVal=document.getElementById('ldrTxTitle').value.trim()||'残高調整';
+    const existingTx=ldrEditingTxId?txs.find(t=>String(t.id)===String(ldrEditingTxId)):null;
+    const sign=existingTx&&existingTx.amount<0?-1:1;
+    txObj={type:'adjust',title:titleVal,amount:amount*sign,accountId:document.getElementById('ldrTxAcc').value||null,date:document.getElementById('ldrTxDate').value,note:document.getElementById('ldrTxNote').value.trim()};
+  } else {
+    const title=document.getElementById('ldrTxTitle').value.trim();
+    if(!title){document.getElementById('ldrTxTitle').focus();return;}
+    const accId=document.getElementById('ldrTxAcc').value||null;
+    // Remember last used account
+    try{if(accId)localStorage.setItem('ledger_last_account',accId);}catch(e){}
+    txObj={type:ldrTxModalType,title,amount,category:document.getElementById('ldrTxCat').value,accountId:accId||undefined,date:document.getElementById('ldrTxDate').value,note:document.getElementById('ldrTxNote').value.trim()};
+    if(!accId)delete txObj.accountId;
+  }
   if(ldrEditingTxId){
     const idx=txs.findIndex(t=>String(t.id)===String(ldrEditingTxId));
     if(idx>=0){txs[idx]={...txs[idx],...txObj};}
@@ -2576,7 +3086,10 @@ function saveTxModal(){
   saveTx();
   closeTxModal();
   renderFinance();
+  ldrListInitDone=false;
   renderLdrTxList();
+  const activeTab=_ldrActiveTab();
+  if(activeTab==='accounts')renderAccountsPanel();
 }
 function confirmDelTx(id){
   const delWrap=document.getElementById('ldrTxDelWrap');
@@ -2584,8 +3097,8 @@ function confirmDelTx(id){
   delWrap.innerHTML=`<span class="ldr-del-confirm">本当に削除しますか？</span><button class="btn btn-ghost btn-sm" onclick="ldrTxDelWrap_cancel()">いいえ</button><button class="btn btn-sm" style="background:var(--accent);color:var(--paper);border:none;padding:5px 12px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;" onclick="execDelTx('${esc(String(id))}')">削除</button>`;
 }
 function ldrTxDelWrap_cancel(){const w=document.getElementById('ldrTxDelWrap');if(w&&ldrEditingTxId)w.innerHTML=`<button class="btn btn-ghost btn-sm" style="border-color:var(--accent);color:var(--accent)" onclick="confirmDelTx('${esc(String(ldrEditingTxId))}')">削除</button>`;}
-function execDelTx(id){txs=txs.filter(t=>String(t.id)!==String(id));saveTx();closeTxModal();renderFinance();renderLdrTxList();}
-function delTx(id){txs=txs.filter(t=>String(t.id)!==String(id));saveTx();renderFinance();renderLdrTxList();}
+function execDelTx(id){txs=txs.filter(t=>String(t.id)!==String(id));saveTx();closeTxModal();renderFinance();ldrListInitDone=false;renderLdrTxList();if(_ldrActiveTab()==='accounts')renderAccountsPanel();}
+function delTx(id){txs=txs.filter(t=>String(t.id)!==String(id));saveTx();renderFinance();ldrListInitDone=false;renderLdrTxList();}
 
 // ── ... menu ──
 function toggleTxMenu(e,id){
@@ -2671,18 +3184,41 @@ function _prevMonthData(){
 }
 
 // ── tx table row HTML ──
+function _accName(id){if(!id)return'';const a=accounts.find(a=>String(a.id)===String(id));return a?a.name:'';}
 function _txRowHtml(t,hideMobCols){
-  const col=TX_CAT_COLORS[t.category]||'#6b7280';
-  const cls=hideMobCols?'hide-mob':'';
+  const mobCls=hideMobCols?'hide-mob':'';
   const dateStr=t.date?fmtS(new Date(t.date+'T00:00:00')):'';
-  const sign=t.type==='income'?'+':'-';
-  const amtCls=t.type==='income'?'inc':'exp';
+  let catHtml,amtHtml,accHtml,titleStr;
+  if(t.type==='transfer'){
+    catHtml=`<div class="ldr-tx-cat-cell"><div class="ldr-tx-cat-dot" style="background:#9ca3af"></div><span class="ldr-tx-cat-lbl">振替</span></div>`;
+    amtHtml=`<td class="ldr-tx-amt" style="color:var(--ink);">¥${fmt(t.amount)}</td>`;
+    const fn=_accName(t.fromAccountId),tn=_accName(t.toAccountId);
+    accHtml=`<td class="${mobCls} ldr-tx-transfer-arrow">${fn?esc(fn):'?'} → ${tn?esc(tn):'?'}</td>`;
+    titleStr=t.title||'振替';
+  } else if(t.type==='adjust'){
+    catHtml=`<div class="ldr-tx-cat-cell"><div class="ldr-tx-cat-dot" style="background:#9ca3af"></div><span class="ldr-tx-cat-lbl">残高調整</span></div>`;
+    const sign=t.amount>=0?'+':'-';
+    amtHtml=`<td class="ldr-tx-amt" style="color:var(--ink);">${sign}¥${fmt(Math.abs(t.amount))}</td>`;
+    const an=_accName(t.accountId);
+    accHtml=`<td class="${mobCls}">${an?`<span style="font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--ink3);">${esc(an)}</span>`:'<span style="color:var(--mute);">—</span>'}</td>`;
+    titleStr=t.title||'残高調整';
+  } else {
+    const col=TX_CAT_COLORS[t.category]||'#6b7280';
+    catHtml=`<div class="ldr-tx-cat-cell"><div class="ldr-tx-cat-dot" style="background:${col}"></div><span class="ldr-tx-cat-lbl">${esc(t.category||'')}</span></div>`;
+    const sign=t.type==='income'?'+':'-';
+    const amtCls=t.type==='income'?'inc':'exp';
+    amtHtml=`<td class="ldr-tx-amt ${amtCls}">${sign}¥${fmt(t.amount)}</td>`;
+    const an=_accName(t.accountId);
+    accHtml=`<td class="${mobCls}">${an?`<span style="font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--ink3);">${esc(an)}</span>`:'<span style="color:var(--mute);">—</span>'}</td>`;
+    titleStr=t.title||'';
+  }
   return`<tr class="ldr-tx-row" onclick="openTxModal(null,'${esc(String(t.id))}')">
     <td class="ldr-tx-date">${esc(dateStr)}</td>
-    <td class="ldr-tx-name">${esc(t.title)}</td>
-    <td class="${cls}"><div class="ldr-tx-cat-cell"><div class="ldr-tx-cat-dot" style="background:${col}"></div><span class="ldr-tx-cat-lbl">${esc(t.category)}</span></div></td>
-    <td class="ldr-tx-amt ${amtCls}">${sign}¥${fmt(t.amount)}</td>
-    <td class="${cls} ldr-tx-memo">${esc(t.note||'')}</td>
+    <td class="ldr-tx-name">${esc(titleStr)}</td>
+    <td class="${mobCls}">${catHtml}</td>
+    ${accHtml}
+    ${amtHtml}
+    <td class="${mobCls} ldr-tx-memo">${esc(t.note||'')}</td>
     <td style="width:32px;padding:4px;" onclick="event.stopPropagation()">
       <div class="ldr-tx-more-wrap">
         <button class="ldr-tx-more" onclick="toggleTxMenu(event,'${esc(String(t.id))}')">⋯</button>
@@ -2711,8 +3247,16 @@ function renderFinance(){
   const firstDay=new Date(vy,vm,1),lastDay=new Date(vy,vm+1,0);
   const pEl=document.getElementById('ldrPeriod');
   if(pEl)pEl.textContent=`${vy}年${vm+1}月${firstDay.getDate()}日 〜 ${vy}年${vm+1}月${lastDay.getDate()}日`;
-  // Current month txs
-  const mt=txs.filter(t=>{if(!t.date)return false;const d=new Date(t.date);return d.getFullYear()===vy&&d.getMonth()===vm;});
+  // Account filter select update
+  _ldrUpdateAccSel();
+  // Current month txs (with account filter)
+  const _moBase=txs.filter(t=>{if(!t.date)return false;const d=new Date(t.date);return d.getFullYear()===vy&&d.getMonth()===vm;});
+  const mt=ldrAccFilter==='all'?_moBase:_moBase.filter(t=>{
+    if(t.type==='income'||t.type==='expense')return String(t.accountId)===ldrAccFilter;
+    if(t.type==='transfer')return String(t.fromAccountId)===ldrAccFilter||String(t.toAccountId)===ldrAccFilter;
+    if(t.type==='adjust')return String(t.accountId)===ldrAccFilter;
+    return false;
+  });
   const inc=mt.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
   const exp=mt.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
   const net=inc-exp;
@@ -2726,10 +3270,10 @@ function renderFinance(){
   // Subs
   const activeSubs=subs.filter(s=>s.active);
   const subMo=activeSubs.reduce((sum,s)=>sum+(s.cycle==='yearly'?s.price/12:s.price),0);
-  // Category breakdown
+  // Category breakdown (expense only, account-filtered)
   const cats={};mt.filter(t=>t.type==='expense').forEach(t=>{cats[t.category]=(cats[t.category]||0)+t.amount;});
   const sortedCats=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([name,amt])=>({name,amt,color:TX_CAT_COLORS[name]||'#6b7280'}));
-  // Recent txs (filtered)
+  // Recent txs (filtered by type pill)
   const filtered=ldrTxFilter==='all'?mt:mt.filter(t=>t.type===ldrTxFilter);
   const recent=[...filtered].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,10);
   const panel=document.getElementById('ldrPanelOverview');
@@ -2779,8 +3323,29 @@ function renderFinance(){
     </div>
   </div>
   <div class="ui-card">
-    <div class="ldr-card-hdr"><div class="ldr-card-title">口座・残高</div></div>
-    <div class="ldr-card-body ldr-coming-soon" style="padding:20px;"><div class="ldr-coming-text" style="font-size:12px;">準備中</div></div>
+    <div class="ldr-card-hdr">
+      <div class="ldr-card-title">口座・残高</div>
+      <button class="ldr-card-link" onclick="ldrTab('accounts',document.querySelector('#ldrSubtabs .ui-seg-btn:nth-child(3)'))">詳細を見る ›</button>
+    </div>
+    <div class="ldr-card-body" style="padding:8px 14px 14px;">
+      ${(()=>{
+        const activeAccounts=accounts.filter(a=>!a.archived).sort((a,b)=>(a.order||0)-(b.order||0));
+        if(!activeAccounts.length)return`<div style="text-align:center;padding:16px 0;font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--mute);">口座が登録されていません</div><button class="ldr-card-link" style="font-size:11px;background:transparent;border:none;cursor:pointer;padding:0;color:var(--accent);display:block;margin-top:4px;" onclick="ldrTab('accounts',document.querySelector('#ldrSubtabs .ui-seg-btn:nth-child(3)'));setTimeout(()=>openAccModal(),50)">口座を登録する ›</button>`;
+        const asOf=_accAsOfDate();
+        const rows=activeAccounts.map(a=>{
+          const bal=accountBalance(a,asOf);
+          const balNeg=bal<0;
+          return`<div class="ldr-acc-ov-row" onclick="ldrTab('accounts',document.querySelector('#ldrSubtabs .ui-seg-btn:nth-child(3)'))">
+            <div class="ldr-acc-ov-icon">${_accKindSvg(a.kind,12)}</div>
+            <div class="ldr-acc-ov-name">${esc(a.name)}</div>
+            <div class="ldr-acc-ov-bal ${balNeg?'neg':''}">${balNeg?'-':''}¥${fmt(Math.abs(bal))}</div>
+            <div class="ldr-acc-ov-chevron">›</div>
+          </div>`;
+        }).join('');
+        const net=activeAccounts.reduce((s,a)=>s+accountBalance(a,asOf),0);
+        return`${rows}<div class="ldr-acc-net-total-row"><span class="ldr-acc-net-total-label">純資産合計</span><span class="ldr-acc-net-total-val ${net<0?'neg':''}" style="${net<0?'color:var(--accent)':''}">${net<0?'-':''}¥${fmt(Math.abs(net))}</span></div>`;
+      })()}
+    </div>
   </div>
   <div class="ui-card">
     <div class="ldr-card-hdr">
@@ -2806,8 +3371,9 @@ function renderFinance(){
         <button class="ui-pill ${ldrTxFilter==='all'?'active':''}" onclick="setLdrTxFilter('all',this)">すべて</button>
         <button class="ui-pill ${ldrTxFilter==='income'?'active':''}" onclick="setLdrTxFilter('income',this)">収入</button>
         <button class="ui-pill ${ldrTxFilter==='expense'?'active':''}" onclick="setLdrTxFilter('expense',this)">支出</button>
+        <button class="ui-pill ${ldrTxFilter==='transfer'?'active':''}" onclick="setLdrTxFilter('transfer',this)">振替</button>
       </div>
-      ${recent.length?`<table class="ldr-tx-table"><thead class="ldr-tx-thead"><tr><th>日付</th><th>内容</th><th class="hide-mob">カテゴリ</th><th class="r">金額</th><th class="hide-mob">メモ</th><th></th></tr></thead><tbody>${recent.map(t=>_txRowHtml(t,true)).join('')}</tbody></table>`:'<div style="text-align:center;padding:24px;color:var(--mute);font-family:\'JetBrains Mono\',monospace;font-size:12px;">取引がありません</div>'}
+      ${recent.length?`<table class="ldr-tx-table"><thead class="ldr-tx-thead"><tr><th>日付</th><th>内容</th><th class="hide-mob">カテゴリ</th><th class="hide-mob">口座</th><th class="r">金額</th><th class="hide-mob">メモ</th><th></th></tr></thead><tbody>${recent.map(t=>_txRowHtml(t,true)).join('')}</tbody></table>`:'<div style="text-align:center;padding:24px;color:var(--mute);font-family:\'JetBrains Mono\',monospace;font-size:12px;">取引がありません</div>'}
     </div>
   </div>
   <div class="ui-card">
@@ -2831,33 +3397,46 @@ function renderFinance(){
 
 // ── renderLdrTxList ──
 let ldrListInitDone=false;
+let ldrListAccFilter='all';
 function renderLdrTxList(){
   const panel=document.getElementById('ldrPanelTxlist');if(!panel)return;
   if(!ldrListInitDone){
     ldrListInitDone=true;
+    const accOpts=`<option value="all">すべての口座</option><option value="__unset__">口座未設定</option>${accounts.filter(a=>!a.archived).map(a=>`<option value="${esc(String(a.id))}">${esc(a.name)}</option>`).join('')}`;
     panel.innerHTML=`<div class="ldr-txlist-toolbar">
       <input class="ldr-txlist-search" id="ldrListSearch" type="text" placeholder="内容・メモで検索…" oninput="ldrListSearch=this.value;renderLdrTxList()" value="${esc(ldrListSearch)}">
-      <div id="ldrListPills" style="display:flex;gap:6px;">
+      <div id="ldrListPills" style="display:flex;gap:6px;flex-wrap:wrap;">
         <button class="ui-pill ${ldrListFilter==='all'?'active':''}" onclick="setLdrListFilter('all',this)">すべて</button>
         <button class="ui-pill ${ldrListFilter==='income'?'active':''}" onclick="setLdrListFilter('income',this)">収入</button>
         <button class="ui-pill ${ldrListFilter==='expense'?'active':''}" onclick="setLdrListFilter('expense',this)">支出</button>
+        <button class="ui-pill ${ldrListFilter==='transfer'?'active':''}" onclick="setLdrListFilter('transfer',this)">振替</button>
       </div>
-      <select class="ldr-txlist-cat-sel" id="ldrListCatSel" onchange="ldrListCat=this.value;renderLdrTxList()">
+      <select class="ldr-txlist-cat-sel" id="ldrListCatSel" onchange="ldrListCat=this.value;renderLdrTxList()" onclick="event.stopPropagation()">
         <option value="all">すべてのカテゴリ</option>
         <option value="食費">食費</option><option value="家賃">家賃</option><option value="光熱費">光熱費</option>
         <option value="交通費">交通費</option><option value="娯楽">娯楽</option><option value="医療">医療</option>
         <option value="衣服">衣服</option><option value="日用品">日用品</option><option value="給与">給与</option>
         <option value="副収入">副収入</option><option value="その他">その他</option>
       </select>
+      <select class="ldr-txlist-cat-sel" id="ldrListAccSel" onchange="ldrListAccFilter=this.value;renderLdrTxList()" onclick="event.stopPropagation()">${accOpts}</select>
     </div>
     <div class="ldr-txlist-summary" id="ldrListSummary"></div>
-    <div class="ui-card" style="overflow:auto;"><table class="ldr-tx-table" id="ldrListTable"><thead><tr><th>日付</th><th>内容</th><th class="hide-mob">カテゴリ</th><th class="r">金額</th><th class="hide-mob">メモ</th><th></th></tr></thead><tbody id="ldrListTbody"></tbody></table></div>`;
+    <div class="ui-card" style="overflow:auto;"><table class="ldr-tx-table" id="ldrListTable"><thead><tr><th>日付</th><th>内容</th><th class="hide-mob">カテゴリ</th><th class="hide-mob">口座</th><th class="r">金額</th><th class="hide-mob">メモ</th><th></th></tr></thead><tbody id="ldrListTbody"></tbody></table></div>`;
   }
   // filter
-  const mt=txs.filter(t=>{if(!t.date)return false;const d=new Date(t.date);return d.getFullYear()===vy&&d.getMonth()===vm;});
-  let filtered=mt;
+  const _moBase=txs.filter(t=>{if(!t.date)return false;const d=new Date(t.date);return d.getFullYear()===vy&&d.getMonth()===vm;});
+  let filtered=_moBase;
   if(ldrListFilter!=='all')filtered=filtered.filter(t=>t.type===ldrListFilter);
   if(ldrListCat!=='all')filtered=filtered.filter(t=>t.category===ldrListCat);
+  if(ldrListAccFilter!=='all'){
+    if(ldrListAccFilter==='__unset__')filtered=filtered.filter(t=>(t.type==='income'||t.type==='expense')&&!t.accountId);
+    else filtered=filtered.filter(t=>{
+      if(t.type==='income'||t.type==='expense')return String(t.accountId)===ldrListAccFilter;
+      if(t.type==='transfer')return String(t.fromAccountId)===ldrListAccFilter||String(t.toAccountId)===ldrListAccFilter;
+      if(t.type==='adjust')return String(t.accountId)===ldrListAccFilter;
+      return false;
+    });
+  }
   if(ldrListSearch){const q=ldrListSearch.toLowerCase();filtered=filtered.filter(t=>(t.title||'').toLowerCase().includes(q)||(t.note||'').toLowerCase().includes(q));}
   const sorted=[...filtered].sort((a,b)=>new Date(b.date)-new Date(a.date));
   const totInc=filtered.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
@@ -2865,14 +3444,15 @@ function renderLdrTxList(){
   const sumEl=document.getElementById('ldrListSummary');
   if(sumEl)sumEl.innerHTML=`<strong>${sorted.length}</strong> 件　収入 <strong style="color:var(--ok)">+¥${fmt(totInc)}</strong>　支出 <strong style="color:var(--accent)">-¥${fmt(totExp)}</strong>`;
   const tbody=document.getElementById('ldrListTbody');
-  if(tbody)tbody.innerHTML=sorted.length?sorted.map(t=>_txRowHtml(t,false)).join(''):`<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--mute);font-family:'JetBrains Mono',monospace;font-size:12px;">取引がありません</td></tr>`;
+  if(tbody)tbody.innerHTML=sorted.length?sorted.map(t=>_txRowHtml(t,false)).join(''):`<tr><td colspan="7" style="text-align:center;padding:28px;color:var(--mute);font-family:'JetBrains Mono',monospace;font-size:12px;">取引がありません</td></tr>`;
   // update pills active state
   document.querySelectorAll('#ldrListPills .ui-pill').forEach(p=>{
     const f=p.getAttribute('onclick').match(/setLdrListFilter\('(\w+)'/)?.[1];
     if(f)p.classList.toggle('active',f===ldrListFilter);
   });
-  // update cat sel
+  // update cat sel + acc sel
   const catSel=document.getElementById('ldrListCatSel');if(catSel)catSel.value=ldrListCat;
+  const accSel=document.getElementById('ldrListAccSel');if(accSel)accSel.value=ldrListAccFilter;
 }
 function setLdrListFilter(f,el){
   ldrListFilter=f;
