@@ -297,10 +297,13 @@
     .ldr-bdg-cat-cell { display:flex; align-items:center; gap:6px; min-width:90px; }
     .ldr-bdg-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
     .ldr-bdg-cat-name { font-family:'Space Grotesk',sans-serif; font-size:13px; white-space:nowrap; }
-    .ldr-bdg-amt { font-family:'JetBrains Mono',monospace; font-size:13px; text-align:right; white-space:nowrap; cursor:pointer; padding:3px 6px; border-radius:4px; transition:background 0.12s; }
-    .ldr-bdg-amt:hover { background:rgba(26,24,20,0.06); }
-    .ldr-bdg-amt.muted { color:var(--mute); }
-    .ldr-bdg-amt.override { background:rgba(139,58,24,0.07); }
+    .ldr-bdg-amt { font-family:'JetBrains Mono',monospace; font-size:13px; text-align:right; white-space:nowrap; cursor:pointer; box-sizing:border-box; height:24px; line-height:1; padding:0 6px; border-radius:6px; border:1px dashed transparent; transition:background 0.12s,border-color 0.12s; display:inline-flex; align-items:center; justify-content:flex-end; gap:3px; }
+    .ldr-bdg-amt:hover, .ldr-bdg-amt:focus-visible { background:rgba(139,58,24,0.08); border-color:var(--accent); outline:none; }
+    .ldr-bdg-amt:not(.muted):not(.muted-mo):hover::before,
+    .ldr-bdg-amt:not(.muted):not(.muted-mo):focus-visible::before { content:''; width:11px; height:11px; flex-shrink:0; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M8.5 1.5 10.5 3.5 4 10H1.5V7.5z' fill='%238b3a18' fill-opacity='.55'/%3E%3C/svg%3E") center/contain no-repeat; }
+    .ldr-bdg-amt.muted { color:rgba(139,58,24,0.6); font-size:11px; }
+    .ldr-bdg-amt.muted-mo { color:var(--mute); font-size:11px; }
+    .ldr-bdg-amt.override { border-color:rgba(139,58,24,0.3); background:rgba(139,58,24,0.07); }
     .ldr-bdg-act { font-family:'JetBrains Mono',monospace; font-size:13px; text-align:right; white-space:nowrap; }
     .ldr-bdg-prog-cell { min-width:120px; }
     .ldr-bdg-bar-wrap { display:flex; align-items:center; gap:6px; }
@@ -309,7 +312,7 @@
     .ldr-bdg-pct { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); width:36px; text-align:right; flex-shrink:0; }
     .ldr-bdg-pct.over { color:var(--accent); font-weight:700; }
     .ldr-bdg-edit-wrap { display:inline-flex; align-items:center; gap:3px; }
-    .ldr-bdg-edit-in { width:11ch; font-family:'JetBrains Mono',monospace; font-size:12px; height:26px; border:1.5px solid var(--ink); border-radius:4px; background:var(--paper); color:var(--ink); outline:none; text-align:right; padding:0 5px; }
+    .ldr-bdg-edit-in { width:11ch; box-sizing:border-box; font-family:'JetBrains Mono',monospace; font-size:12px; height:24px; border:1.5px solid var(--ink); border-radius:4px; background:var(--paper); color:var(--ink); outline:none; text-align:right; padding:0 5px; }
     .ldr-bdg-override-x { background:transparent; border:none; cursor:pointer; color:var(--mute); font-size:13px; padding:2px 4px; line-height:1; transition:color 0.12s; flex-shrink:0; }
     .ldr-bdg-override-x:hover { color:var(--accent); }
     .ldr-bdg-foot { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink3); line-height:1.6; margin-top:12px; padding:12px 14px; background:rgba(26,24,20,0.025); border-radius:8px; }
@@ -942,6 +945,8 @@
       .ldr-modal-2col { grid-template-columns:1fr; gap:10px; }
       /* Budget table on mobile: hide base/month cols, show expand panel */
       .ldr-bdg-table .hide-mob { display:none; }
+      /* Always show dashed border on editable cells (no hover on touch) */
+      .ldr-bdg-amt { border-color:rgba(139,58,24,0.2); }
 
       /* ── Calendar ── */
       .cal-wrap { padding: 12px 8px; }
@@ -2392,9 +2397,11 @@ function renderBudgetPanel(){
 }
 
 function _bdgCellHtml(cat,field,val,isOverride){
-  const displayVal=val!==null?`¥${fmt(val)}`:'—';
+  const isUnset=val===null;
+  const displayVal=isUnset?(field==='base'?'＋ 設定':'＋ 変更'):`¥${fmt(val)}`;
+  const muteClass=isUnset?(field==='base'?'muted':'muted-mo'):'';
   const xBtn=isOverride?`<button class="ldr-bdg-override-x" onclick="event.stopPropagation();ldrBdgClear('${esc(cat)}','${field}')" title="この月の上書きを解除">×</button>`:'';
-  return`<span class="ldr-bdg-amt ${val===null?'muted':''} ${isOverride?'override':''}" data-bdgcat="${esc(cat)}" data-bdgfield="${field}" onclick="event.stopPropagation();ldrBdgEdit('${esc(cat)}','${field}')" title="クリックして編集">${displayVal}</span>${xBtn}`;
+  return`<span class="ldr-bdg-amt ${muteClass} ${isOverride?'override':''}" tabindex="0" role="button" data-bdgcat="${esc(cat)}" data-bdgfield="${field}" onclick="event.stopPropagation();ldrBdgEdit('${esc(cat)}','${field}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.stopPropagation();ldrBdgEdit('${esc(cat)}','${field}');}" title="クリックして編集">${displayVal}</span>${xBtn}`;
 }
 
 let _bdgEditCat=null,_bdgEditField=null;
