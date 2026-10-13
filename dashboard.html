@@ -281,6 +281,44 @@
     .ldr-subs-top { display:flex; align-items:flex-end; gap:20px; padding:14px 0 16px; border-bottom:1px solid rgba(26,24,20,0.12); margin-bottom:16px; flex-wrap:wrap; }
     .ldr-subs-total-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink3); font-weight:600; margin-bottom:6px; }
     .ldr-subs-total-num { font-family:'JetBrains Mono',monospace; font-size:34px; font-weight:700; line-height:1; }
+    /* Budget sub-tab */
+    .ldr-bdg-top-card { padding:16px 18px; margin-bottom:14px; }
+    .ldr-bdg-top-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.12em; text-transform:uppercase; color:var(--ink3); font-weight:600; margin-bottom:6px; }
+    .ldr-bdg-top-vals { font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; line-height:1.1; margin-bottom:8px; }
+    .ldr-bdg-top-vals.over { color:var(--accent); }
+    .ldr-bdg-progbar-wrap { height:7px; background:rgba(26,24,20,0.1); border-radius:4px; overflow:hidden; margin-bottom:5px; }
+    .ldr-bdg-progbar { height:100%; border-radius:4px; transition:width 0.3s; }
+    .ldr-bdg-table { width:100%; border-collapse:collapse; }
+    .ldr-bdg-table th { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink3); font-weight:600; padding:8px 10px; text-align:left; border-bottom:2px solid rgba(26,24,20,0.12); white-space:nowrap; }
+    .ldr-bdg-table th.r { text-align:right; }
+    .ldr-bdg-row { transition:background 0.12s; height:42px; }
+    .ldr-bdg-row:hover { background:rgba(26,24,20,0.025); }
+    .ldr-bdg-row td { padding:8px 10px; border-bottom:1px solid rgba(26,24,20,0.07); vertical-align:middle; }
+    .ldr-bdg-cat-cell { display:flex; align-items:center; gap:6px; min-width:90px; }
+    .ldr-bdg-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .ldr-bdg-cat-name { font-family:'Space Grotesk',sans-serif; font-size:13px; white-space:nowrap; }
+    .ldr-bdg-amt { font-family:'JetBrains Mono',monospace; font-size:13px; text-align:right; white-space:nowrap; cursor:pointer; padding:3px 6px; border-radius:4px; transition:background 0.12s; }
+    .ldr-bdg-amt:hover { background:rgba(26,24,20,0.06); }
+    .ldr-bdg-amt.muted { color:var(--mute); }
+    .ldr-bdg-amt.override { background:rgba(139,58,24,0.07); }
+    .ldr-bdg-act { font-family:'JetBrains Mono',monospace; font-size:13px; text-align:right; white-space:nowrap; }
+    .ldr-bdg-prog-cell { min-width:120px; }
+    .ldr-bdg-bar-wrap { display:flex; align-items:center; gap:6px; }
+    .ldr-bdg-bar-bg { flex:1; height:5px; background:rgba(26,24,20,0.1); border-radius:3px; overflow:hidden; min-width:60px; }
+    .ldr-bdg-bar-fill { height:100%; border-radius:3px; transition:width 0.3s; }
+    .ldr-bdg-pct { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); width:36px; text-align:right; flex-shrink:0; }
+    .ldr-bdg-pct.over { color:var(--accent); font-weight:700; }
+    .ldr-bdg-edit-wrap { display:inline-flex; align-items:center; gap:3px; }
+    .ldr-bdg-edit-in { width:11ch; font-family:'JetBrains Mono',monospace; font-size:12px; height:26px; border:1.5px solid var(--ink); border-radius:4px; background:var(--paper); color:var(--ink); outline:none; text-align:right; padding:0 5px; }
+    .ldr-bdg-override-x { background:transparent; border:none; cursor:pointer; color:var(--mute); font-size:13px; padding:2px 4px; line-height:1; transition:color 0.12s; flex-shrink:0; }
+    .ldr-bdg-override-x:hover { color:var(--accent); }
+    .ldr-bdg-foot { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink3); line-height:1.6; margin-top:12px; padding:12px 14px; background:rgba(26,24,20,0.025); border-radius:8px; }
+    .ldr-bdg-row-total td { border-bottom:2px solid rgba(26,24,20,0.15) !important; font-weight:700; background:rgba(26,24,20,0.02); }
+    .ldr-bdg-row-expand { background:rgba(26,24,20,0.025); }
+    .ldr-bdg-row-expand td { padding:10px 14px; border-bottom:1px solid rgba(26,24,20,0.07); }
+    .ldr-bdg-expand-grid { display:flex; flex-direction:column; gap:8px; }
+    .ldr-bdg-expand-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .ldr-bdg-expand-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink3); min-width:100px; }
     /* Placeholder */
     .ldr-coming-soon { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:56px 20px; text-align:center; }
     .ldr-coming-icon { color:var(--mute); margin-bottom:10px; }
@@ -902,6 +940,8 @@
       .ldr-modal { border-radius:0; max-width:100%; margin:0; margin-top:auto; }
       .ldr-modal-overlay { padding:0; align-items:flex-end; }
       .ldr-modal-2col { grid-template-columns:1fr; gap:10px; }
+      /* Budget table on mobile: hide base/month cols, show expand panel */
+      .ldr-bdg-table .hide-mob { display:none; }
 
       /* ── Calendar ── */
       .cal-wrap { padding: 12px 8px; }
@@ -1245,6 +1285,13 @@
         <div class="ldr-step">
           <div class="ldr-step-num">5</div>
           <div>
+            <div class="ldr-step-title">予算を決める</div>
+            <div class="ldr-step-text">予算タブで毎月の予算を設定すると、進捗が Overview に表示されます。特定の月だけ変えることもできます。</div>
+          </div>
+        </div>
+        <div class="ldr-step">
+          <div class="ldr-step-num">6</div>
+          <div>
             <div class="ldr-step-title">月末に振り返る</div>
             <div class="ldr-step-text">収支・貯蓄率・カテゴリ別支出を見て、翌月に活かしましょう。</div>
           </div>
@@ -1506,6 +1553,7 @@ let shopping = JSON.parse(localStorage.getItem('hd_shopping') || '[]');
 let subs     = JSON.parse(localStorage.getItem('hd_subs')     || '[]');
 let trips    = JSON.parse(localStorage.getItem('hd_trips')    || '[]');
 let meals    = JSON.parse(localStorage.getItem('food_meals')  || '[]');
+let budgets  = (()=>{try{const v=JSON.parse(localStorage.getItem('ledger_budgets'));if(v&&typeof v==='object'&&!Array.isArray(v))return v;}catch(e){}return{base:{total:null,cats:{}},months:{}};})();
 let tripFilter = 'all';
 let shopFilter = 'all';
 
@@ -1551,7 +1599,7 @@ async function pushToSupabase(userId) {
   }
   await sb.from('user_data').upsert({
     user_id: userId, tasks, task_notes: taskNotes,
-    shopping, subs, txs, trips, meals,
+    shopping, subs, txs, trips, meals, budgets,
     seed_flags: seedFlags, updated_at: new Date().toISOString()
   });
 }
@@ -1566,6 +1614,7 @@ async function syncFromSupabase(userId) {
   if (Array.isArray(data.txs))      { txs       = data.txs;       localStorage.setItem('hd_tx',         JSON.stringify(txs)); }
   if (Array.isArray(data.trips))    { trips     = data.trips;     localStorage.setItem('hd_trips',      JSON.stringify(trips)); }
   if (Array.isArray(data.meals))    { meals     = data.meals;     localStorage.setItem('food_meals',    JSON.stringify(meals)); }
+  if (data.budgets && typeof data.budgets==='object' && !Array.isArray(data.budgets)) { budgets = data.budgets; localStorage.setItem('ledger_budgets', JSON.stringify(budgets)); }
   if (data.seed_flags) Object.entries(data.seed_flags).forEach(([k,v]) => localStorage.setItem(k,v));
 }
 
@@ -2189,8 +2238,9 @@ let ldrEditingTxId=null;      // null=new, string=edit
 let ldrTxModalType='expense'; // current modal type
 let _ldrOpenMenuId=null;      // currently open ... menu
 
-function chMonth(d){vm+=d;if(vm>11){vm=0;vy++;}if(vm<0){vm=11;vy--;}renderFinance();}
-function goMonthToday(){const n=new Date();vy=n.getFullYear();vm=n.getMonth();renderFinance();}
+function _ldrActiveTab(){const a=document.querySelector('#ldrSubtabs .ui-seg-btn.active');return a?a.getAttribute('onclick').match(/'(\w+)'/)?.[1]||'overview':'overview';}
+function chMonth(d){vm+=d;if(vm>11){vm=0;vy++;}if(vm<0){vm=11;vy--;}const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();}
+function goMonthToday(){const n=new Date();vy=n.getFullYear();vm=n.getMonth();const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();}
 function saveTx(){localStorage.setItem('hd_tx',JSON.stringify(txs));saveToSupabase();}
 
 // ── sub-tab navigation ──
@@ -2202,14 +2252,14 @@ function ldrTab(tab, el){
     const p=document.getElementById('ldrPanel'+t.charAt(0).toUpperCase()+t.slice(1));
     if(p)p.style.display=(t===tab?'block':'none');
   });
-  const showMon=tab==='overview'||tab==='txlist';
+  const showMon=tab==='overview'||tab==='txlist'||tab==='budget';
   const nav=document.getElementById('ldrMonNav');
   if(nav)nav.style.display=showMon?'':'none';
   if(tab==='overview')renderFinance();
   else if(tab==='txlist')renderLdrTxList();
   else if(tab==='subs'){renderSubs();}
   else if(tab==='accounts')renderLdrPlaceholder('ldrPanelAccounts','口座・残高','銀行・カード・現金などの口座ごとの残高と純資産を表示する予定です。');
-  else if(tab==='budget')renderLdrPlaceholder('ldrPanelBudget','予算','カテゴリごとに月の予算を設定し、進捗を表示する予定です。');
+  else if(tab==='budget')renderBudgetPanel();
   else if(tab==='import')renderLdrPlaceholder('ldrPanelImport','インポート','カード明細や銀行の CSV を取り込む予定です。');
 }
 function restoreLdrSubtab(){
@@ -2221,6 +2271,201 @@ function restoreLdrSubtab(){
 function renderLdrPlaceholder(panelId,title,desc){
   const p=document.getElementById(panelId);if(!p)return;
   p.innerHTML=`<div class="ui-card ldr-coming-soon"><div class="ldr-coming-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12" x2="12" y2="12"/></svg></div><div class="ldr-coming-title">${esc(title)}</div><div class="ldr-coming-text">${esc(desc)}</div></div>`;
+}
+
+// ── BUDGET ──
+function saveBudgets(){
+  if(!budgets.base)budgets.base={total:null,cats:{}};
+  if(!budgets.months)budgets.months={};
+  localStorage.setItem('ledger_budgets',JSON.stringify(budgets));
+  saveToSupabase();
+}
+
+function getEffBudget(y,m){
+  if(!budgets)return{total:null,cats:{}};
+  const ym=`${y}-${String(m+1).padStart(2,'0')}`;
+  const mo=(budgets.months&&budgets.months[ym])||{};
+  const base=budgets.base||{total:null,cats:{}};
+  const total=mo.total!==undefined?mo.total:(base.total!==undefined?base.total:null);
+  const cats={};
+  const allCatKeys=new Set([...Object.keys(base.cats||{}),...Object.keys(mo.cats||{})]);
+  allCatKeys.forEach(cat=>{
+    const moVal=(mo.cats&&mo.cats[cat]!==undefined)?mo.cats[cat]:undefined;
+    const baseVal=(base.cats&&base.cats[cat]!==undefined)?base.cats[cat]:null;
+    cats[cat]=moVal!==undefined?moVal:baseVal;
+  });
+  return{total,cats};
+}
+
+const STD_EXP_CATS=['食費','家賃','光熱費','交通費','娯楽','医療','衣服','日用品','その他'];
+
+function renderBudgetPanel(){
+  const panel=document.getElementById('ldrPanelBudget');if(!panel)return;
+  // Update month nav labels
+  const ml=document.getElementById('ldrMonLabel');
+  if(ml)ml.textContent=`${vy}年 ${LDR_MONTHS[vm]}`;
+  const firstDay=new Date(vy,vm,1),lastDay=new Date(vy,vm+1,0);
+  const pEl=document.getElementById('ldrPeriod');
+  if(pEl)pEl.textContent=`${vy}年${vm+1}月${firstDay.getDate()}日 〜 ${vy}年${vm+1}月${lastDay.getDate()}日`;
+  const ym=`${vy}-${String(vm+1).padStart(2,'0')}`;
+  const expTxs=txs.filter(t=>{if(!t.date||t.type!=='expense')return false;const d=new Date(t.date);return d.getFullYear()===vy&&d.getMonth()===vm;});
+  const totalExp=expTxs.reduce((s,t)=>s+t.amount,0);
+  const eb=getEffBudget(vy,vm);
+  const tb=eb.total;
+
+  // Overall top card
+  let topCardHtml;
+  if(tb===null){
+    topCardHtml=`<div class="ldr-bdg-top-label">${vy}年${vm+1}月の支出予算（全体）</div>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--ink3);margin:6px 0;">全体予算が未設定です</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink3);">実績: ¥${fmt(totalExp)}</div>`;
+  } else {
+    const pct=tb>0?totalExp/tb*100:0;
+    const over=totalExp>tb;
+    const remain=tb-totalExp;
+    const barColor=over?'var(--accent)':pct>=80?'var(--warn)':'var(--ok)';
+    topCardHtml=`<div class="ldr-bdg-top-label">${vy}年${vm+1}月の支出予算</div>
+    <div class="ldr-bdg-top-vals ${over?'over':''}">¥${fmt(totalExp)} <span style="color:var(--ink3);font-size:14px;font-weight:400;">/ ¥${fmt(tb)}</span></div>
+    <div class="ldr-bdg-progbar-wrap"><div class="ldr-bdg-progbar" style="width:${Math.min(pct,100).toFixed(1)}%;background:${barColor};"></div></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:12px;display:flex;gap:12px;flex-wrap:wrap;">
+      <span style="${over?'color:var(--accent);font-weight:700':'color:var(--ink3)'}">${pct.toFixed(0)}%</span>
+      <span style="color:${over?'var(--accent)':'var(--ok)'};">${over?'¥'+fmt(Math.abs(remain))+' 超過':'残り ¥'+fmt(remain)}</span>
+    </div>`;
+  }
+
+  // Build category list: 'total' + STD_EXP_CATS + extra cats in txs
+  const txCats=[...new Set(expTxs.map(t=>t.category).filter(c=>c&&!STD_EXP_CATS.includes(c)&&c!=='給与'&&c!=='副収入'))];
+  const allCats=['total',...STD_EXP_CATS,...txCats];
+  const catExpMap={total:totalExp};
+  expTxs.forEach(t=>{catExpMap[t.category]=(catExpMap[t.category]||0)+t.amount;});
+
+  const base=budgets.base||{total:null,cats:{}};
+  const moData=(budgets.months&&budgets.months[ym])||{};
+
+  function _baseBudGet(cat){return cat==='total'?(base.total!==null&&base.total!==undefined?base.total:null):(base.cats&&base.cats[cat]!==undefined?base.cats[cat]:null);}
+  function _moBudGet(cat){return cat==='total'?(moData.total!==undefined?moData.total:null):(moData.cats&&moData.cats[cat]!==undefined?moData.cats[cat]:null);}
+  function _effBud(cat){const mo=_moBudGet(cat);if(mo!==null)return mo;return _baseBudGet(cat);}
+
+  const rowsHtml=allCats.map(cat=>{
+    const catLabel=cat==='total'?'全体（合計）':cat;
+    const color=cat==='total'?'var(--ink)':TX_CAT_COLORS[cat]||'#6b7280';
+    const baseV=_baseBudGet(cat);
+    const moV=_moBudGet(cat);
+    const effV=_effBud(cat);
+    const actV=catExpMap[cat]||0;
+    const hasEff=effV!==null;
+    const pct=hasEff&&effV>0?actV/effV*100:0;
+    const over=hasEff&&actV>effV;
+    const barColor=over?'var(--accent)':pct>=80?'var(--warn)':'var(--ok)';
+    const baseCell=_bdgCellHtml(cat,'base',baseV,false);
+    const moCell=_bdgCellHtml(cat,'month',moV,moV!==null);
+    const progHtml=hasEff?`<div class="ldr-bdg-bar-wrap"><div class="ldr-bdg-bar-bg"><div class="ldr-bdg-bar-fill" style="width:${Math.min(pct,100).toFixed(1)}%;background:${barColor};"></div></div><span class="ldr-bdg-pct ${over?'over':''}">${pct.toFixed(0)}%</span></div>`:`<span style="color:var(--mute);font-family:'JetBrains Mono',monospace;font-size:11px;">—</span>`;
+    const expandId=`ldrBdgExp_${esc(cat)}`;
+    const mobExpandHtml=`<tr class="ldr-bdg-row-expand" id="${expandId}" style="display:none;"><td colspan="3"><div class="ldr-bdg-expand-grid">
+      <div class="ldr-bdg-expand-row"><span class="ldr-bdg-expand-label">毎月の予算</span>${baseCell}</div>
+      <div class="ldr-bdg-expand-row"><span class="ldr-bdg-expand-label">この月だけ変更</span>${moCell}</div>
+    </div></td></tr>`;
+    return`<tr class="ldr-bdg-row${cat==='total'?' ldr-bdg-row-total':''}" onclick="ldrBdgToggleExpand('${esc(cat)}')">
+      <td><div class="ldr-bdg-cat-cell"><div class="ldr-bdg-dot" style="background:${color};"></div><span class="ldr-bdg-cat-name">${esc(catLabel)}</span></div></td>
+      <td class="hide-mob" style="text-align:right;" onclick="event.stopPropagation()">${baseCell}</td>
+      <td class="hide-mob" style="text-align:right;" onclick="event.stopPropagation()">${moCell}</td>
+      <td class="ldr-bdg-act" style="color:var(--ink);">¥${fmt(actV)}</td>
+      <td class="ldr-bdg-prog-cell">${progHtml}</td>
+    </tr>${mobExpandHtml}`;
+  }).join('');
+
+  panel.innerHTML=`
+<div class="ui-card ldr-bdg-top-card">${topCardHtml}</div>
+<div class="ui-card" style="overflow-x:auto;">
+  <table class="ldr-bdg-table">
+    <thead><tr>
+      <th style="min-width:110px;">カテゴリ</th>
+      <th class="r hide-mob" style="min-width:110px;">毎月の予算</th>
+      <th class="r hide-mob" style="min-width:110px;">この月だけ変更</th>
+      <th class="r" style="min-width:80px;">実績</th>
+      <th style="min-width:120px;">進捗</th>
+    </tr></thead>
+    <tbody>${rowsHtml}</tbody>
+  </table>
+</div>
+<div class="ldr-bdg-foot">毎月の予算は毎月共通です。「この月だけ変更」に入れた金額はこの月にだけ使われます。実績は記録した支出の取引から計算しています（固定費・サブスクは含みません）。各金額をクリックすると編集できます。</div>`;
+}
+
+function _bdgCellHtml(cat,field,val,isOverride){
+  const displayVal=val!==null?`¥${fmt(val)}`:'—';
+  const xBtn=isOverride?`<button class="ldr-bdg-override-x" onclick="event.stopPropagation();ldrBdgClear('${esc(cat)}','${field}')" title="この月の上書きを解除">×</button>`:'';
+  return`<span class="ldr-bdg-amt ${val===null?'muted':''} ${isOverride?'override':''}" data-bdgcat="${esc(cat)}" data-bdgfield="${field}" onclick="event.stopPropagation();ldrBdgEdit('${esc(cat)}','${field}')" title="クリックして編集">${displayVal}</span>${xBtn}`;
+}
+
+let _bdgEditCat=null,_bdgEditField=null;
+function ldrBdgEdit(cat,field){
+  if(_bdgEditCat!==null)ldrBdgCancel();
+  _bdgEditCat=cat;_bdgEditField=field;
+  const base=budgets.base||{total:null,cats:{}};
+  const ym=`${vy}-${String(vm+1).padStart(2,'0')}`;
+  const moData=(budgets.months&&budgets.months[ym])||{};
+  let curVal;
+  if(field==='base'){curVal=cat==='total'?(base.total!==null&&base.total!==undefined?String(base.total):''):(base.cats&&base.cats[cat]!==undefined?String(base.cats[cat]):'');}
+  else{curVal=cat==='total'?(moData.total!==undefined&&moData.total!==null?String(moData.total):''):(moData.cats&&moData.cats[cat]!==undefined?String(moData.cats[cat]):'');}
+  // Find all matching spans by data attributes and replace the first visible one with input
+  const spans=[...document.querySelectorAll(`#ldrPanelBudget .ldr-bdg-amt[data-bdgcat="${esc(cat)}"][data-bdgfield="${field}"]`)];
+  const targetSpan=spans.find(s=>s.offsetParent!==null)||spans[0];
+  if(!targetSpan)return;
+  const sz=Math.max(6,(curVal||'').length+2);
+  targetSpan.outerHTML=`<div class="ldr-bdg-edit-wrap" onclick="event.stopPropagation()"><input class="ldr-bdg-edit-in" id="ldrBdgIn" type="number" min="0" size="${sz}" value="${esc(curVal)}" placeholder="金額" onkeydown="ldrBdgKey(event,'${esc(cat)}','${field}')" onblur="ldrBdgSave('${esc(cat)}','${field}')"></div>`;
+  const inp=document.getElementById('ldrBdgIn');if(inp){inp.focus();inp.select();}
+}
+
+function ldrBdgKey(e,cat,field){
+  if(e.key==='Enter'){e.preventDefault();ldrBdgSave(cat,field);}
+  else if(e.key==='Escape'){e.preventDefault();ldrBdgCancel();}
+}
+
+function ldrBdgCancel(){_bdgEditCat=null;_bdgEditField=null;renderBudgetPanel();}
+
+function ldrBdgSave(cat,field){
+  if(_bdgEditCat!==cat||_bdgEditField!==field)return;
+  _bdgEditCat=null;_bdgEditField=null;
+  const inp=document.getElementById('ldrBdgIn');
+  const raw=inp?inp.value.trim():'';
+  const val=raw===''?null:(isNaN(Number(raw))?null:Number(raw));
+  const ym=`${vy}-${String(vm+1).padStart(2,'0')}`;
+  if(!budgets.base)budgets.base={total:null,cats:{}};
+  if(!budgets.months)budgets.months={};
+  if(field==='base'){
+    if(cat==='total'){budgets.base.total=val;}
+    else{if(val===null){delete budgets.base.cats[cat];}else{if(!budgets.base.cats)budgets.base.cats={};budgets.base.cats[cat]=val;}}
+  } else {
+    if(!budgets.months[ym])budgets.months[ym]={};
+    if(cat==='total'){if(val===null){delete budgets.months[ym].total;}else{budgets.months[ym].total=val;}}
+    else{if(!budgets.months[ym].cats)budgets.months[ym].cats={};if(val===null){delete budgets.months[ym].cats[cat];}else{budgets.months[ym].cats[cat]=val;}}
+    // Clean up empty month entry
+    if(budgets.months[ym]&&budgets.months[ym].total===undefined&&(!budgets.months[ym].cats||!Object.keys(budgets.months[ym].cats).length))delete budgets.months[ym];
+  }
+  saveBudgets();
+  renderBudgetPanel();
+}
+
+function ldrBdgClear(cat,field){
+  if(field!=='month')return;
+  const ym=`${vy}-${String(vm+1).padStart(2,'0')}`;
+  if(!budgets.months||!budgets.months[ym])return;
+  if(cat==='total'){delete budgets.months[ym].total;}
+  else if(budgets.months[ym].cats){delete budgets.months[ym].cats[cat];}
+  // Clean up empty
+  const mo=budgets.months[ym];
+  if(mo&&mo.total===undefined&&(!mo.cats||!Object.keys(mo.cats).length))delete budgets.months[ym];
+  saveBudgets();
+  renderBudgetPanel();
+}
+
+function ldrBdgToggleExpand(cat){
+  // Only meaningful on mobile (≤640px); on desktop stopPropagation handles it
+  if(window.innerWidth>640)return;
+  const id=`ldrBdgExp_${cat}`;
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.style.display=el.style.display==='none'?'table-row':'none';
 }
 
 // ── guide panel ──
@@ -2512,7 +2757,7 @@ function renderFinance(){
   </div>
   <div class="ui-card ldr-sum-card">
     <div class="ldr-sum-label">今月の予算進捗</div>
-    <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--mute);margin-top:6px;">予算機能は準備中です</div>
+    ${(()=>{const eb=getEffBudget(vy,vm);const tb=eb.total;if(tb===null){return`<div style="font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--ink3);margin-top:6px;">予算が未設定です</div><button class="ldr-card-link" style="margin-top:6px;display:block;background:transparent;border:none;padding:0;cursor:pointer;" onclick="ldrTab('budget',document.querySelector('#ldrSubtabs .ui-seg-btn:nth-child(5)'))">設定する ›</button>`;}const pct=tb>0?exp/tb*100:0;const over=exp>tb;const barColor=over?'var(--accent)':pct>=80?'var(--warn)':'var(--ok)';return`<div class="ldr-sum-val ${over?'neg':''}" style="font-size:14px;margin-top:4px;">¥${fmt(exp)} / ¥${fmt(tb)}</div><div class="ldr-bdg-progbar-wrap" style="margin:6px 0 3px;"><div class="ldr-bdg-progbar" style="width:${Math.min(pct,100).toFixed(1)}%;background:${barColor};"></div></div><div class="ldr-sum-diff ${over?'':''}"><span style="${over?'color:var(--accent);font-weight:700':''}">${pct.toFixed(0)}%${over?' 超過':''}</span></div>`;})()}
   </div>
 </div>
 <!-- Mid row: category / accounts / subs -->
@@ -2559,8 +2804,20 @@ function renderFinance(){
     </div>
   </div>
   <div class="ui-card">
-    <div class="ldr-card-hdr"><div class="ldr-card-title">今月の予算</div></div>
-    <div class="ldr-card-body ldr-coming-soon" style="padding:20px;"><div class="ldr-coming-text" style="font-size:12px;">予算機能は準備中です</div></div>
+    <div class="ldr-card-hdr">
+      <div class="ldr-card-title">今月の予算</div>
+      <button class="ldr-card-link" onclick="ldrTab('budget',document.querySelector('#ldrSubtabs .ui-seg-btn:nth-child(5)'))">予算設定 ›</button>
+    </div>
+    <div class="ldr-card-body" style="padding:8px 14px 14px;">
+      ${(()=>{
+        const eb=getEffBudget(vy,vm);
+        const catExpMap={};mt.filter(t=>t.type==='expense').forEach(t=>{catExpMap[t.category]=(catExpMap[t.category]||0)+t.amount;});
+        const catEntries=Object.entries(eb.cats).filter(([c,v])=>v!==null&&v!==undefined);
+        if(!catEntries.length)return`<div style="font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--mute);padding:12px 0;">カテゴリの予算が未設定です</div><button class="ldr-card-link" style="font-size:11px;background:transparent;border:none;cursor:pointer;padding:0;color:var(--accent);" onclick="ldrTab('budget',document.querySelector('#ldrSubtabs .ui-seg-btn:nth-child(5)'))">カテゴリ予算を設定する ›</button>`;
+        const rows=catEntries.map(([cat,bud])=>{const act=catExpMap[cat]||0;const pct=bud>0?act/bud*100:0;const over=act>bud;const col=TX_CAT_COLORS[cat]||'#6b7280';const barColor=over?'var(--accent)':pct>=80?'var(--warn)':'var(--ok)';return{cat,bud,act,pct,over,col,barColor};}).sort((a,b)=>b.pct-a.pct);
+        return`<table class="ldr-tx-table"><thead><tr><th>カテゴリ</th><th class="r">予算</th><th class="r">実績</th><th>進捗</th></tr></thead><tbody>${rows.map(r=>`<tr><td><div style="display:flex;align-items:center;gap:5px;"><div style="width:7px;height:7px;border-radius:50%;background:${r.col};flex-shrink:0;"></div><span style="font-family:'Space Grotesk',sans-serif;font-size:12px;">${esc(r.cat)}</span></div></td><td class="ldr-tx-amt" style="color:var(--ink3);font-size:12px;">¥${fmt(r.bud)}</td><td class="ldr-tx-amt ${r.over?'exp':''}" style="font-size:12px;">¥${fmt(r.act)}</td><td style="min-width:90px;"><div style="display:flex;align-items:center;gap:4px;"><div style="flex:1;height:4px;background:rgba(26,24,20,0.1);border-radius:2px;overflow:hidden;min-width:40px;"><div style="height:100%;width:${Math.min(r.pct,100).toFixed(1)}%;background:${r.barColor};border-radius:2px;"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:10px;${r.over?'color:var(--accent);font-weight:700;':'color:var(--ink3);'}width:32px;text-align:right;flex-shrink:0;">${r.pct.toFixed(0)}%</span></div></td></tr>`).join('')}</tbody></table>`;
+      })()}
+    </div>
   </div>
 </div>`;
 }
