@@ -668,22 +668,29 @@
     .food-detail-empty { padding:28px 20px; text-align:center; }
     .food-detail-empty-text { font-family:'Newsreader',serif; font-style:italic; font-size:15px; color:var(--ink3); margin-bottom:14px; }
     /* List view */
-    .food-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; }
-    .food-card { background:var(--paper); border:1px solid rgba(26,24,20,0.12); border-radius:8px; cursor:pointer; transition:box-shadow 0.15s,transform 0.15s; overflow:hidden; }
+    .food-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
+    .food-card { background:var(--paper); border:1px solid rgba(26,24,20,0.12); border-radius:8px; cursor:pointer; transition:box-shadow 0.15s,transform 0.15s; overflow:hidden; display:flex; flex-direction:column; }
     .food-card:hover { box-shadow:0 4px 16px rgba(26,24,20,0.12); transform:translateY(-2px); }
-    .food-card-img-wrap { position:relative; width:100%; aspect-ratio:16/10; background:var(--paper3); overflow:hidden; flex-shrink:0; }
+    .food-card-img-wrap { position:relative; width:100%; aspect-ratio:4/3; background:var(--paper3); overflow:hidden; flex-shrink:0; }
     .food-card-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
-    .food-card-img-placeholder { width:100%; aspect-ratio:16/10; background:var(--paper3); display:flex; align-items:center; justify-content:center; color:var(--mute); font-size:2.2rem; opacity:0.35; }
-    .food-photo-badge { position:absolute; bottom:6px; right:6px; background:rgba(26,24,20,0.65); color:#fff; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; padding:2px 6px; border-radius:3px; }
-    .food-card-body { padding:12px 14px 14px; }
-    .food-card-date { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); margin-bottom:8px; letter-spacing:0.04em; }
-    .food-chips { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:7px; }
-    .food-chip { font-family:'JetBrains Mono',monospace; font-size:10px; padding:2px 8px; font-weight:600; border-radius:2px; }
-    .food-chip-home { background:rgba(90,107,58,0.12); color:var(--ok); }
-    .food-chip-out  { background:rgba(139,58,24,0.12); color:var(--accent); }
-    .food-card-memo { font-family:'Newsreader',serif; font-style:italic; font-size:14px; color:var(--ink3); overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.45; }
+    .food-card-img-placeholder { width:100%; aspect-ratio:4/3; background:var(--paper3); display:flex; align-items:center; justify-content:center; color:var(--mute); font-size:2.2rem; opacity:0.35; }
+    .food-photo-badge { position:absolute; top:6px; right:6px; background:rgba(26,24,20,0.65); color:#fff; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; padding:2px 6px; border-radius:3px; }
+    .food-card-body { padding:10px 12px 12px; display:flex; flex-direction:column; gap:4px; flex:1; }
+    .food-card-name { font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.3; }
+    .food-card-meta { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink3); letter-spacing:0.04em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .food-card-pills { display:flex; align-items:center; gap:5px; overflow:hidden; }
+    .food-card-pill { font-family:'JetBrains Mono',monospace; font-size:10px; padding:2px 7px; font-weight:600; border-radius:2px; flex-shrink:0; }
+    .food-card-pill.home { background:rgba(90,107,58,0.12); color:var(--ok); }
+    .food-card-pill.out  { background:rgba(139,58,24,0.12); color:var(--accent); }
+    .food-card-place { font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--ink3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; min-width:0; }
+    .food-card-recipe-link { flex-shrink:0; color:var(--ink3); display:flex; align-items:center; line-height:1; }
+    .food-card-recipe-link:hover { color:var(--accent); }
+    .food-card-note { font-family:'Newsreader',serif; font-style:italic; font-size:13px; color:var(--ink3); overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.4; }
     .food-empty { text-align:center; padding:60px 20px; color:var(--mute); }
     .food-empty .ei { font-size:2.5rem; margin-bottom:12px; opacity:0.35; }
+    @media (max-width:640px) { .food-grid { grid-template-columns:repeat(2,1fr); gap:10px; } .food-card-note { display:none; } }
+    @keyframes foodDishHL { 0%{background:rgba(139,58,24,0.12)} 100%{background:transparent} }
+    .food-popup-dish-highlight { animation:foodDishHL 1.2s ease forwards; }
     /* Food edit modal */
     .food-modal-overlay { display:none; position:fixed; inset:0; background:rgba(26,24,20,0.55); z-index:8000; align-items:flex-start; justify-content:center; overflow-y:auto; padding:32px 16px; }
     .food-modal { background:var(--paper); width:100%; max-width:680px; margin:auto; border:1.5px solid var(--rule); }
@@ -1166,7 +1173,6 @@
       .food-search-wrap { flex:1; }
       .food-search-new { width:100%; height:40px; }
       .food-summary-bar { padding:0 0 10px; }
-      .food-grid { grid-template-columns:1fr; gap:14px; }
       .food-modal-overlay { padding:0; align-items:flex-end; }
       .food-modal { max-width:100%; max-height:92svh; overflow-y:auto; }
       .food-popup-overlay { padding:0; align-items:flex-end; }
@@ -4546,28 +4552,60 @@ function renderFoodList() {
   const summaryEl = document.getElementById('foodSearchSummary');
   if (!grid) return;
   const days7 = '日月火水木金土'.split('');
-  let list = [...meals].sort((a, b) => b.date.localeCompare(a.date));
-  if (foodFilter !== 'all') {
-    list = list.filter(m => (m.sittings || []).some(s => (s.dishes || []).some(d => d.type === foodFilter)));
+  const todayStr = localDate();
+  const yesterdayStr = localDate(new Date(Date.now() - 86400000));
+  const todayYear = String(new Date().getFullYear());
+  // Sort order within same date: snack→dinner→lunch→breakfast
+  const DISH_KIND_ORDER = ['snack','dinner','lunch','breakfast'];
+
+  // Flatten all dishes with meal/sitting context
+  let flatDishes = [];
+  for (const m of meals) {
+    for (const s of (m.sittings || [])) {
+      (s.dishes || []).forEach((dish, idx) => {
+        flatDishes.push({ meal: m, sitting: s, dish, idx });
+      });
+    }
   }
+
+  // Sort: date desc, then DISH_KIND_ORDER within same date, then registration order
+  flatDishes.sort((a, b) => {
+    const dateCmp = b.meal.date.localeCompare(a.meal.date);
+    if (dateCmp !== 0) return dateCmp;
+    const kindCmp = DISH_KIND_ORDER.indexOf(a.sitting.kind) - DISH_KIND_ORDER.indexOf(b.sitting.kind);
+    if (kindCmp !== 0) return kindCmp;
+    return a.idx - b.idx;
+  });
+
+  // Apply type filter
+  if (foodFilter !== 'all') {
+    flatDishes = flatDishes.filter(({ dish }) => dish.type === foodFilter);
+  }
+
+  // Apply search
   const q = foodSearch.trim().toLowerCase();
   if (q) {
-    list = list.filter(m => {
-      const sittingText = (m.sittings || []).flatMap(s => (s.dishes || []).map(d => (d.name + ' ' + (d.place||'') + ' ' + (d.note||'')).toLowerCase())).join(' ');
-      return sittingText.includes(q) || (m.memo || '').toLowerCase().includes(q);
+    const memoMatchIds = new Set(
+      meals.filter(m => (m.memo || '').toLowerCase().includes(q)).map(m => String(m.id))
+    );
+    flatDishes = flatDishes.filter(({ meal, dish }) => {
+      if (memoMatchIds.has(String(meal.id))) return true;
+      return (dish.name + ' ' + (dish.place||'') + ' ' + (dish.note||'')).toLowerCase().includes(q);
     });
   }
+
+  // Search summary (dish count)
   if (summaryEl) {
     if (q) {
       summaryEl.style.display = '';
-      if (list.length) {
-        const latest = list[0];
-        const latestD = new Date(latest.date + 'T00:00:00');
+      if (flatDishes.length) {
+        const latestDate = flatDishes.reduce((best, { meal }) => meal.date > best ? meal.date : best, '');
+        const latestD = new Date(latestDate + 'T00:00:00');
         const todayD = new Date(); todayD.setHours(0,0,0,0);
         const daysAgo = Math.round((todayD - latestD) / 86400000);
         const daysLabel = daysAgo === 0 ? '今日' : daysAgo === 1 ? '1日前' : `${daysAgo}日前`;
-        const df = latest.date.slice(0,4) + '/' + latest.date.slice(5,7) + '/' + latest.date.slice(8,10);
-        summaryEl.innerHTML = `<strong>"${esc(q)}"</strong> — 最後は${daysLabel}（${df}）・計${list.length}回`;
+        const df = latestDate.slice(0,4) + '/' + latestDate.slice(5,7) + '/' + latestDate.slice(8,10);
+        summaryEl.innerHTML = `<strong>"${esc(q)}"</strong> — 最後は${daysLabel}（${df}）・計${flatDishes.length}回`;
       } else {
         summaryEl.innerHTML = `<strong>"${esc(q)}"</strong> — 記録なし`;
       }
@@ -4575,38 +4613,56 @@ function renderFoodList() {
       summaryEl.style.display = 'none';
     }
   }
-  if (!list.length) {
+
+  if (!flatDishes.length) {
     grid.innerHTML = `<div class="food-empty" style="grid-column:1/-1"><div class="ei">🍽</div><div>${q ? '検索結果なし' : '記録がありません'}</div></div>`;
     return;
   }
-  const todayStr = localDate();
-  const yesterdayStr = localDate(new Date(Date.now() - 86400000));
-  grid.innerHTML = list.map(m => {
+
+  const linkSVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
+
+  grid.innerHTML = flatDishes.map(({ meal: m, sitting: s, dish }) => {
     const d = new Date(m.date + 'T00:00:00');
+    const kindLabel = KIND_LABELS[s.kind] || s.kind;
     let dateLabel;
-    if (m.date === todayStr) dateLabel = `今日（${days7[d.getDay()]}）`;
-    else if (m.date === yesterdayStr) dateLabel = `昨日（${days7[d.getDay()]}）`;
-    else dateLabel = `${m.date.slice(0,4)}/${parseInt(m.date.slice(5,7))}/${parseInt(m.date.slice(8,10))}（${days7[d.getDay()]}）`;
-    const allPhotos = _allMealPhotos(m);
+    if (m.date === todayStr) {
+      dateLabel = `今日 ${kindLabel}`;
+    } else if (m.date === yesterdayStr) {
+      dateLabel = `昨日 ${kindLabel}`;
+    } else {
+      const mo = parseInt(m.date.slice(5,7));
+      const dy = parseInt(m.date.slice(8,10));
+      const yr = m.date.slice(0,4);
+      const datePart = yr !== todayYear
+        ? `${yr}/${mo}/${dy}（${days7[d.getDay()]}）`
+        : `${mo}/${dy}（${days7[d.getDay()]}）`;
+      dateLabel = `${datePart} ${kindLabel}`;
+    }
+    // Photo (dish's own photos)
+    const photos = dish.photos || [];
     let photoHTML;
-    if (allPhotos.length) {
-      const badge = allPhotos.length > 1 ? `<div class="food-photo-badge">+${allPhotos.length - 1}</div>` : '';
-      photoHTML = `<div class="food-card-img-wrap"><img data-path="${esc(allPhotos[0].path)}" src="" alt="">${badge}</div>`;
+    if (photos.length) {
+      const badge = photos.length > 1 ? `<div class="food-photo-badge">+${photos.length - 1}</div>` : '';
+      photoHTML = `<div class="food-card-img-wrap"><img data-path="${esc(photos[0].path)}" src="" alt="">${badge}</div>`;
     } else {
       photoHTML = `<div class="food-card-img-placeholder">🍽</div>`;
     }
-    // Summary chips: "夕食: カレー、サラダ"
-    const chipsHTML = KIND_ORDER.filter(k => (m.sittings||[]).some(s=>s.kind===k)).map(k => {
-      const s = (m.sittings||[]).find(s=>s.kind===k);
-      const names = (s.dishes||[]).filter(d=>d.name.trim()).map(d=>esc(d.name)).join('、');
-      return `<span class="food-chip ${_sittingIsOut(s)?'food-chip-out':'food-chip-home'}">${KIND_LABELS[k]}${names?': '+names:''}</span>`;
-    }).join('');
-    return `<div class="food-card" onclick="openFoodDetailPopup('${esc(String(m.id))}')">
+    const pillCls = dish.type === 'out' ? 'out' : 'home';
+    const pillLabel = dish.type === 'out' ? '外食' : '自炊';
+    const placeHTML = dish.type === 'out' && dish.place ? `<span class="food-card-place">${esc(dish.place)}</span>` : '';
+    const isValidUrl = /^https?:\/\//.test(dish.recipeUrl || '');
+    const linkHTML = isValidUrl ? `<a class="food-card-recipe-link" href="${esc(dish.recipeUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="レシピ">${linkSVG}</a>` : '';
+    const noteHTML = dish.note ? `<div class="food-card-note">${esc(dish.note)}</div>` : '';
+    return `<div class="food-card" onclick="openFoodDetailPopup('${esc(String(m.id))}','${esc(String(dish.id))}')">
       ${photoHTML}
       <div class="food-card-body">
-        <div class="food-card-date">${dateLabel}</div>
-        <div class="food-chips">${chipsHTML || '<span style="color:var(--mute);font-family:\'JetBrains Mono\',monospace;font-size:11px">料理なし</span>'}</div>
-        ${m.memo ? `<div class="food-card-memo">${esc(m.memo)}</div>` : ''}
+        <div class="food-card-name">${esc(dish.name || '（名前なし）')}</div>
+        <div class="food-card-meta">${esc(dateLabel)}</div>
+        <div class="food-card-pills">
+          <span class="food-card-pill ${pillCls}">${pillLabel}</span>
+          ${placeHTML}${linkHTML}
+        </div>
+        ${noteHTML}
       </div>
     </div>`;
   }).join('');
@@ -4812,7 +4868,7 @@ function renderFoodDayDetail(dateStr) {
       const isValidUrl = /^https?:\/\//.test(dish.recipeUrl || '');
       const linkHTML = isValidUrl ? `<a class="food-detail-dish-link" href="${esc(dish.recipeUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${linkSVG} レシピ</a>` : '';
       const noteHTML = dish.note ? `<div class="food-detail-dish-note">${esc(dish.note)}</div>` : '';
-      return `<div class="food-detail-dish-row" onclick="openFoodDetailPopup('${esc(String(meal.id))}')">
+      return `<div class="food-detail-dish-row" onclick="openFoodDetailPopup('${esc(String(meal.id))}','${esc(String(dish.id))}')">
         ${thumbHTML}
         <div class="food-detail-dish-info">
           <div class="food-detail-dish-name">${esc(dish.name || '（名前なし）')}</div>
@@ -5435,12 +5491,23 @@ document.addEventListener('paste', e => {
 }));
 
 // ── FOOD DETAIL POPUP ──
-function openFoodDetailPopup(id) {
+function openFoodDetailPopup(id, dishId) {
   const meal = meals.find(m => String(m.id) === String(id));
   if (!meal) return;
   _foodPopupId = String(id);
   renderFoodDetailPopup();
   document.getElementById('foodPopupOverlay').style.display = 'flex';
+  if (dishId) {
+    setTimeout(() => {
+      const dishEl = document.getElementById('foodPopupDish-' + String(dishId));
+      if (dishEl) {
+        dishEl.scrollIntoView({ block: 'start' });
+        dishEl.classList.remove('food-popup-dish-highlight');
+        void dishEl.offsetWidth;
+        dishEl.classList.add('food-popup-dish-highlight');
+      }
+    }, 0);
+  }
 }
 
 function closeFoodDetailPopup() {
@@ -5489,7 +5556,7 @@ function renderFoodDetailPopup() {
           <img data-path="${esc(p.path)}" src="" alt="">
         </div>`
       ).join('')}</div>` : '';
-      dishesHTML += `<div class="food-popup-dish">
+      dishesHTML += `<div class="food-popup-dish" id="foodPopupDish-${esc(String(dish.id))}">
         <div class="food-popup-dish-name">${esc(dish.name||'（名前なし）')}</div>
         <div class="food-popup-dish-meta">
           <span class="food-popup-dish-pill ${pillCls}">${pillLabel}</span>
