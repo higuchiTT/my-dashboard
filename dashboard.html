@@ -346,30 +346,20 @@
     .ldr-modal-2col { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 
     /* ── SUBS ── */
-    .sub-hdr { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:8px; }
-    .sub-total-row { display:flex; align-items:baseline; gap:6px; margin-top:4px; }
-    .sub-total-num { font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:28px; font-weight:700; letter-spacing:-0.03em; }
-    .sub-per { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink3); }
-    .sub-annual { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); margin-left:4px; }
-    .sub-list { display:flex; flex-direction:column; gap:0; margin-top:12px; }
-    .sub-item { display:flex; align-items:flex-start; gap:10px; padding:9px 0; border-bottom:1px dotted var(--mute); transition:opacity 0.15s; }
-    .sub-item:last-child { border-bottom:none; }
-    .sub-item.inactive { opacity:0.35; }
-    .sub-cdot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:5px; }
-    .sub-info { flex-shrink:0; }
-    .sub-name { font-family:'Newsreader',serif; font-size:16px; font-style:italic; }
-    .sub-note-col { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); flex:1; min-width:0; font-style:italic; padding:0 8px; white-space:pre-line; line-height:1.6; cursor:text; border-radius:3px; transition:background 0.12s; }
-    .sub-note-col:hover { background:rgba(26,24,20,0.04); }
+    .sub-cdot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
     .sub-cat-tag { font-family:'JetBrains Mono',monospace; font-size:10px; background:var(--paper3); color:var(--ink2); padding:2px 7px; font-weight:700; flex-shrink:0; }
-    .sub-price-wrap { flex-shrink:0; min-width:84px; display:flex; flex-direction:column; align-items:flex-end; }
-    .sub-price { font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; }
-    .sub-cycle { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink3); }
-    .sub-toggle { width:34px; height:19px; border-radius:99px; border:none; cursor:pointer; position:relative; transition:background 0.2s; flex-shrink:0; padding:0; margin-top:2px; }
+    .sub-toggle { width:34px; height:19px; border-radius:99px; border:none; cursor:pointer; position:relative; transition:background 0.2s; flex-shrink:0; padding:0; }
     .sub-toggle.on  { background:var(--ok); }
     .sub-toggle.off { background:rgba(0,0,0,0.18); }
     .sub-toggle::after { content:''; position:absolute; top:2px; width:15px; height:15px; border-radius:50%; background:#fff; transition:left 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
     .sub-toggle.on::after  { left:17px; }
     .sub-toggle.off::after { left:2px; }
+
+    /* ── SUBS ROW2 ── */
+    .ldr-sub-row2 { display:flex; align-items:center; gap:8px; padding:10px 4px; border-bottom:1px solid rgba(26,24,20,0.07); cursor:pointer; transition:background 0.12s; min-height:44px; position:relative; }
+    .ldr-sub-row2:hover { background:rgba(26,24,20,0.025); }
+    .ldr-sub-row2.inactive { opacity:0.4; }
+    .ldr-sub-row2 .ldr-tx-menu { top:calc(100% - 4px); right:8px; }
 
     /* ── CALENDAR ── */
     .cal-wrap { padding: 24px 40px; }
@@ -807,7 +797,11 @@
     /* ── タスク行 ── */
     .tv-row { display: flex; align-items: center; gap: 10px; padding: 10px 24px; border-bottom: 1px solid rgba(26,24,20,0.06); min-height: 44px; transition: background 0.12s; }
     .tv-row:hover { background: rgba(26,24,20,0.02); }
-    .tv-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .tv-check-btn { width: 40px; height: 40px; min-width: 40px; border-radius: 50%; background: transparent; border: none; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s; padding: 0; margin: -10px -8px; }
+    .tv-check-btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+    .tv-check-btn-inner { width: 20px; height: 20px; min-width: 20px; border-radius: 50%; border: 2px solid currentColor; box-sizing: border-box; transition: all 0.15s; display: flex; align-items: center; justify-content: center; pointer-events: none; font-size: 0; }
+    .tv-check-btn:hover .tv-check-btn-inner { border-color: var(--ok) !important; background: rgba(90,107,58,0.1); }
+    .tv-check-btn:hover .tv-check-btn-inner::after { content: '✓'; font-size: 11px; color: var(--ok); opacity: 0.6; line-height: 1; }
     .tv-title { font-family: 'Space Grotesk', sans-serif; font-size: 14px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .tv-pin { font-size: 14px; cursor: pointer; color: var(--mute); flex-shrink: 0; line-height: 1; padding: 2px 4px; border: none; background: transparent; }
     .tv-pin.pinned { color: #f59e0b; }
@@ -823,9 +817,14 @@
     .tv-tag-pop-chip.sel { outline:2px solid var(--ink); }
     .tv-tag-pop-input-wrap { border-top:1px solid var(--rule); padding-top:8px; }
     .tv-tag-pop-input { width:100%; border:none; background:transparent; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink); outline:none; }
-    .tv-done-btn { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; padding: 4px 10px; border: 1px solid rgba(26,24,20,0.2); background: transparent; color: var(--ink3); cursor: pointer; border-radius: 3px; white-space: nowrap; flex-shrink: 0; transition: all 0.12s; }
-    .tv-done-btn:hover { border-color: var(--ok); color: var(--ok); }
-    .tv-done-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .tv-due-wrap { position: relative; flex-shrink: 0; }
+    .tv-due { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); cursor: pointer; white-space: nowrap; padding: 2px 4px; border-radius: 3px; display: inline-block; }
+    .tv-due:hover { background: rgba(26,24,20,0.06); }
+    .tv-due-empty { color: var(--mute); }
+    .tv-due-overdue { color: var(--accent); font-weight: 600; }
+    .tv-due-today { color: var(--ok); font-weight: 600; }
+    .tv-due-soon { color: var(--warn); font-weight: 600; }
+    .tv-due-input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; left: 0; top: 100%; border: none; padding: 0; }
     .tv-add-row { display: flex; align-items: center; gap: 6px; padding: 8px 24px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mute); cursor: pointer; transition: background 0.12s; border-bottom: 1px solid rgba(26,24,20,0.05); }
     .tv-add-row:hover { background: rgba(26,24,20,0.04); color: var(--ink3); }
 
@@ -986,6 +985,7 @@
       .ldr-mid-row { grid-template-columns:1fr; gap:10px; }
       .ldr-bot-row { grid-template-columns:1fr; gap:10px; }
       .ldr-tx-table .hide-mob { display:none; }
+      .ldr-sub-row2 .hide-mob { display:none; }
       .ldr-txlist-search { width:100%; }
       .ldr-txlist-toolbar { flex-direction:column; align-items:stretch; }
       .ldr-modal { border-radius:0; max-width:100%; margin:0; margin-top:auto; }
@@ -1275,31 +1275,7 @@
       <div id="ldrPanelOverview"></div>
       <div id="ldrPanelTxlist" style="display:none"></div>
       <div id="ldrPanelAccounts" style="display:none"></div>
-      <div id="ldrPanelSubs" style="display:none">
-        <!-- Subs subtab content rendered here by renderLdrSubsTab() -->
-        <div class="ldr-subs-top">
-          <div>
-            <div class="ldr-subs-total-label">月額合計（有効）</div>
-            <div class="ldr-subs-total-num" id="subTotalNum">¥0</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink3);margin-top:3px;" id="subAnnual"></div>
-          </div>
-          <button class="btn btn-ghost btn-sm" onclick="toggleAddSub()" style="margin-left:auto">＋ 追加</button>
-        </div>
-        <div class="add-form" id="addSubForm" style="padding:14px 0 0;background:transparent;border:none;margin:0 0 16px">
-          <div class="form-row">
-            <div class="fg" style="flex:2;min-width:140px;"><label>サービス名</label><input type="text" id="subName" placeholder="例: Netflix" /></div>
-            <div class="fg"><label>金額 (¥)</label><input type="number" id="subPrice" placeholder="0" min="0" /></div>
-            <div class="fg"><label>カテゴリ</label><select id="subCat"><option value="住居">住居</option><option value="光熱費">光熱費</option><option value="通信">通信</option><option value="交通">交通</option><option value="動画">動画</option><option value="音楽">音楽</option><option value="AI">AI</option><option value="ストレージ">ストレージ</option><option value="ショッピング">ショッピング</option><option value="仕事">仕事</option><option value="ゲーム">ゲーム</option><option value="その他">その他</option></select></div>
-            <div class="fg"><label>請求サイクル</label><select id="subCycle"><option value="monthly">月払い</option><option value="yearly">年払い</option></select></div>
-          </div>
-          <div class="fg" style="margin-top:10px;"><label>メモ</label><input type="text" id="subNote" placeholder="プランや備考" /></div>
-          <div class="gap-row">
-            <button class="btn btn-ghost" onclick="toggleAddSub()">キャンセル</button>
-            <button class="btn btn-primary" onclick="addSub()">追加</button>
-          </div>
-        </div>
-        <div class="sub-list" id="subList"></div>
-      </div>
+      <div id="ldrPanelSubs" style="display:none"></div>
       <div id="ldrPanelBudget" style="display:none"></div>
       <div id="ldrPanelImport" style="display:none"></div>
     </div>
@@ -1351,7 +1327,7 @@
           <div class="ldr-step-num">6</div>
           <div>
             <div class="ldr-step-title">固定費・サブスクを登録する</div>
-            <div class="ldr-step-text">毎月の固定費を登録すると、月額・年額が自動で集計されます。</div>
+            <div class="ldr-step-text">支払日と支払元を登録すると、支払日に自動で支出として記録されます（予算・残高にも反映）。チェックを外すとその月の記録を取り消せます。</div>
           </div>
         </div>
         <div class="ldr-step">
@@ -1378,6 +1354,7 @@
           <div class="ldr-tips-item">固定費はサブスクに登録しておく</div>
           <div class="ldr-tips-item">カテゴリは少なめにまとめると分析しやすい</div>
           <div class="ldr-tips-item">カードの引き落としは銀行→カードの振替で記録しましょう</div>
+          <div class="ldr-tips-item">口座未設定の取引は週に1回まとめて確認しましょう</div>
         </div>
       </div>
     </aside>
@@ -1488,7 +1465,7 @@
           <label class="ldr-modal-lbl" for="ldrTxCat">カテゴリ</label>
           <select class="ldr-modal-in" id="ldrTxCat">
             <option value="食費">食費</option><option value="家賃">家賃</option><option value="光熱費">光熱費</option>
-            <option value="交通費">交通費</option><option value="娯楽">娯楽</option><option value="医療">医療</option>
+            <option value="通信費">通信費</option><option value="交通費">交通費</option><option value="娯楽">娯楽</option><option value="医療">医療</option>
             <option value="衣服">衣服</option><option value="日用品">日用品</option><option value="給与">給与</option>
             <option value="副収入">副収入</option><option value="その他">その他</option>
           </select>
@@ -1515,6 +1492,79 @@
         <div class="ldr-modal-ftr-r">
           <button class="btn btn-ghost" onclick="closeTxModal()">キャンセル</button>
           <button class="btn btn-primary" id="ldrTxSaveBtn" onclick="saveTxModal()">追加</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sub add/edit modal -->
+  <div class="ldr-modal-overlay" id="ldrSubModal" onclick="if(event.target===this)closeLdrSubModal()">
+    <div class="ldr-modal" onclick="event.stopPropagation()">
+      <div class="ldr-modal-hdr">
+        <div class="ldr-modal-title" id="ldrSubModalTitle">固定費・サブスクを追加</div>
+        <button class="ldr-modal-close" onclick="closeLdrSubModal()">✕</button>
+      </div>
+      <div class="ldr-modal-body">
+        <div>
+          <label class="ldr-modal-lbl" for="ldrSubName">サービス名</label>
+          <input class="ldr-modal-in" type="text" id="ldrSubName" placeholder="例: Netflix">
+        </div>
+        <div class="ldr-modal-2col">
+          <div>
+            <label class="ldr-modal-lbl" for="ldrSubPrice">金額 (¥)</label>
+            <input class="ldr-modal-in" type="number" id="ldrSubPrice" placeholder="0" min="0" style="font-family:'JetBrains Mono',monospace;">
+          </div>
+          <div>
+            <label class="ldr-modal-lbl" for="ldrSubCycle">請求サイクル</label>
+            <select class="ldr-modal-in" id="ldrSubCycle" onchange="ldrSubCycleChange()" onclick="event.stopPropagation()">
+              <option value="monthly">月払い</option>
+              <option value="yearly">年払い</option>
+            </select>
+          </div>
+        </div>
+        <div class="ldr-modal-2col">
+          <div>
+            <label class="ldr-modal-lbl" for="ldrSubPayDay">支払日（1〜31）</label>
+            <input class="ldr-modal-in" type="number" id="ldrSubPayDay" placeholder="未設定" min="1" max="31" style="font-family:'JetBrains Mono',monospace;">
+          </div>
+          <div id="ldrSubPayMonthRow" style="display:none">
+            <label class="ldr-modal-lbl" for="ldrSubPayMonth">支払月（1〜12）</label>
+            <input class="ldr-modal-in" type="number" id="ldrSubPayMonth" placeholder="1" min="1" max="12" style="font-family:'JetBrains Mono',monospace;">
+          </div>
+        </div>
+        <div class="ldr-modal-2col">
+          <div>
+            <label class="ldr-modal-lbl" for="ldrSubCat">カテゴリ</label>
+            <select class="ldr-modal-in" id="ldrSubCat" onchange="ldrSubCatChange()" onclick="event.stopPropagation()">
+              <option value="住居">住居</option><option value="光熱費">光熱費</option><option value="通信">通信</option>
+              <option value="交通">交通</option><option value="動画">動画</option><option value="音楽">音楽</option>
+              <option value="AI">AI</option><option value="ストレージ">ストレージ</option><option value="ショッピング">ショッピング</option>
+              <option value="仕事">仕事</option><option value="ゲーム">ゲーム</option><option value="その他">その他</option>
+            </select>
+          </div>
+          <div>
+            <label class="ldr-modal-lbl" for="ldrSubTxCat">取引カテゴリ</label>
+            <select class="ldr-modal-in" id="ldrSubTxCat" onclick="event.stopPropagation()">
+              <option value="食費">食費</option><option value="家賃">家賃</option><option value="光熱費">光熱費</option>
+              <option value="通信費">通信費</option><option value="交通費">交通費</option><option value="娯楽">娯楽</option>
+              <option value="医療">医療</option><option value="衣服">衣服</option><option value="日用品">日用品</option><option value="その他">その他</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="ldr-modal-lbl" for="ldrSubAccId">支払元の口座</label>
+          <select class="ldr-modal-in" id="ldrSubAccId" onclick="event.stopPropagation()"></select>
+        </div>
+        <div>
+          <label class="ldr-modal-lbl" for="ldrSubNote">メモ</label>
+          <input class="ldr-modal-in" type="text" id="ldrSubNote" placeholder="プランや備考（任意）">
+        </div>
+      </div>
+      <div class="ldr-modal-ftr">
+        <div id="ldrSubDelWrap"></div>
+        <div class="ldr-modal-ftr-r">
+          <button class="btn btn-ghost" onclick="closeLdrSubModal()">キャンセル</button>
+          <button class="btn btn-primary" id="ldrSubSaveBtn" onclick="saveLdrSubModal()">追加</button>
         </div>
       </div>
     </div>
@@ -1776,6 +1826,7 @@ async function syncFromSupabase(userId) {
   if (data.budgets && typeof data.budgets==='object' && !Array.isArray(data.budgets)) { budgets = data.budgets; localStorage.setItem('ledger_budgets', JSON.stringify(budgets)); }
   if (Array.isArray(data.accounts)) { accounts = data.accounts; localStorage.setItem('ledger_accounts', JSON.stringify(accounts)); }
   if (data.seed_flags) Object.entries(data.seed_flags).forEach(([k,v]) => localStorage.setItem(k,v));
+  return true;
 }
 
 function saveToSupabase() {
@@ -1876,7 +1927,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
   document.getElementById('logoutBtn').style.display = 'inline-block';
-  await syncFromSupabase(session.user.id);
+  const synced = await syncFromSupabase(session.user.id);
+  if (synced) autoPostSubs(); // only after server data has been loaded
   loadTaskNotes();
   migrateTaskNotes();
   applyTaskNotes();
@@ -1891,6 +1943,7 @@ document.addEventListener('click', () => {
   closeLdrAddMenu();
   closeLdrTxMenus();
   closeAccMenus();
+  _closeSubMenus();
 });
 
 // ── NAV ──
@@ -2007,7 +2060,7 @@ function completeTask(id) {
   const t = tasks.find(t => String(t.id) === String(id));
   if (!t || t._completing) return;
   t._completing = true;
-  const btn = document.querySelector(`[data-task-id="${id}"] .tv-done-btn`);
+  const btn = document.querySelector(`[data-task-id="${id}"] .tv-check-btn`);
   if (btn) btn.disabled = true;
   const row = document.querySelector(`[data-task-id="${id}"]`);
   if (row) { row.style.opacity = '0.3'; row.style.transition = 'opacity 0.4s'; }
@@ -2063,13 +2116,48 @@ function saveTaskCategory(id, val) {
   renderCalendar();
 }
 function saveTaskDue(id, val) {
-  const t = tasks.find(t => t.id === id);
+  const t = tasks.find(t => String(t.id) === String(id));
   if (!t) return;
   t.due = val;
   saveTasks();
   renderTodayView();
   renderHome();
   renderCalendar();
+}
+
+// ── DUE DATE LABEL ──
+function fmtTaskDueLabel(due) {
+  if (!due) return { label: '＋ 期限', cls: 'tv-due-empty' };
+  const today = getTodayDate();
+  const d = new Date(due + 'T00:00:00');
+  const diff = Math.round((d - today) / 86400000);
+  const thisYear = today.getFullYear();
+  const shortLabel = d.getFullYear() === thisYear
+    ? `${d.getMonth()+1}/${d.getDate()}`
+    : `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`;
+  if (diff < 0) return { label: shortLabel, cls: 'tv-due-overdue' };
+  if (diff === 0) return { label: '今日', cls: 'tv-due-today' };
+  if (diff === 1) return { label: '明日', cls: 'tv-due-soon' };
+  return { label: shortLabel, cls: diff <= 7 ? 'tv-due-soon' : '' };
+}
+
+// ── OPEN DUE DATE PICKER ──
+function openDuePicker(id, el) {
+  const wrap = el.closest('.tv-due-wrap');
+  const input = wrap.querySelector('.tv-due-input');
+  const t = tasks.find(tt => String(tt.id) === String(id));
+  input.value = t && t.due ? t.due : '';
+  input.onchange = () => { saveTaskDue(String(id), input.value); };
+  const showInline = () => {
+    input.style.cssText = 'position:absolute;opacity:1;width:130px;height:28px;left:0;top:100%;z-index:100;pointer-events:auto;';
+    input.onblur = () => { input.style.cssText = ''; };
+    input.focus();
+  };
+  if (typeof input.showPicker === 'function') {
+    try { input.showPicker(); } catch(e) { showInline(); }
+  } else {
+    showInline();
+  }
 }
 
 // ── TASK ROW HTML ──
@@ -2079,14 +2167,16 @@ function tvRowHTML(t) {
   const tags = [...new Set(t.tags || [])].slice(0, 3);
   const tagsHTML = tags.map(tag => `<span class="tv-tag-chip tag-${esc(tag)}">${esc(tag)}</span>`).join('');
   const timeHTML = t.dueTime ? `<span class="tv-time">${esc(t.dueTime)}</span>` : '';
+  const dueInfo = fmtTaskDueLabel(t.due);
+  const dueHTML = `<div class="tv-due-wrap"><span class="tv-due ${dueInfo.cls}" onclick="event.stopPropagation();openDuePicker('${esc(String(t.id))}',this)">${dueInfo.label}</span><input type="date" class="tv-due-input" tabindex="-1"></div>`;
   return `<div class="tv-row" data-task-id="${esc(t.id)}">
-    <div class="tv-dot" style="background:${color}"></div>
+    <button class="tv-check-btn" style="color:${color}" onclick="event.stopPropagation();completeTask('${esc(String(t.id))}')" title="完了にする" aria-label="完了にする"><span class="tv-check-btn-inner"></span></button>
     <div class="tv-title">${esc(t.title)}</div>
-    <button class="tv-pin${isPinned ? ' pinned' : ''}" onclick="event.stopPropagation();togglePin('${esc(t.id)}')">${isPinned ? '★' : '☆'}</button>
+    ${dueHTML}
     ${timeHTML}
+    <button class="tv-pin${isPinned ? ' pinned' : ''}" onclick="event.stopPropagation();togglePin('${esc(String(t.id))}')">${isPinned ? '★' : '☆'}</button>
     <span class="tv-cat" style="background:${color}">${esc(t.category)}</span>
-    <div class="tv-tags" onclick="event.stopPropagation();openTvTagEditor('${esc(t.id)}',event)">${tagsHTML}${tags.length===0?'<span style="font-size:11px;color:var(--mute);cursor:pointer;">+ タグ</span>':''}</div>
-    <button class="tv-done-btn" onclick="completeTask('${esc(t.id)}')">完了にする</button>
+    <div class="tv-tags" onclick="event.stopPropagation();openTvTagEditor('${esc(String(t.id))}',event)">${tagsHTML}${tags.length===0?'<span style="font-size:11px;color:var(--mute);cursor:pointer;">+ タグ</span>':''}</div>
   </div>`;
 }
 
@@ -2386,7 +2476,7 @@ function undoCompleteById(id) {
 
 // ── FINANCE ──
 const TX_CAT_COLORS = {
-  '食費':'#f97316','家賃':'#92400e','光熱費':'#f59e0b','交通費':'#3b82f6',
+  '食費':'#f97316','家賃':'#92400e','光熱費':'#f59e0b','通信費':'#0e7490','交通費':'#3b82f6',
   '娯楽':'#8b5cf6','医療':'#ef4444','衣服':'#ec4899','日用品':'#22c55e',
   '給与':'#5a6b3a','副収入':'#059669','その他':'#6b7280'
 };
@@ -2400,8 +2490,8 @@ let ldrTxModalType='expense'; // current modal type
 let _ldrOpenMenuId=null;      // currently open ... menu
 
 function _ldrActiveTab(){const a=document.querySelector('#ldrSubtabs .ui-seg-btn.active');return a?a.getAttribute('onclick').match(/'(\w+)'/)?.[1]||'overview':'overview';}
-function chMonth(d){vm+=d;if(vm>11){vm=0;vy++;}if(vm<0){vm=11;vy--;}const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();else if(t==='accounts')renderAccountsPanel();}
-function goMonthToday(){const n=new Date();vy=n.getFullYear();vm=n.getMonth();const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();else if(t==='accounts')renderAccountsPanel();}
+function chMonth(d){vm+=d;if(vm>11){vm=0;vy++;}if(vm<0){vm=11;vy--;}const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();else if(t==='accounts')renderAccountsPanel();else if(t==='subs')renderSubs();}
+function goMonthToday(){const n=new Date();vy=n.getFullYear();vm=n.getMonth();const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();else if(t==='accounts')renderAccountsPanel();else if(t==='subs')renderSubs();}
 function saveTx(){localStorage.setItem('hd_tx',JSON.stringify(txs));saveToSupabase();}
 
 // ── sub-tab navigation ──
@@ -2413,7 +2503,7 @@ function ldrTab(tab, el){
     const p=document.getElementById('ldrPanel'+t.charAt(0).toUpperCase()+t.slice(1));
     if(p)p.style.display=(t===tab?'block':'none');
   });
-  const showMon=tab==='overview'||tab==='txlist'||tab==='budget'||tab==='accounts';
+  const showMon=tab==='overview'||tab==='txlist'||tab==='budget'||tab==='accounts'||tab==='subs';
   const nav=document.getElementById('ldrMonNav');
   if(nav)nav.style.display=showMon?'':'none';
   if(tab==='overview')renderFinance();
@@ -2759,7 +2849,7 @@ function getEffBudget(y,m){
   return{total,cats};
 }
 
-const STD_EXP_CATS=['食費','家賃','光熱費','交通費','娯楽','医療','衣服','日用品','その他'];
+const STD_EXP_CATS=['食費','家賃','光熱費','通信費','交通費','娯楽','医療','衣服','日用品','その他'];
 
 function renderBudgetPanel(){
   const panel=document.getElementById('ldrPanelBudget');if(!panel)return;
@@ -3097,7 +3187,11 @@ function confirmDelTx(id){
   delWrap.innerHTML=`<span class="ldr-del-confirm">本当に削除しますか？</span><button class="btn btn-ghost btn-sm" onclick="ldrTxDelWrap_cancel()">いいえ</button><button class="btn btn-sm" style="background:var(--accent);color:var(--paper);border:none;padding:5px 12px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;" onclick="execDelTx('${esc(String(id))}')">削除</button>`;
 }
 function ldrTxDelWrap_cancel(){const w=document.getElementById('ldrTxDelWrap');if(w&&ldrEditingTxId)w.innerHTML=`<button class="btn btn-ghost btn-sm" style="border-color:var(--accent);color:var(--accent)" onclick="confirmDelTx('${esc(String(ldrEditingTxId))}')">削除</button>`;}
-function execDelTx(id){txs=txs.filter(t=>String(t.id)!==String(id));saveTx();closeTxModal();renderFinance();ldrListInitDone=false;renderLdrTxList();if(_ldrActiveTab()==='accounts')renderAccountsPanel();}
+function execDelTx(id){
+  const _dtx=txs.find(t=>String(t.id)===String(id));
+  if(_dtx&&_dtx.subId&&_dtx.subYm){const _ds=subs.find(s=>String(s.id)===String(_dtx.subId));if(_ds){if(!_ds.skip)_ds.skip={};_ds.skip[_dtx.subYm]=true;saveSubs();}}
+  txs=txs.filter(t=>String(t.id)!==String(id));saveTx();closeTxModal();renderFinance();ldrListInitDone=false;renderLdrTxList();if(_ldrActiveTab()==='accounts')renderAccountsPanel();if(_ldrActiveTab()==='subs')renderSubs();
+}
 function delTx(id){txs=txs.filter(t=>String(t.id)!==String(id));saveTx();renderFinance();ldrListInitDone=false;renderLdrTxList();}
 
 // ── ... menu ──
@@ -3270,11 +3364,16 @@ function renderFinance(){
   // Subs
   const activeSubs=subs.filter(s=>s.active);
   const subMo=activeSubs.reduce((sum,s)=>sum+(s.cycle==='yearly'?s.price/12:s.price),0);
+  const _ovYm=`${vy}-${String(vm+1).padStart(2,'0')}`;
+  const _ovMonthSubs=activeSubs.filter(s=>{if(!s.payDay)return false;if(s.cycle==='yearly')return(s.payMonth||1)===(vm+1);return true;});
+  const _ovPaidSubs=_ovMonthSubs.filter(s=>txs.some(t=>String(t.subId)===String(s.id)&&t.subYm===_ovYm));
+  const _ovSubM=_ovMonthSubs.length,_ovSubN=_ovPaidSubs.length;
+  const _ovSubProg=_ovSubM>0?_ovSubN/_ovSubM*100:0;
   // Category breakdown (expense only, account-filtered)
   const cats={};mt.filter(t=>t.type==='expense').forEach(t=>{cats[t.category]=(cats[t.category]||0)+t.amount;});
   const sortedCats=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([name,amt])=>({name,amt,color:TX_CAT_COLORS[name]||'#6b7280'}));
   // Recent txs (filtered by type pill)
-  const filtered=ldrTxFilter==='all'?mt:mt.filter(t=>t.type===ldrTxFilter);
+  const filtered=ldrTxFilter==='all'?mt:ldrTxFilter==='unset_account'?mt.filter(t=>(t.type==='income'||t.type==='expense')&&!t.accountId):mt.filter(t=>t.type===ldrTxFilter);
   const recent=[...filtered].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,10);
   const panel=document.getElementById('ldrPanelOverview');
   if(!panel)return;
@@ -3355,7 +3454,9 @@ function renderFinance(){
     <div class="ldr-card-body">
       <div class="ldr-sub-total-num">¥${fmt(subMo)}</div>
       <div class="ldr-sub-annual">${subMo>0?`年間 ¥${fmt(subMo*12)}`:''}</div>
-      <div class="ldr-sub-rows">${activeSubs.slice(0,5).map(s=>{const col=SUB_CAT_COLORS[s.category]||'#6b7280';const mp=s.cycle==='yearly'?Math.round(s.price/12):s.price;return`<div class="ldr-sub-row"><div class="ldr-sub-dot" style="background:${col}"></div><div class="ldr-sub-name">${esc(s.name)}</div><div class="ldr-sub-cat">${esc(s.category)}</div><div class="ldr-sub-price">¥${fmt(mp)}</div></div>`;}).join('')}${!activeSubs.length?'<div style="font-family:\'Space Grotesk\',sans-serif;font-size:12px;color:var(--mute);">サブスクがありません</div>':''}</div>
+      ${_ovSubM>0?`<div style="margin:8px 0 4px;"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3);margin-bottom:4px;">今月の支払い <strong style="color:var(--ink);">${_ovSubN} / ${_ovSubM} 件</strong></div><div style="height:4px;background:rgba(26,24,20,0.1);border-radius:2px;overflow:hidden;"><div style="height:100%;width:${_ovSubProg.toFixed(1)}%;background:${_ovSubProg>=100?'var(--ok)':'var(--warn)'};border-radius:2px;transition:width 0.3s;"></div></div></div>`:''}
+      <div class="ldr-sub-rows">${activeSubs.slice(0,5).map(s=>{const col=SUB_CAT_COLORS[s.category]||'#6b7280';const mp=s.cycle==='yearly'?Math.round(s.price/12):s.price;const isPaid=txs.some(t=>String(t.subId)===String(s.id)&&t.subYm===_ovYm);const pdLabel=s.payDay?(s.cycle==='yearly'?`${s.payMonth||1}/${s.payDay}`:`毎月${s.payDay}日`):'';return`<div class="ldr-sub-row"><div class="ldr-sub-dot" style="background:${col}"></div><div class="ldr-sub-name">${esc(s.name)}</div><div class="ldr-sub-cat">${esc(s.category)}</div>${s.payDay?`<div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink3);">${pdLabel}</div><div style="font-size:12px;color:${isPaid?'var(--ok)':'var(--mute)'};">${isPaid?'✓':'○'}</div>`:''}<div class="ldr-sub-price">¥${fmt(mp)}</div></div>`;}).join('')}${!activeSubs.length?'<div style="font-family:\'Space Grotesk\',sans-serif;font-size:12px;color:var(--mute);">サブスクがありません</div>':''}</div>
+      <button class="ldr-card-link" style="font-size:11px;background:transparent;border:none;cursor:pointer;padding:0;color:var(--accent);display:block;margin-top:8px;" onclick="ldrTab('subs',document.querySelector('#ldrSubtabs .ui-seg-btn:nth-child(4)'))">すべて見る ›</button>
     </div>
   </div>
 </div>
@@ -3372,6 +3473,7 @@ function renderFinance(){
         <button class="ui-pill ${ldrTxFilter==='income'?'active':''}" onclick="setLdrTxFilter('income',this)">収入</button>
         <button class="ui-pill ${ldrTxFilter==='expense'?'active':''}" onclick="setLdrTxFilter('expense',this)">支出</button>
         <button class="ui-pill ${ldrTxFilter==='transfer'?'active':''}" onclick="setLdrTxFilter('transfer',this)">振替</button>
+        ${(()=>{const n=mt.filter(t=>(t.type==='income'||t.type==='expense')&&!t.accountId).length;return`<button class="ui-pill ${ldrTxFilter==='unset_account'?'active':''}" onclick="setLdrTxFilter('unset_account',this)" style="${n===0?'opacity:0.55':''}">口座未設定 <span style="font-family:'JetBrains Mono',monospace;font-size:9px;background:rgba(26,24,20,0.12);padding:0 4px;border-radius:3px;${n===0?'opacity:0.5':''}">${n}</span></button>`;})()}
       </div>
       ${recent.length?`<table class="ldr-tx-table"><thead class="ldr-tx-thead"><tr><th>日付</th><th>内容</th><th class="hide-mob">カテゴリ</th><th class="hide-mob">口座</th><th class="r">金額</th><th class="hide-mob">メモ</th><th></th></tr></thead><tbody>${recent.map(t=>_txRowHtml(t,true)).join('')}</tbody></table>`:'<div style="text-align:center;padding:24px;color:var(--mute);font-family:\'JetBrains Mono\',monospace;font-size:12px;">取引がありません</div>'}
     </div>
@@ -3400,6 +3502,9 @@ let ldrListInitDone=false;
 let ldrListAccFilter='all';
 function renderLdrTxList(){
   const panel=document.getElementById('ldrPanelTxlist');if(!panel)return;
+  // Compute _moBase first so it can be used in init HTML
+  const _moBase=txs.filter(t=>{if(!t.date)return false;const d=new Date(t.date);return d.getFullYear()===vy&&d.getMonth()===vm;});
+  const _unsetN=_moBase.filter(t=>(t.type==='income'||t.type==='expense')&&!t.accountId).length;
   if(!ldrListInitDone){
     ldrListInitDone=true;
     const accOpts=`<option value="all">すべての口座</option><option value="__unset__">口座未設定</option>${accounts.filter(a=>!a.archived).map(a=>`<option value="${esc(String(a.id))}">${esc(a.name)}</option>`).join('')}`;
@@ -3410,11 +3515,12 @@ function renderLdrTxList(){
         <button class="ui-pill ${ldrListFilter==='income'?'active':''}" onclick="setLdrListFilter('income',this)">収入</button>
         <button class="ui-pill ${ldrListFilter==='expense'?'active':''}" onclick="setLdrListFilter('expense',this)">支出</button>
         <button class="ui-pill ${ldrListFilter==='transfer'?'active':''}" onclick="setLdrListFilter('transfer',this)">振替</button>
+        <button class="ui-pill ${ldrListAccFilter==='__unset__'?'active':''}" id="ldrListUnsetPill" onclick="ldrListSetUnset()" style="${_unsetN===0?'opacity:0.55':''}">口座未設定 <span id="ldrListUnsetBadge" style="font-family:'JetBrains Mono',monospace;font-size:9px;background:rgba(26,24,20,0.12);padding:0 4px;border-radius:3px;">${_unsetN}</span></button>
       </div>
       <select class="ldr-txlist-cat-sel" id="ldrListCatSel" onchange="ldrListCat=this.value;renderLdrTxList()" onclick="event.stopPropagation()">
         <option value="all">すべてのカテゴリ</option>
         <option value="食費">食費</option><option value="家賃">家賃</option><option value="光熱費">光熱費</option>
-        <option value="交通費">交通費</option><option value="娯楽">娯楽</option><option value="医療">医療</option>
+        <option value="通信費">通信費</option><option value="交通費">交通費</option><option value="娯楽">娯楽</option><option value="医療">医療</option>
         <option value="衣服">衣服</option><option value="日用品">日用品</option><option value="給与">給与</option>
         <option value="副収入">副収入</option><option value="その他">その他</option>
       </select>
@@ -3423,8 +3529,11 @@ function renderLdrTxList(){
     <div class="ldr-txlist-summary" id="ldrListSummary"></div>
     <div class="ui-card" style="overflow:auto;"><table class="ldr-tx-table" id="ldrListTable"><thead><tr><th>日付</th><th>内容</th><th class="hide-mob">カテゴリ</th><th class="hide-mob">口座</th><th class="r">金額</th><th class="hide-mob">メモ</th><th></th></tr></thead><tbody id="ldrListTbody"></tbody></table></div>`;
   }
+  // Update unset badge count (when month changes without full reinit)
+  const _unsetBadge=document.getElementById('ldrListUnsetBadge');const _unsetPill=document.getElementById('ldrListUnsetPill');
+  if(_unsetBadge)_unsetBadge.textContent=_unsetN;
+  if(_unsetPill){_unsetPill.classList.toggle('active',ldrListAccFilter==='__unset__');_unsetPill.style.opacity=_unsetN===0?'0.55':'';}
   // filter
-  const _moBase=txs.filter(t=>{if(!t.date)return false;const d=new Date(t.date);return d.getFullYear()===vy&&d.getMonth()===vm;});
   let filtered=_moBase;
   if(ldrListFilter!=='all')filtered=filtered.filter(t=>t.type===ldrListFilter);
   if(ldrListCat!=='all')filtered=filtered.filter(t=>t.category===ldrListCat);
@@ -3456,6 +3565,10 @@ function renderLdrTxList(){
 }
 function setLdrListFilter(f,el){
   ldrListFilter=f;
+  renderLdrTxList();
+}
+function ldrListSetUnset(){
+  ldrListAccFilter=ldrListAccFilter==='__unset__'?'all':'__unset__';
   renderLdrTxList();
 }
 
@@ -3772,55 +3885,288 @@ function saveCandEdit(ci){
 }
 
 // ── SUBS ──
-function toggleAddSub(){const f=document.getElementById('addSubForm');f.classList.toggle('open');if(f.classList.contains('open'))document.getElementById('subName').focus();}
-function addSub(){
-  const name=document.getElementById('subName').value.trim();
-  const priceVal=document.getElementById('subPrice').value;
-  if(!name||!priceVal){document.getElementById(name?'subPrice':'subName').focus();return;}
-  subs.push({id:crypto.randomUUID(),name,category:document.getElementById('subCat').value,price:parseFloat(priceVal),cycle:document.getElementById('subCycle').value,active:true,note:document.getElementById('subNote').value.trim()});
-  saveSubs();
-  document.getElementById('subName').value='';document.getElementById('subPrice').value='';document.getElementById('subNote').value='';
-  toggleAddSub();renderSubs();
-}
-function editSubNote(id){
-  const s=subs.find(s=>String(s.id)===String(id));
-  if(!s)return;
-  const el=document.getElementById('sub-note-'+id);
-  if(!el||el.querySelector('textarea'))return;
-  const ta=document.createElement('textarea');
-  ta.value=s.note||'';
-  ta.rows=3;
-  ta.style.cssText='width:100%;resize:vertical;font-family:"JetBrains Mono",monospace;font-size:11px;font-style:italic;color:var(--ink3);border:1px solid rgba(26,24,20,0.3);border-radius:3px;padding:4px 6px;background:#fff;outline:none;line-height:1.6;';
-  ta.onclick=e=>e.stopPropagation();
-  ta.onblur=()=>{s.note=ta.value.trim();saveSubs();renderSubs();};
-  el.innerHTML='';
-  el.appendChild(ta);
-  ta.focus();
-  ta.setSelectionRange(ta.value.length,ta.value.length);
-}
-function toggleSubActive(id){const s=subs.find(s=>String(s.id)===String(id));if(s){s.active=!s.active;saveSubs();renderSubs();}}
-function delSub(id){subs=subs.filter(s=>String(s.id)!==String(id));saveSubs();renderSubs();}
 function saveSubs(){localStorage.setItem('hd_subs',JSON.stringify(subs));saveToSupabase();}
+
+// Default txCategory from sub category
+function _subDefaultTxCat(subCat){
+  const MAP={'住居':'家賃','光熱費':'光熱費','通信':'通信費','交通':'交通費','動画':'娯楽','音楽':'娯楽','ゲーム':'娯楽'};
+  return MAP[subCat]||'その他';
+}
+
+// autoPostSubs: create expense txs for active subs with payDay, from autoFrom up to today
+function autoPostSubs(){
+  if(!subs||!txs)return;
+  let changed=false;
+  const todayStr=today();
+  const ty=parseInt(todayStr.slice(0,4)),tm=parseInt(todayStr.slice(5,7))-1,td=parseInt(todayStr.slice(8,10));
+  subs.forEach(s=>{
+    if(!s.active||!s.payDay||!s.autoFrom)return;
+    const afy=parseInt(s.autoFrom.slice(0,4)),afm=parseInt(s.autoFrom.slice(5,7))-1;
+    let cy=afy,cm=afm;
+    while(cy<ty||(cy===ty&&cm<=tm)){
+      const ym=`${cy}-${String(cm+1).padStart(2,'0')}`;
+      // For yearly: only the payMonth
+      if(s.cycle==='yearly'){
+        const payMo=(s.payMonth||1)-1;
+        if(cm!==payMo){if(cm===11){cm=0;cy++;}else cm++;continue;}
+      }
+      // Check payDay has passed
+      const daysInMo=new Date(cy,cm+1,0).getDate();
+      const actualDay=Math.min(s.payDay,daysInMo);
+      const payDateStr=`${cy}-${String(cm+1).padStart(2,'0')}-${String(actualDay).padStart(2,'0')}`;
+      if(payDateStr>todayStr){if(cm===11){cm=0;cy++;}else cm++;continue;}
+      // Skip if user unchecked this month
+      if(s.skip&&s.skip[ym]){if(cm===11){cm=0;cy++;}else cm++;continue;}
+      // Skip if already paid
+      const alreadyPaid=txs.some(t=>String(t.subId)===String(s.id)&&t.subYm===ym);
+      if(!alreadyPaid){
+        const txCat=s.txCategory||_subDefaultTxCat(s.category);
+        const tx={id:crypto.randomUUID(),type:'expense',title:s.name,amount:s.price,category:txCat,date:payDateStr,note:'',subId:String(s.id),subYm:ym};
+        if(s.accountId)tx.accountId=s.accountId;
+        txs.push(tx);
+        changed=true;
+      }
+      if(cm===11){cm=0;cy++;}else cm++;
+    }
+  });
+  if(changed)saveTx();
+}
+
+// Sub modal
+let _ldrSubEditId=null;
+function _populateLdrSubAccSel(selectedId){
+  const sel=document.getElementById('ldrSubAccId');if(!sel)return;
+  sel.innerHTML=`<option value="">口座未設定</option>${accounts.filter(a=>!a.archived).map(a=>`<option value="${esc(String(a.id))}">${esc(a.name)}</option>`).join('')}`;
+  sel.value=selectedId||'';
+}
+function openLdrSubModal(id){
+  _ldrSubEditId=id?String(id):null;
+  const overlay=document.getElementById('ldrSubModal');if(!overlay)return;
+  _populateLdrSubAccSel(null);
+  overlay.classList.add('open');
+  const title=document.getElementById('ldrSubModalTitle');
+  const saveBtn=document.getElementById('ldrSubSaveBtn');
+  const delWrap=document.getElementById('ldrSubDelWrap');
+  if(id){
+    const s=subs.find(s=>String(s.id)===String(id));if(!s)return;
+    if(title)title.textContent='固定費・サブスクを編集';
+    if(saveBtn)saveBtn.textContent='保存';
+    document.getElementById('ldrSubName').value=s.name||'';
+    document.getElementById('ldrSubPrice').value=s.price||'';
+    document.getElementById('ldrSubCycle').value=s.cycle||'monthly';
+    document.getElementById('ldrSubPayDay').value=s.payDay||'';
+    document.getElementById('ldrSubPayMonth').value=s.payMonth||'';
+    document.getElementById('ldrSubCat').value=s.category||'その他';
+    document.getElementById('ldrSubTxCat').value=s.txCategory||_subDefaultTxCat(s.category||'その他');
+    _populateLdrSubAccSel(s.accountId||'');
+    document.getElementById('ldrSubNote').value=s.note||'';
+    ldrSubCycleChange();
+    if(delWrap)delWrap.innerHTML=`<button class="btn btn-ghost btn-sm" style="border-color:var(--accent);color:var(--accent)" onclick="confirmDelLdrSub('${esc(String(id))}')">削除</button>`;
+  } else {
+    if(title)title.textContent='固定費・サブスクを追加';
+    if(saveBtn)saveBtn.textContent='追加';
+    document.getElementById('ldrSubName').value='';
+    document.getElementById('ldrSubPrice').value='';
+    document.getElementById('ldrSubCycle').value='monthly';
+    document.getElementById('ldrSubPayDay').value='';
+    document.getElementById('ldrSubPayMonth').value='';
+    document.getElementById('ldrSubCat').value='その他';
+    document.getElementById('ldrSubTxCat').value='その他';
+    _populateLdrSubAccSel('');
+    document.getElementById('ldrSubNote').value='';
+    ldrSubCycleChange();
+    if(delWrap)delWrap.innerHTML='';
+  }
+  document.addEventListener('keydown',_ldrSubModalEsc);
+  setTimeout(()=>{const el=document.getElementById('ldrSubName');if(el)el.focus();},50);
+}
+function closeLdrSubModal(){
+  const overlay=document.getElementById('ldrSubModal');if(overlay)overlay.classList.remove('open');
+  document.removeEventListener('keydown',_ldrSubModalEsc);
+  _ldrSubEditId=null;
+}
+function _ldrSubModalEsc(e){if(e.key==='Escape')closeLdrSubModal();}
+function ldrSubCycleChange(){
+  const cycle=document.getElementById('ldrSubCycle');
+  const row=document.getElementById('ldrSubPayMonthRow');
+  if(cycle&&row)row.style.display=cycle.value==='yearly'?'':'none';
+}
+function ldrSubCatChange(){
+  const cat=document.getElementById('ldrSubCat');
+  const txCat=document.getElementById('ldrSubTxCat');
+  if(cat&&txCat)txCat.value=_subDefaultTxCat(cat.value);
+}
+function saveLdrSubModal(){
+  const name=document.getElementById('ldrSubName').value.trim();
+  if(!name){document.getElementById('ldrSubName').focus();return;}
+  const priceStr=document.getElementById('ldrSubPrice').value;
+  const price=parseFloat(priceStr);
+  if(!priceStr||isNaN(price)||price<=0){document.getElementById('ldrSubPrice').focus();return;}
+  const cycle=document.getElementById('ldrSubCycle').value;
+  const payDayStr=document.getElementById('ldrSubPayDay').value;
+  const payDay=payDayStr?Math.min(31,Math.max(1,parseInt(payDayStr))):null;
+  const payMonthStr=document.getElementById('ldrSubPayMonth').value;
+  const payMonth=(cycle==='yearly'&&payMonthStr)?Math.min(12,Math.max(1,parseInt(payMonthStr))):null;
+  const category=document.getElementById('ldrSubCat').value;
+  const txCategory=document.getElementById('ldrSubTxCat').value;
+  const accId=document.getElementById('ldrSubAccId').value||null;
+  const note=document.getElementById('ldrSubNote').value.trim();
+  const nowYm=today().slice(0,7);
+  if(_ldrSubEditId){
+    const idx=subs.findIndex(s=>String(s.id)===String(_ldrSubEditId));
+    if(idx>=0){
+      const s=subs[idx];
+      s.name=name;s.price=price;s.cycle=cycle;s.category=category;s.txCategory=txCategory;s.note=note;
+      if(accId)s.accountId=accId;else delete s.accountId;
+      if(payDay){if(s.payDay!==payDay)s.autoFrom=nowYm;s.payDay=payDay;}
+      else{delete s.payDay;delete s.autoFrom;}
+      if(cycle==='yearly'&&payMonth)s.payMonth=payMonth;else delete s.payMonth;
+    }
+  } else {
+    const newSub={id:crypto.randomUUID(),name,price,cycle,category,txCategory,active:true,note};
+    if(accId)newSub.accountId=accId;
+    if(payDay){newSub.payDay=payDay;newSub.autoFrom=nowYm;}
+    if(cycle==='yearly'&&payMonth)newSub.payMonth=payMonth;
+    subs.push(newSub);
+  }
+  saveSubs();
+  closeLdrSubModal();
+  autoPostSubs();
+  renderSubs();
+  renderFinance();
+}
+function confirmDelLdrSub(id){
+  const delWrap=document.getElementById('ldrSubDelWrap');if(!delWrap)return;
+  delWrap.innerHTML=`<span class="ldr-del-confirm">本当に削除しますか？</span><button class="btn btn-ghost btn-sm" onclick="ldrSubDelWrap_cancel()">いいえ</button><button class="btn btn-sm" style="background:var(--accent);color:var(--paper);border:none;padding:5px 12px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;cursor:pointer;" onclick="execDelLdrSub('${esc(String(id))}')">削除</button>`;
+}
+function ldrSubDelWrap_cancel(){
+  const w=document.getElementById('ldrSubDelWrap');
+  if(w&&_ldrSubEditId)w.innerHTML=`<button class="btn btn-ghost btn-sm" style="border-color:var(--accent);color:var(--accent)" onclick="confirmDelLdrSub('${esc(String(_ldrSubEditId))}')">削除</button>`;
+}
+function execDelLdrSub(id){
+  subs=subs.filter(s=>String(s.id)!==String(id));
+  saveSubs();closeLdrSubModal();renderSubs();renderFinance();
+}
+
+// Check/uncheck payment for a sub in a specific month
+function checkSubPayment(id,ym){
+  const s=subs.find(s=>String(s.id)===String(id));if(!s||!s.payDay)return;
+  // Remove from skip if present
+  if(s.skip&&s.skip[ym]){delete s.skip[ym];if(!Object.keys(s.skip).length)delete s.skip;}
+  const exists=txs.some(t=>String(t.subId)===String(id)&&t.subYm===ym);
+  if(!exists){
+    const y=parseInt(ym.slice(0,4)),m=parseInt(ym.slice(5,7))-1;
+    const daysInMo=new Date(y,m+1,0).getDate();
+    const actualDay=Math.min(s.payDay,daysInMo);
+    const payDateStr=`${ym}-${String(actualDay).padStart(2,'0')}`;
+    const txCat=s.txCategory||_subDefaultTxCat(s.category);
+    const tx={id:crypto.randomUUID(),type:'expense',title:s.name,amount:s.price,category:txCat,date:payDateStr,note:'',subId:String(s.id),subYm:ym};
+    if(s.accountId)tx.accountId=s.accountId;
+    txs.push(tx);
+    saveTx();
+  }
+  saveSubs();renderSubs();renderFinance();ldrListInitDone=false;renderLdrTxList();
+}
+function uncheckSubPayment(id,ym){
+  const s=subs.find(s=>String(s.id)===String(id));if(!s)return;
+  if(!confirm(`${ym} の「${s.name}」の支払いを取り消しますか？`))return;
+  txs=txs.filter(t=>!(String(t.subId)===String(id)&&t.subYm===ym));
+  if(!s.skip)s.skip={};s.skip[ym]=true;
+  saveTx();saveSubs();renderSubs();renderFinance();ldrListInitDone=false;renderLdrTxList();
+}
+
+// Sub row ... menu
+let _openSubMenuId=null;
+function _openSubMenu(e,id){
+  e.stopPropagation();
+  const menuId='subMenu_'+id;
+  if(_openSubMenuId&&_openSubMenuId!==menuId){const old=document.getElementById(_openSubMenuId);if(old)old.classList.remove('open');}
+  const m=document.getElementById(menuId);
+  if(m){m.classList.toggle('open');_openSubMenuId=m.classList.contains('open')?menuId:null;}
+}
+function _closeSubMenus(){if(_openSubMenuId){const m=document.getElementById(_openSubMenuId);if(m)m.classList.remove('open');_openSubMenuId=null;}}
+
+function toggleSubActive(id){
+  const s=subs.find(s=>String(s.id)===String(id));
+  if(s){s.active=!s.active;saveSubs();if(s.active)autoPostSubs();renderSubs();renderFinance();}
+}
+
 function renderSubs(){
+  const panel=document.getElementById('ldrPanelSubs');if(!panel)return;
+  // Update month nav labels
+  const ml=document.getElementById('ldrMonLabel');
+  if(ml)ml.textContent=`${vy}年 ${LDR_MONTHS[vm]}`;
+  const firstDay=new Date(vy,vm,1),lastDay=new Date(vy,vm+1,0);
+  const pEl=document.getElementById('ldrPeriod');
+  if(pEl)pEl.textContent=`${vy}年${vm+1}月${firstDay.getDate()}日 〜 ${vy}年${vm+1}月${lastDay.getDate()}日`;
+
+  const ym=`${vy}-${String(vm+1).padStart(2,'0')}`;
   const active=subs.filter(s=>s.active);
   const monthly=active.reduce((sum,s)=>sum+(s.cycle==='yearly'?s.price/12:s.price),0);
-  document.getElementById('subTotalNum').textContent='¥'+fmt(monthly);
-  document.getElementById('subAnnual').textContent=monthly>0?`（年間 ¥${fmt(monthly*12)}）`:'';
-  const el=document.getElementById('subList');
-  if(!subs.length){el.innerHTML='<div class="empty" style="padding:20px"><div class="ei" style="font-size:1.6rem">💳</div><div>サブスクを追加してください</div></div>';return;}
-  el.innerHTML=subs.map(s=>{
-    const mPrice=s.cycle==='yearly'?Math.round(s.price/12):s.price;
+  // Progress
+  const monthSubs=active.filter(s=>{if(!s.payDay)return false;if(s.cycle==='yearly')return(s.payMonth||1)===(vm+1);return true;});
+  const paidSubs=monthSubs.filter(s=>txs.some(t=>String(t.subId)===String(s.id)&&t.subYm===ym));
+  const M=monthSubs.length,N=paidSubs.length;
+  const progPct=M>0?N/M*100:0;
+  const todayStr=today();
+
+  const rowsHtml=subs.map(s=>{
     const col=SUB_CAT_COLORS[s.category]||'#6b7280';
-    return`<div class="sub-item ${s.active?'':'inactive'}">
-      <div class="sub-cdot" style="background:${col}"></div>
-      <div class="sub-info"><div class="sub-name">${esc(s.name)}</div></div>
-      <div class="sub-note-col" id="sub-note-${s.id}" onclick="editSubNote('${esc(String(s.id))}')" title="クリックして編集">${s.note?esc(s.note).replace(/\n/g,'<br>'):'<span style="opacity:0.35">メモを追加...</span>'}</div>
-      <div class="sub-cat-tag">${esc(s.category)}</div>
-      <div class="sub-price-wrap"><div class="sub-price">¥${fmt(mPrice)}</div><div class="sub-cycle">${s.cycle==='yearly'?'年払い':'月払い'} /月</div></div>
-      <button class="sub-toggle ${s.active?'on':'off'}" onclick="toggleSubActive('${esc(String(s.id))}')" title="${s.active?'無効化':'有効化'}"></button>
-      <button class="btn-kill" onclick="delSub('${esc(String(s.id))}')">✕</button>
+    const mPrice=s.cycle==='yearly'?Math.round(s.price/12):s.price;
+    const isPaid=s.payDay?txs.some(t=>String(t.subId)===String(s.id)&&t.subYm===ym):false;
+    let payDayLabel,checkHtml;
+    if(!s.payDay){
+      payDayLabel=`<span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);cursor:pointer;" onclick="openLdrSubModal('${esc(String(s.id))}');event.stopPropagation()">＋ 支払日</span>`;
+      checkHtml=`<span style="color:var(--mute);font-size:15px;opacity:0.4;min-width:22px;text-align:center;">○</span>`;
+    } else {
+      payDayLabel=`<span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3);">${s.cycle==='yearly'?`毎年 ${s.payMonth||1}月${s.payDay}日`:`毎月 ${s.payDay}日`}</span>`;
+      const daysInMo=new Date(vy,vm+1,0).getDate();
+      const actualDay=Math.min(s.payDay,daysInMo);
+      const payDateStr=`${ym}-${String(actualDay).padStart(2,'0')}`;
+      const isOverdue=!isPaid&&payDateStr<=todayStr&&s.active;
+      if(isPaid){
+        checkHtml=`<button style="width:22px;height:22px;border-radius:50%;background:var(--ok);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;" onclick="uncheckSubPayment('${esc(String(s.id))}','${esc(ym)}');event.stopPropagation()" title="チェックを外す"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>`;
+      } else if(isOverdue){
+        checkHtml=`<button style="padding:2px 6px;background:rgba(139,58,24,0.08);border:1px solid var(--accent);color:var(--accent);cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;border-radius:3px;flex-shrink:0;white-space:nowrap;" onclick="checkSubPayment('${esc(String(s.id))}','${esc(ym)}');event.stopPropagation()" title="支払い済みにする">未払い</button>`;
+      } else {
+        checkHtml=`<button style="width:22px;height:22px;border-radius:50%;background:transparent;border:1.5px solid var(--mute);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;" onclick="checkSubPayment('${esc(String(s.id))}','${esc(ym)}');event.stopPropagation()" title="支払い済みにする"></button>`;
+      }
+    }
+    const accName=s.accountId?_accName(s.accountId):'—';
+    return`<div class="ldr-sub-row2 ${s.active?'':'inactive'}" onclick="openLdrSubModal('${esc(String(s.id))}')">
+      <div class="sub-cdot" style="background:${col};flex-shrink:0;width:8px;height:8px;border-radius:50%;"></div>
+      <div style="flex:1;min-width:0;font-family:'Space Grotesk',sans-serif;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(s.name)}</div>
+      <div class="sub-cat-tag hide-mob">${esc(s.category)}</div>
+      <div class="hide-mob" style="min-width:100px;">${payDayLabel}</div>
+      <div class="hide-mob" style="font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--ink3);min-width:80px;">${esc(accName)}</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;min-width:72px;text-align:right;flex-shrink:0;">¥${fmt(mPrice)}</div>
+      <div onclick="event.stopPropagation()" style="flex-shrink:0;">${checkHtml}</div>
+      <button class="sub-toggle ${s.active?'on':'off'}" onclick="toggleSubActive('${esc(String(s.id))}');event.stopPropagation()" title="${s.active?'無効化':'有効化'}"></button>
+      <div class="ldr-tx-more-wrap" onclick="event.stopPropagation()">
+        <button class="ldr-tx-more" onclick="_openSubMenu(event,'${esc(String(s.id))}')" style="padding:2px 6px;">⋯</button>
+        <div class="ldr-tx-menu" id="subMenu_${esc(String(s.id))}">
+          <button onclick="openLdrSubModal('${esc(String(s.id))}');_closeSubMenus()">編集</button>
+          <button onclick="confirmDelLdrSub('${esc(String(s.id))}');_closeSubMenus()">削除</button>
+        </div>
+      </div>
     </div>`;
   }).join('');
+
+  panel.innerHTML=`<div style="padding:0 0 12px;">
+  <div style="display:flex;align-items:flex-end;gap:16px;padding:14px 0 12px;border-bottom:1px solid rgba(26,24,20,0.12);flex-wrap:wrap;">
+    <div>
+      <div class="ldr-subs-total-label">月額合計（有効）</div>
+      <div class="ldr-subs-total-num">¥${fmt(monthly)}</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink3);margin-top:3px;">${monthly>0?`年間 ¥${fmt(monthly*12)}`:''}</div>
+    </div>
+    ${M>0?`<div style="flex:1;min-width:160px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3);margin-bottom:5px;">今月の支払い <strong style="color:var(--ink);">${N} / ${M} 件</strong></div>
+      <div style="height:5px;background:rgba(26,24,20,0.1);border-radius:3px;overflow:hidden;"><div style="height:100%;width:${progPct.toFixed(1)}%;background:${progPct>=100?'var(--ok)':'var(--warn)'};border-radius:3px;transition:width 0.3s;"></div></div>
+    </div>`:''}
+    <button class="btn btn-primary btn-sm" onclick="openLdrSubModal(null);event.stopPropagation()">＋ 追加</button>
+  </div>
+  ${subs.length?`<div style="display:flex;flex-direction:column;gap:0;">${rowsHtml}</div>`:'<div class="empty" style="padding:36px 20px"><div class="ei" style="font-size:1.6rem">💳</div><div>固定費・サブスクを追加してください</div></div>'}
+</div>`;
 }
 
 // ── TRAVEL ──
