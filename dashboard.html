@@ -620,7 +620,7 @@
     .food-cal-type-pill.out  { background:rgba(220,210,240,0.7); color:#6b45a0; border:1px solid rgba(107,69,160,0.2); }
     .food-cal-photo-mob { display:none; }
     .food-cal-dot-mob { display:none; }
-    /* Detail panel */
+    /* Detail panel (right side, PC) */
     .food-detail-panel { position:sticky; top:66px; }
     .food-detail-nav { display:flex; align-items:center; gap:8px; padding:14px 20px 10px; border-bottom:1px solid rgba(26,24,20,0.1); }
     .food-detail-nav-btn { width:38px; height:38px; border:1.5px solid rgba(26,24,20,0.2); border-radius:8px; background:transparent; color:var(--ink2); cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; font-family:'JetBrains Mono',monospace; line-height:1; flex-shrink:0; }
@@ -631,20 +631,29 @@
     .food-detail-count-label { font-family:'Space Grotesk',sans-serif; font-size:14px; color:var(--ink2); flex:1; }
     .food-detail-count-num { font-family:'JetBrains Mono',monospace; font-size:30px; font-weight:700; line-height:1; color:var(--ink); }
     .food-detail-count-unit { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink3); }
+    /* Sitting sections in right-panel */
+    .food-detail-sitting { border-bottom:1px solid rgba(26,24,20,0.1); }
+    .food-detail-sitting:last-child { border-bottom:none; }
+    .food-detail-sitting-hdr { display:flex; align-items:center; gap:6px; padding:10px 20px 6px; }
+    .food-detail-sitting-kind { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); }
+    .food-detail-sitting-place { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink3); }
     .food-detail-dishes { display:flex; flex-direction:column; padding:0 20px; }
-    .food-detail-dish-row { display:flex; align-items:flex-start; gap:14px; padding:14px 0; border-bottom:1px solid rgba(26,24,20,0.08); }
+    .food-detail-dish-row { display:flex; align-items:flex-start; gap:14px; padding:10px 0; border-bottom:1px solid rgba(26,24,20,0.08); cursor:pointer; transition:background 0.12s; }
     .food-detail-dish-row:last-child { border-bottom:none; }
-    .food-detail-thumb { width:150px; height:130px; border-radius:8px; overflow:hidden; flex-shrink:0; background:var(--paper3); display:flex; align-items:center; justify-content:center; color:var(--mute); }
+    .food-detail-dish-row:hover { background:rgba(26,24,20,0.025); margin:0 -20px; padding:10px 20px; }
+    .food-detail-thumb { width:150px; height:130px; border-radius:8px; overflow:hidden; flex-shrink:0; background:var(--paper3); display:flex; align-items:center; justify-content:center; color:var(--mute); position:relative; }
     .food-detail-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .food-detail-thumb-badge { position:absolute; bottom:4px; right:4px; background:rgba(26,24,20,0.65); color:#fff; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; padding:2px 5px; border-radius:3px; }
     .food-detail-dish-info { flex:1; min-width:0; padding-top:4px; }
     .food-detail-dish-name { font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:8px; }
-    .food-detail-dish-meta { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+    .food-detail-dish-meta { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:6px; }
     .food-detail-dish-pill { font-family:'JetBrains Mono',monospace; font-size:10px; padding:3px 8px; border-radius:10px; font-weight:600; }
     .food-detail-dish-pill.home { background:rgba(90,107,58,0.12); color:var(--ok); }
     .food-detail-dish-pill.out  { background:rgba(107,69,160,0.1); color:#6b45a0; }
     .food-detail-dish-place { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink3); }
     .food-detail-dish-link { color:var(--ink3); text-decoration:none; font-size:13px; display:inline-flex; align-items:center; gap:4px; }
     .food-detail-dish-link:hover { color:var(--accent); }
+    .food-detail-dish-note { font-family:'Newsreader',serif; font-style:italic; font-size:13px; color:var(--ink3); overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.4; }
     .food-detail-memo { font-family:'Newsreader',serif; font-style:italic; font-size:14px; color:var(--ink3); padding:12px 20px; line-height:1.5; border-top:1px solid rgba(26,24,20,0.08); }
     .food-detail-actions { padding:14px 20px 18px; display:flex; flex-direction:column; gap:8px; }
     .food-detail-add-btn { background:var(--accent); color:var(--paper); border:none; border-radius:8px; height:50px; font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:700; cursor:pointer; width:100%; transition:opacity 0.15s; display:flex; align-items:center; justify-content:center; gap:6px; }
@@ -672,12 +681,10 @@
     .food-chip { font-family:'JetBrains Mono',monospace; font-size:10px; padding:2px 8px; font-weight:600; border-radius:2px; }
     .food-chip-home { background:rgba(90,107,58,0.12); color:var(--ok); }
     .food-chip-out  { background:rgba(139,58,24,0.12); color:var(--accent); }
-    .food-chip-link { margin-left:2px; color:var(--ink3); opacity:0.7; font-size:11px; text-decoration:none; }
-    .food-chip-link:hover { opacity:1; color:var(--accent); }
     .food-card-memo { font-family:'Newsreader',serif; font-style:italic; font-size:14px; color:var(--ink3); overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.45; }
     .food-empty { text-align:center; padding:60px 20px; color:var(--mute); }
     .food-empty .ei { font-size:2.5rem; margin-bottom:12px; opacity:0.35; }
-    /* Food modal */
+    /* Food edit modal */
     .food-modal-overlay { display:none; position:fixed; inset:0; background:rgba(26,24,20,0.55); z-index:8000; align-items:flex-start; justify-content:center; overflow-y:auto; padding:32px 16px; }
     .food-modal { background:var(--paper); width:100%; max-width:680px; margin:auto; border:1.5px solid var(--rule); }
     .food-modal-hdr { display:flex; align-items:center; justify-content:space-between; padding:18px 24px 14px; border-bottom:1px solid var(--rule); }
@@ -687,10 +694,20 @@
     .food-modal-body { padding:20px 24px; display:flex; flex-direction:column; gap:16px; }
     .food-modal-section { display:flex; flex-direction:column; gap:8px; }
     .food-modal-label { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); }
-    .food-dish-row { display:flex; gap:8px; align-items:flex-start; padding:10px 12px; background:var(--paper2); border:1px solid rgba(26,24,20,0.1); margin-bottom:6px; }
+    /* Sitting section in edit modal */
+    .food-sitting-section { border:1.5px solid rgba(26,24,20,0.12); border-radius:6px; margin-bottom:10px; overflow:hidden; }
+    .food-sitting-hdr { display:flex; align-items:center; padding:10px 14px; background:var(--paper2); border-bottom:1px solid rgba(26,24,20,0.1); gap:8px; }
+    .food-sitting-kind-label { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); flex:1; }
+    .food-sitting-del-btn { background:transparent; border:none; color:var(--mute); cursor:pointer; font-size:13px; padding:2px 6px; transition:color 0.12s; line-height:1; font-family:'JetBrains Mono',monospace; }
+    .food-sitting-del-btn:hover { color:var(--accent); }
+    .food-sitting-body { padding:10px 12px 6px; }
+    .food-sitting-add-btns { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
+    .food-sitting-add-kind-btn { padding:5px 12px; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.06em; border:1px dashed rgba(26,24,20,0.3); background:transparent; color:var(--ink3); cursor:pointer; border-radius:4px; transition:all 0.12s; }
+    .food-sitting-add-kind-btn:hover { border-color:var(--ink3); color:var(--ink); background:var(--paper2); }
+    .food-dish-row { display:flex; gap:8px; align-items:flex-start; padding:10px 12px; background:var(--paper2); border:1px solid rgba(26,24,20,0.1); margin-bottom:6px; border-radius:4px; }
     .food-dish-fields { display:flex; flex-direction:column; gap:6px; flex:1; min-width:0; }
     .food-dish-row-top { display:flex; gap:8px; align-items:center; }
-    .food-dish-name { font-family:'Space Grotesk',sans-serif; font-size:14px; padding:6px 10px; border:1px solid var(--ink3); background:var(--paper); color:var(--ink); outline:none; flex:1; min-width:0; border-radius:0; }
+    .food-dish-name { font-family:'Space Grotesk',sans-serif; font-size:14px; padding:6px 10px; border:1px solid var(--ink3); background:var(--paper); color:var(--ink); outline:none; width:220px; min-width:0; border-radius:0; }
     .food-dish-name:focus { border-color:var(--ink); }
     .food-dish-name::placeholder { color:var(--mute); }
     .food-type-toggle { display:flex; flex-shrink:0; }
@@ -698,20 +715,27 @@
     .food-type-btn:first-child { border-right:none; }
     .food-type-btn.active-home { background:var(--ok); color:var(--paper); border-color:var(--ok); }
     .food-type-btn.active-out  { background:var(--accent); color:var(--paper); border-color:var(--accent); }
-    .food-dish-extra { display:flex; gap:6px; }
-    .food-dish-place,.food-dish-url { font-family:'Space Grotesk',sans-serif; font-size:13px; padding:5px 8px; border:1px solid rgba(26,24,20,0.2); background:var(--paper); color:var(--ink); outline:none; flex:1; min-width:0; border-radius:0; }
+    .food-dish-extra { display:flex; gap:6px; flex-wrap:wrap; }
+    .food-dish-place { font-family:'Space Grotesk',sans-serif; font-size:13px; padding:5px 8px; border:1px solid rgba(26,24,20,0.2); background:var(--paper); color:var(--ink); outline:none; width:160px; min-width:0; border-radius:0; }
+    .food-dish-url { font-family:'Space Grotesk',sans-serif; font-size:13px; padding:5px 8px; border:1px solid rgba(26,24,20,0.2); background:var(--paper); color:var(--ink); outline:none; width:220px; min-width:0; border-radius:0; }
     .food-dish-place:focus,.food-dish-url:focus { border-color:var(--ink); }
     .food-dish-place::placeholder,.food-dish-url::placeholder { color:var(--mute); }
+    .food-dish-note-ta { font-family:'Space Grotesk',sans-serif; font-size:13px; padding:5px 8px; border:1px solid rgba(26,24,20,0.2); background:var(--paper); color:var(--ink); outline:none; width:100%; resize:none; min-height:48px; line-height:1.4; border-radius:0; }
+    .food-dish-note-ta:focus { border-color:var(--ink); }
+    .food-dish-note-ta::placeholder { color:var(--mute); }
     .food-dish-del { background:transparent; border:none; color:var(--mute); cursor:pointer; font-size:14px; padding:4px; flex-shrink:0; transition:color 0.12s; line-height:1; }
     .food-dish-del:hover { color:var(--accent); }
-    .food-add-dish { background:transparent; border:1px dashed rgba(26,24,20,0.25); color:var(--ink3); font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.06em; padding:8px; cursor:pointer; width:100%; text-align:center; transition:all 0.12s; }
+    .food-add-dish { background:transparent; border:1px dashed rgba(26,24,20,0.25); color:var(--ink3); font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.06em; padding:8px; cursor:pointer; width:100%; text-align:center; transition:all 0.12s; border-radius:4px; }
     .food-add-dish:hover { border-color:var(--ink3); color:var(--ink); background:var(--paper2); }
+    /* Per-dish photo area */
+    .food-dish-photo-area { border:1px dashed rgba(26,24,20,0.18); border-radius:4px; padding:8px; background:var(--paper); transition:background 0.15s; }
+    .food-dish-photo-area.drag-over { background:var(--paper2); border-color:var(--accent); }
     .food-photos-wrap { display:flex; flex-wrap:wrap; gap:8px; align-items:flex-start; }
-    .food-photo-thumb { position:relative; width:80px; height:60px; overflow:hidden; flex-shrink:0; }
+    .food-photo-thumb { position:relative; width:80px; height:60px; overflow:hidden; flex-shrink:0; border-radius:3px; }
     .food-photo-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
     .food-photo-del { position:absolute; top:2px; right:2px; background:rgba(26,24,20,0.65); border:none; color:#fff; width:18px; height:18px; border-radius:50%; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center; line-height:1; }
     .food-photo-del:hover { background:var(--accent); }
-    .food-photo-add-btn { display:flex; align-items:center; justify-content:center; width:80px; height:60px; border:1.5px dashed rgba(26,24,20,0.25); background:transparent; color:var(--ink3); font-size:10px; font-family:'JetBrains Mono',monospace; cursor:pointer; transition:all 0.12s; flex-direction:column; gap:2px; font-weight:700; }
+    .food-photo-add-btn { display:flex; align-items:center; justify-content:center; width:80px; height:60px; border:1.5px dashed rgba(26,24,20,0.25); background:transparent; color:var(--ink3); font-size:10px; font-family:'JetBrains Mono',monospace; cursor:pointer; transition:all 0.12s; flex-direction:column; gap:2px; font-weight:700; border-radius:3px; }
     .food-photo-add-btn:hover { border-color:var(--ink3); color:var(--ink); background:var(--paper2); }
     .food-photo-error { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); margin-top:4px; min-height:16px; }
     .food-photo-hint { font-size:11px; color:var(--ink3); margin-left:8px; font-weight:400; letter-spacing:0; text-transform:none; }
@@ -724,6 +748,49 @@
     .food-modal-ftr-right { display:flex; gap:8px; align-items:center; }
     .food-del-confirm { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); margin-bottom:6px; }
     .food-del-btns { display:flex; gap:6px; }
+    /* Detail popup (閲覧用大モーダル) */
+    .food-popup-overlay { display:none; position:fixed; inset:0; background:rgba(26,24,20,0.6); z-index:8100; align-items:flex-start; justify-content:center; overflow-y:auto; padding:32px 16px; }
+    .food-popup { background:var(--paper); width:100%; max-width:880px; margin:auto; border:1.5px solid var(--rule); max-height:88vh; display:flex; flex-direction:column; }
+    .food-popup-hdr { display:flex; align-items:center; gap:8px; padding:16px 24px 12px; border-bottom:1px solid var(--rule); flex-shrink:0; }
+    .food-popup-nav-btn { width:36px; height:36px; border:1.5px solid rgba(26,24,20,0.2); border-radius:8px; background:transparent; color:var(--ink2); cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; font-family:'JetBrains Mono',monospace; flex-shrink:0; }
+    .food-popup-nav-btn:hover { border-color:var(--ink); background:var(--paper2); }
+    .food-popup-date { flex:1; text-align:center; font-family:'Newsreader',serif; font-size:22px; font-weight:700; }
+    .food-popup-edit-btn { padding:6px 16px; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; border:1px solid var(--ink3); background:transparent; color:var(--ink2); cursor:pointer; border-radius:4px; flex-shrink:0; transition:all 0.12s; }
+    .food-popup-edit-btn:hover { border-color:var(--ink); color:var(--ink); }
+    .food-popup-close { background:transparent; border:none; font-size:18px; cursor:pointer; color:var(--ink3); padding:4px 8px; line-height:1; flex-shrink:0; }
+    .food-popup-close:hover { color:var(--ink); }
+    .food-popup-body { overflow-y:auto; flex:1; padding:0 24px 24px; }
+    .food-popup-sitting { margin-top:20px; }
+    .food-popup-sitting-hdr { display:flex; align-items:baseline; gap:8px; margin-bottom:12px; padding-bottom:6px; border-bottom:2px solid rgba(26,24,20,0.1); }
+    .food-popup-sitting-kind { font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); }
+    .food-popup-sitting-place { font-family:'Space Grotesk',sans-serif; font-size:14px; color:var(--ink3); }
+    .food-popup-dish { margin-bottom:20px; }
+    .food-popup-dish-name { font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+    .food-popup-dish-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+    .food-popup-dish-pill { font-family:'JetBrains Mono',monospace; font-size:10px; padding:3px 9px; border-radius:10px; font-weight:600; }
+    .food-popup-dish-pill.home { background:rgba(90,107,58,0.12); color:var(--ok); }
+    .food-popup-dish-pill.out  { background:rgba(107,69,160,0.1); color:#6b45a0; }
+    .food-popup-dish-place { font-family:'Space Grotesk',sans-serif; font-size:14px; color:var(--ink3); }
+    .food-popup-dish-link { color:var(--ink3); text-decoration:none; font-size:14px; display:inline-flex; align-items:center; gap:4px; }
+    .food-popup-dish-link:hover { color:var(--accent); }
+    .food-popup-dish-note { font-family:'Newsreader',serif; font-style:italic; font-size:15px; color:var(--ink3); line-height:1.5; margin-bottom:10px; }
+    /* Photo gallery in popup */
+    .food-popup-gallery { display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; }
+    .food-popup-gallery-img { height:220px; flex-shrink:0; border-radius:6px; overflow:hidden; cursor:pointer; background:var(--paper3); }
+    .food-popup-gallery-img img { height:100%; width:auto; object-fit:cover; display:block; transition:opacity 0.12s; }
+    .food-popup-gallery-img:hover img { opacity:0.88; }
+    .food-popup-memo { font-family:'Newsreader',serif; font-style:italic; font-size:15px; color:var(--ink3); padding:16px 0 4px; border-top:1px solid rgba(26,24,20,0.1); margin-top:20px; line-height:1.55; }
+    /* Lightbox */
+    .food-lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:9500; align-items:center; justify-content:center; }
+    .food-lightbox.open { display:flex; }
+    .food-lightbox-img { max-width:92vw; max-height:88vh; object-fit:contain; display:block; border-radius:4px; }
+    .food-lightbox-close { position:absolute; top:16px; right:20px; background:transparent; border:none; color:#fff; font-size:28px; cursor:pointer; opacity:0.7; line-height:1; padding:4px 8px; }
+    .food-lightbox-close:hover { opacity:1; }
+    .food-lightbox-prev,.food-lightbox-next { position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.12); border:none; color:#fff; font-size:28px; cursor:pointer; width:52px; height:52px; display:flex; align-items:center; justify-content:center; border-radius:50%; transition:background 0.15s; }
+    .food-lightbox-prev:hover,.food-lightbox-next:hover { background:rgba(255,255,255,0.25); }
+    .food-lightbox-prev { left:16px; }
+    .food-lightbox-next { right:16px; }
+    .food-lightbox-counter { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); color:rgba(255,255,255,0.6); font-family:'JetBrains Mono',monospace; font-size:12px; }
     .food-fab { display:none; position:fixed; bottom:calc(24px + env(safe-area-inset-bottom,0px)); right:24px; width:52px; height:52px; border-radius:50%; background:var(--accent); color:var(--paper); border:none; font-size:26px; cursor:pointer; align-items:center; justify-content:center; box-shadow:0 4px 16px rgba(139,58,24,0.35); z-index:7000; transition:opacity 0.15s; line-height:1; }
     .food-fab:hover { opacity:0.88; }
 
@@ -1102,6 +1169,9 @@
       .food-grid { grid-template-columns:1fr; gap:14px; }
       .food-modal-overlay { padding:0; align-items:flex-end; }
       .food-modal { max-width:100%; max-height:92svh; overflow-y:auto; }
+      .food-popup-overlay { padding:0; align-items:flex-end; }
+      .food-popup { max-width:100%; max-height:96svh; border-radius:12px 12px 0 0; }
+      .food-popup-gallery-img { height:min(56vw,220px); }
       .food-2col { grid-template-columns:1fr; gap:14px; }
       .food-detail-panel { position:static; }
       .food-detail-panel:not(.has-content) { display:none; }
@@ -1792,7 +1862,7 @@
   <button class="food-fab" id="foodFab" onclick="openFoodModalNew()">＋</button>
 </div>
 
-<!-- ── FOOD MODAL ── -->
+<!-- ── FOOD EDIT MODAL ── -->
 <div id="foodModalOverlay" class="food-modal-overlay" onclick="closeFoodModal()">
   <div class="food-modal" id="foodModal" onclick="event.stopPropagation()" ondragover="foodDragOver(event)" ondragleave="foodDragLeave(event)" ondrop="foodDrop(event)">
     <div class="food-modal-hdr">
@@ -1802,6 +1872,23 @@
     <div class="food-modal-body" id="foodModalBody"></div>
     <div class="food-modal-ftr" id="foodModalFtr"></div>
   </div>
+</div>
+
+<!-- ── FOOD DETAIL POPUP ── -->
+<div id="foodPopupOverlay" class="food-popup-overlay" onclick="closeFoodDetailPopup()">
+  <div class="food-popup" id="foodPopup" onclick="event.stopPropagation()">
+    <div class="food-popup-hdr" id="foodPopupHdr"></div>
+    <div class="food-popup-body" id="foodPopupBody"></div>
+  </div>
+</div>
+
+<!-- ── FOOD LIGHTBOX ── -->
+<div id="foodLightbox" class="food-lightbox" onclick="closeFoodLightbox()">
+  <img class="food-lightbox-img" id="foodLightboxImg" src="" alt="" onclick="event.stopPropagation()">
+  <button class="food-lightbox-close" onclick="event.stopPropagation();closeFoodLightbox()">✕</button>
+  <button class="food-lightbox-prev" id="foodLightboxPrev" onclick="event.stopPropagation();moveFoodLightbox(-1)">‹</button>
+  <button class="food-lightbox-next" id="foodLightboxNext" onclick="event.stopPropagation();moveFoodLightbox(1)">›</button>
+  <div class="food-lightbox-counter" id="foodLightboxCounter"></div>
 </div>
 
 <!-- ── FOOTER ── -->
@@ -1818,7 +1905,7 @@ let txs      = JSON.parse(localStorage.getItem('hd_tx')       || '[]');
 let shopping = JSON.parse(localStorage.getItem('hd_shopping') || '[]');
 let subs     = JSON.parse(localStorage.getItem('hd_subs')     || '[]');
 let trips    = JSON.parse(localStorage.getItem('hd_trips')    || '[]');
-let meals    = JSON.parse(localStorage.getItem('food_meals')  || '[]');
+let meals    = (()=>{ try{ return JSON.parse(localStorage.getItem('food_meals')||'[]'); }catch(e){ return []; } })();
 let budgets  = (()=>{try{const v=JSON.parse(localStorage.getItem('ledger_budgets'));if(v&&typeof v==='object'&&!Array.isArray(v))return v;}catch(e){}return{base:{total:null,cats:{}},months:{}};})();
 let accounts = (()=>{try{const v=JSON.parse(localStorage.getItem('ledger_accounts'));if(Array.isArray(v))return v;}catch(e){}return[];})();
 let ldrAccFilter = (()=>{try{return localStorage.getItem('ledger_acc_filter')||'all';}catch(e){return'all';}})();
@@ -1921,7 +2008,7 @@ async function syncFromSupabase(userId) {
     if (Array.isArray(data.subs))     { subs      = data.subs;      localStorage.setItem('hd_subs',       JSON.stringify(subs)); }
     if (Array.isArray(data.txs))      { txs       = data.txs;       localStorage.setItem('hd_tx',         JSON.stringify(txs)); }
     if (Array.isArray(data.trips))    { trips     = data.trips;     localStorage.setItem('hd_trips',      JSON.stringify(trips)); }
-    if (Array.isArray(data.meals))    { meals     = data.meals;     localStorage.setItem('food_meals',    JSON.stringify(meals)); }
+    if (Array.isArray(data.meals))    { meals     = data.meals; localStorage.setItem('food_meals', JSON.stringify(meals)); }
     if (data.budgets && typeof data.budgets==='object' && !Array.isArray(data.budgets)) { budgets = data.budgets; localStorage.setItem('ledger_budgets', JSON.stringify(budgets)); }
     if (Array.isArray(data.accounts)) { accounts = data.accounts; localStorage.setItem('ledger_accounts', JSON.stringify(accounts)); }
     if (data.seed_flags) Object.entries(data.seed_flags).forEach(([k,v]) => localStorage.setItem(k,v));
@@ -2036,8 +2123,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
   document.getElementById('logoutBtn').style.display = 'inline-block';
+  // Apply v1→v2 migration from localStorage before sync
+  const _preSyncMeals = JSON.stringify(meals);
+  meals = meals.map(migrateMealV2);
+  const _mealsChanged = JSON.stringify(meals) !== _preSyncMeals;
+  if (_mealsChanged) {
+    if (!localStorage.getItem('food_meals_v1_backup')) {
+      localStorage.setItem('food_meals_v1_backup', _preSyncMeals);
+    }
+    localStorage.setItem('food_meals', JSON.stringify(meals));
+  }
   const synced = await syncFromSupabase(session.user.id);
   if (synced) autoPostSubs(); // only after server data has been loaded
+  // After sync, re-apply migration in case server had v1 data; save if changed
+  const _postSyncMeals = JSON.stringify(meals);
+  meals = meals.map(migrateMealV2);
+  if (JSON.stringify(meals) !== _postSyncMeals) {
+    if (!localStorage.getItem('food_meals_v1_backup')) {
+      localStorage.setItem('food_meals_v1_backup', _postSyncMeals);
+    }
+    saveMeals(); // _syncReady is true at this point
+  }
   loadTaskNotes();
   migrateTaskNotes();
   applyTaskNotes();
@@ -4323,6 +4429,58 @@ function renderTravel(){
 }
 
 // ── FOOD ──
+const KIND_ORDER = ['breakfast','lunch','dinner','snack'];
+const KIND_LABELS = { breakfast:'朝食', lunch:'昼食', dinner:'夕食', snack:'軽食' };
+
+function migrateMealV2(m) {
+  if (m && m.v === 2) return m;
+  if (!m) return m;
+  const oldDishes = (m.dishes || []).map(d => ({
+    id: d.id || crypto.randomUUID(),
+    name: d.name || '',
+    type: d.type || 'home',
+    place: d.place || '',
+    recipeUrl: d.recipeUrl || '',
+    note: '',
+    photos: []
+  }));
+  const oldPhotos = m.photos || [];
+  let dishes;
+  if (oldDishes.length === 0 && oldPhotos.length > 0) {
+    dishes = [{ id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '', note: '', photos: [...oldPhotos] }];
+  } else if (oldDishes.length > 0) {
+    dishes = oldDishes;
+    oldPhotos.forEach((p, i) => {
+      const idx = i < dishes.length ? i : dishes.length - 1;
+      dishes[idx].photos.push(p);
+    });
+  } else {
+    dishes = [];
+  }
+  const sittings = dishes.length > 0 ? [{ id: crypto.randomUUID(), kind: 'dinner', dishes }] : [];
+  return { id: m.id, date: m.date, memo: m.memo || '', v: 2, sittings };
+}
+
+function _sittingIsOut(sitting) {
+  return (sitting.dishes || []).some(d => d.type === 'out');
+}
+
+function _allMealPhotos(meal) {
+  return (meal.sittings || []).flatMap(s => (s.dishes || []).flatMap(d => d.photos || []));
+}
+
+function _allMealPhotoPaths(meal) {
+  return _allMealPhotos(meal).map(p => p.path);
+}
+
+function guessKindByHour() {
+  const h = new Date().getHours();
+  if (h < 10) return 'breakfast';
+  if (h < 15) return 'lunch';
+  if (h < 20) return 'dinner';
+  return 'snack';
+}
+
 let foodFilter = 'all';
 let foodSearch = '';
 let foodView = 'calendar';
@@ -4333,6 +4491,9 @@ let _foodViewManual = false;
 let _foodModalState = null;
 let _signedUrlCache = {}; // path -> { url, expiry }
 let _foodUploading = 0;
+let _foodPopupId = null;
+let _lightboxPhotos = [];
+let _lightboxIdx = 0;
 
 function saveMeals() { localStorage.setItem('food_meals', JSON.stringify(meals)); saveToSupabase(); }
 
@@ -4387,13 +4548,13 @@ function renderFoodList() {
   const days7 = '日月火水木金土'.split('');
   let list = [...meals].sort((a, b) => b.date.localeCompare(a.date));
   if (foodFilter !== 'all') {
-    list = list.filter(m => (m.dishes || []).some(d => d.type === foodFilter));
+    list = list.filter(m => (m.sittings || []).some(s => (s.dishes || []).some(d => d.type === foodFilter)));
   }
   const q = foodSearch.trim().toLowerCase();
   if (q) {
     list = list.filter(m => {
-      const dishText = (m.dishes || []).map(d => (d.name + ' ' + (d.place || '')).toLowerCase()).join(' ');
-      return dishText.includes(q) || (m.memo || '').toLowerCase().includes(q);
+      const sittingText = (m.sittings || []).flatMap(s => (s.dishes || []).map(d => (d.name + ' ' + (d.place||'') + ' ' + (d.note||'')).toLowerCase())).join(' ');
+      return sittingText.includes(q) || (m.memo || '').toLowerCase().includes(q);
     });
   }
   if (summaryEl) {
@@ -4426,23 +4587,21 @@ function renderFoodList() {
     if (m.date === todayStr) dateLabel = `今日（${days7[d.getDay()]}）`;
     else if (m.date === yesterdayStr) dateLabel = `昨日（${days7[d.getDay()]}）`;
     else dateLabel = `${m.date.slice(0,4)}/${parseInt(m.date.slice(5,7))}/${parseInt(m.date.slice(8,10))}（${days7[d.getDay()]}）`;
-    const dishes = m.dishes || [];
-    const photos = m.photos || [];
+    const allPhotos = _allMealPhotos(m);
     let photoHTML;
-    if (photos.length) {
-      const badge = photos.length > 1 ? `<div class="food-photo-badge">+${photos.length - 1}</div>` : '';
-      photoHTML = `<div class="food-card-img-wrap"><img data-path="${esc(photos[0].path)}" src="" alt="">${badge}</div>`;
+    if (allPhotos.length) {
+      const badge = allPhotos.length > 1 ? `<div class="food-photo-badge">+${allPhotos.length - 1}</div>` : '';
+      photoHTML = `<div class="food-card-img-wrap"><img data-path="${esc(allPhotos[0].path)}" src="" alt="">${badge}</div>`;
     } else {
       photoHTML = `<div class="food-card-img-placeholder">🍽</div>`;
     }
-    const chipsHTML = dishes.map(dish => {
-      const cls = dish.type === 'out' ? 'food-chip-out' : 'food-chip-home';
-      const place = dish.type === 'out' && dish.place ? ` @${esc(dish.place)}` : '';
-      const isValidUrl = /^https?:\/\//.test(dish.recipeUrl || '');
-      const linkHTML = isValidUrl ? ` <a class="food-chip-link" href="${esc(dish.recipeUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">🔗</a>` : '';
-      return `<span class="food-chip ${cls}">${esc(dish.name)}${place}${linkHTML}</span>`;
+    // Summary chips: "夕食: カレー、サラダ"
+    const chipsHTML = KIND_ORDER.filter(k => (m.sittings||[]).some(s=>s.kind===k)).map(k => {
+      const s = (m.sittings||[]).find(s=>s.kind===k);
+      const names = (s.dishes||[]).filter(d=>d.name.trim()).map(d=>esc(d.name)).join('、');
+      return `<span class="food-chip ${_sittingIsOut(s)?'food-chip-out':'food-chip-home'}">${KIND_LABELS[k]}${names?': '+names:''}</span>`;
     }).join('');
-    return `<div class="food-card" onclick="openFoodModal('${esc(m.id)}')">
+    return `<div class="food-card" onclick="openFoodDetailPopup('${esc(String(m.id))}')">
       ${photoHTML}
       <div class="food-card-body">
         <div class="food-card-date">${dateLabel}</div>
@@ -4482,6 +4641,8 @@ function chFoodCalToday() {
 function foodCalCellClick(dateStr) {
   const isMobile = window.innerWidth <= 640;
   if (isMobile) {
+    const meal = meals.find(m => m.date === dateStr);
+    if (meal) { openFoodDetailPopup(String(meal.id)); return; }
     foodCalSelDay = (foodCalSelDay === dateStr) ? null : dateStr;
   } else {
     foodCalSelDay = dateStr;
@@ -4503,9 +4664,10 @@ function renderFoodCalendar() {
     const mDate = new Date(m.date + 'T00:00:00');
     return mDate.getFullYear() === foodCalY && mDate.getMonth() === foodCalM;
   });
-  const totalDishes = monthMeals.reduce((acc, m) => acc + (m.dishes || []).length, 0);
-  const homeDishes = monthMeals.reduce((acc, m) => acc + (m.dishes || []).filter(d => d.type !== 'out').length, 0);
-  const outDishes  = monthMeals.reduce((acc, m) => acc + (m.dishes || []).filter(d => d.type === 'out').length, 0);
+  const allSittings = monthMeals.flatMap(m => m.sittings || []);
+  const totalDishes = allSittings.length; // sitting count = 食事回数
+  const homeDishes = allSittings.filter(s => !_sittingIsOut(s)).length;
+  const outDishes  = allSittings.filter(s => _sittingIsOut(s)).length;
   const statsEl = document.getElementById('foodStatsRow');
   if (statsEl) {
     const knifeIcon = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 .55.45 1 1 1h3c.55 0 1 .45 1 1v4"/><path d="M21 22v-2"/></svg>`;
@@ -4539,7 +4701,7 @@ function renderFoodCalendar() {
   // Build meal map with filter applied
   const mealMap = {};
   for (const m of meals) {
-    if (foodFilter !== 'all' && !(m.dishes || []).some(d => d.type === foodFilter)) continue;
+    if (foodFilter !== 'all' && !(m.sittings||[]).some(s=>(s.dishes||[]).some(d=>d.type===foodFilter))) continue;
     mealMap[m.date] = m;
   }
 
@@ -4554,8 +4716,9 @@ function renderFoodCalendar() {
     const cls = ['food-cal-cell', c.other ? 'food-cal-other' : '', isToday ? 'food-cal-today' : '', isSel ? 'food-cal-sel' : ''].filter(Boolean).join(' ');
     const clickAttr = c.other ? '' : `onclick="foodCalCellClick('${esc(ds)}')"`;
 
-    const photos = meal ? (meal.photos || []) : [];
-    const dishes = meal ? (meal.dishes || []) : [];
+    // v2: gather all photos and dishes from sittings
+    const allCellPhotos = meal ? _allMealPhotos(meal) : [];
+    const allCellDishes = meal ? (meal.sittings||[]).flatMap(s=>s.dishes||[]) : [];
 
     // Determine day-of-week class for number coloring
     const cellDow = new Date(ds + 'T00:00:00').getDay();
@@ -4563,39 +4726,40 @@ function renderFoodCalendar() {
 
     // PC compact thumbnails (max 2)
     let pcThumbsHTML = '';
-    if (photos.length) {
-      const thumb1 = `<div class="food-cal-thumb"><img data-path="${esc(photos[0].path)}" src="" alt=""></div>`;
+    if (allCellPhotos.length) {
+      const thumb1 = `<div class="food-cal-thumb"><img data-path="${esc(allCellPhotos[0].path)}" src="" alt=""></div>`;
       let thumb2 = '';
-      if (photos.length >= 2) {
-        const moreCount = photos.length > 2 ? photos.length - 1 : 0;
+      if (allCellPhotos.length >= 2) {
+        const moreCount = allCellPhotos.length > 2 ? allCellPhotos.length - 1 : 0;
         const moreBadge = moreCount > 0 ? `<div class="food-cal-thumb-more">+${moreCount}</div>` : '';
-        thumb2 = `<div class="food-cal-thumb"><img data-path="${esc(photos[1].path)}" src="" alt="">${moreBadge}</div>`;
+        thumb2 = `<div class="food-cal-thumb"><img data-path="${esc(allCellPhotos[1].path)}" src="" alt="">${moreBadge}</div>`;
       }
-      const nClass = photos.length >= 2 ? 'n2' : 'n1';
+      const nClass = allCellPhotos.length >= 2 ? 'n2' : 'n1';
       pcThumbsHTML = `<div class="food-cal-thumbs ${nClass}">${thumb1}${thumb2}</div>`;
     }
 
     // Mobile: 1 photo or dot
     let mobHTML = '';
     if (meal) {
-      if (photos.length) {
-        const mobBadge = photos.length > 1 ? `<div class="food-cal-more-sm">+${photos.length - 1}</div>` : '';
-        mobHTML = `<div class="food-cal-photo-mob"><img data-path="${esc(photos[0].path)}" src="" alt="">${mobBadge}</div>`;
-      } else if (dishes.length) {
-        const hasOut = dishes.some(d => d.type === 'out');
+      if (allCellPhotos.length) {
+        const mobBadge = allCellPhotos.length > 1 ? `<div class="food-cal-more-sm">+${allCellPhotos.length - 1}</div>` : '';
+        mobHTML = `<div class="food-cal-photo-mob"><img data-path="${esc(allCellPhotos[0].path)}" src="" alt="">${mobBadge}</div>`;
+      } else if (allCellDishes.length) {
+        const hasOut = allCellDishes.some(d => d.type === 'out');
         mobHTML = `<div class="food-cal-dot-mob ${hasOut ? 'out' : 'home'}"></div>`;
       }
     }
 
-    // PC dish name row + type pills
+    // PC dish name row + type pills (first dish of first sitting)
     let pcDishRowHTML = '';
     let typePillsHTML = '';
-    if (dishes.length) {
-      const firstName = esc(dishes[0].name || '');
-      const extra = dishes.length > 1 ? `<span class="food-cal-dish-extra">+${dishes.length - 1}品</span>` : '';
+    if (allCellDishes.length) {
+      const firstName = esc(allCellDishes[0].name || '');
+      const totalDishCount = allCellDishes.length;
+      const extra = totalDishCount > 1 ? `<span class="food-cal-dish-extra">+${totalDishCount - 1}品</span>` : '';
       pcDishRowHTML = `<div class="food-cal-dish-row"><span class="food-cal-dish-name">${firstName}</span>${extra}</div>`;
-      const hasHome = dishes.some(d => d.type !== 'out');
-      const hasOut  = dishes.some(d => d.type === 'out');
+      const hasHome = allCellDishes.some(d => d.type !== 'out');
+      const hasOut  = allCellDishes.some(d => d.type === 'out');
       const pills = [];
       if (hasHome) pills.push(`<span class="food-cal-type-pill home">自炊</span>`);
       if (hasOut)  pills.push(`<span class="food-cal-type-pill out">外食</span>`);
@@ -4623,29 +4787,32 @@ function renderFoodDayDetail(dateStr) {
   const days7 = '日月火水木金土'.split('');
   const dateLabel = `${dateStr.slice(0, 4)}年 ${parseInt(dateStr.slice(5, 7))}月${parseInt(dateStr.slice(8, 10))}日（${days7[d.getDay()]}）`;
 
-  const dishes = meal ? (meal.dishes || []) : [];
-  const photos = meal ? (meal.photos || []) : [];
+  const sittings = meal ? (meal.sittings || []).slice().sort((a,b) => KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind)) : [];
 
   const countIconSVG = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 .55.45 1 1 1h3c.55 0 1 .45 1 1v4"/><path d="M21 22v-2"/></svg>`;
   const placeholderSVG = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 .55.45 1 1 1h3c.55 0 1 .45 1 1v4"/><path d="M21 22v-2"/></svg>`;
   const pencilSVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>`;
   const trashSVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>`;
+  const linkSVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
 
-  let dishRowsHTML = '';
-  if (dishes.length) {
-    dishRowsHTML = dishes.map((dish, i) => {
-      const photo = photos[i];
-      const thumbHTML = photo
-        ? `<div class="food-detail-thumb"><img data-path="${esc(photo.path)}" src="" alt=""></div>`
+  let sittingsHTML = '';
+  for (const s of sittings) {
+    const isOut = _sittingIsOut(s);
+    const outPlace = isOut ? (s.dishes||[]).map(d=>d.place).filter(Boolean)[0] || '' : '';
+    const placeLabel = outPlace ? `<span class="food-detail-sitting-place"> — ${esc(outPlace)}</span>` : '';
+    const dishRowsHTML = (s.dishes||[]).map(dish => {
+      const photos = dish.photos || [];
+      const firstPhoto = photos[0];
+      const thumbHTML = firstPhoto
+        ? `<div class="food-detail-thumb"><img data-path="${esc(firstPhoto.path)}" src="" alt="">${photos.length>1?`<div class="food-detail-thumb-badge">+${photos.length-1}</div>`:''}</div>`
         : `<div class="food-detail-thumb">${placeholderSVG}</div>`;
       const pillCls = dish.type === 'out' ? 'out' : 'home';
       const pillLabel = dish.type === 'out' ? '外食' : '自炊';
       const placeHTML = dish.type === 'out' && dish.place ? `<span class="food-detail-dish-place">@${esc(dish.place)}</span>` : '';
       const isValidUrl = /^https?:\/\//.test(dish.recipeUrl || '');
-      const linkHTML = isValidUrl ? `<a class="food-detail-dish-link" href="${esc(dish.recipeUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        レシピ</a>` : '';
-      return `<div class="food-detail-dish-row">
+      const linkHTML = isValidUrl ? `<a class="food-detail-dish-link" href="${esc(dish.recipeUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${linkSVG} レシピ</a>` : '';
+      const noteHTML = dish.note ? `<div class="food-detail-dish-note">${esc(dish.note)}</div>` : '';
+      return `<div class="food-detail-dish-row" onclick="openFoodDetailPopup('${esc(String(meal.id))}')">
         ${thumbHTML}
         <div class="food-detail-dish-info">
           <div class="food-detail-dish-name">${esc(dish.name || '（名前なし）')}</div>
@@ -4653,9 +4820,16 @@ function renderFoodDayDetail(dateStr) {
             <span class="food-detail-dish-pill ${pillCls}">${pillLabel}</span>
             ${placeHTML}${linkHTML}
           </div>
+          ${noteHTML}
         </div>
       </div>`;
     }).join('');
+    sittingsHTML += `<div class="food-detail-sitting">
+      <div class="food-detail-sitting-hdr">
+        <span class="food-detail-sitting-kind">${esc(KIND_LABELS[s.kind]||s.kind)}</span>${placeLabel}
+      </div>
+      <div class="food-detail-dishes">${dishRowsHTML}</div>
+    </div>`;
   }
 
   const memoHTML = meal && meal.memo ? `<div class="food-detail-memo">${esc(meal.memo)}</div>` : '';
@@ -4678,8 +4852,8 @@ function renderFoodDayDetail(dateStr) {
       <div class="food-detail-date-label">${esc(dateLabel)}</div>
       <button class="food-detail-nav-btn" onclick="foodDayDetailNav(1)">›</button>
     </div>
-    ${meal ? `<div class="food-detail-count"><span class="food-detail-count-icon">${countIconSVG}</span><span class="food-detail-count-label">この日の食事数</span><span class="food-detail-count-num">${dishes.length}</span><span class="food-detail-count-unit">品</span></div>` : ''}
-    ${dishes.length ? `<div class="food-detail-dishes">${dishRowsHTML}</div>` : ''}
+    ${meal ? `<div class="food-detail-count"><span class="food-detail-count-icon">${countIconSVG}</span><span class="food-detail-count-label">この日の食事数</span><span class="food-detail-count-num">${sittings.length}</span><span class="food-detail-count-unit">回</span></div>` : ''}
+    ${sittingsHTML}
     ${memoHTML}
     ${!meal ? `<div class="food-detail-empty"><div class="food-detail-empty-text">記録がありません</div></div>` : ''}
     <div class="food-detail-actions">
@@ -4691,7 +4865,8 @@ function renderFoodDayDetail(dateStr) {
     </div>
   `;
 
-  if (photos.length) fillSignedUrls(detailEl);
+  const allPhotos = meal ? _allMealPhotos(meal) : [];
+  if (allPhotos.length) fillSignedUrls(detailEl);
 }
 
 function foodDayDetailNav(delta) {
@@ -4744,8 +4919,16 @@ async function deleteFoodFromDetail(id) {
 function openFoodModalNew(dateStr) {
   if (!dateStr) dateStr = localDate();
   const existing = meals.find(m => m.date === dateStr);
-  if (existing) { openFoodModal(existing.id); return; }
-  _foodModalState = { id: crypto.randomUUID(), date: dateStr, dishes: [{ id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '' }], photos: [], memo: '', isNew: true };
+  if (existing) { openFoodModal(String(existing.id)); return; }
+  const kind = guessKindByHour();
+  _foodModalState = {
+    id: crypto.randomUUID(), date: dateStr, memo: '', v: 2,
+    sittings: [{
+      id: crypto.randomUUID(), kind,
+      dishes: [{ id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '', note: '', photos: [] }]
+    }],
+    isNew: true, _focusDishId: null
+  };
   document.getElementById('foodModalTitle').textContent = '記録を追加';
   renderFoodModalBody();
   document.getElementById('foodModalOverlay').style.display = 'flex';
@@ -4768,7 +4951,15 @@ function closeFoodModal() {
 function renderFoodModalBody() {
   if (!_foodModalState) return;
   const s = _foodModalState;
-  const dishesHTML = s.dishes.map((d, i) => foodDishRowHTML(d, i)).join('');
+  const sortedSittings = (s.sittings||[]).slice().sort((a,b)=>KIND_ORDER.indexOf(a.kind)-KIND_ORDER.indexOf(b.kind));
+  const usedKinds = new Set(sortedSittings.map(sit=>sit.kind));
+  const missedKinds = KIND_ORDER.filter(k=>!usedKinds.has(k));
+
+  const sittingsHTML = sortedSittings.map(sit => foodSittingSectionHTML(sit)).join('');
+  const addKindBtns = missedKinds.map(k =>
+    `<button class="food-sitting-add-kind-btn" onclick="event.stopPropagation();addFoodSitting('${esc(k)}')">＋ ${esc(KIND_LABELS[k])}</button>`
+  ).join('');
+
   document.getElementById('foodModalBody').innerHTML = `
     <div class="food-modal-section">
       <div class="food-modal-label">日付</div>
@@ -4777,26 +4968,17 @@ function renderFoodModalBody() {
         onchange="onFoodModalDateChange(this.value)">
     </div>
     <div class="food-modal-section">
-      <div class="food-modal-label">料理</div>
-      <div id="foodDishList">${dishesHTML}</div>
-      <button class="food-add-dish" onclick="addFoodDish()">＋ 料理を追加</button>
+      <div class="food-modal-label">食事<span class="food-photo-hint">感想・写真は料理ごとに追加できます（Ctrl+V 貼り付けは最後に選択した料理に追加）</span></div>
+      <div id="foodSittingList">${sittingsHTML}</div>
+      ${missedKinds.length ? `<div class="food-sitting-add-btns">${addKindBtns}</div>` : ''}
     </div>
     <div class="food-modal-section">
-      <div class="food-modal-label">写真<span class="food-photo-hint">画像ファイルのドラッグ＆ドロップ、またはコピーした画像の Ctrl+V 貼り付けでも追加できます</span></div>
-      <div class="food-photos-wrap" id="foodModalPhotos">
-        ${foodPhotoThumbsHTML(s.photos)}
-        <button class="food-photo-add-btn" id="foodAddPhotoBtn" onclick="document.getElementById('foodPhotoInput').click()">
-          <span style="font-size:16px">＋</span><span>写真を追加</span>
-        </button>
-      </div>
-      <div class="food-photo-error" id="foodPhotoError"></div>
-      <input type="file" id="foodPhotoInput" accept="image/*" multiple style="display:none"
-        onchange="handleFoodPhotoUpload(Array.from(this.files));this.value=''">
-    </div>
-    <div class="food-modal-section">
-      <div class="food-modal-label">メモ</div>
+      <div class="food-modal-label">その日のメモ</div>
       <textarea class="food-memo-ta" id="foodModalMemo" placeholder="今日の食事についてメモ">${esc(s.memo)}</textarea>
     </div>
+    <div class="food-photo-error" id="foodPhotoError"></div>
+    <input type="file" id="foodPhotoInput" accept="image/*" multiple style="display:none"
+      onchange="handleFoodPhotoUpload(Array.from(this.files));this.value=''">
   `;
   document.getElementById('foodModalFtr').innerHTML = `
     <div id="foodDelConfirmWrap">
@@ -4807,91 +4989,179 @@ function renderFoodModalBody() {
       <button class="btn btn-primary" id="foodSaveBtn" onclick="saveFoodModal()">保存</button>
     </div>
   `;
-  renderFoodModalPhotos();
+  // Fill signed URLs for existing photos
+  fillSignedUrls(document.getElementById('foodSittingList'));
 }
 
-function foodDishRowHTML(d, i) {
-  const isOut = d.type === 'out';
-  return `<div class="food-dish-row" id="foodDish-${i}">
-    <div class="food-dish-fields">
-      <div class="food-dish-row-top">
-        <input class="food-dish-name" type="text" value="${esc(d.name)}" placeholder="料理名（必須）"
-          oninput="foodDishInput(${i},'name',this.value)">
-        <div class="food-type-toggle">
-          <button class="food-type-btn${!isOut ? ' active-home' : ''}" onclick="event.stopPropagation();setFoodDishType(${i},'home')">自炊</button>
-          <button class="food-type-btn${isOut ? ' active-out' : ''}" onclick="event.stopPropagation();setFoodDishType(${i},'out')">外食</button>
-        </div>
-      </div>
-      <div class="food-dish-extra">
-        ${isOut ? `<input class="food-dish-place" type="text" value="${esc(d.place || '')}" placeholder="店名" oninput="foodDishInput(${i},'place',this.value)">` : ''}
-        <input class="food-dish-url" type="text" value="${esc(d.recipeUrl || '')}" placeholder="レシピURL（任意）" oninput="foodDishInput(${i},'recipeUrl',this.value)">
-      </div>
+function foodSittingSectionHTML(sit) {
+  const dishes = sit.dishes || [];
+  const dishesHTML = dishes.map((d, i) => foodDishRowHTML(sit.id, d, i)).join('');
+  return `<div class="food-sitting-section" id="foodSitting-${esc(sit.id)}">
+    <div class="food-sitting-hdr">
+      <span class="food-sitting-kind-label">${esc(KIND_LABELS[sit.kind]||sit.kind)}</span>
+      <button class="food-sitting-del-btn" onclick="event.stopPropagation();removeFoodSitting('${esc(String(sit.id))}')" title="このセクションを削除">✕</button>
     </div>
-    <button class="food-dish-del" onclick="event.stopPropagation();removeFoodDish(${i})" title="削除">✕</button>
+    <div class="food-sitting-body">
+      <div id="foodDishList-${esc(sit.id)}">${dishesHTML}</div>
+      <button class="food-add-dish" onclick="event.stopPropagation();addFoodDish('${esc(String(sit.id))}')">＋ 料理を追加</button>
+    </div>
   </div>`;
 }
 
-function foodPhotoThumbsHTML(photos) {
-  return (photos || []).map(p => `<div class="food-photo-thumb">
+function foodDishRowHTML(sittingId, d, i) {
+  const isOut = d.type === 'out';
+  const sid = esc(String(sittingId));
+  const did = esc(String(d.id));
+  const photosHTML = foodDishPhotoThumbsHTML(sittingId, d);
+  return `<div class="food-dish-row" id="foodDish-${sid}-${i}"
+    onclick="_setFocusDishId('${did}')"
+    onfocus="_setFocusDishId('${did}')" tabindex="-1">
+    <div class="food-dish-fields">
+      <div class="food-dish-row-top">
+        <input class="food-dish-name" type="text" value="${esc(d.name)}" placeholder="料理名（必須）"
+          oninput="foodDishFieldInput('${sid}','${did}','name',this.value)"
+          onfocus="event.stopPropagation();_setFocusDishId('${did}')">
+        <div class="food-type-toggle">
+          <button class="food-type-btn${!isOut ? ' active-home' : ''}" onclick="event.stopPropagation();setFoodDishType('${sid}','${did}','home')">自炊</button>
+          <button class="food-type-btn${isOut ? ' active-out' : ''}" onclick="event.stopPropagation();setFoodDishType('${sid}','${did}','out')">外食</button>
+        </div>
+      </div>
+      <div class="food-dish-extra">
+        ${isOut ? `<input class="food-dish-place" type="text" value="${esc(d.place || '')}" placeholder="店名" oninput="foodDishFieldInput('${sid}','${did}','place',this.value)" onfocus="event.stopPropagation();_setFocusDishId('${did}')">` : ''}
+        <input class="food-dish-url" type="text" value="${esc(d.recipeUrl || '')}" placeholder="レシピURL（任意）" oninput="foodDishFieldInput('${sid}','${did}','recipeUrl',this.value)" onfocus="event.stopPropagation();_setFocusDishId('${did}')">
+      </div>
+      <textarea class="food-dish-note-ta" placeholder="料理の感想（任意）"
+        oninput="foodDishFieldInput('${sid}','${did}','note',this.value)"
+        onfocus="event.stopPropagation();_setFocusDishId('${did}')">${esc(d.note||'')}</textarea>
+      <div class="food-dish-photo-area" id="foodDishPhotoArea-${did}"
+        ondragover="foodDishDragOver(event,'${did}')" ondragleave="foodDragLeave(event)" ondrop="foodDishDrop(event,'${did}')">
+        <div class="food-photos-wrap" id="foodDishPhotos-${did}">${photosHTML}
+          <button class="food-photo-add-btn" onclick="event.stopPropagation();_setFocusDishId('${did}');document.getElementById('foodPhotoInput').click()">
+            <span style="font-size:16px">＋</span><span>写真</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <button class="food-dish-del" onclick="event.stopPropagation();removeFoodDish('${sid}','${did}')" title="削除">✕</button>
+  </div>`;
+}
+
+function foodDishPhotoThumbsHTML(sittingId, dish) {
+  const sid = esc(String(sittingId));
+  return (dish.photos || []).map(p => `<div class="food-photo-thumb">
     <img data-path="${esc(p.path)}" src="" alt="">
-    <button class="food-photo-del" onclick="event.stopPropagation();deleteFoodPhoto('${esc(p.id)}')" title="削除">✕</button>
+    <button class="food-photo-del" onclick="event.stopPropagation();deleteFoodPhoto('${esc(String(p.id))}','${esc(String(dish.id))}')" title="削除">✕</button>
   </div>`).join('');
 }
 
-function foodDishInput(i, field, val) {
-  if (!_foodModalState || !_foodModalState.dishes[i]) return;
-  _foodModalState.dishes[i][field] = val;
+function _setFocusDishId(dishId) {
+  if (_foodModalState) _foodModalState._focusDishId = String(dishId);
 }
 
-function setFoodDishType(i, type) {
-  if (!_foodModalState || !_foodModalState.dishes[i]) return;
-  _foodModalState.dishes[i].type = type;
-  // collect current input values first
-  _collectDishInputs();
-  const el = document.getElementById('foodDish-' + i);
-  if (el) el.outerHTML = foodDishRowHTML(_foodModalState.dishes[i], i);
+function _getFocusDish() {
+  if (!_foodModalState) return null;
+  const allDishes = (_foodModalState.sittings||[]).flatMap(s=>s.dishes||[]);
+  if (_foodModalState._focusDishId) {
+    const d = allDishes.find(d=>String(d.id)===String(_foodModalState._focusDishId));
+    if (d) return d;
+  }
+  return allDishes[allDishes.length - 1] || null;
 }
 
-function addFoodDish() {
+function _findSittingByDishId(dishId) {
+  if (!_foodModalState) return null;
+  return (_foodModalState.sittings||[]).find(s=>(s.dishes||[]).some(d=>String(d.id)===String(dishId)));
+}
+
+function foodDishFieldInput(sittingId, dishId, field, val) {
   if (!_foodModalState) return;
-  _collectDishInputs();
-  const newDish = { id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '' };
-  _foodModalState.dishes.push(newDish);
-  const i = _foodModalState.dishes.length - 1;
-  const listEl = document.getElementById('foodDishList');
+  const sitting = (_foodModalState.sittings||[]).find(s=>String(s.id)===String(sittingId));
+  if (!sitting) return;
+  const dish = (sitting.dishes||[]).find(d=>String(d.id)===String(dishId));
+  if (!dish) return;
+  dish[field] = val;
+}
+
+function setFoodDishType(sittingId, dishId, type) {
+  if (!_foodModalState) return;
+  const sitting = (_foodModalState.sittings||[]).find(s=>String(s.id)===String(sittingId));
+  if (!sitting) return;
+  const dish = (sitting.dishes||[]).find(d=>String(d.id)===String(dishId));
+  if (!dish) return;
+  _collectModalInputs();
+  dish.type = type;
+  const idx = (sitting.dishes||[]).indexOf(dish);
+  const rowEl = document.getElementById(`foodDish-${esc(sittingId)}-${idx}`);
+  if (rowEl) rowEl.outerHTML = foodDishRowHTML(sittingId, dish, idx);
+  fillSignedUrls(document.getElementById('foodSittingList'));
+}
+
+function addFoodSitting(kind) {
+  if (!_foodModalState) return;
+  _collectModalInputs();
+  if ((_foodModalState.sittings||[]).some(s=>s.kind===kind)) return; // already exists
+  const newSitting = { id: crypto.randomUUID(), kind, dishes: [{ id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '', note: '', photos: [] }] };
+  _foodModalState.sittings.push(newSitting);
+  renderFoodModalBody();
+}
+
+function removeFoodSitting(sittingId) {
+  if (!_foodModalState) return;
+  if (!confirm(`このセクションを削除しますか？`)) return;
+  _collectModalInputs();
+  _foodModalState.sittings = (_foodModalState.sittings||[]).filter(s=>String(s.id)!==String(sittingId));
+  renderFoodModalBody();
+}
+
+function addFoodDish(sittingId) {
+  if (!_foodModalState) return;
+  _collectModalInputs();
+  const sitting = (_foodModalState.sittings||[]).find(s=>String(s.id)===String(sittingId));
+  if (!sitting) return;
+  const newDish = { id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '', note: '', photos: [] };
+  sitting.dishes.push(newDish);
+  const i = sitting.dishes.length - 1;
+  const listEl = document.getElementById(`foodDishList-${sittingId}`);
   if (listEl) {
     const div = document.createElement('div');
-    div.innerHTML = foodDishRowHTML(newDish, i);
+    div.innerHTML = foodDishRowHTML(sittingId, newDish, i);
     listEl.appendChild(div.firstElementChild);
-    const nameIn = document.getElementById('foodDish-' + i)?.querySelector('.food-dish-name');
+    const nameIn = document.getElementById(`foodDish-${sittingId}-${i}`)?.querySelector('.food-dish-name');
     if (nameIn) nameIn.focus();
   }
 }
 
-function removeFoodDish(i) {
+function removeFoodDish(sittingId, dishId) {
   if (!_foodModalState) return;
-  _collectDishInputs();
-  if (_foodModalState.dishes.length <= 1) {
-    _foodModalState.dishes[0] = { id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '' };
+  _collectModalInputs();
+  const sitting = (_foodModalState.sittings||[]).find(s=>String(s.id)===String(sittingId));
+  if (!sitting) return;
+  if (sitting.dishes.length <= 1) {
+    sitting.dishes[0] = { id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '', note: '', photos: [] };
   } else {
-    _foodModalState.dishes.splice(i, 1);
+    sitting.dishes = sitting.dishes.filter(d=>String(d.id)!==String(dishId));
   }
-  const listEl = document.getElementById('foodDishList');
-  if (listEl) listEl.innerHTML = _foodModalState.dishes.map((d, idx) => foodDishRowHTML(d, idx)).join('');
+  const listEl = document.getElementById(`foodDishList-${sittingId}`);
+  if (listEl) listEl.innerHTML = sitting.dishes.map((d,idx)=>foodDishRowHTML(sittingId,d,idx)).join('');
+  fillSignedUrls(document.getElementById('foodSittingList'));
 }
 
-function _collectDishInputs() {
+function _collectModalInputs() {
   if (!_foodModalState) return;
-  _foodModalState.dishes.forEach((d, i) => {
-    const row = document.getElementById('foodDish-' + i);
-    if (!row) return;
-    const nameEl = row.querySelector('.food-dish-name');
-    if (nameEl) d.name = nameEl.value;
-    const placeEl = row.querySelector('.food-dish-place');
-    if (placeEl) d.place = placeEl.value;
-    const urlEl = row.querySelector('.food-dish-url');
-    if (urlEl) d.recipeUrl = urlEl.value;
-  });
+  for (const sitting of (_foodModalState.sittings||[])) {
+    (sitting.dishes||[]).forEach((d, i) => {
+      const row = document.getElementById(`foodDish-${sitting.id}-${i}`);
+      if (!row) return;
+      const nameEl = row.querySelector('.food-dish-name');
+      if (nameEl) d.name = nameEl.value;
+      const placeEl = row.querySelector('.food-dish-place');
+      if (placeEl) d.place = placeEl.value;
+      const urlEl = row.querySelector('.food-dish-url');
+      if (urlEl) d.recipeUrl = urlEl.value;
+      const noteEl = row.querySelector('.food-dish-note-ta');
+      if (noteEl) d.note = noteEl.value;
+    });
+  }
   const memoEl = document.getElementById('foodModalMemo');
   if (memoEl) _foodModalState.memo = memoEl.value;
   const dateEl = document.getElementById('foodModalDate');
@@ -4909,20 +5179,32 @@ function onFoodModalDateChange(val) {
 
 function saveFoodModal() {
   if (!_foodModalState || _foodUploading > 0) return;
-  _collectDishInputs();
-  const dishes = _foodModalState.dishes.filter(d => d.name.trim());
+  _collectModalInputs();
+  const sittings = (_foodModalState.sittings||[]).map(s => ({
+    ...s,
+    dishes: (s.dishes||[]).filter(d => d.name.trim())
+  })).filter(s => s.dishes.length > 0);
   const meal = {
     id: _foodModalState.id,
     date: _foodModalState.date,
-    dishes,
-    photos: _foodModalState.photos,
     memo: _foodModalState.memo.trim(),
+    v: 2,
+    sittings,
     updatedAt: new Date().toISOString()
   };
   const other = meals.find(m => m.date === meal.date && String(m.id) !== String(meal.id));
   if (other) {
-    other.dishes = [...(other.dishes || []), ...meal.dishes];
-    other.photos = [...(other.photos || []), ...meal.photos];
+    // Merge sittings by kind
+    const mergedSittings = [...(other.sittings||[])];
+    for (const s of meal.sittings) {
+      const existing = mergedSittings.find(es => es.kind === s.kind);
+      if (existing) {
+        existing.dishes = [...(existing.dishes||[]), ...(s.dishes||[])];
+      } else {
+        mergedSittings.push(s);
+      }
+    }
+    other.sittings = mergedSittings;
     other.memo = [other.memo, meal.memo].filter(Boolean).join('\n');
     other.updatedAt = meal.updatedAt;
     meals = meals.filter(m => String(m.id) !== String(meal.id));
@@ -4956,38 +5238,51 @@ function cancelFoodDelConfirm() {
 async function deleteFoodRecord(id) {
   const meal = meals.find(m => String(m.id) === String(id));
   if (!meal) return;
-  if (meal.photos && meal.photos.length) {
-    const paths = meal.photos.map(p => p.path);
+  const paths = _allMealPhotoPaths(meal);
+  if (paths.length) {
     try { await sb.storage.from('meal-photos').remove(paths); } catch(e) {}
     paths.forEach(p => delete _signedUrlCache[p]);
   }
   meals = meals.filter(m => String(m.id) !== String(id));
   saveMeals();
   closeFoodModal();
+  closeFoodDetailPopup();
   renderFood();
 }
 
-async function deleteFoodPhoto(photoId) {
+async function deleteFoodPhoto(photoId, dishId) {
   if (!_foodModalState) return;
-  const photo = _foodModalState.photos.find(p => String(p.id) === String(photoId));
+  // Find the dish that owns this photo
+  let ownerDish = null;
+  for (const s of (_foodModalState.sittings||[])) {
+    const d = (s.dishes||[]).find(d=>String(d.id)===String(dishId));
+    if (d) { ownerDish = d; break; }
+  }
+  if (!ownerDish) return;
+  const photo = (ownerDish.photos||[]).find(p=>String(p.id)===String(photoId));
   if (!photo) return;
   try { await sb.storage.from('meal-photos').remove([photo.path]); } catch(e) {}
   delete _signedUrlCache[photo.path];
-  _foodModalState.photos = _foodModalState.photos.filter(p => String(p.id) !== String(photoId));
-  renderFoodModalPhotos();
+  ownerDish.photos = ownerDish.photos.filter(p=>String(p.id)!==String(photoId));
+  // Re-render just this dish's photo area
+  const photoWrap = document.getElementById(`foodDishPhotos-${dishId}`);
+  if (photoWrap) {
+    photoWrap.innerHTML = foodDishPhotoThumbsHTML(
+      (_foodModalState.sittings||[]).find(s=>(s.dishes||[]).some(d=>String(d.id)===String(dishId)))?.id,
+      ownerDish
+    ) + `<button class="food-photo-add-btn" onclick="event.stopPropagation();_setFocusDishId('${esc(String(dishId))}');document.getElementById('foodPhotoInput').click()"><span style="font-size:16px">＋</span><span>写真</span></button>`;
+    fillSignedUrls(photoWrap);
+  }
 }
 
-function renderFoodModalPhotos() {
-  const wrap = document.getElementById('foodModalPhotos');
-  if (!wrap || !_foodModalState) return;
-  const uploading = _foodUploading > 0;
-  wrap.innerHTML = foodPhotoThumbsHTML(_foodModalState.photos) +
-    `<button class="food-photo-add-btn" id="foodAddPhotoBtn" ${uploading ? 'disabled' : ''} onclick="document.getElementById('foodPhotoInput').click()">
-      ${uploading ? '<span>アップロード中…</span>' : '<span style="font-size:16px">＋</span><span>写真を追加</span>'}
-    </button>`;
+function _updateSaveBtn() {
   const saveBtn = document.getElementById('foodSaveBtn');
-  if (saveBtn) { saveBtn.disabled = uploading; saveBtn.textContent = uploading ? 'アップロード中…' : '保存'; }
-  fillSignedUrls(wrap);
+  if (!saveBtn) return;
+  const uploading = _foodUploading > 0;
+  saveBtn.disabled = uploading;
+  saveBtn.textContent = uploading ? 'アップロード中…' : '保存';
+  const errEl = document.getElementById('foodPhotoError');
+  if (errEl && uploading) errEl.textContent = '';
 }
 
 async function resizeFoodImage(file) {
@@ -5013,15 +5308,34 @@ async function resizeFoodImage(file) {
   });
 }
 
-async function handleFoodPhotoUpload(files) {
+async function handleFoodPhotoUpload(files, targetDishId) {
   const state = _foodModalState;
   const list = Array.from(files || []);
   if (!state || !list.length) return;
+  // Determine target dish
+  const resolvedDishId = targetDishId || (state._focusDishId) || null;
+  let targetDish = null;
+  let targetSitting = null;
+  if (resolvedDishId) {
+    for (const s of (state.sittings||[])) {
+      const d = (s.dishes||[]).find(d=>String(d.id)===String(resolvedDishId));
+      if (d) { targetDish = d; targetSitting = s; break; }
+    }
+  }
+  if (!targetDish) {
+    // Fall back to last dish of last sitting
+    const lastSitting = (state.sittings||[])[(state.sittings||[]).length-1];
+    if (lastSitting && (lastSitting.dishes||[]).length) {
+      targetDish = lastSitting.dishes[lastSitting.dishes.length-1];
+      targetSitting = lastSitting;
+    }
+  }
+  if (!targetDish) return;
   const errEl = document.getElementById('foodPhotoError');
   if (errEl) errEl.textContent = '';
   const errors = [];
   _foodUploading++;
-  renderFoodModalPhotos();
+  _updateSaveBtn();
   try {
     const { data: { user } } = await sb.auth.getUser();
     if (!user) throw new Error('ログインが必要です');
@@ -5032,7 +5346,7 @@ async function handleFoodPhotoUpload(files) {
         const path = `${user.id}/${state.date}/${photoId}.jpg`;
         const { error } = await sb.storage.from('meal-photos').upload(path, blob, { contentType: 'image/jpeg' });
         if (error) throw error;
-        state.photos.push({ id: photoId, path });
+        targetDish.photos.push({ id: photoId, path });
       } catch(e) {
         errors.push(`${file.name}: ${e.message || 'アップロード失敗'}`);
       }
@@ -5041,13 +5355,17 @@ async function handleFoodPhotoUpload(files) {
     errors.push(e.message || 'アップロード失敗');
   }
   _foodUploading--;
-  if (_foodModalState !== state) {
-    if (_foodModalState) renderFoodModalPhotos();
-    return;
-  }
+  if (_foodModalState !== state) { _updateSaveBtn(); return; }
   const errNow = document.getElementById('foodPhotoError');
   if (errNow) errNow.textContent = errors.length ? `エラー: ${errors.join(' / ')}` : '';
-  renderFoodModalPhotos();
+  _updateSaveBtn();
+  // Re-render the target dish photo area
+  const photoWrap = document.getElementById(`foodDishPhotos-${targetDish.id}`);
+  if (photoWrap) {
+    photoWrap.innerHTML = foodDishPhotoThumbsHTML(targetSitting.id, targetDish) +
+      `<button class="food-photo-add-btn" onclick="event.stopPropagation();_setFocusDishId('${esc(String(targetDish.id))}');document.getElementById('foodPhotoInput').click()"><span style="font-size:16px">＋</span><span>写真</span></button>`;
+    fillSignedUrls(photoWrap);
+  }
 }
 
 function _hasDraggedFiles(e) {
@@ -5065,6 +5383,28 @@ function foodDragOver(e) {
 function foodDragLeave(e) {
   if (e.currentTarget.contains(e.relatedTarget)) return;
   e.currentTarget.classList.remove('drag-over');
+}
+
+function foodDishDragOver(e, dishId) {
+  if (!_foodModalState || !_hasDraggedFiles(e)) return;
+  e.preventDefault();
+  e.stopPropagation();
+  e.dataTransfer.dropEffect = 'copy';
+  e.currentTarget.classList.add('drag-over');
+  _setFocusDishId(dishId);
+}
+
+function foodDishDrop(e, dishId) {
+  if (!_hasDraggedFiles(e)) return;
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.remove('drag-over');
+  if (!_foodModalState) return;
+  _setFocusDishId(dishId);
+  const files = Array.from(e.dataTransfer.files || []).filter(f => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name));
+  if (files.length) { handleFoodPhotoUpload(files, dishId); return; }
+  const errEl = document.getElementById('foodPhotoError');
+  if (errEl) errEl.textContent = 'ブラウザ上の画像はドロップできません。画像を右クリック →「画像をコピー」→ この画面で Ctrl+V で貼り付けてください';
 }
 
 function foodDrop(e) {
@@ -5086,13 +5426,158 @@ document.addEventListener('paste', e => {
     .filter(Boolean);
   if (!files.length) return;
   e.preventDefault();
-  handleFoodPhotoUpload(files);
+  handleFoodPhotoUpload(files); // uses _focusDishId internally
 });
 
 // モーダル外にファイルを落としたとき、ブラウザが画像を開いてページ遷移するのを防ぐ
 ['dragover', 'drop'].forEach(type => window.addEventListener(type, e => {
   if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) e.preventDefault();
 }));
+
+// ── FOOD DETAIL POPUP ──
+function openFoodDetailPopup(id) {
+  const meal = meals.find(m => String(m.id) === String(id));
+  if (!meal) return;
+  _foodPopupId = String(id);
+  renderFoodDetailPopup();
+  document.getElementById('foodPopupOverlay').style.display = 'flex';
+}
+
+function closeFoodDetailPopup() {
+  _foodPopupId = null;
+  document.getElementById('foodPopupOverlay').style.display = 'none';
+}
+
+function renderFoodDetailPopup() {
+  if (!_foodPopupId) return;
+  const meal = meals.find(m => String(m.id) === _foodPopupId);
+  if (!meal) { closeFoodDetailPopup(); return; }
+  const d = new Date(meal.date + 'T00:00:00');
+  const days7 = '日月火水木金土'.split('');
+  const dateLabel = `${meal.date.slice(0,4)}年${parseInt(meal.date.slice(5,7))}月${parseInt(meal.date.slice(8,10))}日（${days7[d.getDay()]}）`;
+  const linkSVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
+
+  // Header
+  document.getElementById('foodPopupHdr').innerHTML = `
+    <button class="food-popup-nav-btn" onclick="event.stopPropagation();navFoodPopup(-1)">‹</button>
+    <div class="food-popup-date">${esc(dateLabel)}</div>
+    <button class="food-popup-nav-btn" onclick="event.stopPropagation();navFoodPopup(1)">›</button>
+    <button class="food-popup-edit-btn" onclick="event.stopPropagation();closeFoodDetailPopup();openFoodModal('${esc(_foodPopupId)}')">編集</button>
+    <button class="food-popup-close" onclick="event.stopPropagation();closeFoodDetailPopup()">✕</button>
+  `;
+
+  // Body
+  const sittings = (meal.sittings||[]).slice().sort((a,b)=>KIND_ORDER.indexOf(a.kind)-KIND_ORDER.indexOf(b.kind));
+  let bodyHTML = '';
+  for (const s of sittings) {
+    const isOut = _sittingIsOut(s);
+    const outPlaces = (s.dishes||[]).filter(d=>d.type==='out'&&d.place).map(d=>d.place);
+    const placeText = isOut && outPlaces.length ? outPlaces[0] : '';
+    const placeHTML = placeText ? `<span class="food-popup-sitting-place">${esc(placeText)}</span>` : '';
+    let dishesHTML = '';
+    for (const dish of (s.dishes||[])) {
+      const photos = dish.photos || [];
+      const pillCls = dish.type==='out' ? 'out' : 'home';
+      const pillLabel = dish.type==='out' ? '外食' : '自炊';
+      const placeHtml = dish.type==='out' && dish.place ? `<span class="food-popup-dish-place">@${esc(dish.place)}</span>` : '';
+      const isValidUrl = /^https?:\/\//.test(dish.recipeUrl||'');
+      const linkHtml = isValidUrl ? `<a class="food-popup-dish-link" href="${esc(dish.recipeUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${linkSVG} レシピ</a>` : '';
+      const noteHtml = dish.note ? `<div class="food-popup-dish-note">${esc(dish.note)}</div>` : '';
+      // Gallery
+      const galleryHTML = photos.length ? `<div class="food-popup-gallery">${photos.map((p,pi) =>
+        `<div class="food-popup-gallery-img" onclick="event.stopPropagation();openFoodLightboxForDish('${esc(String(dish.id))}',${pi})">
+          <img data-path="${esc(p.path)}" src="" alt="">
+        </div>`
+      ).join('')}</div>` : '';
+      dishesHTML += `<div class="food-popup-dish">
+        <div class="food-popup-dish-name">${esc(dish.name||'（名前なし）')}</div>
+        <div class="food-popup-dish-meta">
+          <span class="food-popup-dish-pill ${pillCls}">${pillLabel}</span>
+          ${placeHtml}${linkHtml}
+        </div>
+        ${noteHtml}
+        ${galleryHTML}
+      </div>`;
+    }
+    bodyHTML += `<div class="food-popup-sitting">
+      <div class="food-popup-sitting-hdr">
+        <span class="food-popup-sitting-kind">${esc(KIND_LABELS[s.kind]||s.kind)}</span>${placeHTML}
+      </div>
+      ${dishesHTML}
+    </div>`;
+  }
+  if (meal.memo) {
+    bodyHTML += `<div class="food-popup-memo">${esc(meal.memo)}</div>`;
+  }
+  document.getElementById('foodPopupBody').innerHTML = bodyHTML;
+  fillSignedUrls(document.getElementById('foodPopupBody'));
+}
+
+function navFoodPopup(delta) {
+  if (!_foodPopupId) return;
+  const sorted = [...meals].sort((a,b)=>a.date.localeCompare(b.date));
+  const cur = sorted.findIndex(m=>String(m.id)===_foodPopupId);
+  if (cur < 0) return;
+  let next = cur + delta;
+  if (next < 0 || next >= sorted.length) return;
+  _foodPopupId = String(sorted[next].id);
+  renderFoodDetailPopup();
+}
+
+// ── LIGHTBOX ──
+function openFoodLightboxForDish(dishId, startIdx) {
+  for (const m of meals) for (const s of (m.sittings || [])) for (const d of (s.dishes || [])) {
+    if (String(d.id) === String(dishId)) { openFoodLightbox((d.photos || []).map(p => p.path), startIdx); return; }
+  }
+}
+function openFoodLightbox(photoPaths, startIdx) {
+  _lightboxPhotos = photoPaths;
+  _lightboxIdx = startIdx || 0;
+  _renderLightbox();
+  document.getElementById('foodLightbox').classList.add('open');
+}
+
+function closeFoodLightbox() {
+  document.getElementById('foodLightbox').classList.remove('open');
+  _lightboxPhotos = [];
+  _lightboxIdx = 0;
+}
+
+function moveFoodLightbox(delta) {
+  _lightboxIdx = (_lightboxIdx + delta + _lightboxPhotos.length) % _lightboxPhotos.length;
+  _renderLightbox();
+}
+
+function _renderLightbox() {
+  const img = document.getElementById('foodLightboxImg');
+  const path = _lightboxPhotos[_lightboxIdx];
+  if (!path) return;
+  const cached = _signedUrlCache[path];
+  if (cached) { img.src = cached.url; }
+  else {
+    img.src = '';
+    fillSignedUrls(document.getElementById('foodLightbox'));
+    img.dataset.path = path;
+  }
+  img.dataset.path = path;
+  document.getElementById('foodLightboxCounter').textContent = _lightboxPhotos.length > 1 ? `${_lightboxIdx+1} / ${_lightboxPhotos.length}` : '';
+  document.getElementById('foodLightboxPrev').style.display = _lightboxPhotos.length > 1 ? '' : 'none';
+  document.getElementById('foodLightboxNext').style.display = _lightboxPhotos.length > 1 ? '' : 'none';
+  // Ensure signed URL
+  fillSignedUrls(document.getElementById('foodLightbox'));
+}
+
+document.addEventListener('keydown', e => {
+  const lb = document.getElementById('foodLightbox');
+  if (lb && lb.classList.contains('open')) {
+    if (e.key === 'Escape') { closeFoodLightbox(); return; }
+    if (e.key === 'ArrowLeft') { moveFoodLightbox(-1); return; }
+    if (e.key === 'ArrowRight') { moveFoodLightbox(1); return; }
+  }
+  if (document.getElementById('foodPopupOverlay')?.style.display === 'flex') {
+    if (e.key === 'Escape') { closeFoodDetailPopup(); return; }
+  }
+});
 
 async function fillSignedUrls(containerEl) {
   if (!containerEl) return;
