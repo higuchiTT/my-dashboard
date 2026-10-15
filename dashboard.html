@@ -39,10 +39,18 @@
 
     /* ── TABS ── */
     .tabs { display:flex; align-items:stretch; gap:0; flex:1; }
-    .tab-btn { padding:0 16px; border:none; border-bottom:2px solid transparent; background:transparent; color:var(--ink3); cursor:pointer; font-family:'Newsreader',serif; font-size:18px; font-weight:800; font-style:italic; line-height:1; transition:color 0.15s,border-color 0.15s; white-space:nowrap; margin-bottom:-1.5px; }
+    .tab-btn { padding:0 20px; min-height:44px; border:none; border-bottom:2px solid transparent; background:transparent; color:var(--ink3); cursor:pointer; font-family:'Newsreader',serif; font-size:20px; font-weight:800; font-style:italic; line-height:1; transition:color 0.15s,border-color 0.15s; white-space:nowrap; margin-bottom:-1.5px; display:flex; align-items:center; gap:4px; }
     .tab-btn:hover:not(.active) { color:var(--ink2); }
     .tab-btn.active { color:var(--ink); border-bottom-color:var(--accent); }
     .tab-badge { background:var(--accent); color:var(--paper); font-family:'JetBrains Mono',monospace; font-size:10px; padding:1px 5px; margin-left:4px; font-weight:700; border-radius:3px; font-style:normal; }
+
+    /* ── BOTTOM TAB BAR (mobile) ── */
+    .hm-bottom-nav { display:none; }
+    .hm-bnav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; border:none; background:transparent; cursor:pointer; color:var(--ink3); padding:0; position:relative; transition:color 0.12s; }
+    .hm-bnav-item.active { color:var(--accent); }
+    .hm-bnav-icon { display:flex; align-items:center; justify-content:center; }
+    .hm-bnav-label { font-family:'Space Grotesk',sans-serif; font-size:9px; font-weight:600; letter-spacing:0.02em; line-height:1; }
+    .hm-bnav-badge { position:absolute; top:4px; right:50%; transform:translateX(10px); background:var(--accent); color:var(--paper); font-family:'JetBrains Mono',monospace; font-size:9px; padding:1px 4px; border-radius:10px; font-weight:700; min-width:14px; text-align:center; line-height:1.4; }
 
     /* ── PAGE ── */
     .page { display: none; }
@@ -92,53 +100,88 @@
     .fchip.active { background: var(--ink); color: var(--paper); }
     .fchip:hover:not(.active) { background: var(--paper2); color: var(--ink); }
 
-    /* ── HOME STATS ── */
-    .stat-row { display: grid; grid-template-columns: repeat(3,1fr); border-bottom: 1px solid var(--rule); }
-    .stat-card { padding: 22px 32px; border-right: 1px solid var(--rule); }
-    .stat-card:last-child { border-right: none; }
-    .stat-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink3); font-weight: 600; }
-    .stat-number { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 64px; font-weight: 700; line-height: 1; letter-spacing: -0.03em; margin-top: 8px; color: var(--ink); }
-    .stat-number.red   { color: var(--accent); }
-    .stat-number.amber { color: var(--warn); }
-    .stat-sub { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); margin-top: 6px; }
+    /* ── HOME v2 ── */
+    .hm-task-strip { display:flex; align-items:center; gap:10px; padding:8px 24px; background:var(--paper2); border-bottom:1px solid rgba(26,24,20,0.12); cursor:pointer; flex-wrap:wrap; transition:background 0.12s; font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink2); }
+    .hm-task-strip:hover { background:var(--paper3); }
+    .hm-ts-num { font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px; color:var(--ink); }
+    .hm-ts-od .hm-ts-num { color:var(--accent); }
+    .hm-ts-sep { color:var(--mute); }
+    .hm-ts-arrow { margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); letter-spacing:0.06em; }
+    .hm-task-strip:hover .hm-ts-arrow { color:var(--accent); }
+    .hm-body { display:grid; grid-template-columns:320px 1fr; gap:16px; padding:20px; align-items:start; }
+    .hm-col-left { display:flex; flex-direction:column; gap:16px; }
+    .hm-col-right { display:flex; flex-direction:column; gap:16px; }
+    .hm-card { background:var(--paper); border:1px solid rgba(26,24,20,0.15); border-radius:12px; box-shadow:0 2px 10px rgba(26,24,20,0.07); overflow:hidden; }
+    .hm-card-hdr { display:flex; align-items:center; justify-content:space-between; padding:14px 18px 12px; border-bottom:1px solid rgba(26,24,20,0.1); cursor:pointer; transition:background 0.12s; }
+    .hm-card-hdr:hover { background:rgba(26,24,20,0.03); }
+    .hm-card-hdr-left { display:flex; flex-direction:column; gap:2px; }
+    .hm-card-title { font-family:'Newsreader',serif; font-size:18px; font-weight:800; font-style:normal; color:var(--ink); line-height:1; }
+    .hm-card-sub { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink3); letter-spacing:0.06em; margin-top:2px; }
+    .hm-card-link { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); letter-spacing:0.06em; flex-shrink:0; }
+    .hm-card-hdr:hover .hm-card-link { color:var(--accent); }
+    .hm-card-body { padding:0; }
+    .hm-schedule-body { overflow-y:auto; max-height:calc(100vh - 200px); }
+    .hm-sched-group { border-bottom:1px solid rgba(26,24,20,0.07); padding:8px 16px; }
+    .hm-sched-group:last-child { border-bottom:none; }
+    .hm-sched-date-label { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.08em; color:var(--ink3); margin-bottom:5px; display:flex; align-items:center; gap:5px; text-transform:uppercase; }
+    .hm-sched-date-label.hm-sched-today { color:var(--accent); }
+    .hm-sched-od-label { color:var(--accent) !important; }
+    .hm-sched-od-count { font-weight:400; text-transform:none; }
+    .hm-sched-item { display:flex; align-items:center; gap:8px; padding:4px 0; cursor:pointer; min-height:28px; }
+    .hm-sched-item:hover .hm-sched-title { text-decoration:underline; text-decoration-style:dotted; }
+    .hm-sched-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .hm-sched-title { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .hm-sched-time { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); flex-shrink:0; }
+    .hm-sched-sub-icon { color:var(--ink3); flex-shrink:0; display:flex; }
+    .hm-sched-paid { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ok); flex-shrink:0; font-weight:700; }
+    .hm-sched-more { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); cursor:pointer; padding:3px 0; }
+    .hm-sched-more:hover { text-decoration:underline; }
+    .hm-empty { padding:24px 18px; font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--mute); text-align:center; }
+    .hm-finance-nums { display:grid; grid-template-columns:repeat(3,1fr); gap:0; padding:12px 14px 10px; border-bottom:1px solid rgba(26,24,20,0.07); }
+    .hm-finance-num-item { text-align:center; }
+    .hm-finance-num-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); font-weight:600; margin-bottom:3px; }
+    .hm-finance-num-val { font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:700; line-height:1.1; }
+    .hm-finance-num-val.inc { color:var(--ok); }
+    .hm-finance-num-val.exp { color:var(--accent); }
+    .hm-finance-num-val.pos { color:var(--ok); }
+    .hm-finance-num-val.neg { color:var(--accent); }
+    .hm-finance-budget { padding:8px 16px; border-bottom:1px solid rgba(26,24,20,0.07); }
+    .hm-finance-budget-row { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+    .hm-finance-budget-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); font-weight:600; flex-shrink:0; }
+    .hm-finance-budget-val { font-family:'JetBrains Mono',monospace; font-size:12px; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .hm-finance-budget-val.hm-finance-budget-over { color:var(--accent); }
+    .hm-finance-budget-val.hm-finance-budget-warn { color:var(--warn); }
+    .hm-finance-budget-pct { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); flex-shrink:0; }
+    .hm-finance-budget-pct.over { color:var(--accent); font-weight:700; }
+    .hm-finance-budget-pct.warn { color:var(--warn); font-weight:700; }
+    .hm-prog-wrap { height:5px; background:rgba(26,24,20,0.1); border-radius:3px; overflow:hidden; }
+    .hm-prog-bar { height:100%; border-radius:3px; transition:width 0.3s; }
+    .hm-finance-no-budget { padding:8px 16px; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--mute); }
+    .hm-finance-net { padding:10px 16px 4px; }
+    .hm-finance-net-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); font-weight:600; margin-bottom:3px; }
+    .hm-finance-net-val { font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:700; line-height:1; }
+    .hm-finance-net-val.neg { color:var(--accent); }
+    .hm-acc-list { padding:2px 16px 12px; display:flex; flex-direction:column; }
+    .hm-acc-row { display:flex; align-items:center; justify-content:space-between; padding:3px 0; border-bottom:1px solid rgba(26,24,20,0.05); }
+    .hm-acc-row:last-child { border-bottom:none; }
+    .hm-acc-name { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink2); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .hm-acc-bal { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; flex-shrink:0; }
+    .hm-acc-bal.neg { color:var(--accent); }
+    .hm-finance-no-acc { padding:14px 16px; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--mute); }
+    .hm-food-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; padding:10px 10px 4px; }
+    .hm-food-cell { cursor:pointer; padding:4px 2px; border-radius:6px; transition:background 0.12s; text-align:center; }
+    .hm-food-cell:hover { background:rgba(26,24,20,0.06); }
+    .hm-food-today { background:rgba(139,58,24,0.07); outline:1.5px solid var(--accent); outline-offset:-1px; }
+    .hm-food-day { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; color:var(--ink2); margin-bottom:2px; line-height:1; }
+    .hm-food-today .hm-food-day { color:var(--accent); font-weight:800; }
+    .hm-food-sun { color:var(--accent) !important; }
+    .hm-food-sat { color:#4a7ab5 !important; }
+    .hm-food-dots { display:flex; justify-content:center; gap:2px; margin-top:2px; }
+    .hm-food-dot { width:5px; height:5px; border-radius:50%; background:rgba(26,24,20,0.12); flex-shrink:0; }
+    .hm-food-dot.active { background:var(--accent); }
+    .hm-food-summary { padding:4px 14px 12px; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); text-align:center; }
 
-    /* ── HOME ALERTS ── */
-    .alert-wrap { display: flex; flex-direction: column; }
-    .alert { display: flex; align-items: flex-start; gap: 14px; padding: 13px 40px; font-size: 14px; border-bottom: 1px solid var(--rule); border-left: 4px solid; }
-    .alert.red    { background: rgba(139,58,24,0.06);  border-left-color: var(--accent); color: var(--accent); }
-    .alert.yellow { background: rgba(163,106,24,0.07); border-left-color: var(--warn);   color: var(--warn); }
-    .alert strong { font-weight: 700; }
-
-    /* ── HOME WIDGETS ── */
-    .widget-row { display: grid; grid-template-columns: 1.15fr 0.85fr; border-bottom: 1px solid var(--rule); }
-    .widget-wrap { padding: 24px 30px; border-right: 1px solid var(--rule); }
-    .widget-wrap:last-child { border-right: none; background: var(--paper2); }
-    .widget-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; }
-    .widget-title { font-family: 'Newsreader', serif; font-size: 22px; font-style: italic; font-weight: 700; }
-    .widget-link { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); cursor: pointer; letter-spacing: 0.06em; }
-    .widget-link:hover { color: var(--accent); }
-    .home-task { display: flex; align-items: flex-start; gap: 12px; padding: 11px 0; border-bottom: 1px dotted var(--mute); }
-    .home-task:last-child { border-bottom: none; }
-    .pdot { width: 8px; height: 8px; flex-shrink: 0; margin-top: 6px; }
-    .pdot.high   { background: var(--accent); }
-    .pdot.medium { background: var(--warn); }
-    .pdot.low    { background: var(--ok); }
-    .ht-info { flex: 1; min-width: 0; }
-    .ht-title { font-family: 'Newsreader', serif; font-size: 17px; line-height: 1.35; }
-    .ht-meta { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); margin-top: 3px; }
-    .ht-check { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; background: transparent; border: 1px solid var(--ink3); color: var(--ink3); padding: 4px 10px; cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
-    .ht-check:hover { border-color: var(--ok); color: var(--ok); }
-    .asset-ph { border: 1.5px dashed var(--mute); padding: 28px 20px; text-align: center; background: var(--paper); }
-    .asset-ph-icon { font-size: 2rem; margin-bottom: 10px; opacity: 0.45; }
-    .asset-ph p { font-family: 'Newsreader', serif; font-style: italic; font-size: 16px; color: var(--ink3); line-height: 1.6; }
-
-    /* ── TASK GROUPS ── */
-    .task-groups-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 0; }
-    .task-group { padding: 24px 30px; border-right: 1px solid var(--rule); }
-    .task-group:last-child { border-right: none; }
-    .task-group-hdr { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 2px solid var(--rule); }
-    .task-group-label { font-family: 'Newsreader', serif; font-size: 20px; font-weight: 700; font-style: italic; }
-    .tg-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); font-weight: 600; }
+    /* ── TASK GROUPS (unused, kept for removal safety) ── */
 
     /* ── TASK LIST ── */
     .task-list { display: flex; flex-direction: column; gap: 0; }
@@ -387,6 +430,10 @@
     .cal-panel-title { font-family:'Newsreader',serif; font-size:18px; font-style:italic; font-weight:700; margin-bottom:12px; }
     .cal-task-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px dotted var(--mute); font-size:14px; }
     .cal-task-row:last-child { border-bottom:none; }
+    .pdot { width: 8px; height: 8px; flex-shrink: 0; }
+    .pdot.high   { background: var(--accent); }
+    .pdot.medium { background: var(--warn); }
+    .pdot.low    { background: var(--ok); }
     .cal-task-row.done { opacity:0.4; }
     .cal-task-row.done span { text-decoration:line-through; }
 
@@ -583,10 +630,10 @@
     /* Calendar card */
     .food-cal-card { overflow:hidden; }
     .food-cal-top { display:flex; align-items:center; gap:8px; padding:14px 18px 12px; justify-content:flex-start; }
-    .food-cal-month-label { font-family:'Newsreader',serif; font-size:24px; font-weight:800; font-style:normal; margin:0 6px; }
+    .food-cal-month-label { font-family:'Newsreader',serif; font-size:24px; font-weight:800; font-style:normal; margin:0 6px; white-space:nowrap; }
     .food-cal-nav-btn { width:40px; height:40px; border:1.5px solid rgba(26,24,20,0.2); border-radius:8px; background:transparent; color:var(--ink2); cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; font-family:'JetBrains Mono',monospace; line-height:1; }
     .food-cal-nav-btn:hover { border-color:var(--ink); color:var(--ink); background:var(--paper2); }
-    .food-cal-today-btn { padding:0 14px; height:40px; border:1.5px solid rgba(26,24,20,0.2); border-radius:8px; background:transparent; color:var(--ink2); cursor:pointer; font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; transition:all 0.15s; }
+    .food-cal-today-btn { white-space:nowrap; padding:0 14px; height:40px; border:1.5px solid rgba(26,24,20,0.2); border-radius:8px; background:transparent; color:var(--ink2); cursor:pointer; font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; transition:all 0.15s; }
     .food-cal-today-btn:hover { border-color:var(--ink); color:var(--ink); }
     .food-cal-dow-row { display:grid; grid-template-columns:repeat(7,1fr); background:var(--paper2); border-top:1px solid rgba(26,24,20,0.15); border-bottom:1px solid rgba(26,24,20,0.15); }
     .food-cal-dow { text-align:center; font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; color:var(--ink3); padding:8px 4px; letter-spacing:0.04em; }
@@ -1019,18 +1066,12 @@
       .masthead-date { display: none; }
       .masthead-divider { margin: 0 8px; }
 
-      /* ── タブ横スクロール ── */
-      .tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-      .tabs::-webkit-scrollbar { display: none; }
-      .tab-btn { padding: 0 10px; font-size: 15px; }
-
       /* ── セクション共通パディング ── */
       .sec-head-inner { padding: 10px 14px 8px; }
       .sec-title { font-size: 28px; }
       .page-bar { padding: 10px 14px; }
       .add-form { padding: 14px 14px; }
       .mnav { padding: 10px 14px; }
-      .alert { padding: 10px 14px; }
 
       /* ── フィルターバー横スクロール ── */
       .fbar { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
@@ -1038,13 +1079,21 @@
       .fchip { white-space: nowrap; }
 
       /* ── Home ── */
-      .stat-row { grid-template-columns: 1fr; }
-      .stat-card { border-right: none; border-bottom: 1px solid var(--rule); }
-      .stat-card:last-child { border-bottom: none; }
-      .stat-number { font-size: 44px; }
-      .widget-row { grid-template-columns: 1fr; }
-      .widget-wrap { border-right: none; border-bottom: 1px solid var(--rule); padding: 18px 14px; }
-      .widget-wrap:last-child { border-bottom: none; }
+      .hm-body { grid-template-columns:1fr; padding:10px; gap:10px; }
+      .hm-schedule-body { max-height:none; }
+      .hm-task-strip { padding:8px 14px; }
+
+      /* ── タブ (スマホ: ヘッダータブ非表示、ボトムバー表示) ── */
+      .tabs { display:none !important; }
+      .masthead-divider { display:none; }
+      body { padding-bottom:calc(60px + env(safe-area-inset-bottom,0px)); }
+      .hm-bottom-nav { display:flex; position:fixed; bottom:0; left:0; right:0; height:calc(60px + env(safe-area-inset-bottom,0px)); padding-bottom:env(safe-area-inset-bottom,0px); background:var(--paper); border-top:1.5px solid rgba(26,24,20,0.18); z-index:6000; }
+      .food-fab { bottom:calc(76px + env(safe-area-inset-bottom,0px)) !important; }
+      .undo-toast { bottom:calc(68px + env(safe-area-inset-bottom,0px)) !important; }
+      #saveErrToast { bottom:calc(68px + env(safe-area-inset-bottom,0px)) !important; }
+      .ldr-modal-overlay { z-index:7000; }
+      .food-modal-overlay { z-index:7000; }
+      .food-popup-overlay { z-index:7100; }
 
       /* ── ToDo（1列レイアウト） ── */
       #page-todo { min-width: unset; overflow-x: hidden; }
@@ -1160,6 +1209,9 @@
 
       /* ── Food ── */
       .food-page { padding:14px; }
+      .food-cal-month-label { font-size:19px; }
+      .food-cal-nav-btn { width:34px; height:34px; }
+      .food-cal-today-btn { height:34px; padding:0 10px; }
       .food-header-row { flex-direction:column; align-items:flex-start; gap:10px; margin-bottom:14px; }
       .food-header-title { font-size:22px; }
       .food-stats-row { flex:none; width:100%; gap:6px; }
@@ -1228,44 +1280,12 @@
 
 <!-- ══ HOME ══ -->
 <div class="page active" id="page-home">
-
-  <div class="stat-row">
-    <div class="stat-card">
-      <div class="stat-eyebrow">未完了タスク</div>
-      <div class="stat-number" id="hN1">—</div>
-      <div class="stat-sub" id="hS1"></div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-eyebrow">期限切れ</div>
-      <div class="stat-number red" id="hN2">—</div>
-      <div class="stat-sub">要対応</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-eyebrow">今週期限</div>
-      <div class="stat-number amber" id="hN3">—</div>
-      <div class="stat-sub">要注意</div>
-    </div>
-  </div>
-
-  <div class="alert-wrap" id="homeAlerts"></div>
-
-  <div class="widget-row">
-    <div class="widget-wrap">
-      <div class="widget-header">
-        <div class="widget-title">優先タスク</div>
-        <div class="widget-link" onclick="nav('todo')">§02 To-Do で詳細 →</div>
-      </div>
-      <div id="homeTaskList"></div>
-    </div>
-    <div class="widget-wrap">
-      <div class="widget-header">
-        <div class="widget-title">資産サマリー</div>
-        <div class="widget-link" onclick="nav('finance')">§03 Ledger →</div>
-      </div>
-      <div class="asset-ph">
-        <div class="asset-ph-icon">📊</div>
-        <p>SBI証券 CSV 連携後に<br>資産状況が表示されます</p>
-      </div>
+  <div id="homeTaskStrip"></div>
+  <div class="hm-body" id="homeBody">
+    <div class="hm-col-left" id="homeScheduleCol"></div>
+    <div class="hm-col-right">
+      <div id="homeFinanceCard"></div>
+      <div id="homeFoodCard"></div>
     </div>
   </div>
 </div>
@@ -2171,8 +2191,10 @@ document.addEventListener('click', () => {
 function nav(page) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.hm-bnav-item').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(b=>{ if(b.getAttribute('onclick')===`nav('${page}')`) b.classList.add('active'); });
+  document.querySelectorAll('.hm-bnav-item').forEach(b=>{ if(b.getAttribute('onclick')===`nav('${page}')`) b.classList.add('active'); });
   if(page==='home')     renderHome();
   if(page==='todo')     renderTodayView();
   if(page==='finance')  { restoreLdrSubtab(); }
@@ -2184,27 +2206,248 @@ function nav(page) {
 
 // ── HOME ──
 function renderHome() {
-  const now=new Date(); now.setHours(0,0,0,0);
-  const w7=new Date(now); w7.setDate(w7.getDate()+7);
-  const pending=tasks.filter(t=>!t.done);
-  const overdue=pending.filter(t=>t.due&&new Date(t.due)<now);
-  const week=pending.filter(t=>{if(!t.due)return false;const d=new Date(t.due);return d>=now&&d<=w7;});
-  document.getElementById('hN1').textContent=pending.length;
-  document.getElementById('hS1').textContent=`完了済み ${tasks.filter(t=>t.done).length} 件`;
-  document.getElementById('hN2').textContent=overdue.length;
-  document.getElementById('hN3').textContent=week.length;
-  const alerts=[];
-  if(overdue.length){const ns=overdue.slice(0,2).map(t=>t.title).join('、')+(overdue.length>2?` 他 ${overdue.length-2} 件`:'');alerts.push(`<div class="alert red"><span>🚨</span><span><strong>期限切れ ${overdue.length} 件：</strong>${esc(ns)}</span></div>`);}
-  const soon=pending.filter(t=>{if(!t.due)return false;const d=(new Date(t.due)-now)/86400000;return d>=0&&d<=3;});
-  if(soon.length){const ns=soon.slice(0,2).map(t=>t.title).join('、')+(soon.length>2?` 他 ${soon.length-2} 件`:'');alerts.push(`<div class="alert yellow"><span>⚠️</span><span><strong>3日以内に期限：</strong>${esc(ns)}</span></div>`);}
-  document.getElementById('homeAlerts').innerHTML=alerts.join('');
-  const po={high:0,medium:1,low:2};
-  const urgent=[...pending].filter(t=>t.priority==='high'||(t.due&&new Date(t.due)<now)).sort((a,b)=>{const ao=a.due&&new Date(a.due)<now,bo=b.due&&new Date(b.due)<now;if(ao!==bo)return ao?-1:1;if(po[a.priority]!==po[b.priority])return po[a.priority]-po[b.priority];if(a.due&&b.due)return new Date(a.due)-new Date(b.due);return a.due?-1:b.due?1:0;}).slice(0,5);
-  document.getElementById('homeTaskList').innerHTML=urgent.length?urgent.map(t=>{const od=t.due&&new Date(t.due)<now;return`<div class="home-task"><div class="pdot ${t.priority}"></div><div class="ht-info"><div class="ht-title">${esc(t.title)}</div><div class="ht-meta">${esc(t.category)}${t.due?` · ${od?'⚠️ ':''}${fmtS(new Date(t.due+'T00:00:00'))}`:''}  </div></div><button class="ht-check" onclick="quickDone('${esc(String(t.id))}')">✓</button></div>`;}).join(''):'<div class="empty"><div class="ei">✓</div>優先タスクはありません</div>';
+  const todayStr = localDate();
+  const now = new Date(todayStr+'T00:00:00');
+  const w7 = new Date(now); w7.setDate(w7.getDate()+7);
+  const pending = tasks.filter(t=>!t.done);
+  const overdue = pending.filter(t=>t.due && t.due < todayStr);
+  const thisWeek = pending.filter(t=>{if(!t.due)return false;return t.due>=todayStr && t.due<=localDate(w7);});
+
+  // ── 0. Task strip ──
+  const tsEl = document.getElementById('homeTaskStrip');
+  if(tsEl) tsEl.innerHTML = `<div class="hm-task-strip" onclick="nav('todo')">
+    <span class="hm-ts-item"><span class="hm-ts-num">${pending.length}</span> 未完了</span>
+    <span class="hm-ts-sep">·</span>
+    <span class="hm-ts-item hm-ts-od"><span class="hm-ts-num">${overdue.length}</span> 期限切れ</span>
+    <span class="hm-ts-sep">·</span>
+    <span class="hm-ts-item"><span class="hm-ts-num">${thisWeek.length}</span> 今週期限</span>
+    <span class="hm-ts-arrow">To-Do ›</span>
+  </div>`;
+
+  // ── 1. 予定カード ──
+  const endDate = new Date(now); endDate.setDate(endDate.getDate()+13);
+  const endStr = localDate(endDate);
+  const dayNames = '日月火水木金土'.split('');
+
+  // Overdue items (oldest first, max 5)
+  const overdueItems = overdue.slice().sort((a,b)=>a.due<b.due?-1:1);
+  let overdueHTML = '';
+  if(overdueItems.length) {
+    const shown = overdueItems.slice(0,5);
+    const rest = overdueItems.length - 5;
+    overdueHTML = `<div class="hm-sched-group">
+      <div class="hm-sched-date-label hm-sched-od-label">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.4"/><path d="M6 3.5V6.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="6" cy="8.5" r=".6" fill="currentColor"/></svg>
+        期限切れ <span class="hm-sched-od-count">${overdueItems.length}件</span>
+      </div>
+      ${shown.map(t=>`<div class="hm-sched-item hm-sched-task" onclick="nav('todo')">
+        <span class="hm-sched-dot" style="background:${esc(getCatColor(t.category))}"></span>
+        <span class="hm-sched-title">${esc(t.title)}</span>
+        ${t.dueTime?`<span class="hm-sched-time">${esc(t.dueTime)}</span>`:''}
+      </div>`).join('')}
+      ${rest>0?`<div class="hm-sched-more" onclick="nav('todo')">他 ${rest} 件</div>`:''}
+    </div>`;
+  }
+
+  // Daily groups: tasks + subs in range
+  const dailyGroups = {};
+  pending.filter(t=>t.due && t.due>=todayStr && t.due<=endStr).forEach(t=>{
+    if(!dailyGroups[t.due]) dailyGroups[t.due] = {tasks:[],subs:[]};
+    dailyGroups[t.due].tasks.push(t);
+  });
+  const activeSubs = subs.filter(s=>s.active && s.payDay);
+  activeSubs.forEach(s=>{
+    for(let cur=new Date(now);;cur.setDate(cur.getDate()+1)){
+      const ds=localDate(cur);
+      if(ds>endStr)break;
+      const y=cur.getFullYear(),m=cur.getMonth(),day=cur.getDate();
+      const daysInMo=new Date(y,m+1,0).getDate();
+      const actualDay=Math.min(s.payDay,daysInMo);
+      if(day!==actualDay)continue;
+      if(s.cycle==='yearly'&&(s.payMonth||1)!==m+1)continue;
+      const ym=`${y}-${String(m+1).padStart(2,'0')}`;
+      const paid=txs.some(t=>String(t.subId)===String(s.id)&&t.subYm===ym);
+      if(!dailyGroups[ds])dailyGroups[ds]={tasks:[],subs:[]};
+      dailyGroups[ds].subs.push({sub:s,ym,paid});
+    }
+  });
+
+  const tomorrowStr = localDate(new Date(now.getTime()+86400000));
+  let daysHTML = '';
+  Object.keys(dailyGroups).sort().forEach(ds=>{
+    const dt = new Date(ds+'T00:00:00');
+    const isToday = ds===todayStr;
+    const isTomorrow = ds===tomorrowStr;
+    let prefix = `${dt.getMonth()+1}/${dt.getDate()}（${dayNames[dt.getDay()]}）`;
+    if(isToday) prefix = `今日 ${prefix}`;
+    else if(isTomorrow) prefix = `明日 ${prefix}`;
+    const {tasks:dayTasks,subs:daySubs} = dailyGroups[ds];
+    const items = [
+      ...dayTasks.map(t=>`<div class="hm-sched-item hm-sched-task" onclick="nav('todo')">
+        <span class="hm-sched-dot" style="background:${esc(getCatColor(t.category))}"></span>
+        <span class="hm-sched-title">${esc(t.title)}</span>
+        ${t.dueTime?`<span class="hm-sched-time">${esc(t.dueTime)}</span>`:''}
+      </div>`),
+      ...daySubs.map(({sub,paid})=>`<div class="hm-sched-item hm-sched-sub" onclick="event.stopPropagation();nav('finance');setTimeout(()=>{const btn=document.querySelector('#ldrSubtabs .ui-seg-btn:nth-child(4)');if(btn)ldrTab('subs',btn);},60)">
+        <span class="hm-sched-sub-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="2.5" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 5h10" stroke="currentColor" stroke-width="1.3"/></svg></span>
+        <span class="hm-sched-title">${esc(sub.name)} の支払い ¥${fmt(sub.price)}</span>
+        ${paid?`<span class="hm-sched-paid">✓</span>`:''}
+      </div>`)
+    ].join('');
+    daysHTML += `<div class="hm-sched-group">
+      <div class="hm-sched-date-label${isToday?' hm-sched-today':''}">${esc(prefix)}</div>
+      ${items}
+    </div>`;
+  });
+
+  let scheduleContent = overdueHTML + daysHTML;
+  if(!scheduleContent) scheduleContent = `<div class="hm-empty">2週間以内の予定はありません</div>`;
+  const endDt = new Date(endStr+'T00:00:00');
+  const subDateStr = `今日〜${endDt.getMonth()+1}/${endDt.getDate()}`;
+  const schedEl = document.getElementById('homeScheduleCol');
+  if(schedEl) schedEl.innerHTML = `<div class="hm-card">
+    <div class="hm-card-hdr" onclick="nav('todo')">
+      <div class="hm-card-hdr-left">
+        <div class="hm-card-title">予定</div>
+        <div class="hm-card-sub">${esc(subDateStr)}</div>
+      </div>
+      <div class="hm-card-link">To-Do ›</div>
+    </div>
+    <div class="hm-card-body hm-schedule-body">${scheduleContent}</div>
+  </div>`;
+
+  // ── 2. ファイナンスカード ──
+  const nowDate = new Date();
+  const cy = nowDate.getFullYear(), cm = nowDate.getMonth();
+  const thisMonthTxs = txs.filter(t=>{
+    if(!t.date||t.type==='transfer'||t.type==='adjust')return false;
+    const d = new Date(t.date+'T00:00:00');
+    return d.getFullYear()===cy && d.getMonth()===cm;
+  });
+  const income = thisMonthTxs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const expense = thisMonthTxs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const balance = income - expense;
+  const eb = getEffBudget(cy,cm);
+  let budgetHTML = '';
+  if(eb.total!==null && eb.total!==undefined) {
+    const pct = eb.total>0?expense/eb.total*100:0;
+    const over = expense>eb.total;
+    const warn80 = pct>=80&&!over;
+    const barColor = over?'var(--accent)':warn80?'var(--warn)':'var(--ok)';
+    budgetHTML = `<div class="hm-finance-budget">
+      <div class="hm-finance-budget-row">
+        <span class="hm-finance-budget-label">予算</span>
+        <span class="hm-finance-budget-val${over?' hm-finance-budget-over':warn80?' hm-finance-budget-warn':''}">支出 ¥${fmt(expense)} / ¥${fmt(eb.total)}</span>
+        <span class="hm-finance-budget-pct${over?' over':warn80?' warn':''}">${Math.round(pct)}%</span>
+      </div>
+      <div class="hm-prog-wrap"><div class="hm-prog-bar" style="width:${Math.min(pct,100).toFixed(1)}%;background:${barColor}"></div></div>
+    </div>`;
+  } else {
+    budgetHTML = `<div class="hm-finance-no-budget">予算は未設定です</div>`;
+  }
+  const asOf = todayStr;
+  const activeAccounts = accounts.filter(a=>!a.archived).sort((a,b)=>(a.order||0)-(b.order||0));
+  let netWorthHTML = '';
+  if(!activeAccounts.length) {
+    netWorthHTML = `<div class="hm-finance-no-acc">口座を登録すると純資産が表示されます</div>`;
+  } else {
+    const net = activeAccounts.reduce((s,a)=>s+accountBalance(a,asOf),0);
+    const accRows = activeAccounts.slice(0,5).map(a=>{
+      const bal = accountBalance(a,asOf);
+      return `<div class="hm-acc-row"><span class="hm-acc-name">${esc(a.name)}</span><span class="hm-acc-bal${bal<0?' neg':''}">${bal<0?'-':''}¥${fmt(Math.abs(bal))}</span></div>`;
+    }).join('');
+    netWorthHTML = `<div class="hm-finance-net">
+      <div class="hm-finance-net-label">純資産</div>
+      <div class="hm-finance-net-val${net<0?' neg':''}">${net<0?'-':''}¥${fmt(Math.abs(net))}</div>
+    </div><div class="hm-acc-list">${accRows}</div>`;
+  }
+  const monLabel = `${cy}年${cm+1}月`;
+  const finEl = document.getElementById('homeFinanceCard');
+  if(finEl) finEl.innerHTML = `<div class="hm-card">
+    <div class="hm-card-hdr" onclick="nav('finance')">
+      <div class="hm-card-hdr-left">
+        <div class="hm-card-title">ファイナンス</div>
+        <div class="hm-card-sub">${esc(monLabel)}</div>
+      </div>
+      <div class="hm-card-link">Ledger ›</div>
+    </div>
+    <div class="hm-card-body">
+      <div class="hm-finance-nums">
+        <div class="hm-finance-num-item"><div class="hm-finance-num-label">収入</div><div class="hm-finance-num-val inc">¥${fmt(income)}</div></div>
+        <div class="hm-finance-num-item"><div class="hm-finance-num-label">支出</div><div class="hm-finance-num-val exp">¥${fmt(expense)}</div></div>
+        <div class="hm-finance-num-item"><div class="hm-finance-num-label">収支</div><div class="hm-finance-num-val ${balance>=0?'pos':'neg'}">${balance>=0?'+':'−'}¥${fmt(Math.abs(balance))}</div></div>
+      </div>
+      ${budgetHTML}
+      ${netWorthHTML}
+    </div>
+  </div>`;
+
+  // ── 3. 食事カード ──
+  const startFoodDate = new Date(now); startFoodDate.setDate(startFoodDate.getDate()-13);
+  const foodDates = [];
+  for(let i=0;i<14;i++){const d=new Date(startFoodDate);d.setDate(d.getDate()+i);foodDates.push(localDate(d));}
+  const mealMap = {};
+  meals.forEach(m=>{if(foodDates.includes(m.date))mealMap[m.date]=m;});
+  const kindOrder = ['breakfast','lunch','dinner','snack'];
+  const cellsHTML = foodDates.map(ds=>{
+    const dt = new Date(ds+'T00:00:00');
+    const isToday = ds===todayStr;
+    const dow = dt.getDay();
+    const dowClass = dow===0?' hm-food-sun':dow===6?' hm-food-sat':'';
+    const meal = mealMap[ds];
+    let thumbHTML = '';
+    if(meal){
+      const fp=(()=>{for(const s of(meal.sittings||[])){for(const d of(s.dishes||[])){if(d.photos&&d.photos.length)return d.photos[0];}}return null;})();
+      if(fp) thumbHTML=`<img data-path="${esc(fp)}" style="width:100%;height:28px;object-fit:cover;display:block;border-radius:3px;margin-bottom:1px">`;
+      else thumbHTML=`<div style="height:28px;display:flex;align-items:center;justify-content:center;color:var(--ink3);font-size:10px;margin-bottom:1px;">●</div>`;
+    } else {
+      thumbHTML=`<div style="height:28px;margin-bottom:1px;"></div>`;
+    }
+    const presentKinds = new Set();
+    if(meal)(meal.sittings||[]).forEach(s=>presentKinds.add(s.kind));
+    const dotsHTML = kindOrder.map(k=>`<span class="hm-food-dot${presentKinds.has(k)?' active':''}"></span>`).join('');
+    return `<div class="hm-food-cell${isToday?' hm-food-today':''}" onclick="foodHomeCell('${esc(ds)}')">
+      <div class="hm-food-day${dowClass}">${dt.getDate()}</div>
+      ${thumbHTML}
+      <div class="hm-food-dots">${dotsHTML}</div>
+    </div>`;
+  }).join('');
+  let eatCount=0,homeCook=0,outEat=0;
+  foodDates.forEach(ds=>{const m=mealMap[ds];if(!m)return;(m.sittings||[]).forEach(s=>{eatCount++;const hasOut=(s.dishes||[]).some(d=>d.type==='out');if(hasOut)outEat++;else homeCook++;});});
+  const foodEl = document.getElementById('homeFoodCard');
+  if(foodEl){
+    foodEl.innerHTML = `<div class="hm-card">
+      <div class="hm-card-hdr" onclick="nav('food')">
+        <div class="hm-card-hdr-left">
+          <div class="hm-card-title">食事</div>
+          <div class="hm-card-sub">直近2週間</div>
+        </div>
+        <div class="hm-card-link">Food ›</div>
+      </div>
+      <div class="hm-card-body">
+        <div class="hm-food-grid" id="homeFoodGrid">${cellsHTML}</div>
+        <div class="hm-food-summary">2週間で食事 ${eatCount} 回（自炊 ${homeCook} / 外食 ${outEat}）</div>
+      </div>
+    </div>`;
+    fillSignedUrls(document.getElementById('homeFoodGrid'));
+  }
+}
+
+function foodHomeCell(ds) {
+  nav('food');
+  const dt = new Date(ds+'T00:00:00');
+  foodCalY = dt.getFullYear();
+  foodCalM = dt.getMonth();
+  foodCalSelDay = ds;
+  renderFood();
+  if(window.innerWidth<=640){
+    const meal = meals.find(m=>m.date===ds);
+    if(meal) setTimeout(()=>openFoodDetailPopup(String(meal.id)),60);
+  }
 }
 
 // ── TASKS ──
-function updateBadge(){const n=tasks.filter(t=>!t.done).length;const b=document.getElementById('navBadge');b.textContent=n;b.style.display=n>0?'':'none';}
+function updateBadge(){const n=tasks.filter(t=>!t.done).length;const b=document.getElementById('navBadge');b.textContent=n;b.style.display=n>0?'':'none';const bb=document.getElementById('bottomBadge');if(bb){bb.textContent=n;bb.style.display=n>0?'':'none';}}
 function toggleAddTask(){const f=document.getElementById('addTaskForm');f.classList.toggle('open');if(f.classList.contains('open'))document.getElementById('taskTitle').focus();}
 function addTask(){
   const title=document.getElementById('taskTitle').value.trim();
@@ -2219,7 +2462,6 @@ function addTask(){
   renderTodayView();renderHome();renderCalendar();updateBadge();
 }
 function toggleTask(id){const t=tasks.find(t=>String(t.id)===String(id));if(t){t.done=!t.done;saveTasks();renderTodayView();renderHome();renderCalendar();updateBadge();}}
-function quickDone(id){const t=tasks.find(t=>String(t.id)===String(id));if(t){t.done=true;saveTasks();renderHome();updateBadge();}}
 function delTask(id){tasks=tasks.filter(t=>String(t.id)!==String(id));saveTasks();renderTodayView();renderHome();renderCalendar();updateBadge();}
 
 // ── CATEGORY COLOR MAP ──
@@ -2714,7 +2956,7 @@ let _ldrOpenMenuId=null;      // currently open ... menu
 function _ldrActiveTab(){const a=document.querySelector('#ldrSubtabs .ui-seg-btn.active');return a?a.getAttribute('onclick').match(/'(\w+)'/)?.[1]||'overview':'overview';}
 function chMonth(d){vm+=d;if(vm>11){vm=0;vy++;}if(vm<0){vm=11;vy--;}const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();else if(t==='accounts')renderAccountsPanel();else if(t==='subs')renderSubs();}
 function goMonthToday(){const n=new Date();vy=n.getFullYear();vm=n.getMonth();const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();else if(t==='accounts')renderAccountsPanel();else if(t==='subs')renderSubs();}
-function saveTx(){localStorage.setItem('hd_tx',JSON.stringify(txs));saveToSupabase();}
+function saveTx(){localStorage.setItem('hd_tx',JSON.stringify(txs));saveToSupabase();renderHome();}
 
 // ── sub-tab navigation ──
 function ldrTab(tab, el){
@@ -2760,6 +3002,7 @@ function _accKindSvg(kind,size){
 function saveAccounts(){
   localStorage.setItem('ledger_accounts',JSON.stringify(accounts));
   saveToSupabase();
+  renderHome();
 }
 function accountBalance(acc,asOfDate){
   let bal=acc.openingBalance||0;
@@ -3053,6 +3296,7 @@ function saveBudgets(){
   if(!budgets.months)budgets.months={};
   localStorage.setItem('ledger_budgets',JSON.stringify(budgets));
   saveToSupabase();
+  renderHome();
 }
 
 function getEffBudget(y,m){
@@ -4107,7 +4351,7 @@ function saveCandEdit(ci){
 }
 
 // ── SUBS ──
-function saveSubs(){localStorage.setItem('hd_subs',JSON.stringify(subs));saveToSupabase();}
+function saveSubs(){localStorage.setItem('hd_subs',JSON.stringify(subs));saveToSupabase();renderHome();}
 
 // Default txCategory from sub category
 function _subDefaultTxCat(subCat){
@@ -4501,7 +4745,7 @@ let _foodPopupId = null;
 let _lightboxPhotos = [];
 let _lightboxIdx = 0;
 
-function saveMeals() { localStorage.setItem('food_meals', JSON.stringify(meals)); saveToSupabase(); }
+function saveMeals() { localStorage.setItem('food_meals', JSON.stringify(meals)); saveToSupabase(); renderHome(); }
 
 function localDate(d) {
   const dt = d || new Date();
@@ -5691,6 +5935,40 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
   <button onclick="undoComplete()">元に戻す</button>
 </div>
 <div id="saveErrToast"></div>
+
+<!-- ══ BOTTOM NAV (mobile) ══ -->
+<nav class="hm-bottom-nav" id="bottomNav">
+  <button class="hm-bnav-item active" onclick="nav('home')">
+    <span class="hm-bnav-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 9.5L10 3l7 6.5V17a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M7.5 18v-5.5h5V18" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></span>
+    <span class="hm-bnav-label">Home</span>
+  </button>
+  <button class="hm-bnav-item" onclick="nav('todo')">
+    <span class="hm-bnav-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 9.5l2.5 2.5L13 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <span class="hm-bnav-label">To-Do</span>
+    <span class="hm-bnav-badge" id="bottomBadge" style="display:none">0</span>
+  </button>
+  <button class="hm-bnav-item" onclick="nav('finance')">
+    <span class="hm-bnav-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 6.5v1m0 5v1m2.5-3.5c0-.83-.67-1.5-2.5-1.5s-2.5.67-2.5 1.5c0 .83 1 1.5 2.5 1.5s2.5.67 2.5 1.5c0 .83-.67 1.5-2.5 1.5s-2.5-.67-2.5-1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+    <span class="hm-bnav-label">家計</span>
+  </button>
+  <button class="hm-bnav-item" onclick="nav('calendar')">
+    <span class="hm-bnav-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="4.5" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 8.5h14" stroke="currentColor" stroke-width="1.5"/><path d="M7 3v3M13 3v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+    <span class="hm-bnav-label">予定</span>
+  </button>
+  <button class="hm-bnav-item" onclick="nav('shopping')">
+    <span class="hm-bnav-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3.5c-2.21 0-4 1.79-4 4v.5H4.5l-.5 9h12l-.5-9H14V7.5c0-2.21-1.79-4-4-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M7.5 8v-1a2.5 2.5 0 015 0v1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+    <span class="hm-bnav-label">欲しい</span>
+  </button>
+  <button class="hm-bnav-item" onclick="nav('travel')">
+    <span class="hm-bnav-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 16l2.5-5 4.5 1.5 4.5-8L17 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 9.5L8 8l2 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <span class="hm-bnav-label">旅行</span>
+  </button>
+  <button class="hm-bnav-item" onclick="nav('food')">
+    <span class="hm-bnav-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M6 3v14M6 9c2-2 6-2 6 0v1c0 2-6 2-6 0V9z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 3v5c0 1.5-.5 3-2 3V17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <span class="hm-bnav-label">食事</span>
+  </button>
+</nav>
+
 <div id="loginOverlay" style="display:none; position:fixed; inset:0; background:var(--paper); z-index:9999; align-items:center; justify-content:center;">
   <div class="login-box" style="border:2px solid var(--rule); background:var(--paper);">
     <div style="font-family:'Newsreader',serif; font-size:36px; font-weight:800; font-style:italic; letter-spacing:-0.02em; margin-bottom:8px;">My Dashboard</div>
