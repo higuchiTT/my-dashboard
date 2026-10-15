@@ -797,11 +797,10 @@
     /* ── タスク行 ── */
     .tv-row { display: flex; align-items: center; gap: 10px; padding: 10px 24px; border-bottom: 1px solid rgba(26,24,20,0.06); min-height: 44px; transition: background 0.12s; }
     .tv-row:hover { background: rgba(26,24,20,0.02); }
-    .tv-check-btn { width: 40px; height: 40px; min-width: 40px; border-radius: 50%; background: transparent; border: none; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.15s; padding: 0; margin: -10px -8px; }
-    .tv-check-btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
-    .tv-check-btn-inner { width: 20px; height: 20px; min-width: 20px; border-radius: 50%; border: 2px solid currentColor; box-sizing: border-box; transition: all 0.15s; display: flex; align-items: center; justify-content: center; pointer-events: none; font-size: 0; }
-    .tv-check-btn:hover .tv-check-btn-inner { border-color: var(--ok) !important; background: rgba(90,107,58,0.1); }
-    .tv-check-btn:hover .tv-check-btn-inner::after { content: '✓'; font-size: 11px; color: var(--ok); opacity: 0.6; line-height: 1; }
+    .tv-dot { width: 8px; height: 8px; min-width: 8px; border-radius: 50%; flex-shrink: 0; }
+    .tv-done-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(26,24,20,0.2); background: transparent; cursor: pointer; flex-shrink: 0; color: var(--ink); white-space: nowrap; transition: border-color 0.15s, color 0.15s; }
+    .tv-done-btn:hover { border-color: var(--ok); color: var(--ok); }
+    .tv-done-btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
     .tv-title { font-family: 'Space Grotesk', sans-serif; font-size: 14px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .tv-pin { font-size: 14px; cursor: pointer; color: var(--mute); flex-shrink: 0; line-height: 1; padding: 2px 4px; border: none; background: transparent; }
     .tv-pin.pinned { color: #f59e0b; }
@@ -874,6 +873,15 @@
     .undo-toast { position:fixed; bottom:24px; right:24px; background:var(--ink); color:var(--paper); padding:12px 16px; display:flex; align-items:center; gap:12px; opacity:0; pointer-events:none; transition:opacity 0.2s; z-index:9000; border-radius:4px; font-size:13px; font-family:'Space Grotesk',sans-serif; }
     .undo-toast.show { opacity:1; pointer-events:auto; }
     .undo-toast button { background:transparent; border:1px solid rgba(255,255,255,0.4); color:var(--paper); padding:4px 10px; cursor:pointer; font-size:12px; border-radius:3px; font-family:'Space Grotesk',sans-serif; }
+
+    /* ── 同期警告バナー ── */
+    #syncWarnBanner { display:none; background:var(--accent); color:#fff; font-family:'Space Grotesk',sans-serif; font-size:13px; padding:8px 16px; box-sizing:border-box; width:100%; max-width:100%; flex-shrink:0; align-items:center; gap:12px; flex-wrap:wrap; }
+    #syncWarnBanner.show { display:flex; }
+    #syncWarnBanner button { background:transparent; border:1px solid rgba(255,255,255,0.6); color:#fff; padding:3px 10px; cursor:pointer; font-size:12px; border-radius:3px; font-family:'Space Grotesk',sans-serif; white-space:nowrap; flex-shrink:0; }
+
+    /* ── 保存エラートースト ── */
+    #saveErrToast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#8b3a18; color:#fff; padding:10px 16px; border-radius:4px; font-size:13px; font-family:'Space Grotesk',sans-serif; opacity:0; pointer-events:none; transition:opacity 0.2s; z-index:9001; max-width:calc(100vw - 32px); box-sizing:border-box; text-align:center; }
+    #saveErrToast.show { opacity:1; pointer-events:auto; }
 
     .login-box { width: 380px; padding: 56px 48px; }
 
@@ -1002,6 +1010,7 @@
       /* メイン内パディング調整 */
       .tm-head { padding: 14px 14px 10px; }
       .todo-main .add-form { padding: 14px 14px; }
+      .todo-main { min-width: 0; }
       .tv-row { padding: 8px 14px; }
       .tv-sec-hdr { padding: 10px 14px; }
       .tv-add-row { padding: 8px 14px; }
@@ -1012,6 +1021,10 @@
       /* 行内カテゴリ・タグチップは非表示（省略） */
       .tv-cat { display: none; }
       .tv-tags { display: none; }
+      /* 時刻は非表示（横スペース確保） */
+      .tv-time { display: none; }
+      /* 完了ボタン：押しやすい大きさ */
+      .tv-done-btn { min-height: 32px; min-width: 56px; font-size: 12px; padding: 4px 8px; }
 
       /* ── Ledger ── */
       .ldr-topbar { padding:8px 10px; }
@@ -1132,6 +1145,10 @@
   </nav>
   <button id="logoutBtn" onclick="signOut()" style="display:none; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:6px 14px; background:transparent; border:1px solid var(--ink3); color:var(--ink3); cursor:pointer; margin-left:16px; transition:all 0.15s;" onmouseover="this.style.borderColor='var(--ink)';this.style.color='var(--ink)'" onmouseout="this.style.borderColor='var(--ink3)';this.style.color='var(--ink3)'">ログアウト</button>
 </header>
+<div id="syncWarnBanner">
+  <span style="flex:1;min-width:200px;">サーバーからデータを読み込めませんでした。この状態での変更はサーバーに保存されません。</span>
+  <button onclick="location.reload()">再読み込み</button>
+</div>
 
 <!-- ══ HOME ══ -->
 <div class="page active" id="page-home">
@@ -1845,36 +1862,83 @@ function migrateTaskNotes(){
 }
 
 // ── SUPABASE SYNC ──
+let _syncReady = false;
+
+function _showSyncWarnBanner() {
+  document.getElementById('syncWarnBanner').classList.add('show');
+}
+
+let _saveErrToastTimer = null;
+function _showSaveErrToast(msg) {
+  const el = document.getElementById('saveErrToast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_saveErrToastTimer);
+  _saveErrToastTimer = setTimeout(() => el.classList.remove('show'), 6000);
+}
+
 async function pushToSupabase(userId) {
   const seedFlags = {};
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     if (key && key.startsWith('hd_')) seedFlags[key] = localStorage.getItem(key);
   }
-  await sb.from('user_data').upsert({
+  const { error } = await sb.from('user_data').upsert({
     user_id: userId, tasks, task_notes: taskNotes,
     shopping, subs, txs, trips, meals, budgets, accounts,
     seed_flags: seedFlags, updated_at: new Date().toISOString()
   });
+  if (error) {
+    console.error('pushToSupabase error:', error);
+    _showSaveErrToast(`保存に失敗しました（${error.message}）。再読み込みしてもう一度お試しください`);
+  }
 }
 
 async function syncFromSupabase(userId) {
-  const { data } = await sb.from('user_data').select('*').eq('user_id', userId).single();
-  if (!data) { await pushToSupabase(userId); return; }
-  if (Array.isArray(data.tasks))    { tasks    = data.tasks;      localStorage.setItem('hd_tasks',      JSON.stringify(tasks)); }
-  if (data.task_notes)              { taskNotes = data.task_notes; localStorage.setItem('hd_task_notes', JSON.stringify(taskNotes)); }
-  if (Array.isArray(data.shopping)) { shopping  = data.shopping;  localStorage.setItem('hd_shopping',   JSON.stringify(shopping)); }
-  if (Array.isArray(data.subs))     { subs      = data.subs;      localStorage.setItem('hd_subs',       JSON.stringify(subs)); }
-  if (Array.isArray(data.txs))      { txs       = data.txs;       localStorage.setItem('hd_tx',         JSON.stringify(txs)); }
-  if (Array.isArray(data.trips))    { trips     = data.trips;     localStorage.setItem('hd_trips',      JSON.stringify(trips)); }
-  if (Array.isArray(data.meals))    { meals     = data.meals;     localStorage.setItem('food_meals',    JSON.stringify(meals)); }
-  if (data.budgets && typeof data.budgets==='object' && !Array.isArray(data.budgets)) { budgets = data.budgets; localStorage.setItem('ledger_budgets', JSON.stringify(budgets)); }
-  if (Array.isArray(data.accounts)) { accounts = data.accounts; localStorage.setItem('ledger_accounts', JSON.stringify(accounts)); }
-  if (data.seed_flags) Object.entries(data.seed_flags).forEach(([k,v]) => localStorage.setItem(k,v));
-  return true;
+  try {
+    const { data, error } = await sb.from('user_data').select('*').eq('user_id', userId).single();
+    if (error) {
+      if (error.code === 'PGRST116') {
+        // 行が存在しない（初回ユーザー）
+        await pushToSupabase(userId);
+        _syncReady = true;
+        return false;
+      }
+      // それ以外のエラー（通信障害など）— push しない
+      console.error('syncFromSupabase error:', error);
+      _showSyncWarnBanner();
+      return false;
+    }
+    if (!data) {
+      // data が null だが error もない異常状態 — push しない
+      console.error('syncFromSupabase: data is null without error');
+      _showSyncWarnBanner();
+      return false;
+    }
+    if (Array.isArray(data.tasks))    { tasks    = data.tasks;      localStorage.setItem('hd_tasks',      JSON.stringify(tasks)); }
+    if (data.task_notes)              { taskNotes = data.task_notes; localStorage.setItem('hd_task_notes', JSON.stringify(taskNotes)); }
+    if (Array.isArray(data.shopping)) { shopping  = data.shopping;  localStorage.setItem('hd_shopping',   JSON.stringify(shopping)); }
+    if (Array.isArray(data.subs))     { subs      = data.subs;      localStorage.setItem('hd_subs',       JSON.stringify(subs)); }
+    if (Array.isArray(data.txs))      { txs       = data.txs;       localStorage.setItem('hd_tx',         JSON.stringify(txs)); }
+    if (Array.isArray(data.trips))    { trips     = data.trips;     localStorage.setItem('hd_trips',      JSON.stringify(trips)); }
+    if (Array.isArray(data.meals))    { meals     = data.meals;     localStorage.setItem('food_meals',    JSON.stringify(meals)); }
+    if (data.budgets && typeof data.budgets==='object' && !Array.isArray(data.budgets)) { budgets = data.budgets; localStorage.setItem('ledger_budgets', JSON.stringify(budgets)); }
+    if (Array.isArray(data.accounts)) { accounts = data.accounts; localStorage.setItem('ledger_accounts', JSON.stringify(accounts)); }
+    if (data.seed_flags) Object.entries(data.seed_flags).forEach(([k,v]) => localStorage.setItem(k,v));
+    _syncReady = true;
+    return true;
+  } catch (e) {
+    console.error('syncFromSupabase exception:', e);
+    _showSyncWarnBanner();
+    return false;
+  }
 }
 
 function saveToSupabase() {
+  if (!_syncReady) {
+    _showSyncWarnBanner();
+    return;
+  }
   sb.auth.getUser().then(({ data: { user } }) => { if (user) pushToSupabase(user.id); });
 }
 
@@ -2105,7 +2169,7 @@ function completeTask(id) {
   const t = tasks.find(t => String(t.id) === String(id));
   if (!t || t._completing) return;
   t._completing = true;
-  const btn = document.querySelector(`[data-task-id="${id}"] .tv-check-btn`);
+  const btn = document.querySelector(`[data-task-id="${id}"] .tv-done-btn`);
   if (btn) btn.disabled = true;
   const row = document.querySelector(`[data-task-id="${id}"]`);
   if (row) { row.style.opacity = '0.3'; row.style.transition = 'opacity 0.4s'; }
@@ -2215,13 +2279,14 @@ function tvRowHTML(t) {
   const dueInfo = fmtTaskDueLabel(t.due);
   const dueHTML = `<div class="tv-due-wrap"><span class="tv-due ${dueInfo.cls}" onclick="event.stopPropagation();openDuePicker('${esc(String(t.id))}',this)">${dueInfo.label}</span><input type="date" class="tv-due-input" tabindex="-1"></div>`;
   return `<div class="tv-row" data-task-id="${esc(t.id)}">
-    <button class="tv-check-btn" style="color:${color}" onclick="event.stopPropagation();completeTask('${esc(String(t.id))}')" title="完了にする" aria-label="完了にする"><span class="tv-check-btn-inner"></span></button>
+    <span class="tv-dot" style="background:${color}"></span>
     <div class="tv-title">${esc(t.title)}</div>
     ${dueHTML}
     ${timeHTML}
     <button class="tv-pin${isPinned ? ' pinned' : ''}" onclick="event.stopPropagation();togglePin('${esc(String(t.id))}')">${isPinned ? '★' : '☆'}</button>
     <span class="tv-cat" style="background:${color}">${esc(t.category)}</span>
     <div class="tv-tags" onclick="event.stopPropagation();openTvTagEditor('${esc(String(t.id))}',event)">${tagsHTML}${tags.length===0?'<span style="font-size:11px;color:var(--mute);cursor:pointer;">+ タグ</span>':''}</div>
+    <button class="tv-done-btn" onclick="event.stopPropagation();completeTask('${esc(String(t.id))}')" title="完了にする">完了</button>
   </div>`;
 }
 
@@ -5073,6 +5138,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
   <span id="undoMsg"></span>
   <button onclick="undoComplete()">元に戻す</button>
 </div>
+<div id="saveErrToast"></div>
 <div id="loginOverlay" style="display:none; position:fixed; inset:0; background:var(--paper); z-index:9999; align-items:center; justify-content:center;">
   <div class="login-box" style="border:2px solid var(--rule); background:var(--paper);">
     <div style="font-family:'Newsreader',serif; font-size:36px; font-weight:800; font-style:italic; letter-spacing:-0.02em; margin-bottom:8px;">My Dashboard</div>
