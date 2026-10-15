@@ -964,9 +964,54 @@
       .widget-wrap { border-right: none; border-bottom: 1px solid var(--rule); padding: 18px 14px; }
       .widget-wrap:last-child { border-bottom: none; }
 
-      /* ── ToDo（横スクロール） ── */
-      #page-todo { min-width: unset; overflow-x: auto; }
-      .todo-app { min-width: 860px; }
+      /* ── ToDo（1列レイアウト） ── */
+      #page-todo { min-width: unset; overflow-x: hidden; }
+      /* グリッドを1列に変更・min-height 解除 */
+      .todo-app { grid-template-columns: 1fr; min-height: unset; }
+      /* sidebar-l を display:contents に → 子要素がグリッドの直接アイテムになる */
+      .todo-sidebar-l { display: contents; }
+      /* ☑ Todo 見出しは非表示 */
+      .ts-head { display: none; }
+      /* "ビュー" ラベルも非表示（ボタン自体が自明） */
+      .ts-view-label { display: none; }
+      /* ① ビュー切替：横並び・横スクロール (order:1 = 最上部) */
+      #tvViewNav {
+        order: 1;
+        display: flex; flex-direction: row; flex-wrap: nowrap;
+        overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+        padding: 8px 10px; gap: 4px;
+        background: var(--paper2); border-bottom: 1px solid var(--rule);
+      }
+      #tvViewNav::-webkit-scrollbar { display: none; }
+      #tvViewNav .ts-nav-item {
+        flex-shrink: 0; width: auto; padding: 6px 12px;
+        border-radius: 20px; border: 1px solid rgba(26,24,20,0.12);
+      }
+      #tvViewNav .ts-nav-item.active { border-color: var(--accent); }
+      /* ② メイン (order:2) */
+      .todo-main { order: 2; overflow: visible; }
+      .tv-sections { overflow-y: visible; flex: none; }
+      /* ③ カテゴリ・タグ (order:3) */
+      .ts-cat-label { order: 3; border-top: 1px solid var(--rule); }
+      #tvCatNav { order: 3; flex-direction: row; flex-wrap: wrap; }
+      #tvCatNav .ts-sec-item { width: auto; padding: 4px 10px; border-radius: 14px; }
+      .ts-tag-label { order: 3; }
+      #tvTagNav { order: 3; }
+      /* ④ 右サイドバー (order:4) */
+      .todo-sidebar-r { order: 4; border-left: none; border-top: 2px solid var(--rule); background: var(--paper2); }
+      /* メイン内パディング調整 */
+      .tm-head { padding: 14px 14px 10px; }
+      .todo-main .add-form { padding: 14px 14px; }
+      .tv-row { padding: 8px 14px; }
+      .tv-sec-hdr { padding: 10px 14px; }
+      .tv-add-row { padding: 8px 14px; }
+      .tv-sec-preview { padding: 6px 14px 8px; }
+      /* 統計カード 2列 */
+      .tv-stats { grid-template-columns: repeat(2, 1fr); }
+      .tv-stat-card:nth-child(even) { border-right: none; }
+      /* 行内カテゴリ・タグチップは非表示（省略） */
+      .tv-cat { display: none; }
+      .tv-tags { display: none; }
 
       /* ── Ledger ── */
       .ldr-topbar { padding:8px 10px; }
@@ -1143,7 +1188,7 @@
         <h3 class="ts-head-title">Todo</h3>
       </div>
 
-      <div class="ts-group-label">ビュー</div>
+      <div class="ts-group-label ts-view-label">ビュー</div>
       <nav class="ts-nav" id="tvViewNav">
         <button class="ts-nav-item active" data-view="null" onclick="setViewFilter(null,this)">
           <span class="ts-nav-label">すべて</span>
@@ -1167,10 +1212,10 @@
         </button>
       </nav>
 
-      <div class="ts-group-label">カテゴリ</div>
+      <div class="ts-group-label ts-cat-label">カテゴリ</div>
       <nav class="ts-sec-nav" id="tvCatNav"></nav>
 
-      <div class="ts-group-label">タグ</div>
+      <div class="ts-group-label ts-tag-label">タグ</div>
       <div class="tv-tag-list" id="tvTagNav"></div>
     </aside>
 
