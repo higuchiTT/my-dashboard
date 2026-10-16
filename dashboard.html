@@ -404,38 +404,66 @@
     .ldr-sub-row2.inactive { opacity:0.4; }
     .ldr-sub-row2 .ldr-tx-menu { top:calc(100% - 4px); right:8px; }
 
-    /* ── CALENDAR ── */
-    .cal-wrap { padding: 24px 40px; }
-    .cal-top { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
-    .cal-dow-row { display:grid; grid-template-columns:repeat(7,1fr); border-top:1px solid var(--rule); border-left:1px solid var(--rule); border-right:1px solid var(--rule); }
-    .cal-dow { text-align:center; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; color:var(--ink3); padding:8px 4px; letter-spacing:0.06em; border-right:1px solid var(--rule); border-bottom:2px solid var(--rule); }
-    .cal-dow:last-child { border-right:none; }
-    .cal-dow:first-child { color:var(--accent); }
-    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); border-left:1px solid var(--rule); }
-    .cal-day { border-right:1px solid var(--rule); border-bottom:1px solid var(--rule); padding:8px 10px 6px; cursor:pointer; min-height:64px; position:relative; background:var(--paper); transition:background 0.15s; }
-    .cal-day:hover:not(.cal-other) { background:var(--paper2); }
-    .cal-day.cal-other { opacity:0.3; cursor:default; }
-    .cal-day.cal-today { background:var(--ink) !important; }
-    .cal-day.cal-today .cal-num { color:var(--paper); font-weight:800; }
-    .cal-day.cal-selected { background:var(--paper3) !important; }
-    .cal-num { font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; }
-    .cal-dots { display:flex; gap:2px; margin-top:4px; }
-    .cal-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
-    .cal-dot.high   { background:var(--accent); }
-    .cal-dot.medium { background:var(--warn); }
-    .cal-dot.low    { background:var(--ok); }
-    .cal-legend { display:flex; gap:14px; margin-left:auto; }
-    .cal-legend-item { display:flex; align-items:center; gap:5px; font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--ink3); }
-    .cal-panel { margin-top:20px; border-top:2px solid var(--rule); padding-top:16px; }
-    .cal-panel-title { font-family:'Newsreader',serif; font-size:18px; font-style:italic; font-weight:700; margin-bottom:12px; }
-    .cal-task-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px dotted var(--mute); font-size:14px; }
-    .cal-task-row:last-child { border-bottom:none; }
-    .pdot { width: 8px; height: 8px; flex-shrink: 0; }
-    .pdot.high   { background: var(--accent); }
-    .pdot.medium { background: var(--warn); }
-    .pdot.low    { background: var(--ok); }
-    .cal-task-row.done { opacity:0.4; }
-    .cal-task-row.done span { text-decoration:line-through; }
+    /* ── CALENDAR v2 ── */
+    .cal2-page { padding: 20px 28px 40px; }
+    .cal2-layout { display: grid; grid-template-columns: 1fr 390px; gap: 20px; align-items: start; }
+    .cal2-card { overflow: hidden; }
+    .cal2-top { display: flex; align-items: center; gap: 8px; padding: 14px 18px 12px; flex-wrap: wrap; }
+    .cal2-month-label { font-family: 'Newsreader', serif; font-size: 24px; font-weight: 800; font-style: normal; margin: 0 6px; white-space: nowrap; }
+    .cal2-nav-btn { width: 40px; height: 40px; border: 1.5px solid rgba(26,24,20,0.2); border-radius: 8px; background: transparent; color: var(--ink2); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; font-family: 'JetBrains Mono', monospace; line-height: 1; flex-shrink: 0; }
+    .cal2-nav-btn:hover { border-color: var(--ink); color: var(--ink); background: var(--paper2); }
+    .cal2-today-btn { white-space: nowrap; padding: 0 14px; height: 40px; border: 1.5px solid rgba(26,24,20,0.2); border-radius: 8px; background: transparent; color: var(--ink2); cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; transition: all 0.15s; flex-shrink: 0; }
+    .cal2-today-btn:hover { border-color: var(--ink); color: var(--ink); }
+    .cal2-filters { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+    .cal2-dow-row { display: grid; grid-template-columns: repeat(7,1fr); background: var(--paper2); border-top: 1px solid rgba(26,24,20,0.15); border-bottom: 1px solid rgba(26,24,20,0.15); }
+    .cal2-dow { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--ink3); padding: 8px 4px; }
+    .cal2-dow.dow-sun { color: var(--accent); }
+    .cal2-dow.dow-sat { color: #4a7ab5; }
+    .cal2-grid { display: grid; grid-template-columns: repeat(7,1fr); }
+    .cal2-cell { border-right: 1px solid rgba(26,24,20,0.08); border-bottom: 1px solid rgba(26,24,20,0.08); padding: 5px 5px 4px; cursor: pointer; height: 105px; position: relative; background: var(--paper); transition: background 0.15s; overflow: hidden; min-width: 0; }
+    .cal2-trip-dot-mob { display: none; }
+    .cal2-cell:nth-child(7n) { border-right: none; }
+    .cal2-cell:hover:not(.cal2-other) { background: rgba(26,24,20,0.03); }
+    .cal2-cell.cal2-other { opacity: 0.25; cursor: default; pointer-events: none; }
+    .cal2-cell.cal2-today .cal2-num { display: inline-flex; width: 28px; height: 28px; align-items: center; justify-content: center; border-radius: 50%; background: #f3d9c4; color: var(--ink); font-weight: 800; }
+    .cal2-cell.cal2-sel { outline: 2px solid var(--accent); outline-offset: -1px; background: rgba(139,58,24,0.04); }
+    .cal2-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; display: block; line-height: 1.2; margin-bottom: 2px; }
+    .cal2-num.dow-sun { color: var(--accent); }
+    .cal2-num.dow-sat { color: #4a7ab5; }
+    .cal2-trip-bar { height: 16px; border-radius: 3px; font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 600; display: flex; align-items: center; padding: 0 4px; overflow: hidden; white-space: nowrap; margin-bottom: 2px; color: var(--paper); min-width: 0; }
+    .cal2-trip-bar.s-検討中 { background: var(--warn); }
+    .cal2-trip-bar.s-計画中 { background: var(--ok); }
+    .cal2-trip-bar.s-予約済み { background: var(--accent); }
+    .cal2-trip-bar.s-完了 { background: var(--mute); }
+    .cal2-task-row { display: flex; align-items: center; gap: 3px; overflow: hidden; margin-bottom: 1px; }
+    .cal2-task-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .cal2-task-dot.high { background: var(--accent); }
+    .cal2-task-dot.medium { background: var(--warn); }
+    .cal2-task-dot.low { background: var(--ok); }
+    .cal2-task-title { font-family: 'Space Grotesk', sans-serif; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+    .cal2-sub-row-cell { display: flex; align-items: center; gap: 3px; overflow: hidden; margin-bottom: 1px; }
+    .cal2-sub-title-cell { font-family: 'Space Grotesk', sans-serif; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+    .cal2-cell-more { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink3); }
+    /* Detail panel */
+    .cal2-detail-panel { position: sticky; top: 66px; }
+    .cal2-detail-nav { display: flex; align-items: center; gap: 8px; padding: 14px 20px 10px; border-bottom: 1px solid rgba(26,24,20,0.1); }
+    .cal2-detail-nav-btn { width: 38px; height: 38px; border: 1.5px solid rgba(26,24,20,0.2); border-radius: 8px; background: transparent; color: var(--ink2); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; font-family: 'JetBrains Mono', monospace; line-height: 1; flex-shrink: 0; }
+    .cal2-detail-nav-btn:hover { border-color: var(--ink); background: var(--paper2); }
+    .cal2-detail-date { flex: 1; text-align: center; font-family: 'Newsreader', serif; font-size: 20px; font-weight: 700; font-style: normal; }
+    .cal2-section-hdr { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink3); padding: 12px 20px 6px; }
+    .cal2-trip-item { padding: 10px 20px; border-bottom: 1px solid rgba(26,24,20,0.08); cursor: pointer; transition: background 0.12s; }
+    .cal2-trip-item:hover { background: rgba(26,24,20,0.025); }
+    .cal2-task-item { padding: 10px 20px; border-bottom: 1px solid rgba(26,24,20,0.08); display: flex; align-items: center; gap: 10px; }
+    .cal2-task-done { opacity: 0.4; }
+    .cal2-task-done .cal2-panel-title { text-decoration: line-through; }
+    .cal2-sub-item { padding: 10px 20px; border-bottom: 1px solid rgba(26,24,20,0.08); cursor: pointer; transition: background 0.12s; display: flex; align-items: center; gap: 8px; }
+    .cal2-sub-item:hover { background: rgba(26,24,20,0.025); }
+    .cal2-panel-title { font-family: 'Space Grotesk', sans-serif; font-size: 14px; color: var(--ink); }
+    .cal2-panel-sub { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); margin-top: 2px; }
+    .cal2-empty-day { padding: 28px 20px; text-align: center; font-family: 'Newsreader', serif; font-style: italic; font-size: 15px; color: var(--ink3); }
+    /* Trip edit button */
+    .trip-edit-btn { padding: 3px 9px; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; border: 1px solid rgba(26,24,20,0.2); border-radius: 3px; background: transparent; color: var(--ink3); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .trip-edit-btn:hover { border-color: var(--ink); color: var(--ink); }
 
     /* ── SHOPPING (Master-Detail v3) ── */
     .shop-summary { display:grid; grid-template-columns:repeat(3,1fr); border-bottom:1px solid var(--rule); }
@@ -1177,11 +1205,21 @@
       /* Always show dashed border on editable cells (no hover on touch) */
       .ldr-bdg-amt { border-color:rgba(139,58,24,0.2); }
 
-      /* ── Calendar ── */
-      .cal-wrap { padding: 12px 8px; }
-      .cal-top { flex-wrap: wrap; gap: 8px; }
-      .cal-legend { margin-left: 0; }
-      .cal-day { min-height: 44px; padding: 5px 4px 4px; }
+      /* ── Calendar v2 ── */
+      .cal2-layout { grid-template-columns: 1fr; }
+      .cal2-detail-panel { position: static; }
+      .cal2-cell { height: 60px; }
+      .cal2-filters { margin-left: 0; margin-top: 4px; }
+      .cal2-trip-bar { display: none; }
+      .cal2-task-row { display: none; }
+      .cal2-sub-row-cell { display: none; }
+      .cal2-cell-more { display: none; }
+      .cal2-trip-dot-mob { display: block; position: absolute; bottom: 3px; left: 2px; right: 2px; display: flex; gap: 2px; }
+      .cal2-mob-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+      .cal2-mob-dot.trip { background: var(--accent); }
+      .cal2-mob-dot.task { background: var(--ink3); }
+      .cal2-mob-dot.sub { background: var(--warn); }
+      .cal2-page { padding: 10px; }
 
       /* ── Accounts ── */
       .ldr-acc-summary-row { grid-template-columns: 1fr; gap:8px; }
@@ -1731,24 +1769,35 @@
 
 <!-- ══ CALENDAR ══ -->
 <div class="page" id="page-calendar">
-
-  <div class="cal-wrap">
-    <div class="cal-top">
-      <button class="mnav-btn" onclick="chCal(-1)">‹</button>
-      <div class="mnav-label" id="calLabel"></div>
-      <button class="mnav-btn" onclick="chCal(1)">›</button>
-      <div class="cal-legend">
-        <div class="cal-legend-item"><div class="cal-dot high"></div>高優先</div>
-        <div class="cal-legend-item"><div class="cal-dot medium"></div>普通</div>
-        <div class="cal-legend-item"><div class="cal-dot low"></div>低優先</div>
+  <div class="cal2-page">
+    <div class="cal2-layout">
+      <!-- Left: calendar card -->
+      <div class="ui-card cal2-card">
+        <div class="cal2-top">
+          <button class="cal2-nav-btn" onclick="chCal(-1)">‹</button>
+          <span class="cal2-month-label" id="calLabel"></span>
+          <button class="cal2-nav-btn" onclick="chCal(1)">›</button>
+          <button class="cal2-today-btn" onclick="goCalToday()">今月</button>
+          <div class="cal2-filters">
+            <button class="ui-pill active" id="calFilter-task" onclick="toggleCalFilter('task')">タスク</button>
+            <button class="ui-pill active" id="calFilter-sub" onclick="toggleCalFilter('sub')">支払い</button>
+            <button class="ui-pill active" id="calFilter-trip" onclick="toggleCalFilter('trip')">旅行</button>
+          </div>
+        </div>
+        <div class="cal2-dow-row">
+          <div class="cal2-dow dow-sun">日</div>
+          <div class="cal2-dow">月</div>
+          <div class="cal2-dow">火</div>
+          <div class="cal2-dow">水</div>
+          <div class="cal2-dow">木</div>
+          <div class="cal2-dow">金</div>
+          <div class="cal2-dow dow-sat">土</div>
+        </div>
+        <div class="cal2-grid" id="calGrid"></div>
       </div>
+      <!-- Right: detail panel -->
+      <div class="ui-card cal2-detail-panel" id="calDetailPanel"></div>
     </div>
-    <div class="cal-dow-row">
-      <div class="cal-dow">日</div><div class="cal-dow">月</div><div class="cal-dow">火</div>
-      <div class="cal-dow">水</div><div class="cal-dow">木</div><div class="cal-dow">金</div><div class="cal-dow">土</div>
-    </div>
-    <div class="cal-grid" id="calGrid"></div>
-    <div class="cal-panel" id="calPanel"></div>
   </div>
 </div>
 
@@ -1789,11 +1838,15 @@
   <div class="add-form" id="addTripForm">
     <div class="form-row">
       <div class="fg" style="flex:2;min-width:180px;"><label>行き先</label><input type="text" id="tripDest" placeholder="例: 京都、台湾・台北" /></div>
-      <div class="fg"><label>時期</label><input type="text" id="tripTiming" placeholder="例: 2026年秋" /></div>
+      <div class="fg"><label>時期（テキスト）</label><input type="text" id="tripTiming" placeholder="例: 2026年秋" /></div>
+      <div class="fg"><label>開始日</label><input type="date" id="tripStartDate" /></div>
+      <div class="fg"><label>終了日</label><input type="date" id="tripEndDate" /></div>
+    </div>
+    <div class="form-row" style="margin-top:10px;">
       <div class="fg"><label>予算 (¥)</label><input type="number" id="tripBudgetInput" placeholder="未定は空欄" min="0" /></div>
       <div class="fg"><label>ステータス</label><select id="tripStatus"><option value="検討中">検討中</option><option value="計画中">計画中</option><option value="予約済み">予約済み</option></select></div>
+      <div class="fg" style="flex:2;min-width:180px;"><label>メモ</label><input type="text" id="tripNote" placeholder="見どころ・食べたいもの・参考URLなど" /></div>
     </div>
-    <div class="fg" style="margin-top:10px;"><label>メモ</label><input type="text" id="tripNote" placeholder="見どころ・食べたいもの・参考URLなど" /></div>
     <div class="gap-row">
       <button class="btn btn-ghost" onclick="toggleAddTrip()">キャンセル</button>
       <button class="btn btn-primary" onclick="addTrip()">追加</button>
@@ -1810,6 +1863,62 @@
 
   <div class="trip-content">
     <div class="trip-grid" id="tripGrid"></div>
+  </div>
+
+  <!-- Trip Edit Modal -->
+  <div class="ldr-modal-overlay" id="tripModal" onclick="if(event.target===this)closeTripModal()">
+    <div class="ldr-modal">
+      <div class="ldr-modal-hdr">
+        <div class="ldr-modal-title">旅行を編集</div>
+        <button class="ldr-modal-close" onclick="closeTripModal()">✕</button>
+      </div>
+      <div class="ldr-modal-body">
+        <div>
+          <label class="ldr-modal-lbl">行き先</label>
+          <input class="ldr-modal-in" id="tripModalDest" type="text" placeholder="例: 京都、台湾・台北" />
+        </div>
+        <div class="ldr-modal-2col">
+          <div>
+            <label class="ldr-modal-lbl">開始日</label>
+            <input class="ldr-modal-in" id="tripModalStart" type="date" />
+          </div>
+          <div>
+            <label class="ldr-modal-lbl">終了日</label>
+            <input class="ldr-modal-in" id="tripModalEnd" type="date" />
+          </div>
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">時期（テキスト）</label>
+          <input class="ldr-modal-in" id="tripModalTiming" type="text" placeholder="例: 2026年秋" />
+        </div>
+        <div class="ldr-modal-2col">
+          <div>
+            <label class="ldr-modal-lbl">予算 (¥)</label>
+            <input class="ldr-modal-in" id="tripModalBudget" type="number" min="0" />
+          </div>
+          <div>
+            <label class="ldr-modal-lbl">ステータス</label>
+            <select class="ldr-modal-in" id="tripModalStatus">
+              <option value="検討中">検討中</option>
+              <option value="計画中">計画中</option>
+              <option value="予約済み">予約済み</option>
+              <option value="完了">完了</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">メモ</label>
+          <input class="ldr-modal-in" id="tripModalNote" type="text" placeholder="見どころ・食べたいもの・参考URLなど" />
+        </div>
+      </div>
+      <div class="ldr-modal-ftr">
+        <div id="tripModalDelWrap"></div>
+        <div class="ldr-modal-ftr-r">
+          <button class="btn btn-ghost btn-sm" onclick="closeTripModal()">キャンセル</button>
+          <button class="btn btn-primary btn-sm" onclick="saveTripModal()">保存</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2249,10 +2358,10 @@ function renderHome() {
     </div>`;
   }
 
-  // Daily groups: tasks + subs in range
+  // Daily groups: tasks + subs + trips in range
   const dailyGroups = {};
   pending.filter(t=>t.due && t.due>=todayStr && t.due<=endStr).forEach(t=>{
-    if(!dailyGroups[t.due]) dailyGroups[t.due] = {tasks:[],subs:[]};
+    if(!dailyGroups[t.due]) dailyGroups[t.due] = {tasks:[],subs:[],tripItems:[]};
     dailyGroups[t.due].tasks.push(t);
   });
   const activeSubs = subs.filter(s=>s.active && s.payDay);
@@ -2267,9 +2376,27 @@ function renderHome() {
       if(s.cycle==='yearly'&&(s.payMonth||1)!==m+1)continue;
       const ym=`${y}-${String(m+1).padStart(2,'0')}`;
       const paid=txs.some(t=>String(t.subId)===String(s.id)&&t.subYm===ym);
-      if(!dailyGroups[ds])dailyGroups[ds]={tasks:[],subs:[]};
+      if(!dailyGroups[ds])dailyGroups[ds]={tasks:[],subs:[],tripItems:[]};
       dailyGroups[ds].subs.push({sub:s,ym,paid});
     }
+  });
+  // Trips: show once per trip — on today's row if ongoing, else on startDate if within range
+  trips.filter(t=>t.startDate&&t.endDate).forEach(t=>{
+    const isOngoing=todayStr>=t.startDate&&todayStr<=t.endDate;
+    let ds;
+    if(isOngoing){
+      ds=todayStr;
+    } else if(t.startDate>=todayStr&&t.startDate<=endStr){
+      ds=t.startDate;
+    } else return;
+    if(!dailyGroups[ds])dailyGroups[ds]={tasks:[],subs:[],tripItems:[]};
+    const dayNum=isOngoing?Math.round((new Date(todayStr+'T00:00:00')-new Date(t.startDate+'T00:00:00'))/86400000)+1:null;
+    const sd=new Date(t.startDate+'T00:00:00'),ed=new Date(t.endDate+'T00:00:00');
+    const curY=new Date().getFullYear();
+    const sPfx=sd.getFullYear()!==curY?`${sd.getFullYear()}/`:'';
+    const rangeStr=`${sPfx}${sd.getMonth()+1}/${sd.getDate()}〜${ed.getMonth()+1}/${ed.getDate()}`;
+    const label=isOngoing?`✈ ${t.dest} ${dayNum}日目`:`✈ ${t.dest}（${rangeStr}）`;
+    dailyGroups[ds].tripItems.push({label,trip:t});
   });
 
   const tomorrowStr = localDate(new Date(now.getTime()+86400000));
@@ -2281,7 +2408,7 @@ function renderHome() {
     let prefix = `${dt.getMonth()+1}/${dt.getDate()}（${dayNames[dt.getDay()]}）`;
     if(isToday) prefix = `今日 ${prefix}`;
     else if(isTomorrow) prefix = `明日 ${prefix}`;
-    const {tasks:dayTasks,subs:daySubs} = dailyGroups[ds];
+    const {tasks:dayTasks,subs:daySubs,tripItems:dayTrips} = dailyGroups[ds];
     const items = [
       ...dayTasks.map(t=>`<div class="hm-sched-item hm-sched-task" onclick="nav('todo')">
         <span class="hm-sched-dot" style="background:${esc(getCatColor(t.category))}"></span>
@@ -2292,6 +2419,10 @@ function renderHome() {
         <span class="hm-sched-sub-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="2.5" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 5h10" stroke="currentColor" stroke-width="1.3"/></svg></span>
         <span class="hm-sched-title">${esc(sub.name)} の支払い ¥${fmt(sub.price)}</span>
         ${paid?`<span class="hm-sched-paid">✓</span>`:''}
+      </div>`),
+      ...(dayTrips||[]).map(({label})=>`<div class="hm-sched-item" onclick="nav('travel')">
+        <span class="hm-sched-dot" style="background:var(--accent)"></span>
+        <span class="hm-sched-title">${esc(label)}</span>
       </div>`)
     ].join('');
     daysHTML += `<div class="hm-sched-group">
@@ -4038,41 +4169,198 @@ function ldrListSetUnset(){
   renderLdrTxList();
 }
 
-// ── CALENDAR ──
-function chCal(d){calM+=d;if(calM>11){calM=0;calY++;}if(calM<0){calM=11;calY--;}selDay=null;renderCalendar();}
+// ── CALENDAR v2 ──
+let calFilters = (()=>{try{const v=JSON.parse(localStorage.getItem('cal_filters'));if(Array.isArray(v))return v;}catch(e){}return['task','sub','trip'];})();
+function saveCalFilters(){try{localStorage.setItem('cal_filters',JSON.stringify(calFilters));}catch(e){}}
+function toggleCalFilter(f){const idx=calFilters.indexOf(f);if(idx>=0)calFilters.splice(idx,1);else calFilters.push(f);saveCalFilters();renderCalendar();}
+function chCal(d){calM+=d;if(calM>11){calM=0;calY++;}if(calM<0){calM=11;calY--;}renderCalendar();}
+function goCalToday(){const t=new Date();calY=t.getFullYear();calM=t.getMonth();selDay=today();renderCalendar();}
+function selectDay(ds){selDay=ds;renderCalendar();}
+function cal2NavDay(dir){
+  if(!selDay)return;
+  const d=new Date(selDay+'T00:00:00');
+  d.setDate(d.getDate()+dir);
+  selDay=localDate(d);
+  if(d.getMonth()!==calM||d.getFullYear()!==calY){calM=d.getMonth();calY=d.getFullYear();}
+  renderCalendar();
+}
 function renderCalendar(){
   const months='1月 2月 3月 4月 5月 6月 7月 8月 9月 10月 11月 12月'.split(' ');
+  const todayStr=today();
+  // Auto-select: if no selection, default to today (if in current month) or month-start
+  if(!selDay){
+    const now=new Date();
+    selDay=(calY===now.getFullYear()&&calM===now.getMonth())?todayStr:`${calY}-${String(calM+1).padStart(2,'0')}-01`;
+  }
   document.getElementById('calLabel').textContent=`${calY}年 ${months[calM]}`;
+  // Filter buttons
+  ['task','sub','trip'].forEach(f=>{
+    const btn=document.getElementById(`calFilter-${f}`);
+    if(btn)btn.classList.toggle('active',calFilters.includes(f));
+  });
   const firstDow=new Date(calY,calM,1).getDay();
   const daysInMonth=new Date(calY,calM+1,0).getDate();
   const prevDays=new Date(calY,calM,0).getDate();
-  const todayStr=today();
   const cells=[];
   for(let i=firstDow-1;i>=0;i--) cells.push({d:prevDays-i,m:calM-1,y:calY,other:true});
   for(let d=1;d<=daysInMonth;d++) cells.push({d,m:calM,y:calY,other:false});
   while(cells.length%7!==0){const x=cells.length-daysInMonth-firstDow+1;cells.push({d:x,m:calM+1,y:calY,other:true});}
   const grid=document.getElementById('calGrid');
   grid.innerHTML=cells.map(c=>{
-    const ds=`${c.y}-${String(c.m+1).padStart(2,'0')}-${String(c.d).padStart(2,'0')}`;
-    const dt=tasks.filter(t=>t.due===ds&&!t.done);
+    const rm=((c.m%12)+12)%12;
+    const ry=c.m<0?c.y-1:c.m>11?c.y+1:c.y;
+    const ds=`${ry}-${String(rm+1).padStart(2,'0')}-${String(c.d).padStart(2,'0')}`;
+    const dow=new Date(ds+'T00:00:00').getDay();
     const isToday=ds===todayStr;
     const isSel=ds===selDay;
-    const cls=`cal-day ${c.other?'cal-other':''} ${isToday?'cal-today':''} ${isSel?'cal-selected':''}`;
-    const dots=dt.slice(0,3).map(t=>`<div class="cal-dot ${t.priority}"></div>`).join('');
-    return`<div class="${cls}" onclick="${c.other?'':` selectDay('${ds}')`}"><div class="cal-num">${c.d}</div><div class="cal-dots">${dots}</div></div>`;
+    let numCls='cal2-num'+(dow===0?' dow-sun':dow===6?' dow-sat':'');
+    let cellCls='cal2-cell'+(c.other?' cal2-other':'')+(isToday?' cal2-today':'')+(isSel?' cal2-sel':'');
+    let inner=`<span class="${numCls}">${c.d}</span>`;
+    const mob=[];
+    if(!c.other){
+      // Trips
+      if(calFilters.includes('trip')){
+        const dTrips=trips.filter(t=>t.startDate&&t.endDate&&ds>=t.startDate&&ds<=t.endDate);
+        const shown=dTrips.slice(0,2);const more=dTrips.length-shown.length;
+        if(dTrips.length)mob.push('trip');
+        shown.forEach(t=>{
+          const isStart=ds===t.startDate,isWkStart=dow===0;
+          inner+=`<div class="cal2-trip-bar s-${esc(t.status)}">${isStart||isWkStart?esc(t.dest):''}</div>`;
+        });
+        if(more>0)inner+=`<div class="cal2-cell-more">+${more}</div>`;
+      }
+      // Tasks
+      if(calFilters.includes('task')){
+        const dTasks=tasks.filter(t=>t.due===ds&&!t.done);
+        const shT=dTasks.slice(0,2);const morT=dTasks.length-shT.length;
+        if(dTasks.length)mob.push('task');
+        shT.forEach(t=>{inner+=`<div class="cal2-task-row"><div class="cal2-task-dot ${t.priority}"></div><span class="cal2-task-title">${esc(t.title)}</span></div>`;});
+        if(morT>0)inner+=`<div class="cal2-cell-more">+${morT}件</div>`;
+      }
+      // Subs
+      if(calFilters.includes('sub')){
+        const dt2=new Date(ds+'T00:00:00');
+        const sy=dt2.getFullYear(),sm=dt2.getMonth(),sd=dt2.getDate();
+        const dim=new Date(sy,sm+1,0).getDate();
+        const dSubs=subs.filter(s=>{
+          if(!s.active||!s.payDay)return false;
+          const aDay=Math.min(s.payDay,dim);
+          if(sd!==aDay)return false;
+          if(s.cycle==='yearly'&&(s.payMonth||1)!==sm+1)return false;
+          return true;
+        });
+        const shS=dSubs.slice(0,1);const morS=dSubs.length-shS.length;
+        if(dSubs.length)mob.push('sub');
+        shS.forEach(s=>{
+          const ym=`${sy}-${String(sm+1).padStart(2,'0')}`;
+          const paid=txs.some(tx=>String(tx.subId)===String(s.id)&&tx.subYm===ym);
+          inner+=`<div class="cal2-sub-row-cell"><svg width="9" height="9" viewBox="0 0 12 12" fill="none" style="flex-shrink:0"><rect x="1" y="2.5" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 5h10" stroke="currentColor" stroke-width="1.3"/></svg><span class="cal2-sub-title-cell">${esc(s.name)}${paid?' ✓':''}</span></div>`;
+        });
+        if(morS>0)inner+=`<div class="cal2-cell-more">+${morS}</div>`;
+      }
+      if(mob.length)inner+=`<div class="cal2-trip-dot-mob">${mob.map(k=>`<span class="cal2-mob-dot ${k}"></span>`).join('')}</div>`;
+    }
+    return`<div class="${cellCls}" onclick="${c.other?'':` selectDay('${ds}')`}">${inner}</div>`;
   }).join('');
-  renderCalPanel();
+  renderCalDetail();
 }
-function selectDay(ds){selDay=selDay===ds?null:ds;renderCalendar();}
-function renderCalPanel(){
-  const panel=document.getElementById('calPanel');
+function renderCalDetail(){
+  const panel=document.getElementById('calDetailPanel');
+  if(!panel)return;
   if(!selDay){panel.innerHTML='';return;}
-  const dayTasks=tasks.filter(t=>t.due===selDay);
   const d=new Date(selDay+'T00:00:00');
-  const days='日月火水木金土'.split('');
-  const title=`${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）のタスク`;
-  if(!dayTasks.length){panel.innerHTML=`<div class="cal-panel-title">${title}</div><div class="empty" style="padding:20px"><div class="ei" style="font-size:1.6rem">📅</div>この日のタスクはありません</div>`;return;}
-  panel.innerHTML=`<div class="cal-panel-title">${title}</div>${dayTasks.map(t=>`<div class="cal-task-row ${t.done?'done':''}"><div class="pdot ${t.priority}"></div><span>${esc(t.title)}</span><span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3)">${esc(t.category)}</span></div>`).join('')}`;
+  const dayNames='日月火水木金土'.split('');
+  const y=d.getFullYear(),mo=d.getMonth()+1,dy=d.getDate(),dow=d.getDay();
+  const curY=new Date().getFullYear();
+  const yearPfx=y!==curY?`${y}年`:'';
+  const dateLabel=`${yearPfx}${mo}月${dy}日（${dayNames[dow]}）`;
+  let html=`<div class="cal2-detail-nav">
+    <button class="cal2-detail-nav-btn" onclick="cal2NavDay(-1)">‹</button>
+    <span class="cal2-detail-date">${dateLabel}</span>
+    <button class="cal2-detail-nav-btn" onclick="cal2NavDay(1)">›</button>
+  </div>`;
+  let hasContent=false;
+  // Trips
+  if(calFilters.includes('trip')){
+    const dTrips=trips.filter(t=>t.startDate&&t.endDate&&selDay>=t.startDate&&selDay<=t.endDate);
+    if(dTrips.length){
+      hasContent=true;
+      html+=`<div class="cal2-section-hdr">旅行</div>`;
+      dTrips.forEach(t=>{
+        const sd2=new Date(t.startDate+'T00:00:00'),ed2=new Date(t.endDate+'T00:00:00');
+        const daysTotal=Math.round((ed2-sd2)/86400000)+1;
+        const dayNum=Math.round((new Date(selDay+'T00:00:00')-sd2)/86400000)+1;
+        const sY=sd2.getFullYear(),eY=ed2.getFullYear();
+        const sPfx=sY!==curY?`${sY}/`:'';const ePfx=eY!==curY?`${eY}/`:'';
+        const rangeStr=`${sPfx}${sd2.getMonth()+1}/${sd2.getDate()}〜${ePfx}${ed2.getMonth()+1}/${ed2.getDate()}（${daysTotal}日間）`;
+        html+=`<div class="cal2-trip-item" onclick="nav('travel');event.stopPropagation()">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
+            <span style="font-family:'Newsreader',serif;font-size:17px;font-weight:800;">${esc(t.dest)}</span>
+            <span class="trip-badge ${esc(t.status)}">${esc(t.status)}</span>
+          </div>
+          <div class="cal2-panel-sub">${rangeStr} · ${dayNum}日目</div>
+          ${t.budget?`<div class="cal2-panel-sub">予算 ¥${fmt(t.budget)}</div>`:''}
+        </div>`;
+      });
+    }
+  }
+  // Tasks
+  if(calFilters.includes('task')){
+    const incomp=tasks.filter(t=>t.due===selDay&&!t.done);
+    const comp=tasks.filter(t=>t.due===selDay&&t.done);
+    if(incomp.length||comp.length){
+      hasContent=true;
+      html+=`<div class="cal2-section-hdr">タスク</div>`;
+      incomp.forEach(t=>{
+        html+=`<div class="cal2-task-item">
+          <div class="cal2-task-dot ${t.priority}" style="flex-shrink:0;width:8px;height:8px;border-radius:50%;"></div>
+          <div style="flex:1;min-width:0;">
+            <div class="cal2-panel-title" onclick="nav('todo')" style="cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.title)}</div>
+            <div class="cal2-panel-sub">${esc(t.category)}${t.dueTime?` · ${esc(t.dueTime)}`:''}</div>
+          </div>
+          <button class="tv-done-btn" onclick="completeTask('${esc(String(t.id))}');event.stopPropagation()">完了</button>
+        </div>`;
+      });
+      comp.forEach(t=>{
+        html+=`<div class="cal2-task-item cal2-task-done">
+          <div class="cal2-task-dot ${t.priority}" style="flex-shrink:0;width:8px;height:8px;border-radius:50%;"></div>
+          <div class="cal2-panel-title" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.title)}</div>
+        </div>`;
+      });
+    }
+  }
+  // Subs
+  if(calFilters.includes('sub')){
+    const dt2=new Date(selDay+'T00:00:00');
+    const sy=dt2.getFullYear(),sm=dt2.getMonth(),sd=dt2.getDate();
+    const dim=new Date(sy,sm+1,0).getDate();
+    const dSubs=subs.filter(s=>{
+      if(!s.active||!s.payDay)return false;
+      const aDay=Math.min(s.payDay,dim);
+      if(sd!==aDay)return false;
+      if(s.cycle==='yearly'&&(s.payMonth||1)!==sm+1)return false;
+      return true;
+    });
+    if(dSubs.length){
+      hasContent=true;
+      html+=`<div class="cal2-section-hdr">支払い</div>`;
+      dSubs.forEach(s=>{
+        const ym=`${sy}-${String(sm+1).padStart(2,'0')}`;
+        const paid=txs.some(tx=>String(tx.subId)===String(s.id)&&tx.subYm===ym);
+        const acc=accounts.find(a=>String(a.id)===String(s.accountId));
+        html+=`<div class="cal2-sub-item" onclick="nav('finance');setTimeout(()=>{const btn=document.querySelector('#ldrSubtabs .ui-seg-btn:nth-child(4)');if(btn)ldrTab('subs',btn);},60);event.stopPropagation()">
+          <svg width="14" height="14" viewBox="0 0 12 12" fill="none" style="flex-shrink:0"><rect x="1" y="2.5" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 5h10" stroke="currentColor" stroke-width="1.3"/></svg>
+          <div style="flex:1;min-width:0;">
+            <div class="cal2-panel-title" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(s.name)}</div>
+            <div class="cal2-panel-sub">¥${fmt(s.price)}${acc?` · ${esc(acc.name)}`:''}</div>
+          </div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;flex-shrink:0;color:${paid?'var(--ok)':'var(--warn)'};">${paid?'✓ 支払済':'未払い'}</span>
+        </div>`;
+      });
+    }
+  }
+  if(!hasContent){html+=`<div class="cal2-empty-day">この日の予定はありません</div>`;}
+  panel.innerHTML=html;
 }
 
 // ── SHOPPING ──
@@ -4636,20 +4924,75 @@ function renderSubs(){
 }
 
 // ── TRAVEL ──
+let tripModalId=null;
+function fmtTripDateRange(t){
+  if(!t.startDate&&!t.endDate)return t.timing||'';
+  const sd=new Date(t.startDate+'T00:00:00'),ed=new Date(t.endDate+'T00:00:00');
+  const curY=new Date().getFullYear();
+  const days=Math.round((ed-sd)/86400000)+1;
+  const sPfx=sd.getFullYear()!==curY?`${sd.getFullYear()}/`:'';
+  const ePfx=ed.getFullYear()!==curY&&ed.getFullYear()!==sd.getFullYear()?`${ed.getFullYear()}/`:'';
+  return`${sPfx}${sd.getMonth()+1}/${sd.getDate()}〜${ePfx}${ed.getMonth()+1}/${ed.getDate()}（${days}日間）`;
+}
 function toggleAddTrip(){const f=document.getElementById('addTripForm');f.classList.toggle('open');if(f.classList.contains('open'))document.getElementById('tripDest').focus();}
 function addTrip(){
   const dest=document.getElementById('tripDest').value.trim();
   if(!dest){document.getElementById('tripDest').focus();return;}
   const b=document.getElementById('tripBudgetInput').value;
-  trips.push({id:crypto.randomUUID(),dest,timing:document.getElementById('tripTiming').value.trim(),budget:b?parseFloat(b):null,status:document.getElementById('tripStatus').value,note:document.getElementById('tripNote').value.trim()});
+  let sd=document.getElementById('tripStartDate').value;
+  let ed=document.getElementById('tripEndDate').value;
+  if(sd&&ed&&ed<sd){document.getElementById('tripEndDate').focus();return;}
+  if(!sd&&ed)sd=ed;
+  trips.push({id:crypto.randomUUID(),dest,timing:document.getElementById('tripTiming').value.trim(),startDate:sd||null,endDate:ed||null,budget:b?parseFloat(b):null,status:document.getElementById('tripStatus').value,note:document.getElementById('tripNote').value.trim()});
   saveTrips();
-  document.getElementById('tripDest').value='';document.getElementById('tripTiming').value='';document.getElementById('tripBudgetInput').value='';document.getElementById('tripNote').value='';
+  document.getElementById('tripDest').value='';document.getElementById('tripTiming').value='';document.getElementById('tripStartDate').value='';document.getElementById('tripEndDate').value='';document.getElementById('tripBudgetInput').value='';document.getElementById('tripNote').value='';
   toggleAddTrip();renderTravel();
 }
 function setTripStatus(id,status){const t=trips.find(t=>String(t.id)===String(id));if(t){t.status=status;saveTrips();renderTravel();}}
 function delTrip(id){trips=trips.filter(t=>String(t.id)!==String(id));saveTrips();renderTravel();}
 function saveTrips(){localStorage.setItem('hd_trips',JSON.stringify(trips));saveToSupabase();}
 function setTripF(f,el){tripFilter=f;document.querySelectorAll('#page-travel .fchip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderTravel();}
+function openTripModal(id){
+  const t=trips.find(t=>String(t.id)===String(id));if(!t)return;
+  tripModalId=String(t.id);
+  document.getElementById('tripModalDest').value=t.dest||'';
+  document.getElementById('tripModalStart').value=t.startDate||'';
+  document.getElementById('tripModalEnd').value=t.endDate||'';
+  document.getElementById('tripModalTiming').value=t.timing||'';
+  document.getElementById('tripModalBudget').value=t.budget!=null?t.budget:'';
+  document.getElementById('tripModalStatus').value=t.status||'検討中';
+  document.getElementById('tripModalNote').value=t.note||'';
+  document.getElementById('tripModalDelWrap').innerHTML=`<button class="btn btn-ghost btn-sm" style="color:var(--accent);border-color:rgba(139,58,24,0.3);" onclick="confirmDelTripModal();event.stopPropagation()">削除</button>`;
+  document.getElementById('tripModal').classList.add('open');
+}
+function closeTripModal(){document.getElementById('tripModal').classList.remove('open');tripModalId=null;}
+function saveTripModal(){
+  if(!tripModalId)return;
+  const t=trips.find(t=>String(t.id)===tripModalId);if(!t)return;
+  const dest=document.getElementById('tripModalDest').value.trim();
+  if(!dest){document.getElementById('tripModalDest').focus();return;}
+  let sd=document.getElementById('tripModalStart').value;
+  let ed=document.getElementById('tripModalEnd').value;
+  if(sd&&ed&&ed<sd){document.getElementById('tripModalEnd').focus();return;}
+  if(!sd&&ed)sd=ed;
+  t.dest=dest;
+  t.startDate=sd||null;t.endDate=ed||null;
+  t.timing=document.getElementById('tripModalTiming').value.trim();
+  const b=document.getElementById('tripModalBudget').value;
+  t.budget=b?parseFloat(b):null;
+  t.status=document.getElementById('tripModalStatus').value;
+  t.note=document.getElementById('tripModalNote').value.trim();
+  saveTrips();closeTripModal();renderTravel();
+}
+function confirmDelTripModal(){
+  if(!tripModalId)return;
+  document.getElementById('tripModalDelWrap').innerHTML=`<span class="ldr-del-confirm">削除しますか?</span><button class="btn btn-ghost btn-sm" style="color:var(--accent);margin-left:8px;" onclick="execDelTripModal();event.stopPropagation()">はい</button>`;
+}
+function execDelTripModal(){
+  if(!tripModalId)return;
+  trips=trips.filter(t=>String(t.id)!==tripModalId);
+  saveTrips();closeTripModal();renderTravel();
+}
 function renderTravel(){
   const STATUSES=['検討中','計画中','予約済み','完了'];
   document.getElementById('tripN1').textContent=trips.filter(t=>t.status==='検討中').length;
@@ -4660,22 +5003,25 @@ function renderTravel(){
   let list=tripFilter==='all'?trips:trips.filter(t=>t.status===tripFilter);
   const grid=document.getElementById('tripGrid');
   if(!list.length){grid.innerHTML='<div class="empty" style="grid-column:1/-1;padding:48px"><div class="ei">✈</div><div>旅行プランを追加してください</div></div>';return;}
-  grid.innerHTML=list.map(t=>`
-    <div class="trip-card s-${t.status}">
+  grid.innerHTML=list.map(t=>{
+    const dateStr=t.startDate?fmtTripDateRange(t):t.timing||'';
+    return`<div class="trip-card s-${esc(t.status)}">
       <div class="trip-card-top">
         <div class="trip-dest">${esc(t.dest)}</div>
-        <span class="trip-badge ${t.status}">${t.status}</span>
+        <span class="trip-badge ${esc(t.status)}">${esc(t.status)}</span>
       </div>
       <div class="trip-meta">
-        ${t.timing?`<div class="trip-meta-row"><span class="trip-meta-icon">📅</span>${esc(t.timing)}</div>`:''}
+        ${dateStr?`<div class="trip-meta-row"><span class="trip-meta-icon">📅</span>${esc(dateStr)}</div>`:''}
         ${t.budget?`<div class="trip-meta-row"><span class="trip-meta-icon">💴</span>¥${fmt(t.budget)}</div>`:'<div class="trip-meta-row"><span class="trip-meta-icon">💴</span><span style="color:var(--mute)">予算未定</span></div>'}
       </div>
       ${t.note?`<div class="trip-note">${esc(t.note)}</div>`:'<div class="trip-note"></div>'}
       <div class="trip-actions">
-        ${STATUSES.map(s=>`<button class="trip-sbtn ${s} ${t.status===s?'act':''}" onclick="setTripStatus('${esc(String(t.id))}','${s}')">${s}</button>`).join('')}
-        <button class="btn-kill" style="margin-left:auto" onclick="delTrip('${esc(String(t.id))}')">✕</button>
+        ${STATUSES.map(s=>`<button class="trip-sbtn ${esc(s)} ${t.status===s?'act':''}" onclick="setTripStatus('${esc(String(t.id))}','${esc(s)}');event.stopPropagation()">${esc(s)}</button>`).join('')}
+        <button class="trip-edit-btn" onclick="openTripModal('${esc(String(t.id))}');event.stopPropagation()">編集</button>
+        <button class="btn-kill" style="margin-left:auto" onclick="delTrip('${esc(String(t.id))}');event.stopPropagation()">✕</button>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 // ── FOOD ──
