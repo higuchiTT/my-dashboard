@@ -187,7 +187,7 @@
     /* ── FOOD DAY-LIST ── */
     .food-day-list { display:flex; flex-direction:column; }
     .food-week-hdr { padding:8px 16px 6px; font-family:'Newsreader',serif; font-size:13px; font-weight:800; font-style:normal; color:var(--ink2); border-bottom:2px solid var(--ink); background:var(--paper2); letter-spacing:0.01em; }
-    .food-day-row { display:grid; grid-template-columns:96px 1fr; min-height:56px; border-bottom:1px solid rgba(26,24,20,0.08); border-left:4px solid transparent; cursor:pointer; transition:background 0.12s; align-items:stretch; }
+    .food-day-row { display:grid; grid-template-columns:96px 1fr; min-height:74px; border-bottom:1px solid rgba(26,24,20,0.08); border-left:4px solid transparent; cursor:pointer; transition:background 0.12s; align-items:stretch; }
     .food-day-row:hover { background:rgba(26,24,20,0.03); }
     .food-day-row.is-sat { background:rgba(60,100,180,0.11); border-left-color:#4a7ab5; }
     .food-day-row.is-sat:hover { background:rgba(60,100,180,0.16); }
@@ -206,10 +206,10 @@
     .food-day-dish-link:hover { color:var(--accent); text-decoration:underline; text-decoration-style:dotted; }
     .food-day-place { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--mute); }
     .food-day-thumbs { display:flex; gap:4px; flex-wrap:nowrap; margin-left:auto; }
-    .food-day-thumb { width:32px; height:32px; border-radius:4px; overflow:hidden; flex-shrink:0; background:var(--paper3); cursor:pointer; }
+    .food-day-thumb { width:56px; height:56px; border-radius:6px; overflow:hidden; flex-shrink:0; background:var(--paper3); cursor:pointer; }
     .food-day-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
     .food-day-thumb:hover { opacity:0.85; }
-    .food-day-thumb-more { width:32px; height:32px; border-radius:4px; background:var(--paper3); color:var(--ink3); font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer; }
+    .food-day-thumb-more { width:56px; height:56px; border-radius:6px; background:var(--paper3); color:var(--ink3); font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer; }
     .food-day-empty { color:var(--mute); font-family:'Space Grotesk',sans-serif; font-size:12px; font-style:italic; padding:2px 0; }
     .food-list-more-btn { display:flex; align-items:center; justify-content:center; padding:14px; border:none; background:var(--paper2); cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.1em; color:var(--ink3); width:100%; transition:background 0.12s; text-transform:uppercase; border-top:1px solid rgba(26,24,20,0.1); }
     .food-list-more-btn:hover { background:var(--paper3); color:var(--ink); }
@@ -1254,11 +1254,11 @@
       .hm-food-grid { grid-template-columns:repeat(7,1fr); gap:3px; }
 
       /* ── Food day-list (mobile) ── */
-      .food-day-row { grid-template-columns:64px 1fr; }
+      .food-day-row { grid-template-columns:64px 1fr; min-height:60px; }
       .food-day-date-col { padding:8px 6px 8px 10px; }
       .food-day-date-num { font-size:15px; }
       .food-day-dow-label { font-size:12px; }
-      .food-day-thumb, .food-day-thumb-more { width:28px; height:28px; }
+      .food-day-thumb, .food-day-thumb-more { width:44px; height:44px; }
       .food-day-meals-col { padding:6px 10px; }
 
       /* ── タブ (スマホ: ヘッダータブ非表示、ボトムバー表示) ── */
@@ -1478,6 +1478,11 @@
     .notes-search-in::placeholder { color:var(--mute); }
     .notes-tag-pills-wrap { display:flex; gap:6px; flex-wrap:wrap; flex:1; }
     .notes-date-group { margin-bottom:20px; }
+    .notes-month-hdr { position:sticky; top:var(--mast-h,57px); z-index:5; display:flex; align-items:baseline; gap:10px; padding:10px 4px 8px; margin:8px 0 12px; background:var(--paper); border-bottom:2px solid var(--ink); }
+    .notes-month-label { font-family:'Newsreader',serif; font-size:20px; font-weight:800; font-style:normal; color:var(--ink); }
+    .notes-month-count { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); }
+    .notes-date-label.is-sat { color:#4a7ab5; }
+    .notes-date-label.is-sun { color:var(--accent); }
     .notes-date-label { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
     .notes-date-label::after { content:''; flex:1; height:1px; background:rgba(26,24,20,0.1); }
     .notes-card { background:var(--paper); border:1px solid rgba(26,24,20,0.12); border-radius:10px; box-shadow:0 1px 6px rgba(26,24,20,0.06); margin-bottom:10px; overflow:visible; transition:box-shadow 0.12s; }
@@ -8168,8 +8173,22 @@ function _renderNotesList() {
   const yesterdayStr = localDate(new Date(new Date(todayStr+'T00:00:00').getTime() - 86400000));
   const currentYear = new Date().getFullYear();
   const DOW = '日月火水木金土'.split('');
+  // 月ごとの件数（絞り込み後の全件で数える）
+  const monthCount = {};
+  list.forEach(r => { const ym = (r.date||'').slice(0,7); monthCount[ym] = (monthCount[ym]||0) + 1; });
+  const mast = document.querySelector('.masthead');
+  if (mast) document.documentElement.style.setProperty('--mast-h', mast.offsetHeight + 'px');
   let html = '';
+  let curYm = null;
   uniqueDates.forEach(date => {
+    const ym = date.slice(0,7);
+    if (ym !== curYm) {
+      curYm = ym;
+      const [yy, mm] = ym.split('-').map(Number);
+      html += `<div class="notes-month-hdr"><span class="notes-month-label">${yy}年${mm}月</span><span class="notes-month-count">${monthCount[ym]||0}件</span></div>`;
+    }
+    const dObj = new Date(date + 'T00:00:00');
+    const dowCls = dObj.getDay()===6 ? ' is-sat' : dObj.getDay()===0 ? ' is-sun' : '';
     let label;
     if (date === todayStr) label = '今日';
     else if (date === yesterdayStr) label = '昨日';
@@ -8179,7 +8198,7 @@ function _renderNotesList() {
       label = y === currentYear ? `${m}/${day}（${dow}）` : `${y}/${m}/${day}（${dow}）`;
     }
     html += `<div class="notes-date-group">
-      <div class="notes-date-label">${esc(label)}</div>
+      <div class="notes-date-label${dowCls}">${esc(label)}</div>
       ${groups[date].map(r => _notesRenderCard(r)).join('')}
     </div>`;
   });
