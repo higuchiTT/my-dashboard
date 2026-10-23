@@ -108,9 +108,10 @@
     .hm-ts-sep { color:var(--mute); }
     .hm-ts-arrow { margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); letter-spacing:0.06em; }
     .hm-task-strip:hover .hm-ts-arrow { color:var(--accent); }
-    .hm-body { display:grid; grid-template-columns:320px 1fr; gap:16px; padding:20px; align-items:start; }
-    .hm-col-left { display:flex; flex-direction:column; gap:16px; }
-    .hm-col-right { display:flex; flex-direction:column; gap:16px; }
+    .hm-body { display:flex; flex-direction:column; gap:16px; padding:20px; }
+    .hm-upper-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:stretch; }
+    .hm-upper-row > div { display:flex; }
+    .hm-upper-row > div > .hm-card { flex:1; }
     .hm-card { background:var(--paper); border:1px solid rgba(26,24,20,0.15); border-radius:12px; box-shadow:0 2px 10px rgba(26,24,20,0.07); overflow:hidden; }
     .hm-card-hdr { display:flex; align-items:center; justify-content:space-between; padding:14px 18px 12px; border-bottom:1px solid rgba(26,24,20,0.1); cursor:pointer; transition:background 0.12s; }
     .hm-card-hdr:hover { background:rgba(26,24,20,0.03); }
@@ -120,7 +121,7 @@
     .hm-card-link { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); letter-spacing:0.06em; flex-shrink:0; }
     .hm-card-hdr:hover .hm-card-link { color:var(--accent); }
     .hm-card-body { padding:0; }
-    .hm-schedule-body { overflow-y:auto; max-height:calc(100vh - 200px); }
+    .hm-schedule-body { overflow-y:auto; max-height:420px; }
     .hm-sched-group { border-bottom:1px solid rgba(26,24,20,0.07); padding:8px 16px; }
     .hm-sched-group:last-child { border-bottom:none; }
     .hm-sched-date-label { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.08em; color:var(--ink3); margin-bottom:5px; display:flex; align-items:center; gap:5px; text-transform:uppercase; }
@@ -168,8 +169,9 @@
     .hm-acc-bal { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; flex-shrink:0; }
     .hm-acc-bal.neg { color:var(--accent); }
     .hm-finance-no-acc { padding:14px 16px; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--mute); }
-    .hm-food-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; padding:10px 10px 4px; }
-    .hm-food-cell { cursor:pointer; padding:4px 2px; border-radius:6px; transition:background 0.12s; text-align:center; }
+    .hm-food-grid { display:grid; grid-template-columns:repeat(14,1fr); gap:4px; padding:10px 12px 6px; }
+    @media (max-width:1000px) { .hm-food-grid { grid-template-columns:repeat(7,1fr); } }
+    .hm-food-cell { cursor:pointer; padding:4px 2px; border-radius:6px; transition:background 0.12s; text-align:center; min-width:0; overflow:hidden; }
     .hm-food-cell:hover { background:rgba(26,24,20,0.06); }
     .hm-food-today { background:rgba(139,58,24,0.07); outline:1.5px solid var(--accent); outline-offset:-1px; }
     .hm-food-day { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; color:var(--ink2); margin-bottom:2px; line-height:1; }
@@ -180,6 +182,37 @@
     .hm-food-dot { width:5px; height:5px; border-radius:50%; background:rgba(26,24,20,0.12); flex-shrink:0; }
     .hm-food-dot.active { background:var(--accent); }
     .hm-food-summary { padding:4px 14px 12px; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); text-align:center; }
+    .hm-food-dow-sm { font-family:'Space Grotesk',sans-serif; font-size:9px; font-weight:600; text-align:center; line-height:1; margin-bottom:2px; }
+
+    /* ── FOOD DAY-LIST ── */
+    .food-day-list { display:flex; flex-direction:column; }
+    .food-week-hdr { padding:8px 16px 6px; font-family:'Newsreader',serif; font-size:13px; font-weight:800; font-style:normal; color:var(--ink2); border-bottom:2px solid var(--ink); background:var(--paper2); letter-spacing:0.01em; }
+    .food-day-row { display:grid; grid-template-columns:96px 1fr; min-height:56px; border-bottom:1px solid rgba(26,24,20,0.08); border-left:4px solid transparent; cursor:pointer; transition:background 0.12s; align-items:stretch; }
+    .food-day-row:hover { background:rgba(26,24,20,0.03); }
+    .food-day-row.is-sat { background:rgba(60,100,180,0.11); border-left-color:#4a7ab5; }
+    .food-day-row.is-sat:hover { background:rgba(60,100,180,0.16); }
+    .food-day-row.is-sun { background:rgba(139,58,24,0.09); border-left-color:var(--accent); }
+    .food-day-row.is-sun:hover { background:rgba(139,58,24,0.14); }
+    .food-day-date-col { padding:8px 8px 8px 12px; display:flex; flex-direction:row; flex-wrap:wrap; align-items:baseline; align-content:center; gap:3px 6px; border-right:1px solid rgba(26,24,20,0.07); min-height:56px; }
+    .food-day-date-num { font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:700; line-height:1; color:var(--ink); }
+    .food-day-dow-label { font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; line-height:1; color:var(--ink2); }
+    .food-day-row.is-sat .food-day-date-num, .food-day-row.is-sat .food-day-dow-label { color:#4a7ab5; }
+    .food-day-row.is-sun .food-day-date-num, .food-day-row.is-sun .food-day-dow-label { color:var(--accent); }
+    .food-day-today-badge { background:var(--accent); color:var(--paper); font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; padding:1px 5px; border-radius:3px; line-height:1.4; margin-top:2px; display:inline-block; }
+    .food-day-meals-col { padding:8px 12px 8px 14px; display:flex; flex-direction:row; flex-wrap:wrap; align-items:center; gap:4px 18px; }
+    .food-day-sitting-group { display:flex; align-items:baseline; gap:5px; flex-wrap:wrap; }
+    .food-day-kind-tag { font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--mute); background:var(--paper2); padding:1px 5px; border-radius:2px; flex-shrink:0; line-height:1.6; }
+    .food-day-dish-link { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink); cursor:pointer; transition:color 0.12s; }
+    .food-day-dish-link:hover { color:var(--accent); text-decoration:underline; text-decoration-style:dotted; }
+    .food-day-place { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--mute); }
+    .food-day-thumbs { display:flex; gap:4px; flex-wrap:nowrap; margin-left:auto; }
+    .food-day-thumb { width:32px; height:32px; border-radius:4px; overflow:hidden; flex-shrink:0; background:var(--paper3); cursor:pointer; }
+    .food-day-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .food-day-thumb:hover { opacity:0.85; }
+    .food-day-thumb-more { width:32px; height:32px; border-radius:4px; background:var(--paper3); color:var(--ink3); font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer; }
+    .food-day-empty { color:var(--mute); font-family:'Space Grotesk',sans-serif; font-size:12px; font-style:italic; padding:2px 0; }
+    .food-list-more-btn { display:flex; align-items:center; justify-content:center; padding:14px; border:none; background:var(--paper2); cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.1em; color:var(--ink3); width:100%; transition:background 0.12s; text-transform:uppercase; border-top:1px solid rgba(26,24,20,0.1); }
+    .food-list-more-btn:hover { background:var(--paper3); color:var(--ink); }
 
     /* ── TASK GROUPS (unused, kept for removal safety) ── */
 
@@ -798,28 +831,8 @@
     .food-detail-del-confirm { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); margin-bottom:6px; }
     .food-detail-empty { padding:28px 20px; text-align:center; }
     .food-detail-empty-text { font-family:'Newsreader',serif; font-style:italic; font-size:15px; color:var(--ink3); margin-bottom:14px; }
-    /* List view */
-    .food-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
-    .food-card { background:var(--paper); border:1px solid rgba(26,24,20,0.12); border-radius:8px; cursor:pointer; transition:box-shadow 0.15s,transform 0.15s; overflow:hidden; display:flex; flex-direction:column; }
-    .food-card:hover { box-shadow:0 4px 16px rgba(26,24,20,0.12); transform:translateY(-2px); }
-    .food-card-img-wrap { position:relative; width:100%; aspect-ratio:4/3; background:var(--paper3); overflow:hidden; flex-shrink:0; }
-    .food-card-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
-    .food-card-img-placeholder { width:100%; aspect-ratio:4/3; background:var(--paper3); display:flex; align-items:center; justify-content:center; color:var(--mute); font-size:2.2rem; opacity:0.35; }
-    .food-photo-badge { position:absolute; top:6px; right:6px; background:rgba(26,24,20,0.65); color:#fff; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; padding:2px 6px; border-radius:3px; }
-    .food-card-body { padding:10px 12px 12px; display:flex; flex-direction:column; gap:4px; flex:1; }
-    .food-card-name { font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.3; }
-    .food-card-meta { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink3); letter-spacing:0.04em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .food-card-pills { display:flex; align-items:center; gap:5px; overflow:hidden; }
-    .food-card-pill { font-family:'JetBrains Mono',monospace; font-size:10px; padding:2px 7px; font-weight:600; border-radius:2px; flex-shrink:0; }
-    .food-card-pill.home { background:rgba(90,107,58,0.12); color:var(--ok); }
-    .food-card-pill.out  { background:rgba(139,58,24,0.12); color:var(--accent); }
-    .food-card-place { font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--ink3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; min-width:0; }
-    .food-card-recipe-link { flex-shrink:0; color:var(--ink3); display:flex; align-items:center; line-height:1; }
-    .food-card-recipe-link:hover { color:var(--accent); }
-    .food-card-note { font-family:'Newsreader',serif; font-style:italic; font-size:13px; color:var(--ink3); overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; line-height:1.4; }
     .food-empty { text-align:center; padding:60px 20px; color:var(--mute); }
     .food-empty .ei { font-size:2.5rem; margin-bottom:12px; opacity:0.35; }
-    @media (max-width:640px) { .food-grid { grid-template-columns:repeat(2,1fr); gap:10px; } .food-card-note { display:none; } }
     @keyframes foodDishHL { 0%{background:rgba(139,58,24,0.12)} 100%{background:transparent} }
     .food-popup-dish-highlight { animation:foodDishHL 1.2s ease forwards; }
     /* Food edit modal */
@@ -1088,6 +1101,16 @@
     #saveErrToast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#8b3a18; color:#fff; padding:10px 16px; border-radius:4px; font-size:13px; font-family:'Space Grotesk',sans-serif; opacity:0; pointer-events:none; transition:opacity 0.2s; z-index:9001; max-width:calc(100vw - 32px); box-sizing:border-box; text-align:center; }
     #saveErrToast.show { opacity:1; pointer-events:auto; }
 
+    /* ── 同期情報トースト ── */
+    #syncInfoToast { position:fixed; bottom:24px; left:24px; background:var(--ink2); color:var(--paper); padding:8px 14px; border-radius:4px; font-size:12px; font-family:'Space Grotesk',sans-serif; opacity:0; pointer-events:none; transition:opacity 0.2s; z-index:9000; max-width:280px; }
+    #syncInfoToast.show { opacity:1; }
+
+    /* ── バックアップボタン (ヘッダー) ── */
+    #backupBtn { display:none; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:6px 14px; background:transparent; border:1px solid var(--ink3); color:var(--ink3); cursor:pointer; margin-left:8px; transition:all 0.15s; }
+    #backupBtn:hover { border-color:var(--ink); color:var(--ink); }
+    #backupBtn .backup-icon { display:none; }
+    #backupBtn .backup-label { display:inline; }
+
     .login-box { width: 380px; padding: 56px 48px; }
 
     /* ── ACCOUNTS ── */
@@ -1163,9 +1186,19 @@
       .fchip { white-space: nowrap; }
 
       /* ── Home ── */
-      .hm-body { grid-template-columns:1fr; padding:10px; gap:10px; }
+      .hm-body { padding:10px; gap:10px; }
+      .hm-upper-row { grid-template-columns:1fr; }
       .hm-schedule-body { max-height:none; }
       .hm-task-strip { padding:8px 14px; }
+      .hm-food-grid { grid-template-columns:repeat(7,1fr); gap:3px; }
+
+      /* ── Food day-list (mobile) ── */
+      .food-day-row { grid-template-columns:64px 1fr; }
+      .food-day-date-col { padding:8px 6px 8px 10px; }
+      .food-day-date-num { font-size:15px; }
+      .food-day-dow-label { font-size:12px; }
+      .food-day-thumb, .food-day-thumb-more { width:28px; height:28px; }
+      .food-day-meals-col { padding:6px 10px; }
 
       /* ── タブ (スマホ: ヘッダータブ非表示、ボトムバー表示) ── */
       .tabs { display:none !important; }
@@ -1175,6 +1208,9 @@
       .food-fab { bottom:calc(76px + env(safe-area-inset-bottom,0px)) !important; }
       .undo-toast { bottom:calc(68px + env(safe-area-inset-bottom,0px)) !important; }
       #saveErrToast { bottom:calc(68px + env(safe-area-inset-bottom,0px)) !important; }
+      #syncInfoToast { bottom:calc(68px + env(safe-area-inset-bottom,0px)); left:16px; }
+      #backupBtn .backup-label { display:none; }
+      #backupBtn .backup-icon { display:inline; }
       .ldr-modal-overlay { z-index:7000; }
       .food-modal-overlay { z-index:7000; }
       .food-popup-overlay { z-index:7100; }
@@ -1449,7 +1485,8 @@
     <button class="tab-btn nav-item" onclick="nav('food')">Food</button>
     <button class="tab-btn nav-item" onclick="nav('notes')">Notes</button>
   </nav>
-  <button id="logoutBtn" onclick="signOut()" style="display:none; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:6px 14px; background:transparent; border:1px solid var(--ink3); color:var(--ink3); cursor:pointer; margin-left:16px; transition:all 0.15s;" onmouseover="this.style.borderColor='var(--ink)';this.style.color='var(--ink)'" onmouseout="this.style.borderColor='var(--ink3)';this.style.color='var(--ink3)'">ログアウト</button>
+  <button id="backupBtn" onclick="openBackupModal()"><span class="backup-label">バックアップ</span><span class="backup-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="vertical-align:middle"><path d="M8 2v7M5 6l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2.5 10.5v1.5a1 1 0 001 1h9a1 1 0 001-1v-1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span></button>
+  <button id="logoutBtn" onclick="signOut()" style="display:none; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:6px 14px; background:transparent; border:1px solid var(--ink3); color:var(--ink3); cursor:pointer; margin-left:8px; transition:all 0.15s;" onmouseover="this.style.borderColor='var(--ink)';this.style.color='var(--ink)'" onmouseout="this.style.borderColor='var(--ink3)';this.style.color='var(--ink3)'">ログアウト</button>
 </header>
 <div id="syncWarnBanner">
   <span style="flex:1;min-width:200px;">サーバーからデータを読み込めませんでした。この状態での変更はサーバーに保存されません。</span>
@@ -1460,11 +1497,11 @@
 <div class="page active" id="page-home">
   <div id="homeTaskStrip"></div>
   <div class="hm-body" id="homeBody">
-    <div class="hm-col-left" id="homeScheduleCol"></div>
-    <div class="hm-col-right">
+    <div class="hm-upper-row">
+      <div id="homeScheduleCol"></div>
       <div id="homeFinanceCard"></div>
-      <div id="homeFoodCard"></div>
     </div>
+    <div id="homeFoodCard"></div>
   </div>
 </div>
 
@@ -2138,7 +2175,7 @@
     </div>
     <!-- List view -->
     <div id="foodListView" style="display:none">
-      <div class="food-grid" id="foodGrid"></div>
+      <div id="foodGrid"></div>
     </div>
   </div>
   <button class="food-fab" id="foodFab" onclick="openFoodModalNew()">＋</button>
@@ -2278,6 +2315,10 @@ function migrateTaskNotes(){
 
 // ── SUPABASE SYNC ──
 let _syncReady = false;
+let _serverUpdatedAt = null;   // last confirmed server updated_at
+let _baseSnapshot    = null;   // collections deep-copy at that point
+let _pushInFlight    = false;  // serialization guard
+let _pushPending     = false;  // re-run flag
 
 function _showSyncWarnBanner() {
   document.getElementById('syncWarnBanner').classList.add('show');
@@ -2292,21 +2333,227 @@ function _showSaveErrToast(msg) {
   _saveErrToastTimer = setTimeout(() => el.classList.remove('show'), 6000);
 }
 
-async function pushToSupabase(userId) {
-  const seedFlags = {};
+let _syncInfoToastTimer = null;
+function _showSyncInfoToast(msg) {
+  const el = document.getElementById('syncInfoToast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(_syncInfoToastTimer);
+  _syncInfoToastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+// ── Collection helpers ──
+function _collectSeedFlags() {
+  const flags = {};
   for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key && key.startsWith('hd_')) seedFlags[key] = localStorage.getItem(key);
+    const k = localStorage.key(i);
+    if (k && k.startsWith('hd_')) flags[k] = localStorage.getItem(k);
   }
-  const { error } = await sb.from('user_data').upsert({
-    user_id: userId, tasks, task_notes: taskNotes,
-    shopping, subs, txs, trips, meals, budgets, accounts, tx_rules: txRules, reflections,
-    seed_flags: seedFlags, updated_at: new Date().toISOString()
-  });
-  if (error) {
-    console.error('pushToSupabase error:', error);
-    _showSaveErrToast(`保存に失敗しました（${error.message}）。再読み込みしてもう一度お試しください`);
+  return flags;
+}
+
+function _snapshotCollections() {
+  return JSON.parse(JSON.stringify({
+    tasks, task_notes: taskNotes, shopping, subs, txs, trips, meals,
+    budgets, accounts, tx_rules: txRules, reflections, seed_flags: _collectSeedFlags()
+  }));
+}
+
+function _localCollections() {
+  return { tasks, task_notes: taskNotes, shopping, subs, txs, trips, meals,
+    budgets, accounts, tx_rules: txRules, reflections, seed_flags: _collectSeedFlags() };
+}
+
+function _extractSnapshot(row) {
+  return {
+    tasks:       Array.isArray(row.tasks)       ? row.tasks       : [],
+    task_notes:  row.task_notes  || {},
+    shopping:    Array.isArray(row.shopping)    ? row.shopping    : [],
+    subs:        Array.isArray(row.subs)        ? row.subs        : [],
+    txs:         Array.isArray(row.txs)         ? row.txs         : [],
+    trips:       Array.isArray(row.trips)       ? row.trips       : [],
+    meals:       Array.isArray(row.meals)       ? row.meals       : [],
+    budgets:     (row.budgets && typeof row.budgets==='object' && !Array.isArray(row.budgets)) ? row.budgets : {base:{total:null,cats:{}},months:{}},
+    accounts:    Array.isArray(row.accounts)    ? row.accounts    : [],
+    tx_rules:    (row.tx_rules && typeof row.tx_rules==='object') ? row.tx_rules : {rules:[]},
+    reflections: Array.isArray(row.reflections) ? row.reflections : [],
+    seed_flags:  row.seed_flags  || {}
+  };
+}
+
+function _applyCollections(c) {
+  if (Array.isArray(c.tasks))      { tasks    = c.tasks;      localStorage.setItem('hd_tasks',       JSON.stringify(tasks)); }
+  if (c.task_notes)                { taskNotes = c.task_notes; localStorage.setItem('hd_task_notes',  JSON.stringify(taskNotes)); }
+  if (Array.isArray(c.shopping))   { shopping  = c.shopping;  localStorage.setItem('hd_shopping',    JSON.stringify(shopping)); }
+  if (Array.isArray(c.subs))       { subs      = c.subs;      localStorage.setItem('hd_subs',        JSON.stringify(subs)); }
+  if (Array.isArray(c.txs))        { txs       = c.txs;       localStorage.setItem('hd_tx',          JSON.stringify(txs)); }
+  if (Array.isArray(c.trips))      { trips     = c.trips;     localStorage.setItem('hd_trips',       JSON.stringify(trips)); }
+  if (Array.isArray(c.meals))      { meals     = c.meals;     localStorage.setItem('food_meals',     JSON.stringify(meals)); }
+  if (c.budgets && typeof c.budgets==='object' && !Array.isArray(c.budgets)) { budgets  = c.budgets;  localStorage.setItem('ledger_budgets',  JSON.stringify(budgets)); }
+  if (Array.isArray(c.accounts))   { accounts  = c.accounts;  localStorage.setItem('ledger_accounts',JSON.stringify(accounts)); }
+  if (c.tx_rules && typeof c.tx_rules==='object' && !Array.isArray(c.tx_rules)) { txRules = c.tx_rules; localStorage.setItem('ledger_tx_rules', JSON.stringify(txRules)); }
+  if (Array.isArray(c.reflections)){ reflections = c.reflections; localStorage.setItem('reflections', JSON.stringify(reflections)); }
+  if (c.seed_flags) Object.entries(c.seed_flags).forEach(([k,v]) => localStorage.setItem(k, v));
+}
+
+// ── 3-way merge ──
+function mergeArrayById(base, local, server) {
+  const bArr = base || [], lArr = local || [], sArr = server || [];
+  const baseMap   = new Map(bArr.map(x => [String(x.id), x]));
+  const localMap  = new Map(lArr.map(x => [String(x.id), x]));
+  const serverMap = new Map(sArr.map(x => [String(x.id), x]));
+  const result = [];
+  const added  = new Set();
+
+  for (const [sid, sItem] of serverMap) {
+    const inBase  = baseMap.has(sid);
+    const inLocal = localMap.has(sid);
+    if (inBase && inLocal) {
+      const lItem = localMap.get(sid), bItem = baseMap.get(sid);
+      result.push(JSON.parse(JSON.stringify(
+        JSON.stringify(lItem) !== JSON.stringify(bItem) ? lItem : sItem
+      )));
+    } else if (!inBase && inLocal) {
+      result.push(JSON.parse(JSON.stringify(localMap.get(sid))));
+    } else if (inBase && !inLocal) {
+      // local deleted → skip
+    } else {
+      result.push(JSON.parse(JSON.stringify(sItem)));
+    }
+    added.add(sid);
   }
+
+  for (const [lid, lItem] of localMap) {
+    if (added.has(lid)) continue;
+    if (!baseMap.has(lid)) {
+      result.push(JSON.parse(JSON.stringify(lItem)));
+    } else {
+      const bItem = baseMap.get(lid);
+      if (JSON.stringify(lItem) !== JSON.stringify(bItem)) {
+        result.push(JSON.parse(JSON.stringify(lItem)));
+      }
+    }
+  }
+  return result;
+}
+
+function mergeObjKeysDeep(base, local, server) {
+  const b = base || {}, l = local || {}, s = server || {};
+  const result = JSON.parse(JSON.stringify(s));
+  for (const key of Object.keys(l)) {
+    const inBase = key in b;
+    if (!inBase) {
+      result[key] = JSON.parse(JSON.stringify(l[key]));
+    } else {
+      const lv = l[key], bv = b[key], sv = s[key];
+      if (JSON.stringify(lv) !== JSON.stringify(bv)) {
+        if (lv !== null && typeof lv === 'object' && !Array.isArray(lv) &&
+            bv !== null && typeof bv === 'object' && !Array.isArray(bv) &&
+            (sv === undefined || (sv !== null && typeof sv === 'object' && !Array.isArray(sv)))) {
+          result[key] = mergeObjKeysDeep(bv, lv, sv || {});
+        } else {
+          result[key] = JSON.parse(JSON.stringify(lv));
+        }
+      }
+    }
+  }
+  for (const key of Object.keys(b)) {
+    if (!(key in l) && key in result) delete result[key];
+  }
+  return result;
+}
+
+function mergeCollections(base, local, server) {
+  const b = base || {}, l = local || {}, s = server || {};
+  return {
+    tasks:       mergeArrayById(b.tasks,      l.tasks,      s.tasks),
+    task_notes:  mergeObjKeysDeep(b.task_notes,  l.task_notes,  s.task_notes),
+    shopping:    mergeArrayById(b.shopping,   l.shopping,   s.shopping),
+    subs:        mergeArrayById(b.subs,       l.subs,       s.subs),
+    txs:         mergeArrayById(b.txs,        l.txs,        s.txs),
+    trips:       mergeArrayById(b.trips,      l.trips,      s.trips),
+    meals:       mergeArrayById(b.meals,      l.meals,      s.meals),
+    budgets:     mergeObjKeysDeep(b.budgets,     l.budgets,     s.budgets),
+    accounts:    mergeArrayById(b.accounts,   l.accounts,   s.accounts),
+    tx_rules:    { rules: mergeArrayById(b.tx_rules && b.tx_rules.rules, l.tx_rules && l.tx_rules.rules, s.tx_rules && s.tx_rules.rules) },
+    reflections: mergeArrayById(b.reflections, l.reflections, s.reflections),
+    seed_flags:  mergeObjKeysDeep(b.seed_flags,  l.seed_flags,  s.seed_flags),
+  };
+}
+
+// ── Push (serialized, optimistic-lock) ──
+async function _enqueuePush(userId) {
+  if (_pushInFlight) { _pushPending = true; return; }
+  _pushInFlight = true;
+  _pushPending  = false;
+  try {
+    await pushToSupabase(userId);
+  } finally {
+    _pushInFlight = false;
+    if (_pushPending) {
+      _pushPending = false;
+      _enqueuePush(userId);
+    }
+  }
+}
+
+async function pushToSupabase(userId) {
+  const MAX_RETRIES = 3;
+  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+    const seedFlags = _collectSeedFlags();
+    const newTs = new Date().toISOString();
+    const payload = {
+      user_id: userId, tasks, task_notes: taskNotes,
+      shopping, subs, txs, trips, meals, budgets, accounts, tx_rules: txRules, reflections,
+      seed_flags: seedFlags, updated_at: newTs
+    };
+
+    // No server baseline yet → insert (initial user)
+    if (_serverUpdatedAt === null) {
+      const { data: upsertData, error: upsertErr } = await sb.from('user_data')
+        .upsert(payload).select('updated_at').single();
+      if (upsertErr) {
+        console.error('pushToSupabase upsert error:', upsertErr);
+        _showSaveErrToast(`保存に失敗しました（${upsertErr.message}）`);
+        return;
+      }
+      if (upsertData) { _serverUpdatedAt = upsertData.updated_at; _baseSnapshot = _snapshotCollections(); }
+      return;
+    }
+
+    // Optimistic update
+    const { data: updated, error: updErr } = await sb.from('user_data')
+      .update(payload).eq('user_id', userId).eq('updated_at', _serverUpdatedAt).select('updated_at');
+    if (updErr) {
+      console.error('pushToSupabase update error:', updErr);
+      _showSaveErrToast(`保存に失敗しました（${updErr.message}）`);
+      return;
+    }
+    if (updated && updated.length > 0) {
+      _serverUpdatedAt = updated[0].updated_at;
+      _baseSnapshot    = _snapshotCollections();
+      return;
+    }
+
+    // Conflict: 0 rows matched → another device updated first
+    if (attempt < MAX_RETRIES - 1) {
+      const { data: serverRow, error: fetchErr } = await sb.from('user_data')
+        .select('*').eq('user_id', userId).single();
+      if (fetchErr || !serverRow) {
+        console.error('pushToSupabase conflict fetch error:', fetchErr);
+        _showSaveErrToast('競合解決に失敗しました。再読み込みしてください');
+        return;
+      }
+      const merged = mergeCollections(_baseSnapshot || {}, _localCollections(), serverRow);
+      _applyCollections(merged);
+      rerenderAll();
+      _baseSnapshot    = _extractSnapshot(serverRow);
+      _serverUpdatedAt = serverRow.updated_at;
+      // loop continues with merged data as new local
+    }
+  }
+  _showSaveErrToast('競合の解決に繰り返し失敗しました。再読み込みしてください');
 }
 
 async function syncFromSupabase(userId) {
@@ -2314,34 +2561,44 @@ async function syncFromSupabase(userId) {
     const { data, error } = await sb.from('user_data').select('*').eq('user_id', userId).single();
     if (error) {
       if (error.code === 'PGRST116') {
-        // 行が存在しない（初回ユーザー）
-        await pushToSupabase(userId);
+        // 行が存在しない（初回ユーザー）— insert with upsert
+        const seedFlags = _collectSeedFlags();
+        const newTs = new Date().toISOString();
+        const { data: upsertData, error: upsertErr } = await sb.from('user_data').upsert({
+          user_id: userId, tasks, task_notes: taskNotes,
+          shopping, subs, txs, trips, meals, budgets, accounts, tx_rules: txRules, reflections,
+          seed_flags: seedFlags, updated_at: newTs
+        }).select('updated_at').single();
+        if (!upsertErr && upsertData) {
+          _serverUpdatedAt = upsertData.updated_at;
+          _baseSnapshot    = _snapshotCollections();
+        }
         _syncReady = true;
         return false;
       }
-      // それ以外のエラー（通信障害など）— push しない
       console.error('syncFromSupabase error:', error);
       _showSyncWarnBanner();
       return false;
     }
     if (!data) {
-      // data が null だが error もない異常状態 — push しない
       console.error('syncFromSupabase: data is null without error');
       _showSyncWarnBanner();
       return false;
     }
-    if (Array.isArray(data.tasks))    { tasks    = data.tasks;      localStorage.setItem('hd_tasks',      JSON.stringify(tasks)); }
-    if (data.task_notes)              { taskNotes = data.task_notes; localStorage.setItem('hd_task_notes', JSON.stringify(taskNotes)); }
-    if (Array.isArray(data.shopping)) { shopping  = data.shopping;  localStorage.setItem('hd_shopping',   JSON.stringify(shopping)); }
-    if (Array.isArray(data.subs))     { subs      = data.subs;      localStorage.setItem('hd_subs',       JSON.stringify(subs)); }
-    if (Array.isArray(data.txs))      { txs       = data.txs;       localStorage.setItem('hd_tx',         JSON.stringify(txs)); }
-    if (Array.isArray(data.trips))    { trips     = data.trips;     localStorage.setItem('hd_trips',      JSON.stringify(trips)); }
-    if (Array.isArray(data.meals))    { meals     = data.meals; localStorage.setItem('food_meals', JSON.stringify(meals)); }
+    if (Array.isArray(data.tasks))    { tasks    = data.tasks;      localStorage.setItem('hd_tasks',       JSON.stringify(tasks)); }
+    if (data.task_notes)              { taskNotes = data.task_notes; localStorage.setItem('hd_task_notes',  JSON.stringify(taskNotes)); }
+    if (Array.isArray(data.shopping)) { shopping  = data.shopping;  localStorage.setItem('hd_shopping',    JSON.stringify(shopping)); }
+    if (Array.isArray(data.subs))     { subs      = data.subs;      localStorage.setItem('hd_subs',        JSON.stringify(subs)); }
+    if (Array.isArray(data.txs))      { txs       = data.txs;       localStorage.setItem('hd_tx',          JSON.stringify(txs)); }
+    if (Array.isArray(data.trips))    { trips     = data.trips;     localStorage.setItem('hd_trips',       JSON.stringify(trips)); }
+    if (Array.isArray(data.meals))    { meals     = data.meals;     localStorage.setItem('food_meals',     JSON.stringify(meals)); }
     if (data.budgets && typeof data.budgets==='object' && !Array.isArray(data.budgets)) { budgets = data.budgets; localStorage.setItem('ledger_budgets', JSON.stringify(budgets)); }
     if (Array.isArray(data.accounts)) { accounts = data.accounts; localStorage.setItem('ledger_accounts', JSON.stringify(accounts)); }
     if (data.tx_rules && typeof data.tx_rules==='object' && !Array.isArray(data.tx_rules)) { txRules = data.tx_rules; localStorage.setItem('ledger_tx_rules', JSON.stringify(txRules)); }
     if (Array.isArray(data.reflections)) { reflections = data.reflections; localStorage.setItem('reflections', JSON.stringify(reflections)); }
     if (data.seed_flags) Object.entries(data.seed_flags).forEach(([k,v]) => localStorage.setItem(k,v));
+    _serverUpdatedAt = data.updated_at || null;
+    _baseSnapshot    = _snapshotCollections();
     _syncReady = true;
     return true;
   } catch (e) {
@@ -2351,12 +2608,13 @@ async function syncFromSupabase(userId) {
   }
 }
 
+let _saveDebounceTimer = null;
 function saveToSupabase() {
-  if (!_syncReady) {
-    _showSyncWarnBanner();
-    return;
-  }
-  sb.auth.getUser().then(({ data: { user } }) => { if (user) pushToSupabase(user.id); });
+  if (!_syncReady) { _showSyncWarnBanner(); return; }
+  clearTimeout(_saveDebounceTimer);
+  _saveDebounceTimer = setTimeout(() => {
+    sb.auth.getUser().then(({ data: { user } }) => { if (user) _enqueuePush(user.id); });
+  }, 400);
 }
 
 async function signIn() {
@@ -2453,6 +2711,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
   document.getElementById('logoutBtn').style.display = 'inline-block';
+  document.getElementById('backupBtn').style.display = 'inline-block';
   // Apply v1→v2 migration from localStorage before sync
   const _preSyncMeals = JSON.stringify(meals);
   meals = meals.map(migrateMealV2);
@@ -2479,9 +2738,45 @@ document.addEventListener('DOMContentLoaded', async () => {
   applyTaskNotes();
   const h = new Date().getHours();
   document.getElementById('topDate').textContent = fmtFull(new Date());
-  renderHome(); renderTodayView(); renderCalendar(); renderShopping(); renderTravel(); renderFood(); renderNotes(); updateBadge();
+  rerenderAll();
   restoreLdrGuide(); restoreLdrSubtab();
 });
+
+function rerenderAll() {
+  renderHome(); renderTodayView(); renderCalendar(); renderShopping(); renderTravel(); renderFood(); renderNotes(); updateBadge();
+  restoreLdrSubtab();
+}
+
+async function _checkRemoteChanges() {
+  if (_pushInFlight || !_syncReady || !_serverUpdatedAt) return;
+  try {
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) return;
+    const { data: chk, error: chkErr } = await sb.from('user_data')
+      .select('updated_at').eq('user_id', user.id).single();
+    if (chkErr || !chk || chk.updated_at === _serverUpdatedAt) return;
+    const { data: serverRow, error: fetchErr } = await sb.from('user_data')
+      .select('*').eq('user_id', user.id).single();
+    if (fetchErr || !serverRow) return;
+    const merged = mergeCollections(_baseSnapshot || {}, _localCollections(), serverRow);
+    _applyCollections(merged);
+    rerenderAll();
+    _baseSnapshot    = _extractSnapshot(serverRow);
+    _serverUpdatedAt = serverRow.updated_at;
+    _showSyncInfoToast('別の端末の変更を読み込みました');
+    // Push if merged differs from server (local had unsent changes)
+    if (JSON.stringify(merged) !== JSON.stringify(_extractSnapshot(serverRow))) {
+      _enqueuePush(user.id);
+    }
+  } catch (e) {
+    // silent — visibility change check is best-effort
+  }
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') _checkRemoteChanges();
+});
+window.addEventListener('focus', _checkRemoteChanges);
 
 document.addEventListener('click', () => {
   closeTvTagPop();
@@ -2710,13 +3005,13 @@ function renderHome() {
     </div>
   </div>`;
 
-  // ── 3. 食事カード ──
+  // ── 3. 食事カード（14日帯）──
   const startFoodDate = new Date(now); startFoodDate.setDate(startFoodDate.getDate()-13);
   const foodDates = [];
   for(let i=0;i<14;i++){const d=new Date(startFoodDate);d.setDate(d.getDate()+i);foodDates.push(localDate(d));}
   const mealMap = {};
   meals.forEach(m=>{if(foodDates.includes(m.date))mealMap[m.date]=m;});
-  const kindOrder = ['breakfast','lunch','dinner','snack'];
+  const kindOrder14 = ['breakfast','lunch','dinner','snack'];
   const cellsHTML = foodDates.map(ds=>{
     const dt = new Date(ds+'T00:00:00');
     const isToday = ds===todayStr;
@@ -2726,16 +3021,18 @@ function renderHome() {
     let thumbHTML = '';
     if(meal){
       const fp=(()=>{for(const s of(meal.sittings||[])){for(const d of(s.dishes||[])){if(d.photos&&d.photos.length)return d.photos[0];}}return null;})();
-      if(fp) thumbHTML=`<img data-path="${esc(fp)}" style="width:100%;height:28px;object-fit:cover;display:block;border-radius:3px;margin-bottom:1px">`;
-      else thumbHTML=`<div style="height:28px;display:flex;align-items:center;justify-content:center;color:var(--ink3);font-size:10px;margin-bottom:1px;">●</div>`;
+      const firstName = (()=>{for(const s of(meal.sittings||[])){for(const d of(s.dishes||[])){if(d.name)return d.name[0];}}return null;})();
+      if(fp) thumbHTML=`<div style="border-radius:3px;overflow:hidden;margin-bottom:2px;aspect-ratio:1"><img data-path="${esc(fp.path)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block"></div>`;
+      else thumbHTML=`<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;background:var(--paper2);border-radius:3px;margin-bottom:2px;font-size:12px;font-weight:700;font-family:'Space Grotesk',sans-serif;color:var(--ink3)">${esc(firstName||'●')}</div>`;
     } else {
-      thumbHTML=`<div style="height:28px;margin-bottom:1px;"></div>`;
+      thumbHTML=`<div style="aspect-ratio:1;margin-bottom:2px;border-radius:3px;background:rgba(26,24,20,0.04)"></div>`;
     }
     const presentKinds = new Set();
     if(meal)(meal.sittings||[]).forEach(s=>presentKinds.add(s.kind));
-    const dotsHTML = kindOrder.map(k=>`<span class="hm-food-dot${presentKinds.has(k)?' active':''}"></span>`).join('');
+    const dotsHTML = kindOrder14.map(k=>`<span class="hm-food-dot${presentKinds.has(k)?' active':''}"></span>`).join('');
     return `<div class="hm-food-cell${isToday?' hm-food-today':''}" onclick="foodHomeCell('${esc(ds)}')">
       <div class="hm-food-day${dowClass}">${dt.getDate()}</div>
+      <div class="hm-food-dow-sm${dowClass}">${dayNames[dt.getDay()]}</div>
       ${thumbHTML}
       <div class="hm-food-dots">${dotsHTML}</div>
     </div>`;
@@ -5871,6 +6168,7 @@ let foodCalM = new Date().getMonth();
 let foodCalSelDay = null;
 let _foodViewManual = false;
 let _foodModalState = null;
+let _foodListWeeks = 0;
 let _signedUrlCache = {}; // path -> { url, expiry }
 let _foodUploading = 0;
 let _foodPopupId = null;
@@ -5886,6 +6184,7 @@ function localDate(d) {
 
 function setFoodFilter(f, el) {
   foodFilter = f;
+  _foodListWeeks = 0;
   document.querySelectorAll('#page-food .food-filter-pills .ui-pill').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   renderFood();
@@ -5893,6 +6192,7 @@ function setFoodFilter(f, el) {
 
 function foodSearchInput(val) {
   foodSearch = val;
+  _foodListWeeks = 0;
   if (val.trim()) {
     foodView = 'list';
   } else if (!_foodViewManual) {
@@ -5924,64 +6224,40 @@ function renderFood() {
 }
 
 function renderFoodList() {
-  const grid = document.getElementById('foodGrid');
+  const container = document.getElementById('foodGrid');
   const summaryEl = document.getElementById('foodSearchSummary');
-  if (!grid) return;
+  if (!container) return;
+
   const days7 = '日月火水木金土'.split('');
+  const DISP_ORDER = ['breakfast','lunch','dinner','snack'];
+  const KIND_SHORT = { breakfast:'朝', lunch:'昼', dinner:'夕', snack:'軽' };
   const todayStr = localDate();
-  const yesterdayStr = localDate(new Date(Date.now() - 86400000));
-  const todayYear = String(new Date().getFullYear());
-  // Sort order within same date: snack→dinner→lunch→breakfast
-  const DISH_KIND_ORDER = ['snack','dinner','lunch','breakfast'];
-
-  // Flatten all dishes with meal/sitting context
-  let flatDishes = [];
-  for (const m of meals) {
-    for (const s of (m.sittings || [])) {
-      (s.dishes || []).forEach((dish, idx) => {
-        flatDishes.push({ meal: m, sitting: s, dish, idx });
-      });
-    }
-  }
-
-  // Sort: date desc, then DISH_KIND_ORDER within same date, then registration order
-  flatDishes.sort((a, b) => {
-    const dateCmp = b.meal.date.localeCompare(a.meal.date);
-    if (dateCmp !== 0) return dateCmp;
-    const kindCmp = DISH_KIND_ORDER.indexOf(a.sitting.kind) - DISH_KIND_ORDER.indexOf(b.sitting.kind);
-    if (kindCmp !== 0) return kindCmp;
-    return a.idx - b.idx;
-  });
-
-  // Apply type filter
-  if (foodFilter !== 'all') {
-    flatDishes = flatDishes.filter(({ dish }) => dish.type === foodFilter);
-  }
-
-  // Apply search
   const q = foodSearch.trim().toLowerCase();
-  if (q) {
-    const memoMatchIds = new Set(
-      meals.filter(m => (m.memo || '').toLowerCase().includes(q)).map(m => String(m.id))
-    );
-    flatDishes = flatDishes.filter(({ meal, dish }) => {
-      if (memoMatchIds.has(String(meal.id))) return true;
-      return (dish.name + ' ' + (dish.place||'') + ' ' + (dish.note||'')).toLowerCase().includes(q);
-    });
-  }
 
-  // Search summary (dish count)
+  // Search summary
   if (summaryEl) {
     if (q) {
+      let matchCount = 0;
+      let latestDate = '';
+      for (const m of meals) {
+        const memoMatch = (m.memo||'').toLowerCase().includes(q);
+        for (const s of (m.sittings||[])) {
+          for (const dish of (s.dishes||[])) {
+            if (memoMatch || (dish.name+' '+(dish.place||'')+' '+(dish.note||'')).toLowerCase().includes(q)) {
+              if (foodFilter === 'all' || dish.type === foodFilter) {
+                matchCount++;
+                if (!latestDate || m.date > latestDate) latestDate = m.date;
+              }
+            }
+          }
+        }
+      }
       summaryEl.style.display = '';
-      if (flatDishes.length) {
-        const latestDate = flatDishes.reduce((best, { meal }) => meal.date > best ? meal.date : best, '');
-        const latestD = new Date(latestDate + 'T00:00:00');
-        const todayD = new Date(); todayD.setHours(0,0,0,0);
-        const daysAgo = Math.round((todayD - latestD) / 86400000);
-        const daysLabel = daysAgo === 0 ? '今日' : daysAgo === 1 ? '1日前' : `${daysAgo}日前`;
-        const df = latestDate.slice(0,4) + '/' + latestDate.slice(5,7) + '/' + latestDate.slice(8,10);
-        summaryEl.innerHTML = `<strong>"${esc(q)}"</strong> — 最後は${daysLabel}（${df}）・計${flatDishes.length}回`;
+      if (matchCount) {
+        const daysAgo = Math.round((new Date(todayStr+'T00:00:00') - new Date(latestDate+'T00:00:00')) / 86400000);
+        const daysLabel = daysAgo===0?'今日':daysAgo===1?'1日前':`${daysAgo}日前`;
+        const df = latestDate.slice(0,4)+'/'+latestDate.slice(5,7)+'/'+latestDate.slice(8,10);
+        summaryEl.innerHTML = `<strong>"${esc(q)}"</strong> — 最後は${daysLabel}（${df}）・計${matchCount}回`;
       } else {
         summaryEl.innerHTML = `<strong>"${esc(q)}"</strong> — 記録なし`;
       }
@@ -5990,65 +6266,183 @@ function renderFoodList() {
     }
   }
 
-  if (!flatDishes.length) {
-    grid.innerHTML = `<div class="food-empty" style="grid-column:1/-1"><div class="ei">🍽</div><div>${q ? '検索結果なし' : '記録がありません'}</div></div>`;
-    return;
+  // Build meal map by date
+  const mealByDate = {};
+  meals.forEach(m => { mealByDate[m.date] = m; });
+
+  // Determine display range
+  const mealDates = meals.map(m=>m.date).filter(Boolean);
+  const todayDate = new Date(todayStr+'T00:00:00');
+  let rangeStart = todayStr;
+  if (mealDates.length) rangeStart = mealDates.reduce((a,b) => a<b?a:b);
+
+  // Generate all days from rangeStart to today
+  const allDays = [];
+  for (let c=new Date(rangeStart+'T00:00:00'); c<=todayDate; c.setDate(c.getDate()+1)) {
+    allDays.push(localDate(c));
   }
 
-  const linkSVG = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
+  // Window: last (4 + _foodListWeeks) * 7 days
+  const windowDays = (4 + _foodListWeeks) * 7;
+  const windowStartDate = new Date(todayDate);
+  windowStartDate.setDate(windowStartDate.getDate() - windowDays + 1);
+  const windowStartStr = localDate(windowStartDate);
+  const hasMore = allDays.some(d => d < windowStartStr);
+  const displayDays = allDays.filter(d => d >= windowStartStr);
 
-  grid.innerHTML = flatDishes.map(({ meal: m, sitting: s, dish }) => {
-    const d = new Date(m.date + 'T00:00:00');
-    const kindLabel = KIND_LABELS[s.kind] || s.kind;
-    let dateLabel;
-    if (m.date === todayStr) {
-      dateLabel = `今日 ${kindLabel}`;
-    } else if (m.date === yesterdayStr) {
-      dateLabel = `昨日 ${kindLabel}`;
-    } else {
-      const mo = parseInt(m.date.slice(5,7));
-      const dy = parseInt(m.date.slice(8,10));
-      const yr = m.date.slice(0,4);
-      const datePart = yr !== todayYear
-        ? `${yr}/${mo}/${dy}（${days7[d.getDay()]}）`
-        : `${mo}/${dy}（${days7[d.getDay()]}）`;
-      dateLabel = `${datePart} ${kindLabel}`;
+  // Helper: get matched sittings for a day (with filter/search applied)
+  const isFiltered = foodFilter !== 'all' || q;
+  function getMatchedSittings(date) {
+    const meal = mealByDate[date];
+    if (!meal) return null;
+    const memoMatch = q ? (meal.memo||'').toLowerCase().includes(q) : false;
+    const out = [];
+    for (const s of (meal.sittings||[])) {
+      const dishes = (s.dishes||[]).filter(dish => {
+        if (foodFilter !== 'all' && dish.type !== foodFilter) return false;
+        if (q && !memoMatch && !(dish.name+' '+(dish.place||'')+' '+(dish.note||'')).toLowerCase().includes(q)) return false;
+        return true;
+      });
+      if (dishes.length) out.push({...s, dishes});
     }
-    // Photo (dish's own photos)
-    const photos = dish.photos || [];
-    let photoHTML;
-    if (photos.length) {
-      const badge = photos.length > 1 ? `<div class="food-photo-badge">+${photos.length - 1}</div>` : '';
-      photoHTML = `<div class="food-card-img-wrap"><img data-path="${esc(photos[0].path)}" src="" alt="">${badge}</div>`;
-    } else {
-      photoHTML = `<div class="food-card-img-placeholder">🍽</div>`;
-    }
-    const pillCls = dish.type === 'out' ? 'out' : 'home';
-    const pillLabel = dish.type === 'out' ? '外食' : '自炊';
-    const placeHTML = dish.type === 'out' && dish.place ? `<span class="food-card-place">${esc(dish.place)}</span>` : '';
-    const isValidUrl = /^https?:\/\//.test(dish.recipeUrl || '');
-    const linkHTML = isValidUrl ? `<a class="food-card-recipe-link" href="${esc(dish.recipeUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" title="レシピ">${linkSVG}</a>` : '';
-    const noteHTML = dish.note ? `<div class="food-card-note">${esc(dish.note)}</div>` : '';
-    return `<div class="food-card" onclick="openFoodDetailPopup('${esc(String(m.id))}','${esc(String(dish.id))}')">
-      ${photoHTML}
-      <div class="food-card-body">
-        <div class="food-card-name">${esc(dish.name || '（名前なし）')}</div>
-        <div class="food-card-meta">${esc(dateLabel)}</div>
-        <div class="food-card-pills">
-          <span class="food-card-pill ${pillCls}">${pillLabel}</span>
-          ${placeHTML}${linkHTML}
+    return out.length ? out : null;
+  }
+
+  // Get Monday of week containing date
+  function mondayOf(dateStr) {
+    const d = new Date(dateStr+'T00:00:00');
+    const dow = d.getDay();
+    d.setDate(d.getDate() + (dow===0 ? -6 : 1-dow));
+    return localDate(d);
+  }
+
+  // Group into weeks
+  const weekMap = {};
+  const weekOrder = [];
+  for (const d of displayDays) {
+    const mon = mondayOf(d);
+    if (!weekMap[mon]) { weekMap[mon] = []; weekOrder.push(mon); }
+    weekMap[mon].push(d);
+  }
+  // Sort weeks newest first
+  weekOrder.sort((a,b) => b.localeCompare(a));
+
+  const todayWeekMon = mondayOf(todayStr);
+  const lastWeekMonD = new Date(todayWeekMon+'T00:00:00');
+  lastWeekMonD.setDate(lastWeekMonD.getDate()-7);
+  const lastWeekMon = localDate(lastWeekMonD);
+
+  function fmtWeekHdr(mon) {
+    const mD = new Date(mon+'T00:00:00');
+    const sD = new Date(mon+'T00:00:00'); sD.setDate(sD.getDate()+6);
+    const fmt = d => `${d.getMonth()+1}/${d.getDate()}（${days7[d.getDay()]}）`;
+    const prefix = mon===todayWeekMon?'今週 ': mon===lastWeekMon?'先週 ':'';
+    return `${prefix}${fmt(mD)}〜${fmt(sD)}`;
+  }
+
+  let html = '<div class="food-day-list">';
+  let hasContent = false;
+
+  for (const mon of weekOrder) {
+    // Days newest-first within week (so most-recent day appears just under its week header)
+    const daysAsc = weekMap[mon].slice().sort();
+    const daysDesc = daysAsc.slice().reverse();
+
+    // Check if any day in this week is visible when filtering
+    if (isFiltered && !daysAsc.some(d => getMatchedSittings(d) !== null)) continue;
+
+    hasContent = true;
+    html += `<div class="food-week-hdr">${esc(fmtWeekHdr(mon))}</div>`;
+
+    for (const ds of daysDesc) {
+      const dt = new Date(ds+'T00:00:00');
+      const dow = dt.getDay();
+      const isSat = dow===6, isSun = dow===0;
+      const isToday = ds===todayStr;
+      const dayClass = isSat?' is-sat':isSun?' is-sun':'';
+      const matched = getMatchedSittings(ds);
+
+      // When filtering, hide empty-record days AND days with no matches
+      if (isFiltered && !matched) continue;
+
+      const mealRec = mealByDate[ds];
+      const mealId = mealRec ? String(mealRec.id) : null;
+      const dateLabel = `${dt.getMonth()+1}/${dt.getDate()}`;
+      const rowOnclick = mealId
+        ? `onclick="openFoodDetailPopup('${esc(mealId)}')" `
+        : `onclick="openFoodModalNew('${esc(ds)}')" `;
+
+      let mealsColHTML = '';
+      if (matched && matched.length) {
+        // Sort sittings by kind order
+        const sorted = matched.slice().sort((a,b)=>DISP_ORDER.indexOf(a.kind)-DISP_ORDER.indexOf(b.kind));
+
+        // Build sitting groups
+        mealsColHTML = sorted.map(s => {
+          const kShort = KIND_SHORT[s.kind]||s.kind;
+          const dishParts = s.dishes.map(dish => {
+            const isOut = dish.type==='out';
+            const placeHTML = isOut&&dish.place ? ` <span class="food-day-place">@${esc(dish.place)}</span>` : '';
+            return `<span class="food-day-dish-link" onclick="event.stopPropagation();openFoodDetailPopup('${esc(mealId)}','${esc(String(dish.id))}')">${esc(dish.name||'（名前なし）')}${placeHTML}</span>`;
+          }).join('<span style="color:var(--mute);margin:0 2px">・</span>');
+          return `<div class="food-day-sitting-group"><span class="food-day-kind-tag">${esc(kShort)}</span>${dishParts}</div>`;
+        }).join('');
+
+        // Thumbnails (up to 4)
+        let thumbs = '';
+        let tCount = 0;
+        const MAX_T = 4;
+        let totalPhotos = 0;
+        for (const s of sorted) for (const d of s.dishes) totalPhotos += (d.photos||[]).length;
+
+        outer: for (const s of sorted) {
+          for (const dish of s.dishes) {
+            for (const p of (dish.photos||[])) {
+              if (tCount < MAX_T) {
+                thumbs += `<div class="food-day-thumb" onclick="event.stopPropagation();openFoodDetailPopup('${esc(mealId)}','${esc(String(dish.id))}')"><img data-path="${esc(p.path)}" alt=""></div>`;
+                tCount++;
+              } else { break outer; }
+            }
+          }
+        }
+        if (totalPhotos > MAX_T) {
+          thumbs += `<div class="food-day-thumb-more" onclick="event.stopPropagation();openFoodDetailPopup('${esc(mealId)}')">+${totalPhotos-MAX_T}</div>`;
+        }
+        if (thumbs) mealsColHTML += `<div class="food-day-thumbs">${thumbs}</div>`;
+      } else {
+        // No filter active, show "記録なし"
+        mealsColHTML = `<span class="food-day-empty">記録なし</span>`;
+      }
+
+      html += `<div class="food-day-row${dayClass}" ${rowOnclick}>
+        <div class="food-day-date-col">
+          <div class="food-day-date-num">${esc(dateLabel)}</div>
+          <div class="food-day-dow-label">${esc(days7[dow])}</div>
+          ${isToday?'<span class="food-day-today-badge">今日</span>':''}
         </div>
-        ${noteHTML}
-      </div>
-    </div>`;
-  }).join('');
-  fillSignedUrls(grid);
+        <div class="food-day-meals-col">${mealsColHTML}</div>
+      </div>`;
+    }
+  }
+
+  if (!hasContent) {
+    html = `<div class="food-empty"><div class="ei">🍽</div><div>${q?'検索結果なし':'記録がありません'}</div></div>`;
+  } else {
+    if (hasMore) {
+      html += `<button class="food-list-more-btn" onclick="_foodListWeeks+=4;renderFoodList()">さらに前を表示（4週間）</button>`;
+    }
+    html += '</div>';
+  }
+
+  container.innerHTML = html;
+  fillSignedUrls(container);
 }
 
 // ── FOOD CALENDAR ──
 function setFoodView(v, el) {
   foodView = v;
   _foodViewManual = (v === 'list');
+  if (v === 'list') _foodListWeeks = 0;
   document.querySelectorAll('#page-food .ui-seg-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   renderFood();
@@ -7453,6 +7847,104 @@ function today(){return localDate();}
 function fmtS(d){return`${d.getMonth()+1}/${d.getDate()}`;}
 function fmtFull(d){const days='日月火水木金土'.split('');return`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`;}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+// ── BACKUP ──
+function openBackupModal() {
+  document.getElementById('backupModal').classList.add('open');
+  document.getElementById('restorePreview').style.display = 'none';
+  document.getElementById('restoreConfirmBtn').style.display = 'none';
+  document.getElementById('restoreFileInput').value = '';
+  _restoreData = null;
+}
+
+function closeBackupModal() {
+  document.getElementById('backupModal').classList.remove('open');
+}
+
+function downloadBackup() {
+  const backup = {
+    app: 'my-dashboard', version: 1, exportedAt: new Date().toISOString(),
+    data: { tasks, task_notes: taskNotes, shopping, subs, txs, trips, meals,
+      budgets, accounts, tx_rules: txRules, reflections, seed_flags: _collectSeedFlags() }
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  const now = new Date();
+  const pad = n => String(n).padStart(2, '0');
+  a.download = `dashboard-backup-${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+let _restoreData = null;
+
+function handleRestoreFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      if (!parsed.app || !parsed.data) { alert('このファイルはバックアップとして認識できません。'); return; }
+      _restoreData = parsed;
+      const d = parsed.data;
+      const exportedAt = parsed.exportedAt ? new Date(parsed.exportedAt).toLocaleString('ja-JP') : '不明';
+      const preview = document.getElementById('restorePreview');
+      preview.innerHTML =
+        `<div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.08em;color:var(--ink3);margin-bottom:8px;">バックアップの日時: ${esc(exportedAt)}</div>` +
+        `<div style="font-size:13px;line-height:1.9;">` +
+        `タスク: <b>${Array.isArray(d.tasks)?d.tasks.length:0}</b> 件　` +
+        `取引: <b>${Array.isArray(d.txs)?d.txs.length:0}</b> 件　` +
+        `食事: <b>${Array.isArray(d.meals)?d.meals.length:0}</b> 日分<br>` +
+        `所感: <b>${Array.isArray(d.reflections)?d.reflections.length:0}</b> 件　` +
+        `ウィッシュリスト: <b>${Array.isArray(d.shopping)?d.shopping.length:0}</b> 件</div>`;
+      preview.style.display = 'block';
+      document.getElementById('restoreConfirmBtn').style.display = 'inline-block';
+    } catch (err) { alert('ファイルの読み込みに失敗しました。'); }
+  };
+  reader.readAsText(file);
+}
+
+async function doRestore() {
+  if (!_restoreData || !_syncReady) return;
+  if (!confirm('今のデータはすべてこのバックアップの内容に置き換わります。念のため、今のデータのバックアップを先にダウンロードします。')) return;
+  downloadBackup(); // save current data first
+  const d = _restoreData.data;
+  _applyCollections({
+    tasks:       Array.isArray(d.tasks)       ? d.tasks       : tasks,
+    task_notes:  d.task_notes  || {},
+    shopping:    Array.isArray(d.shopping)    ? d.shopping    : shopping,
+    subs:        Array.isArray(d.subs)        ? d.subs        : subs,
+    txs:         Array.isArray(d.txs)         ? d.txs         : txs,
+    trips:       Array.isArray(d.trips)       ? d.trips       : trips,
+    meals:       Array.isArray(d.meals)       ? d.meals       : meals,
+    budgets:     (d.budgets && typeof d.budgets==='object') ? d.budgets : budgets,
+    accounts:    Array.isArray(d.accounts)    ? d.accounts    : accounts,
+    tx_rules:    (d.tx_rules && typeof d.tx_rules==='object') ? d.tx_rules : txRules,
+    reflections: Array.isArray(d.reflections) ? d.reflections : reflections,
+    seed_flags:  d.seed_flags || {}
+  });
+  rerenderAll();
+  const { data: { user } } = await sb.auth.getUser();
+  if (user) {
+    const seedFlags = _collectSeedFlags();
+    const { data: upsertData, error: upsertErr } = await sb.from('user_data').upsert({
+      user_id: user.id, tasks, task_notes: taskNotes,
+      shopping, subs, txs, trips, meals, budgets, accounts, tx_rules: txRules, reflections,
+      seed_flags: seedFlags, updated_at: new Date().toISOString()
+    }).select('updated_at').single();
+    if (upsertErr) {
+      _showSaveErrToast(`復元の保存に失敗しました（${upsertErr.message}）`);
+    } else {
+      if (upsertData) { _serverUpdatedAt = upsertData.updated_at; _baseSnapshot = _snapshotCollections(); }
+      _showSyncInfoToast('復元しました');
+    }
+  }
+  closeBackupModal();
+  _restoreData = null;
+}
 </script>
 
 <div id="tvTagPop" class="tv-tag-pop" onclick="event.stopPropagation()">
@@ -7466,6 +7958,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
   <button onclick="undoComplete()">元に戻す</button>
 </div>
 <div id="saveErrToast"></div>
+<div id="syncInfoToast"></div>
 
 <!-- ══ BOTTOM NAV (mobile) ══ -->
 <nav class="hm-bottom-nav" id="bottomNav">
@@ -7503,6 +7996,36 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
     <span class="hm-bnav-label">所感</span>
   </button>
 </nav>
+
+<!-- ══ BACKUP MODAL ══ -->
+<div class="ldr-modal-overlay" id="backupModal" onclick="if(event.target===this)closeBackupModal()">
+  <div class="ldr-modal" onclick="event.stopPropagation()" style="max-width:480px;">
+    <div class="ldr-modal-hdr">
+      <div class="ldr-modal-title">バックアップ</div>
+      <button class="ldr-modal-close" onclick="closeBackupModal()">✕</button>
+    </div>
+    <div class="ldr-modal-body">
+      <!-- Download -->
+      <div>
+        <div class="ldr-modal-lbl">ダウンロード</div>
+        <p style="font-size:13px;color:var(--ink3);margin-bottom:10px;line-height:1.6;">現在のすべてのデータを JSON ファイルとして保存します。写真ファイルそのものは含まれません（写真の場所の情報だけが含まれます）。</p>
+        <button class="btn btn-primary btn-sm" onclick="downloadBackup()">バックアップをダウンロード</button>
+      </div>
+      <hr style="border:none;border-top:1px solid rgba(26,24,20,0.12);">
+      <!-- Restore -->
+      <div>
+        <div class="ldr-modal-lbl">バックアップから復元</div>
+        <p style="font-size:13px;color:var(--ink3);margin-bottom:10px;line-height:1.6;">以前ダウンロードした JSON ファイルを選択してください。今のデータはすべて置き換わります。</p>
+        <input type="file" id="restoreFileInput" accept=".json" onchange="handleRestoreFile(event)" style="font-size:13px;font-family:'Space Grotesk',sans-serif;color:var(--ink);">
+        <div id="restorePreview" style="display:none;margin-top:12px;padding:12px;background:var(--paper2);border-radius:6px;border:1px solid rgba(26,24,20,0.1);"></div>
+      </div>
+    </div>
+    <div class="ldr-modal-ftr">
+      <button class="btn btn-ghost btn-sm" onclick="closeBackupModal()">閉じる</button>
+      <button id="restoreConfirmBtn" class="btn btn-primary btn-sm" style="display:none;background:var(--accent);" onclick="doRestore()">復元する</button>
+    </div>
+  </div>
+</div>
 
 <div id="loginOverlay" style="display:none; position:fixed; inset:0; background:var(--paper); z-index:9999; align-items:center; justify-content:center;">
   <div class="login-box" style="border:2px solid var(--rule); background:var(--paper);">
