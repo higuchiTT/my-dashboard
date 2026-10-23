@@ -1344,6 +1344,89 @@
       #page-food .ui-pill { height:36px; font-size:13px; }
 
     }
+
+    /* ── NOTES ── */
+    .notes-page { padding:28px 40px 80px; max-width:900px; margin:0 auto; }
+    .notes-header-row { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
+    .notes-header-icon { color:var(--accent); display:flex; flex-shrink:0; }
+    .notes-header-title { font-family:'Newsreader',serif; font-size:34px; font-weight:800; font-style:normal; line-height:1; color:var(--ink); }
+    .notes-input-card { padding:16px 18px 14px; margin-bottom:20px; }
+    .notes-body-ta { width:100%; min-height:72px; font-family:'Space Grotesk',sans-serif; font-size:14px; padding:8px 10px; border:1.5px solid rgba(26,24,20,0.2); border-radius:6px; background:var(--paper); color:var(--ink); outline:none; resize:none; line-height:1.55; overflow:hidden; transition:border-color 0.15s; display:block; }
+    .notes-body-ta:focus { border-color:var(--ink); }
+    .notes-body-ta::placeholder { color:var(--mute); }
+    .notes-input-bottom { display:flex; align-items:flex-start; gap:8px; margin-top:10px; flex-wrap:wrap; }
+    .notes-date-in { font-family:'JetBrains Mono',monospace; font-size:13px; padding:6px 10px; border:1.5px solid rgba(26,24,20,0.2); border-radius:6px; background:var(--paper); color:var(--ink); outline:none; flex-shrink:0; transition:border-color 0.15s; height:36px; }
+    .notes-date-in:focus { border-color:var(--ink); }
+    .notes-tag-wrap { display:flex; align-items:center; gap:5px; flex-wrap:wrap; flex:1; min-width:120px; border:1.5px solid rgba(26,24,20,0.2); border-radius:6px; background:var(--paper); padding:4px 8px; cursor:text; min-height:36px; transition:border-color 0.15s; position:relative; }
+    .notes-tag-wrap:focus-within { border-color:var(--ink); }
+    .notes-tag-chip-in { background:rgba(139,58,24,0.1); color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; padding:2px 6px; border-radius:10px; display:inline-flex; align-items:center; gap:3px; white-space:nowrap; }
+    .notes-tag-chip-in-x { background:transparent; border:none; cursor:pointer; color:var(--accent); font-size:12px; padding:0 1px; line-height:1; opacity:0.7; }
+    .notes-tag-chip-in-x:hover { opacity:1; }
+    .notes-tag-text-in { border:none; background:transparent; outline:none; font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink); min-width:80px; max-width:160px; padding:2px 0; height:26px; }
+    .notes-tag-text-in::placeholder { color:var(--mute); }
+    .notes-tag-autocomplete { display:none; position:absolute; top:calc(100% + 4px); left:0; right:0; background:var(--paper); border:1px solid rgba(26,24,20,0.18); border-radius:8px; box-shadow:0 4px 16px rgba(26,24,20,0.12); z-index:300; overflow:hidden; max-height:180px; overflow-y:auto; }
+    .notes-tag-autocomplete.open { display:block; }
+    .notes-tag-ac-item { padding:8px 12px; font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink); cursor:pointer; border-bottom:1px solid rgba(26,24,20,0.06); }
+    .notes-tag-ac-item:last-child { border-bottom:none; }
+    .notes-tag-ac-item:hover { background:var(--paper2); }
+    .notes-save-btn { padding:0 18px; height:36px; background:var(--accent); color:var(--paper); border:none; border-radius:6px; font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700; cursor:pointer; transition:opacity 0.15s; flex-shrink:0; white-space:nowrap; }
+    .notes-save-btn:hover { opacity:0.88; }
+    .notes-filter-row { display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+    .notes-search-in { font-family:'Space Grotesk',sans-serif; font-size:14px; padding:7px 12px; border:1.5px solid rgba(26,24,20,0.2); border-radius:8px; background:var(--paper); color:var(--ink); outline:none; width:240px; transition:border-color 0.15s; }
+    .notes-search-in:focus { border-color:var(--ink); }
+    .notes-search-in::placeholder { color:var(--mute); }
+    .notes-tag-pills-wrap { display:flex; gap:6px; flex-wrap:wrap; flex:1; }
+    .notes-date-group { margin-bottom:20px; }
+    .notes-date-label { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+    .notes-date-label::after { content:''; flex:1; height:1px; background:rgba(26,24,20,0.1); }
+    .notes-card { background:var(--paper); border:1px solid rgba(26,24,20,0.12); border-radius:10px; box-shadow:0 1px 6px rgba(26,24,20,0.06); margin-bottom:10px; overflow:visible; transition:box-shadow 0.12s; }
+    .notes-card:hover { box-shadow:0 3px 12px rgba(26,24,20,0.1); }
+    .notes-card-pos { position:relative; }
+    .notes-card-header { display:flex; align-items:center; justify-content:flex-end; gap:8px; padding:10px 14px 4px; }
+    .notes-card-time { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--mute); margin-right:auto; }
+    .notes-card-more-btn { background:transparent; border:none; font-size:16px; color:var(--mute); cursor:pointer; padding:2px 5px; border-radius:4px; line-height:1; transition:color 0.12s; }
+    .notes-card-more-btn:hover { color:var(--ink); background:var(--paper2); }
+    .notes-card-menu { display:none; position:absolute; right:14px; top:36px; background:var(--paper); border:1px solid rgba(26,24,20,0.18); border-radius:8px; box-shadow:0 4px 16px rgba(26,24,20,0.12); z-index:400; min-width:120px; overflow:hidden; }
+    .notes-card-menu.open { display:block; }
+    .notes-card-menu button { display:block; width:100%; text-align:left; padding:9px 14px; background:transparent; border:none; border-bottom:1px solid rgba(26,24,20,0.08); font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink); cursor:pointer; }
+    .notes-card-menu button:last-child { border-bottom:none; }
+    .notes-card-menu button.danger { color:var(--accent); }
+    .notes-card-menu button:hover { background:var(--paper2); }
+    .notes-card-body { padding:0 16px 8px; white-space:pre-wrap; font-family:'Space Grotesk',sans-serif; font-size:14px; color:var(--ink); line-height:1.65; word-break:break-word; }
+    .notes-card-body.collapsed { display:-webkit-box; -webkit-line-clamp:6; -webkit-box-orient:vertical; overflow:hidden; }
+    .notes-card-expand-btn { background:transparent; border:none; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); cursor:pointer; padding:2px 16px 8px; display:block; }
+    .notes-card-expand-btn:hover { text-decoration:underline; }
+    .notes-card-tags { display:flex; gap:5px; flex-wrap:wrap; padding:0 16px 12px; }
+    .notes-card-tag { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; padding:2px 8px; border-radius:10px; background:rgba(139,58,24,0.08); color:var(--accent); cursor:pointer; border:none; transition:background 0.12s; }
+    .notes-card-tag:hover { background:rgba(139,58,24,0.15); }
+    .notes-card-tag.active { background:var(--accent); color:var(--paper); }
+    .notes-edit-area { padding:12px 14px 8px; }
+    .notes-edit-body-ta { width:100%; font-family:'Space Grotesk',sans-serif; font-size:14px; padding:8px 10px; border:1.5px solid rgba(26,24,20,0.2); border-radius:6px; background:var(--paper); color:var(--ink); outline:none; resize:none; line-height:1.55; overflow:hidden; transition:border-color 0.15s; min-height:72px; display:block; }
+    .notes-edit-body-ta:focus { border-color:var(--ink); }
+    .notes-edit-bottom { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; align-items:flex-start; }
+    .notes-edit-date-in { font-family:'JetBrains Mono',monospace; font-size:13px; padding:6px 10px; border:1.5px solid rgba(26,24,20,0.2); border-radius:6px; background:var(--paper); color:var(--ink); outline:none; flex-shrink:0; transition:border-color 0.15s; height:36px; }
+    .notes-edit-date-in:focus { border-color:var(--ink); }
+    .notes-edit-actions { display:flex; gap:8px; margin-top:10px; justify-content:flex-end; }
+    .notes-del-confirm { display:none; padding:10px 16px 12px; background:rgba(139,58,24,0.04); border-top:1px solid rgba(139,58,24,0.12); }
+    .notes-del-confirm.open { display:block; }
+    .notes-del-confirm-text { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink); margin-bottom:8px; }
+    .notes-del-confirm-btns { display:flex; gap:8px; }
+    .notes-del-yes { padding:5px 14px; background:var(--accent); color:var(--paper); border:none; border-radius:5px; font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
+    .notes-del-no { padding:5px 14px; background:transparent; border:1px solid rgba(26,24,20,0.25); border-radius:5px; font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink2); cursor:pointer; }
+    .notes-load-more { display:flex; justify-content:center; padding:20px 0; }
+    .notes-load-more-btn { padding:9px 24px; border:1.5px solid rgba(26,24,20,0.2); border-radius:8px; background:transparent; font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; color:var(--ink2); cursor:pointer; transition:all 0.15s; }
+    .notes-load-more-btn:hover { border-color:var(--ink); color:var(--ink); }
+    .notes-empty { text-align:center; padding:48px 20px; color:var(--mute); font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.6; }
+    @media (max-width:640px) {
+      .notes-page { padding:14px 14px 100px; }
+      .notes-header-title { font-size:24px; }
+      .notes-input-bottom { flex-direction:column; }
+      .notes-date-in { width:100%; }
+      .notes-tag-wrap { width:100%; flex:none; }
+      .notes-save-btn { width:100%; height:44px; font-size:15px; }
+      .notes-search-in { width:100%; }
+      .notes-filter-row { flex-direction:column; align-items:stretch; }
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -1364,6 +1447,7 @@
     <button class="tab-btn nav-item" onclick="nav('shopping')">Wishlist</button>
     <button class="tab-btn nav-item" onclick="nav('travel')">Travel</button>
     <button class="tab-btn nav-item" onclick="nav('food')">Food</button>
+    <button class="tab-btn nav-item" onclick="nav('notes')">Notes</button>
   </nav>
   <button id="logoutBtn" onclick="signOut()" style="display:none; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:6px 14px; background:transparent; border:1px solid var(--ink3); color:var(--ink3); cursor:pointer; margin-left:16px; transition:all 0.15s;" onmouseover="this.style.borderColor='var(--ink)';this.style.color='var(--ink)'" onmouseout="this.style.borderColor='var(--ink3)';this.style.color='var(--ink3)'">ログアウト</button>
 </header>
@@ -2089,6 +2173,45 @@
   <div class="food-lightbox-counter" id="foodLightboxCounter"></div>
 </div>
 
+<!-- ══ NOTES ══ -->
+<div class="page" id="page-notes">
+  <div class="notes-page">
+    <!-- Header -->
+    <div class="notes-header-row">
+      <span class="notes-header-icon">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="5" y="4" width="22" height="26" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M10 11h12M10 16h12M10 21h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M22 19l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" display="none"/></svg>
+      </span>
+      <h1 class="notes-header-title">所感</h1>
+    </div>
+
+    <!-- Input card -->
+    <div class="ui-card notes-input-card" id="notesInputCard">
+      <textarea id="notesBodyInput" class="notes-body-ta" placeholder="気づいたこと、思ったことをメモ…" rows="3"
+        oninput="notesBodyInput(event)" onkeydown="notesNewBodyKeydown(event)"></textarea>
+      <div class="notes-input-bottom">
+        <input type="date" id="notesDateInput" class="notes-date-in">
+        <div class="notes-tag-wrap" id="notesInputTagWrap" onclick="document.getElementById('notesTagTextIn').focus()">
+          <span id="notesInputTagChips"></span>
+          <input type="text" id="notesTagTextIn" class="notes-tag-text-in" placeholder="タグを追加（Enter）"
+            onkeydown="notesInputTagKeydown(event)" oninput="notesInputTagOninput(event)" onblur="_notesHideInputAC()">
+          <div class="notes-tag-autocomplete" id="notesInputTagAC"></div>
+        </div>
+        <button class="notes-save-btn" onclick="saveNewNote()">保存</button>
+      </div>
+    </div>
+
+    <!-- Filter row -->
+    <div class="notes-filter-row">
+      <input type="search" id="notesSearchIn" class="notes-search-in" placeholder="メモ・タグを検索…"
+        oninput="setNotesSearch(this.value)">
+      <div class="notes-tag-pills-wrap" id="notesTagPills"></div>
+    </div>
+
+    <!-- List -->
+    <div id="notesList"></div>
+  </div>
+</div>
+
 <!-- ── FOOTER ── -->
 
 <script>
@@ -2113,6 +2236,12 @@ let _ldrAccModalId = null;
 let _ldrBalAdjAccId = null;
 let tripFilter = 'all';
 let shopFilter = 'all';
+let reflections = (()=>{ try{ return JSON.parse(localStorage.getItem('reflections')||'[]'); }catch(e){ return []; } })();
+let notesFilter = { tag: null, search: '' };
+let notesVisibleCount = 50;
+let notesNewTags = [];
+let notesEditId = null;
+let notesEditTags = [];
 
 // ── TODO STATE ──
 let todoState = {
@@ -2171,7 +2300,7 @@ async function pushToSupabase(userId) {
   }
   const { error } = await sb.from('user_data').upsert({
     user_id: userId, tasks, task_notes: taskNotes,
-    shopping, subs, txs, trips, meals, budgets, accounts, tx_rules: txRules,
+    shopping, subs, txs, trips, meals, budgets, accounts, tx_rules: txRules, reflections,
     seed_flags: seedFlags, updated_at: new Date().toISOString()
   });
   if (error) {
@@ -2211,6 +2340,7 @@ async function syncFromSupabase(userId) {
     if (data.budgets && typeof data.budgets==='object' && !Array.isArray(data.budgets)) { budgets = data.budgets; localStorage.setItem('ledger_budgets', JSON.stringify(budgets)); }
     if (Array.isArray(data.accounts)) { accounts = data.accounts; localStorage.setItem('ledger_accounts', JSON.stringify(accounts)); }
     if (data.tx_rules && typeof data.tx_rules==='object' && !Array.isArray(data.tx_rules)) { txRules = data.tx_rules; localStorage.setItem('ledger_tx_rules', JSON.stringify(txRules)); }
+    if (Array.isArray(data.reflections)) { reflections = data.reflections; localStorage.setItem('reflections', JSON.stringify(reflections)); }
     if (data.seed_flags) Object.entries(data.seed_flags).forEach(([k,v]) => localStorage.setItem(k,v));
     _syncReady = true;
     return true;
@@ -2349,7 +2479,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   applyTaskNotes();
   const h = new Date().getHours();
   document.getElementById('topDate').textContent = fmtFull(new Date());
-  renderHome(); renderTodayView(); renderCalendar(); renderShopping(); renderTravel(); renderFood(); updateBadge();
+  renderHome(); renderTodayView(); renderCalendar(); renderShopping(); renderTravel(); renderFood(); renderNotes(); updateBadge();
   restoreLdrGuide(); restoreLdrSubtab();
 });
 
@@ -2359,6 +2489,7 @@ document.addEventListener('click', () => {
   closeLdrTxMenus();
   closeAccMenus();
   _closeSubMenus();
+  document.querySelectorAll('.notes-card-menu.open').forEach(m=>m.classList.remove('open'));
 });
 
 // ── NAV ──
@@ -2376,6 +2507,7 @@ function nav(page) {
   if(page==='shopping') renderShopping();
   if(page==='travel')   renderTravel();
   if(page==='food')     renderFood();
+  if(page==='notes')    renderNotes();
 }
 
 // ── HOME ──
@@ -6916,6 +7048,405 @@ async function fillSignedUrls(containerEl) {
   });
 }
 
+// ── REFLECTIONS (Notes) ──
+function saveReflections() { localStorage.setItem('reflections', JSON.stringify(reflections)); saveToSupabase(); }
+
+function renderNotes() {
+  // Initialize date input to today if empty
+  const dateIn = document.getElementById('notesDateInput');
+  if (dateIn && !dateIn.value) dateIn.value = today();
+  _renderNotesInputChips();
+  _renderNotesFilterPills();
+  _renderNotesList();
+}
+
+function _getTagUsage() {
+  const map = {};
+  reflections.forEach(r => { (r.tags||[]).forEach(t => { map[t] = (map[t]||0)+1; }); });
+  return map;
+}
+
+function _renderNotesInputChips() {
+  const el = document.getElementById('notesInputTagChips');
+  if (!el) return;
+  el.innerHTML = notesNewTags.map((t,i) =>
+    `<span class="notes-tag-chip-in">${esc(t)}<button type="button" class="notes-tag-chip-in-x" onclick="event.stopPropagation();notesRemoveInputTag(${i})">×</button></span>`
+  ).join('');
+}
+
+function notesRemoveInputTag(i) {
+  notesNewTags.splice(i, 1);
+  _renderNotesInputChips();
+  document.getElementById('notesTagTextIn')?.focus();
+}
+
+function notesBodyInput(e) {
+  const ta = e.target;
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+}
+
+function notesNewBodyKeydown(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); saveNewNote(); }
+}
+
+function notesInputTagKeydown(e) {
+  const input = e.target;
+  const val = input.value;
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const tag = val.trim().replace(/,/g, '');
+    if (tag && !notesNewTags.includes(tag)) { notesNewTags.push(tag); }
+    input.value = '';
+    _renderNotesInputChips();
+    _notesHideInputAC();
+  } else if (e.key === 'Backspace' && !val && notesNewTags.length > 0) {
+    notesNewTags.pop();
+    _renderNotesInputChips();
+  }
+}
+
+function notesInputTagOninput(e) {
+  const val = e.target.value;
+  if (val.endsWith(',')) {
+    const tag = val.slice(0, -1).trim();
+    if (tag && !notesNewTags.includes(tag)) { notesNewTags.push(tag); }
+    e.target.value = '';
+    _renderNotesInputChips();
+    _notesHideInputAC();
+    return;
+  }
+  _notesShowAC('notesInputTagAC', val, notesNewTags, notesPickInputAcTag);
+}
+
+function _notesHideInputAC() {
+  document.getElementById('notesInputTagAC')?.classList.remove('open');
+}
+
+function _notesShowAC(acId, q, existingTags, pickFn) {
+  const ac = document.getElementById(acId);
+  if (!ac) return;
+  if (!q.trim()) { ac.classList.remove('open'); return; }
+  const usage = _getTagUsage();
+  const matches = Object.entries(usage)
+    .filter(([t]) => t.toLowerCase().includes(q.toLowerCase()) && !existingTags.includes(t))
+    .sort((a,b) => b[1]-a[1]).slice(0, 6);
+  if (!matches.length) { ac.classList.remove('open'); return; }
+  ac.innerHTML = matches.map(([t]) =>
+    `<div class="notes-tag-ac-item" onmousedown="event.preventDefault();${pickFn.name}('${esc(t)}')">${esc(t)}</div>`
+  ).join('');
+  ac.classList.add('open');
+}
+
+function notesPickInputAcTag(tag) {
+  if (!notesNewTags.includes(tag)) notesNewTags.push(tag);
+  const inp = document.getElementById('notesTagTextIn');
+  if (inp) inp.value = '';
+  _renderNotesInputChips();
+  _notesHideInputAC();
+  inp?.focus();
+}
+
+function saveNewNote() {
+  const body = document.getElementById('notesBodyInput')?.value.trim();
+  if (!body) { document.getElementById('notesBodyInput')?.focus(); return; }
+  const date = document.getElementById('notesDateInput')?.value || today();
+  const now = new Date().toISOString();
+  const note = { id: crypto.randomUUID(), date, body, tags: [...notesNewTags], createdAt: now, updatedAt: now };
+  reflections.unshift(note);
+  saveReflections();
+  // Reset input
+  const ta = document.getElementById('notesBodyInput');
+  if (ta) { ta.value = ''; ta.style.height = ''; }
+  const dateIn = document.getElementById('notesDateInput');
+  if (dateIn) dateIn.value = today();
+  notesNewTags = [];
+  _renderNotesInputChips();
+  _notesHideInputAC();
+  notesVisibleCount = 50;
+  _renderNotesFilterPills();
+  _renderNotesList();
+}
+
+function setNotesTagFilter(tag) {
+  notesFilter.tag = (tag && notesFilter.tag !== tag) ? tag : null; // 同じタグをもう一度押すと解除
+  notesVisibleCount = 50;
+  _renderNotesFilterPills();
+  _renderNotesList();
+}
+
+function setNotesSearch(val) {
+  notesFilter.search = val;
+  notesVisibleCount = 50;
+  _renderNotesList();
+}
+
+function _renderNotesFilterPills() {
+  const usage = _getTagUsage();
+  const topTags = Object.entries(usage).sort((a,b) => b[1]-a[1]).slice(0, 15).map(([t]) => t);
+  const el = document.getElementById('notesTagPills');
+  if (!el) return;
+  el.innerHTML = `<button class="ui-pill${!notesFilter.tag?' active':''}" onclick="setNotesTagFilter(null)">すべて</button>`
+    + topTags.map(t => `<button class="ui-pill${notesFilter.tag===t?' active':''}" onclick="setNotesTagFilter('${esc(t)}')">${esc(t)}</button>`).join('');
+}
+
+function _getFilteredReflections() {
+  let list = reflections.slice();
+  if (notesFilter.tag) list = list.filter(r => (r.tags||[]).includes(notesFilter.tag));
+  if (notesFilter.search) {
+    const q = notesFilter.search.toLowerCase();
+    list = list.filter(r => (r.body||'').toLowerCase().includes(q) || (r.tags||[]).some(t => t.toLowerCase().includes(q)));
+  }
+  return list;
+}
+
+function _noteNeedsExpand(body) {
+  const lines = (body||'').split('\n');
+  return lines.length > 6 || (body||'').length > 350;
+}
+
+function _renderNotesList() {
+  const el = document.getElementById('notesList');
+  if (!el) return;
+  const list = _getFilteredReflections();
+  list.sort((a,b) => {
+    if (b.date !== a.date) return b.date < a.date ? -1 : 1;
+    return (b.createdAt||'') < (a.createdAt||'') ? -1 : 1;
+  });
+  if (list.length === 0) {
+    const msg = (notesFilter.tag || notesFilter.search)
+      ? '該当するメモはありません'
+      : 'まだメモがありません。気づいたことを書いてみましょう';
+    el.innerHTML = `<div class="notes-empty">${esc(msg)}</div>`;
+    return;
+  }
+  const visible = list.slice(0, notesVisibleCount);
+  const hasMore = list.length > notesVisibleCount;
+  const groups = {};
+  const dateOrder = [];
+  visible.forEach(r => {
+    if (!groups[r.date]) { groups[r.date] = []; dateOrder.push(r.date); }
+    groups[r.date].push(r);
+  });
+  const uniqueDates = [...new Set(dateOrder)];
+  const todayStr = today();
+  const yesterdayStr = localDate(new Date(new Date(todayStr+'T00:00:00').getTime() - 86400000));
+  const currentYear = new Date().getFullYear();
+  const DOW = '日月火水木金土'.split('');
+  let html = '';
+  uniqueDates.forEach(date => {
+    let label;
+    if (date === todayStr) label = '今日';
+    else if (date === yesterdayStr) label = '昨日';
+    else {
+      const d = new Date(date + 'T00:00:00');
+      const y = d.getFullYear(), m = d.getMonth()+1, day = d.getDate(), dow = DOW[d.getDay()];
+      label = y === currentYear ? `${m}/${day}（${dow}）` : `${y}/${m}/${day}（${dow}）`;
+    }
+    html += `<div class="notes-date-group">
+      <div class="notes-date-label">${esc(label)}</div>
+      ${groups[date].map(r => _notesRenderCard(r)).join('')}
+    </div>`;
+  });
+  if (hasMore) {
+    html += `<div class="notes-load-more"><button class="notes-load-more-btn" onclick="notesLoadMore()">もっと見る（あと${list.length - notesVisibleCount}件）</button></div>`;
+  }
+  el.innerHTML = html;
+}
+
+function _notesRenderCard(r) {
+  const isEditing = notesEditId === String(r.id);
+  if (isEditing) {
+    return `<div class="notes-card notes-card-pos" id="notes-card-${esc(String(r.id))}">
+      <div class="notes-edit-area">
+        <textarea class="notes-edit-body-ta" id="notesEditBodyInput" oninput="notesBodyInput(event)"
+          onkeydown="notesEditBodyKeydown(event,'${esc(String(r.id))}')">${esc(r.body||'')}</textarea>
+        <div class="notes-edit-bottom">
+          <input type="date" class="notes-edit-date-in" id="notesEditDateInput" value="${esc(r.date||'')}">
+          <div class="notes-tag-wrap" id="notesEditTagWrap" onclick="event.stopPropagation();document.getElementById('notesEditTagTextIn')?.focus()">
+            <span id="notesEditTagChips">${notesEditTags.map((t,i)=>`<span class="notes-tag-chip-in">${esc(t)}<button type="button" class="notes-tag-chip-in-x" onclick="event.stopPropagation();notesEditRemoveTag(${i})">×</button></span>`).join('')}</span>
+            <input type="text" id="notesEditTagTextIn" class="notes-tag-text-in" placeholder="タグを追加（Enter）"
+              onkeydown="notesEditTagKeydown(event)" oninput="notesEditTagOninput(event)" onblur="document.getElementById('notesEditTagAC')?.classList.remove('open')">
+            <div class="notes-tag-autocomplete" id="notesEditTagAC"></div>
+          </div>
+        </div>
+        <div class="notes-edit-actions">
+          <button class="draft-btn-cancel" onclick="cancelNotesEdit()">キャンセル</button>
+          <button class="draft-btn-save" onclick="saveNotesEdit('${esc(String(r.id))}')">保存</button>
+        </div>
+      </div>
+    </div>`;
+  }
+  const needsExpand = _noteNeedsExpand(r.body||'');
+  const time = r.createdAt ? new Date(r.createdAt).toLocaleTimeString('ja-JP', {hour:'2-digit',minute:'2-digit'}) : '';
+  const edited = r.updatedAt && r.updatedAt !== r.createdAt ? '<span style="font-size:10px;color:var(--mute);margin-left:4px;">編集済</span>' : '';
+  const tagsHtml = (r.tags||[]).length
+    ? `<div class="notes-card-tags">${(r.tags||[]).map(t=>`<button class="notes-card-tag${notesFilter.tag===t?' active':''}" onclick="event.stopPropagation();setNotesTagFilter('${esc(t)}')">${esc(t)}</button>`).join('')}</div>`
+    : '';
+  return `<div class="notes-card notes-card-pos" id="notes-card-${esc(String(r.id))}">
+    <div class="notes-card-header">
+      <span class="notes-card-time">${esc(time)}${edited}</span>
+      <button class="notes-card-more-btn" onclick="event.stopPropagation();notesToggleMenu('${esc(String(r.id))}')" aria-label="メニュー">…</button>
+      <div class="notes-card-menu" id="notes-menu-${esc(String(r.id))}" onclick="event.stopPropagation()">
+        <button onclick="event.stopPropagation();startNotesEdit('${esc(String(r.id))}')">編集</button>
+        <button class="danger" onclick="event.stopPropagation();notesShowDelConfirm('${esc(String(r.id))}')">削除</button>
+      </div>
+    </div>
+    <div class="notes-card-body${needsExpand?' collapsed':''}" id="notes-body-${esc(String(r.id))}">${esc(r.body||'')}</div>
+    ${needsExpand ? `<button class="notes-card-expand-btn" id="notes-expand-${esc(String(r.id))}" onclick="event.stopPropagation();notesToggleExpand('${esc(String(r.id))}')">続きを読む</button>` : ''}
+    ${tagsHtml}
+    <div class="notes-del-confirm" id="notes-del-${esc(String(r.id))}" onclick="event.stopPropagation()">
+      <div class="notes-del-confirm-text">このメモを削除しますか？</div>
+      <div class="notes-del-confirm-btns">
+        <button class="notes-del-yes" onclick="event.stopPropagation();deleteNote('${esc(String(r.id))}')">削除する</button>
+        <button class="notes-del-no" onclick="event.stopPropagation();notesHideDelConfirm('${esc(String(r.id))}')">キャンセル</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function notesToggleMenu(id) {
+  const menuEl = document.getElementById('notes-menu-'+id);
+  if (!menuEl) return;
+  const wasOpen = menuEl.classList.contains('open');
+  document.querySelectorAll('.notes-card-menu.open').forEach(m => m.classList.remove('open'));
+  if (!wasOpen) menuEl.classList.add('open');
+}
+
+function startNotesEdit(id) {
+  const r = reflections.find(r => String(r.id) === String(id));
+  if (!r) return;
+  notesEditId = String(id);
+  notesEditTags = [...(r.tags||[])];
+  document.querySelectorAll('.notes-card-menu.open').forEach(m => m.classList.remove('open'));
+  _renderNotesList();
+  setTimeout(() => {
+    const ta = document.getElementById('notesEditBodyInput');
+    if (ta) { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight+'px'; ta.focus(); }
+  }, 30);
+}
+
+function cancelNotesEdit() {
+  notesEditId = null;
+  notesEditTags = [];
+  _renderNotesList();
+}
+
+function notesEditBodyKeydown(e, id) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); saveNotesEdit(id); }
+  if (e.key === 'Escape') { e.preventDefault(); cancelNotesEdit(); }
+}
+
+function saveNotesEdit(id) {
+  const r = reflections.find(r => String(r.id) === String(id));
+  if (!r) return;
+  const body = document.getElementById('notesEditBodyInput')?.value.trim();
+  if (!body) return;
+  const date = document.getElementById('notesEditDateInput')?.value || r.date;
+  r.body = body;
+  r.date = date;
+  r.tags = [...notesEditTags];
+  r.updatedAt = new Date().toISOString();
+  notesEditId = null;
+  notesEditTags = [];
+  saveReflections();
+  _renderNotesList();
+}
+
+function notesEditRemoveTag(i) {
+  notesEditTags.splice(i, 1);
+  _renderEditTagChips();
+  document.getElementById('notesEditTagTextIn')?.focus();
+}
+
+function _renderEditTagChips() {
+  const el = document.getElementById('notesEditTagChips');
+  if (!el) return;
+  el.innerHTML = notesEditTags.map((t,i) =>
+    `<span class="notes-tag-chip-in">${esc(t)}<button type="button" class="notes-tag-chip-in-x" onclick="event.stopPropagation();notesEditRemoveTag(${i})">×</button></span>`
+  ).join('');
+}
+
+function notesEditTagKeydown(e) {
+  const input = e.target;
+  const val = input.value;
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const tag = val.trim().replace(/,/g, '');
+    if (tag && !notesEditTags.includes(tag)) { notesEditTags.push(tag); }
+    input.value = '';
+    _renderEditTagChips();
+    document.getElementById('notesEditTagAC')?.classList.remove('open');
+  } else if (e.key === 'Backspace' && !val && notesEditTags.length > 0) {
+    notesEditTags.pop();
+    _renderEditTagChips();
+  }
+}
+
+function notesEditTagOninput(e) {
+  const val = e.target.value;
+  if (val.endsWith(',')) {
+    const tag = val.slice(0,-1).trim();
+    if (tag && !notesEditTags.includes(tag)) { notesEditTags.push(tag); }
+    e.target.value = '';
+    _renderEditTagChips();
+    document.getElementById('notesEditTagAC')?.classList.remove('open');
+    return;
+  }
+  const ac = document.getElementById('notesEditTagAC');
+  if (!ac || !val.trim()) { ac?.classList.remove('open'); return; }
+  const usage = _getTagUsage();
+  const matches = Object.entries(usage)
+    .filter(([t]) => t.toLowerCase().includes(val.toLowerCase()) && !notesEditTags.includes(t))
+    .sort((a,b) => b[1]-a[1]).slice(0, 6);
+  if (!matches.length) { ac.classList.remove('open'); return; }
+  ac.innerHTML = matches.map(([t]) =>
+    `<div class="notes-tag-ac-item" onmousedown="event.preventDefault();notesEditPickAcTag('${esc(t)}')">${esc(t)}</div>`
+  ).join('');
+  ac.classList.add('open');
+}
+
+function notesEditPickAcTag(tag) {
+  if (!notesEditTags.includes(tag)) notesEditTags.push(tag);
+  const inp = document.getElementById('notesEditTagTextIn');
+  if (inp) inp.value = '';
+  _renderEditTagChips();
+  document.getElementById('notesEditTagAC')?.classList.remove('open');
+  inp?.focus();
+}
+
+function notesShowDelConfirm(id) {
+  document.querySelectorAll('.notes-card-menu.open').forEach(m => m.classList.remove('open'));
+  const el = document.getElementById('notes-del-'+id);
+  if (el) el.classList.add('open');
+}
+
+function notesHideDelConfirm(id) {
+  const el = document.getElementById('notes-del-'+id);
+  if (el) el.classList.remove('open');
+}
+
+function deleteNote(id) {
+  reflections = reflections.filter(r => String(r.id) !== String(id));
+  saveReflections();
+  _renderNotesList();
+  _renderNotesFilterPills();
+}
+
+function notesToggleExpand(id) {
+  const body = document.getElementById('notes-body-'+id);
+  const btn = document.getElementById('notes-expand-'+id);
+  if (!body || !btn) return;
+  const isCollapsed = body.classList.contains('collapsed');
+  body.classList.toggle('collapsed', !isCollapsed);
+  btn.textContent = isCollapsed ? '折りたたむ' : '続きを読む';
+}
+
+function notesLoadMore() {
+  notesVisibleCount += 50;
+  _renderNotesList();
+}
+
 // ── UTILS ──
 function fmt(n){return Math.abs(Math.round(n)).toLocaleString('ja-JP');}
 function today(){return localDate();}
@@ -6966,6 +7497,10 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
   <button class="hm-bnav-item" onclick="nav('food')">
     <span class="hm-bnav-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M6 3v14M6 9c2-2 6-2 6 0v1c0 2-6 2-6 0V9z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 3v5c0 1.5-.5 3-2 3V17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     <span class="hm-bnav-label">食事</span>
+  </button>
+  <button class="hm-bnav-item" onclick="nav('notes')">
+    <span class="hm-bnav-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="4" y="3" width="12" height="15" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 7.5h6M7 10.5h6M7 13.5h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+    <span class="hm-bnav-label">所感</span>
   </button>
 </nav>
 
