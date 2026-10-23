@@ -398,6 +398,67 @@
     .ldr-bdg-expand-grid { display:flex; flex-direction:column; gap:8px; }
     .ldr-bdg-expand-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
     .ldr-bdg-expand-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink3); min-width:100px; }
+    /* ── ONBOARD GUIDE PANEL ── */
+    .ldr-onboard-section-title { font-family:'Newsreader',serif; font-size:14px; font-weight:800; font-style:normal; color:var(--ink); margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; gap:6px; }
+    .ldr-onboard-progress { margin-bottom:12px; }
+    .ldr-onboard-progress-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); font-weight:600; margin-bottom:4px; }
+    .ldr-onboard-progress-bar { height:4px; background:rgba(26,24,20,0.12); border-radius:2px; overflow:hidden; }
+    .ldr-onboard-progress-fill { height:100%; border-radius:2px; background:var(--accent); transition:width 0.3s; }
+    .ldr-onboard-step { margin-bottom:10px; background:var(--paper); border:1px solid rgba(26,24,20,0.1); border-radius:10px; padding:10px 12px; }
+    .ldr-onboard-step.done { opacity:0.6; }
+    .ldr-onboard-step.skipped { opacity:0.45; }
+    .ldr-onboard-step-hdr { display:flex; align-items:flex-start; gap:9px; }
+    .ldr-onboard-step-badge { width:22px; height:22px; border-radius:50%; background:var(--accent); color:var(--paper); font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+    .ldr-onboard-step-badge.done { background:var(--ok); }
+    .ldr-onboard-step-badge.skipped { background:var(--mute); }
+    .ldr-onboard-step-title { font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700; color:var(--ink); margin-bottom:2px; }
+    .ldr-onboard-step-desc { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink3); line-height:1.5; }
+    .ldr-onboard-step-hint { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--warn); margin-top:2px; }
+    .ldr-onboard-step-actions { display:flex; align-items:center; gap:6px; margin-top:8px; flex-wrap:wrap; }
+    .ldr-onboard-open-btn { font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:600; padding:4px 10px; border:1.5px solid var(--accent); border-radius:6px; background:transparent; color:var(--accent); cursor:pointer; transition:all 0.12s; white-space:nowrap; }
+    .ldr-onboard-open-btn:hover { background:var(--accent); color:var(--paper); }
+    .ldr-onboard-skip-btn { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--mute); background:transparent; border:none; cursor:pointer; padding:2px 4px; transition:color 0.12s; white-space:nowrap; }
+    .ldr-onboard-skip-btn:hover { color:var(--ink3); }
+    .ldr-onboard-complete-row { display:flex; align-items:center; gap:8px; padding:8px 10px; background:rgba(90,107,58,0.07); border:1px solid rgba(90,107,58,0.2); border-radius:8px; cursor:pointer; margin-bottom:10px; font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:600; color:var(--ok); }
+    .ldr-onboard-complete-row:hover { background:rgba(90,107,58,0.12); }
+    .ldr-weekly-card { background:var(--paper); border:1px solid rgba(26,24,20,0.1); border-radius:10px; padding:12px 14px; margin-bottom:10px; }
+    .ldr-weekly-title { font-family:'Newsreader',serif; font-size:14px; font-weight:800; font-style:normal; color:var(--ink); margin-bottom:8px; }
+    .ldr-weekly-item { margin-bottom:6px; }
+    .ldr-weekly-label { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink2); }
+    .ldr-weekly-accent { color:var(--accent); font-weight:700; }
+    .ldr-weekly-btn { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); background:transparent; border:none; cursor:pointer; padding:2px 0; font-weight:700; white-space:nowrap; display:inline-block; }
+    .ldr-weekly-btn:hover { text-decoration:underline; }
+    .ldr-mob-onboard { display:none; margin-bottom:14px; }
+    .ldr-mob-onboard-card { background:var(--paper); border:1px solid rgba(26,24,20,0.12); border-radius:12px; overflow:hidden; box-shadow:0 2px 8px rgba(26,24,20,0.06); }
+    .ldr-mob-onboard-hdr { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; cursor:pointer; border-bottom:1px solid rgba(26,24,20,0.08); }
+    .ldr-mob-onboard-hdr-title { font-family:'Newsreader',serif; font-size:16px; font-weight:800; font-style:normal; color:var(--ink); }
+    .ldr-mob-onboard-toggle { font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--ink3); }
+    .ldr-mob-onboard-body { padding:12px 16px; }
+    /* Review panel */
+    .ldr-review-section { margin-bottom:16px; }
+    .ldr-review-section-title { font-family:'Newsreader',serif; font-size:16px; font-weight:800; font-style:normal; color:var(--ink); margin-bottom:8px; padding-bottom:4px; border-bottom:2px solid rgba(26,24,20,0.1); }
+    .ldr-review-table { width:100%; border-collapse:collapse; }
+    .ldr-review-table th { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink3); font-weight:600; padding:7px 10px; text-align:left; border-bottom:2px solid rgba(26,24,20,0.12); white-space:nowrap; }
+    .ldr-review-table th.r { text-align:right; }
+    .ldr-review-table td { padding:8px 10px; border-bottom:1px solid rgba(26,24,20,0.07); vertical-align:middle; font-family:'JetBrains Mono',monospace; font-size:13px; }
+    .ldr-review-table td.r { text-align:right; white-space:nowrap; }
+    .ldr-review-table td.name { font-family:'Space Grotesk',sans-serif; }
+    .ldr-review-up { color:var(--accent); }
+    .ldr-review-down { color:var(--ok); }
+    .ldr-review-sum-row { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:14px; }
+    .ldr-review-sum-card { padding:12px 14px; }
+    .ldr-review-sum-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); font-weight:600; margin-bottom:5px; }
+    .ldr-review-sum-val { font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:700; line-height:1.1; }
+    .ldr-review-sum-diff { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); margin-top:3px; }
+    .ldr-review-over { color:var(--accent); font-weight:700; }
+    .ldr-review-warn { color:var(--warn); }
+    /* Budget suggest modal */
+    .ldr-suggest-tbl { width:100%; border-collapse:collapse; }
+    .ldr-suggest-tbl th { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink3); font-weight:600; padding:6px 8px; text-align:left; border-bottom:2px solid rgba(26,24,20,0.12); white-space:nowrap; }
+    .ldr-suggest-tbl th.r { text-align:right; }
+    .ldr-suggest-tbl td { padding:6px 8px; border-bottom:1px solid rgba(26,24,20,0.07); vertical-align:middle; }
+    .ldr-suggest-amt { font-family:'JetBrains Mono',monospace; font-size:12px; text-align:right; white-space:nowrap; }
+    .ldr-suggest-in { font-family:'JetBrains Mono',monospace; font-size:12px; height:26px; border:1.5px solid var(--ink); border-radius:4px; background:var(--paper); color:var(--ink); outline:none; text-align:right; padding:0 5px; width:9ch; }
     /* Placeholder */
     .ldr-coming-soon { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:56px 20px; text-align:center; }
     .ldr-coming-icon { color:var(--mute); margin-bottom:10px; }
@@ -1278,6 +1339,7 @@
       .ldr-body { flex-direction:column; }
       .ldr-guide { display:none; }
       .ldr-guide-collapsed { display:none !important; }
+      .ldr-mob-onboard { display:block; }
       .ldr-main { padding:12px; }
       .ldr-summary-row { grid-template-columns:1fr 1fr; gap:8px; }
       .ldr-sum-card { min-height:70px; }
@@ -1296,6 +1358,9 @@
       .ldr-bdg-table .hide-mob { display:none; }
       /* Always show dashed border on editable cells (no hover on touch) */
       .ldr-bdg-amt { border-color:rgba(139,58,24,0.2); }
+      /* Review panel on mobile */
+      .ldr-review-sum-row { grid-template-columns:1fr 1fr; gap:8px; }
+      .ldr-review-table .hide-mob { display:none; }
 
       /* ── Calendar v2 ── */
       .cal2-layout { grid-template-columns: 1fr; }
@@ -1619,6 +1684,7 @@
       <button class="ui-seg-btn" onclick="ldrTab('accounts',this)">口座・残高</button>
       <button class="ui-seg-btn" onclick="ldrTab('subs',this)">固定費・サブスク</button>
       <button class="ui-seg-btn" onclick="ldrTab('budget',this)">予算</button>
+      <button class="ui-seg-btn" onclick="ldrTab('review',this)">振り返り</button>
       <button class="ui-seg-btn" onclick="ldrTab('import',this)">インポート</button>
     </div>
     <div class="ldr-add-wrap">
@@ -1645,101 +1711,26 @@
   <!-- Body: main content + guide -->
   <div class="ldr-body">
     <div class="ldr-main" id="ldrMain">
+      <div id="ldrMobOnboard" class="ldr-mob-onboard"></div>
       <div id="ldrPanelOverview"></div>
       <div id="ldrPanelTxlist" style="display:none"></div>
       <div id="ldrPanelAccounts" style="display:none"></div>
       <div id="ldrPanelSubs" style="display:none"></div>
       <div id="ldrPanelBudget" style="display:none"></div>
+      <div id="ldrPanelReview" style="display:none"></div>
       <div id="ldrPanelImport" style="display:none"></div>
     </div>
 
     <!-- Guide panel -->
     <aside class="ldr-guide" id="ldrGuide">
       <div class="ldr-guide-hdr">
-        <div class="ldr-guide-title">使い方ガイド</div>
+        <div class="ldr-guide-title">やること</div>
         <button class="ldr-guide-toggle" id="ldrGuideToggle" onclick="toggleLdrGuide()">∧</button>
       </div>
-      <div id="ldrGuideContent">
-        <div class="ldr-step">
-          <div class="ldr-step-num">1</div>
-          <div>
-            <div class="ldr-step-title">まずは取引を記録する</div>
-            <div class="ldr-step-text">「＋ 取引を追加」から収入・支出を記録します。</div>
-            <button class="ldr-add-btn" style="margin-top:8px;border-radius:6px;font-size:12px;padding:5px 12px;" onclick="openTxModal('expense')">＋ 取引を追加</button>
-          </div>
-        </div>
-        <div class="ldr-step">
-          <div class="ldr-step-num">2</div>
-          <div>
-            <div class="ldr-step-title">カテゴリを選ぶ</div>
-            <div class="ldr-step-text">食費・家賃などのカテゴリを選ぶと、カテゴリ別支出に反映されます。</div>
-          </div>
-        </div>
-        <div class="ldr-step">
-          <div class="ldr-step-num">3</div>
-          <div>
-            <div class="ldr-step-title">支払元（口座）を選ぶ</div>
-            <div class="ldr-step-text">取引ごとにお金の出どころを選ぶと、口座ごとの残高が計算されます。</div>
-          </div>
-        </div>
-        <div class="ldr-step">
-          <div class="ldr-step-num">4</div>
-          <div>
-            <div class="ldr-step-title">振替を使う</div>
-            <div class="ldr-step-text">ATM 引き出しやカードの引き落としは「振替」で記録します。支出が二重に数えられません。</div>
-          </div>
-        </div>
-        <div class="ldr-step">
-          <div class="ldr-step-num">5</div>
-          <div>
-            <div class="ldr-step-title">メモを活用する</div>
-            <div class="ldr-step-text">「10月分」など補足をメモに残せます。行をクリックすると後から編集できます。</div>
-          </div>
-        </div>
-        <div class="ldr-step">
-          <div class="ldr-step-num">6</div>
-          <div>
-            <div class="ldr-step-title">固定費・サブスクを登録する</div>
-            <div class="ldr-step-text">支払日と支払元を登録すると、支払日に自動で支出として記録されます（予算・残高にも反映）。チェックを外すとその月の記録を取り消せます。</div>
-          </div>
-        </div>
-        <div class="ldr-step">
-          <div class="ldr-step-num">7</div>
-          <div>
-            <div class="ldr-step-title">予算を決める</div>
-            <div class="ldr-step-text">予算タブで毎月の予算を設定すると、進捗が Overview に表示されます。特定の月だけ変えることもできます。</div>
-          </div>
-        </div>
-        <div class="ldr-step">
-          <div class="ldr-step-num">8</div>
-          <div>
-            <div class="ldr-step-title">月末に振り返る</div>
-            <div class="ldr-step-text">収支・貯蓄率・カテゴリ別支出を見て、翌月に活かしましょう。</div>
-          </div>
-        </div>
-        <div class="ldr-step">
-          <div class="ldr-step-num">9</div>
-          <div>
-            <div class="ldr-step-title">CSV を取り込む</div>
-            <div class="ldr-step-text">インポートで楽天カードや三菱UFJの CSV を取り込めます。一度分類したお店は次回から自動で分類されます。カードの引き落としや ATM は「振替」にすると、支出が二重になりません。</div>
-          </div>
-        </div>
-        <div class="ldr-tips-box">
-          <div class="ldr-tips-hdr">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            運用のコツ
-          </div>
-          <div class="ldr-tips-item">毎日つけなくてOK</div>
-          <div class="ldr-tips-item">週1回まとめて記録でも十分</div>
-          <div class="ldr-tips-item">固定費はサブスクに登録しておく</div>
-          <div class="ldr-tips-item">カテゴリは少なめにまとめると分析しやすい</div>
-          <div class="ldr-tips-item">カードの引き落としは銀行→カードの振替で記録しましょう</div>
-          <div class="ldr-tips-item">口座未設定の取引は週に1回まとめて確認しましょう</div>
-        </div>
-      </div>
+      <div id="ldrGuideContent"></div>
     </aside>
     <div class="ldr-guide-collapsed" id="ldrGuideCollapsed" style="display:none" onclick="toggleLdrGuide()">
-      <span class="ldr-guide-tab-label">ガイド</span>
+      <span class="ldr-guide-tab-label">やること</span>
     </div>
   </div>
 
@@ -3002,6 +2993,20 @@ function renderHome() {
       </div>
       ${budgetHTML}
       ${netWorthHTML}
+      ${(()=>{
+        const last=getLastImportAt();
+        if(!last)return'';
+        const now2=new Date();
+        const diffDays=_daysSinceLocal(last);
+        const lastStr=`${last.getMonth()+1}/${last.getDate()}`;
+        if(diffDays>=7){
+          return`<div style="display:flex;align-items:center;gap:8px;padding:6px 16px 8px;border-top:1px solid rgba(26,24,20,0.07);flex-wrap:wrap;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);font-weight:700;">取り込みから ${diffDays}日 (${lastStr})</span>
+            <button style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:transparent;border:1px solid var(--accent);border-radius:4px;padding:2px 8px;cursor:pointer;" onclick="event.stopPropagation();nav('finance');setTimeout(()=>{_ldrOpenTab('import');},80)">取り込む ›</button>
+          </div>`;
+        }
+        return`<div style="padding:5px 16px 8px;border-top:1px solid rgba(26,24,20,0.07);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3);">最後の CSV 取り込み: ${diffDays}日前（${lastStr}）</div>`;
+      })()}
     </div>
   </div>`;
 
@@ -3579,8 +3584,8 @@ let ldrTxModalType='expense'; // current modal type
 let _ldrOpenMenuId=null;      // currently open ... menu
 
 function _ldrActiveTab(){const a=document.querySelector('#ldrSubtabs .ui-seg-btn.active');return a?a.getAttribute('onclick').match(/'(\w+)'/)?.[1]||'overview':'overview';}
-function chMonth(d){vm+=d;if(vm>11){vm=0;vy++;}if(vm<0){vm=11;vy--;}const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();else if(t==='accounts')renderAccountsPanel();else if(t==='subs')renderSubs();}
-function goMonthToday(){const n=new Date();vy=n.getFullYear();vm=n.getMonth();const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();else if(t==='accounts')renderAccountsPanel();else if(t==='subs')renderSubs();}
+function chMonth(d){vm+=d;if(vm>11){vm=0;vy++;}if(vm<0){vm=11;vy--;}const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();else if(t==='accounts')renderAccountsPanel();else if(t==='subs')renderSubs();else if(t==='review')renderReviewPanel();}
+function goMonthToday(){const n=new Date();vy=n.getFullYear();vm=n.getMonth();const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();else if(t==='accounts')renderAccountsPanel();else if(t==='subs')renderSubs();else if(t==='review')renderReviewPanel();}
 function saveTx(){localStorage.setItem('hd_tx',JSON.stringify(txs));saveToSupabase();renderHome();}
 function saveTxRules(){localStorage.setItem('ledger_tx_rules',JSON.stringify(txRules));saveToSupabase();}
 
@@ -3599,11 +3604,14 @@ function ldrTab(tab, el){
   try{localStorage.setItem('ledger_subtab',tab);}catch(e){}
   document.querySelectorAll('#ldrSubtabs .ui-seg-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  ['overview','txlist','accounts','subs','budget','import'].forEach(t=>{
+  ['overview','txlist','accounts','subs','budget','review','import'].forEach(t=>{
     const p=document.getElementById('ldrPanel'+t.charAt(0).toUpperCase()+t.slice(1));
     if(p)p.style.display=(t===tab?'block':'none');
   });
-  const showMon=tab==='overview'||tab==='txlist'||tab==='budget'||tab==='accounts'||tab==='subs';
+  // mobile onboard: only show on overview
+  const mobOnboard=document.getElementById('ldrMobOnboard');
+  if(mobOnboard)mobOnboard.style.display=(tab==='overview')?'':'none';
+  const showMon=tab==='overview'||tab==='txlist'||tab==='budget'||tab==='accounts'||tab==='subs'||tab==='review';
   const nav=document.getElementById('ldrMonNav');
   if(nav)nav.style.display=showMon?'':'none';
   if(tab==='overview')renderFinance();
@@ -3611,6 +3619,7 @@ function ldrTab(tab, el){
   else if(tab==='subs'){renderSubs();}
   else if(tab==='accounts')renderAccountsPanel();
   else if(tab==='budget')renderBudgetPanel();
+  else if(tab==='review')renderReviewPanel();
   else if(tab==='import')renderLdrImport();
 }
 function restoreLdrSubtab(){
@@ -4075,17 +4084,19 @@ function _importConfirm(){
   if(toAdd.some(r=>r.autoRule))saveTxRules();
   toAdd.forEach(r=>{
     let tx;
+    const _now=new Date().toISOString();
     if(r.type==='transfer'){
-      tx={id:crypto.randomUUID(),type:'transfer',title:r.title,amount:r.amount,date:r.date,note:r.note,srcName:r.srcName,importKey:r.importKey};
+      tx={id:crypto.randomUUID(),type:'transfer',title:r.title,amount:r.amount,date:r.date,note:r.note,srcName:r.srcName,importKey:r.importKey,importedAt:_now};
       if(r.kind==='expense'){if(st.accountId)tx.fromAccountId=st.accountId;if(r.toAccountId)tx.toAccountId=r.toAccountId;}
       else{if(r.toAccountId)tx.fromAccountId=r.toAccountId;if(st.accountId)tx.toAccountId=st.accountId;}
     } else {
-      tx={id:crypto.randomUUID(),type:r.type,title:r.title,amount:r.amount,category:r.category,date:r.date,note:r.note,srcName:r.srcName,importKey:r.importKey};
+      tx={id:crypto.randomUUID(),type:r.type,title:r.title,amount:r.amount,category:r.category,date:r.date,note:r.note,srcName:r.srcName,importKey:r.importKey,importedAt:_now};
       if(st.accountId)tx.accountId=st.accountId;
     }
     txs.push(tx);
   });
   saveTx();
+  renderGuidePanel();renderLdrMobOnboard();
   const count=toAdd.length;
   _importState=null;_importFilter='all';
   const p=document.getElementById('ldrPanelImport');
@@ -4187,6 +4198,7 @@ function saveAccounts(){
   localStorage.setItem('ledger_accounts',JSON.stringify(accounts));
   saveToSupabase();
   renderHome();
+  renderGuidePanel();renderLdrMobOnboard();
 }
 function accountBalance(acc,asOfDate){
   let bal=acc.openingBalance||0;
@@ -4479,6 +4491,7 @@ function saveBudgets(){
   if(!budgets.base)budgets.base={total:null,cats:{}};
   if(!budgets.months)budgets.months={};
   localStorage.setItem('ledger_budgets',JSON.stringify(budgets));
+  renderGuidePanel();renderLdrMobOnboard();
   saveToSupabase();
   renderHome();
 }
@@ -4577,7 +4590,12 @@ function renderBudgetPanel(){
   }).join('');
 
   panel.innerHTML=`
-<div class="ui-card ldr-bdg-top-card">${topCardHtml}</div>
+<div class="ui-card ldr-bdg-top-card">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap">
+    <div style="flex:1">${topCardHtml}</div>
+    <button class="btn btn-ghost btn-sm" style="flex-shrink:0;margin-top:4px" onclick="event.stopPropagation();openBudgetSuggest()">実績から提案</button>
+  </div>
+</div>
 <div class="ui-card" style="overflow-x:auto;">
   <table class="ldr-bdg-table">
     <thead><tr>
@@ -4672,11 +4690,136 @@ function ldrBdgToggleExpand(cat){
   el.style.display=el.style.display==='none'?'table-row':'none';
 }
 
+// ── budget suggestion modal ──
+function openBudgetSuggest(){
+  // Find up to 3 months with expense data, going back from the month before vy/vm
+  const months=[];
+  for(let i=1;i<=6&&months.length<3;i++){
+    let y=vy,m=vm-i;
+    while(m<0){m+=12;y--;}
+    const hasData=txs.some(t=>{if(!t.date||t.type!=='expense')return false;const d=new Date(t.date);return d.getFullYear()===y&&d.getMonth()===m;});
+    if(hasData)months.push({y,m});
+  }
+  if(!months.length){
+    alert('提案するための実績がまだありません');return;
+  }
+  // Compute per-category averages
+  const catTotals={};
+  months.forEach(({y,m})=>{
+    const exp=txs.filter(t=>t.type==='expense'&&t.date&&(()=>{const d=new Date(t.date);return d.getFullYear()===y&&d.getMonth()===m;})());
+    exp.forEach(t=>{
+      catTotals[t.category]=(catTotals[t.category]||0)+t.amount;
+    });
+  });
+  const base=budgets&&budgets.base?budgets.base:{total:null,cats:{}};
+  // Build rows
+  const cats=Object.keys(catTotals).sort((a,b)=>catTotals[b]-catTotals[a]);
+  const ceil1k=v=>Math.ceil(v/1000)*1000;
+  const moLabel=months.map(({y,m})=>`${m+1}月`).join('・');
+  const moCount=months.length;
+  const rows=cats.map(c=>{
+    const avg=catTotals[c]/months.length; // 支出がなかった月も 0 として平均する
+    const suggest=ceil1k(avg);
+    const curBudget=base.cats&&base.cats[c]!==undefined?base.cats[c]:null;
+    const defaultCheck=curBudget===null||(suggest!==curBudget);
+    return{cat:c,avg,suggest,curBudget,check:defaultCheck};
+  });
+  const totalAvg=rows.reduce((s,r)=>s+r.avg,0);
+  const totalSuggest=ceil1k(totalAvg);
+  const totalCurBudget=base.total!==null&&base.total!==undefined?base.total:null;
+  const totalCheck=totalCurBudget===null||(totalSuggest!==totalCurBudget);
+
+  let overlay=document.getElementById('ldrBdgSuggestOverlay');
+  if(!overlay){
+    overlay=document.createElement('div');
+    overlay.id='ldrBdgSuggestOverlay';
+    overlay.className='ldr-modal-overlay';
+    overlay.onclick=function(e){if(e.target===this)closeBudgetSuggest();};
+    document.body.appendChild(overlay);
+  }
+  const rowsHtml=rows.map((r,i)=>`<tr>
+    <td class="name" style="font-family:'Space Grotesk',sans-serif;font-size:13px;">${esc(r.cat)}</td>
+    <td class="ldr-suggest-amt">¥${fmt(r.avg)}</td>
+    <td style="text-align:right;"><input class="ldr-suggest-in" id="ldrSugIn_${i}" type="number" min="0" value="${r.suggest}" onclick="event.stopPropagation()" style="font-family:'JetBrains Mono',monospace;"></td>
+    <td class="ldr-suggest-amt">${r.curBudget!==null?'¥'+fmt(r.curBudget):'—'}</td>
+    <td style="text-align:center;"><input type="checkbox" id="ldrSugChk_${i}" ${r.check?'checked':''} onclick="event.stopPropagation()"></td>
+  </tr>`).join('');
+
+  overlay.innerHTML=`<div class="ldr-modal" onclick="event.stopPropagation()" style="max-width:640px">
+    <div class="ldr-modal-hdr">
+      <div class="ldr-modal-title">実績から提案</div>
+      <button class="ldr-modal-close" onclick="closeBudgetSuggest()">✕</button>
+    </div>
+    <div class="ldr-modal-body" style="padding-bottom:0">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--ink3);margin-bottom:10px;">直近${moCount}か月（${moLabel}）の平均から提案しています。</div>
+      <div style="overflow-x:auto;">
+        <table class="ldr-suggest-tbl">
+          <thead><tr>
+            <th style="min-width:80px;">カテゴリ</th>
+            <th class="r" style="min-width:80px;">平均実績</th>
+            <th class="r" style="min-width:90px;">提案額</th>
+            <th class="r" style="min-width:80px;">今の予算</th>
+            <th style="min-width:40px;text-align:center;">適用</th>
+          </tr></thead>
+          <tbody>
+            ${rowsHtml}
+            <tr style="border-top:2px solid rgba(26,24,20,0.15);font-weight:700">
+              <td style="font-family:'Space Grotesk',sans-serif;font-size:13px;">全体合計</td>
+              <td class="ldr-suggest-amt">¥${fmt(totalAvg)}</td>
+              <td style="text-align:right;"><input class="ldr-suggest-in" id="ldrSugInTotal" type="number" min="0" value="${totalSuggest}" onclick="event.stopPropagation()" style="font-family:'JetBrains Mono',monospace;"></td>
+              <td class="ldr-suggest-amt">${totalCurBudget!==null?'¥'+fmt(totalCurBudget):'—'}</td>
+              <td style="text-align:center;"><input type="checkbox" id="ldrSugChkTotal" ${totalCheck?'checked':''} onclick="event.stopPropagation()"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="ldr-modal-ftr">
+      <button class="btn btn-ghost btn-sm" onclick="closeBudgetSuggest()">キャンセル</button>
+      <div class="ldr-modal-ftr-r">
+        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();_budgetSuggestApply(${JSON.stringify(rows.map((_,i)=>i))})">選んだ項目を毎月の予算にする</button>
+      </div>
+    </div>
+  </div>`;
+  overlay.classList.add('open');
+}
+function closeBudgetSuggest(){
+  const o=document.getElementById('ldrBdgSuggestOverlay');if(o)o.classList.remove('open');
+}
+function _budgetSuggestApply(idxArr){
+  if(!budgets.base)budgets.base={total:null,cats:{}};
+  idxArr.forEach(i=>{
+    const chk=document.getElementById('ldrSugChk_'+i);
+    if(!chk||!chk.checked)return;
+    const inp=document.getElementById('ldrSugIn_'+i);
+    if(!inp)return;
+    const val=Number(inp.value);
+    if(isNaN(val)||val<0)return;
+    // Get cat from table row: we need to find it. Use data approach
+    const tbl=document.querySelector('#ldrBdgSuggestOverlay .ldr-suggest-tbl tbody tr:nth-child('+(i+1)+') td:first-child');
+    const cat=tbl?tbl.textContent.trim():'';
+    if(!cat)return;
+    if(!budgets.base.cats)budgets.base.cats={};
+    budgets.base.cats[cat]=val;
+  });
+  // Total
+  const chkTotal=document.getElementById('ldrSugChkTotal');
+  if(chkTotal&&chkTotal.checked){
+    const inpTotal=document.getElementById('ldrSugInTotal');
+    if(inpTotal){const val=Number(inpTotal.value);if(!isNaN(val)&&val>=0)budgets.base.total=val;}
+  }
+  saveBudgets();
+  closeBudgetSuggest();
+  renderBudgetPanel();
+  renderGuidePanel();renderLdrMobOnboard();
+}
+
 // ── guide panel ──
 function restoreLdrGuide(){
   let open=true;
   try{const v=localStorage.getItem('ledger_guide_open');if(v!==null)open=v==='true';}catch(e){}
   if(!open)_ldrGuideSetState(false);
+  renderGuidePanel();
 }
 function toggleLdrGuide(){
   const guide=document.getElementById('ldrGuide');
@@ -4692,6 +4835,264 @@ function _ldrGuideSetState(open){
   if(col)col.style.display=open?'none':'flex';
   if(toggle)toggle.textContent=open?'∧':'∨';
   try{localStorage.setItem('ledger_guide_open',open);}catch(e){}
+}
+
+// ── open Ledger sub-tab by name ──
+function _ldrOpenTab(name){
+  const btn=document.querySelector('#ldrSubtabs .ui-seg-btn[onclick*="\''+name+'\'"]');
+  if(btn)ldrTab(name,btn);
+}
+
+// ── getLastImportAt ──
+function _daysSinceLocal(d){ // 日付（ローカル）の差で数える
+  const a=new Date(d.getFullYear(),d.getMonth(),d.getDate()), t=new Date(); t.setHours(0,0,0,0);
+  return Math.round((t-a)/86400000);
+}
+function getLastImportAt(){
+  // 1. prefer importedAt field
+  let max=null;
+  for(const t of txs){
+    if(t.importedAt){const d=new Date(t.importedAt);if(!isNaN(d)&&(!max||d>max))max=d;}
+  }
+  if(max)return max;
+  // 2. fallback: date of latest tx with importKey
+  let maxDate=null;
+  for(const t of txs){
+    if(t.importKey&&t.date){const d=new Date(t.date+'T00:00:00');if(!isNaN(d)&&(!maxDate||d>maxDate))maxDate=d;}
+  }
+  return maxDate;
+}
+
+// ── onboarding status ──
+function _getOnboardSkips(){
+  try{const v=localStorage.getItem('ledger_onboard_skip');return Array.isArray(JSON.parse(v))?JSON.parse(v):[];}catch(e){return[];}
+}
+function _setOnboardSkip(idx,skip){
+  let arr=_getOnboardSkips();
+  if(skip){if(!arr.includes(idx))arr.push(idx);}
+  else{arr=arr.filter(i=>i!==idx);}
+  try{localStorage.setItem('ledger_onboard_skip',JSON.stringify(arr));}catch(e){}
+  renderGuidePanel();renderLdrMobOnboard();
+}
+function _ldrOnboardSteps(){
+  // Returns [{done, skipped, label, desc, hint, openTab, openTabLabel}]
+  const skip=_getOnboardSkips();
+  const activeAcc=accounts.filter(a=>!a.archived);
+  const hasBank=activeAcc.some(a=>a.kind==='bank');
+  const hasCard=activeAcc.some(a=>a.kind==='card');
+  const step1done=hasBank&&hasCard;
+  let step1hint='';
+  if(activeAcc.length>0&&!(hasBank&&hasCard)){
+    step1hint='あと: '+(hasBank?'カード':'銀行');
+  }
+  const step2done=txs.some(t=>t.importKey);
+  const step3done=subs.some(s=>s.payDay!==undefined&&s.payDay!==null&&s.payDay!=='');
+  const step4done=(budgets&&budgets.base&&(budgets.base.total!==null&&budgets.base.total!==undefined))||
+    (budgets&&budgets.base&&budgets.base.cats&&Object.keys(budgets.base.cats).length>0);
+  return[
+    {done:step1done,skipped:skip.includes(0),hint:step1hint,
+     title:'口座を登録する',
+     desc:'銀行とカードを登録しましょう',
+     openTab:'accounts',openTabLabel:'口座・残高を開く ›'},
+    {done:step2done,skipped:skip.includes(1),
+     title:'CSV を取り込む',
+     desc:'先月分の CSV を取り込みましょう（引き落とし・ATM は振替に）',
+     openTab:'import',openTabLabel:'インポートを開く ›'},
+    {done:step3done,skipped:skip.includes(2),
+     title:'固定費・サブスクを登録する',
+     desc:'支払日を設定すると自動で記録されます',
+     openTab:'subs',openTabLabel:'固定費を開く ›'},
+    {done:step4done,skipped:skip.includes(3),
+     title:'予算を決める',
+     desc:'実績から提案ボタンで簡単に設定できます',
+     openTab:'budget',openTabLabel:'予算を開く ›'},
+  ];
+}
+
+// ── render guide panel ──
+function renderGuidePanel(){
+  const el=document.getElementById('ldrGuideContent');if(!el)return;
+  const steps=_ldrOnboardSteps();
+  const allDoneOrSkipped=steps.every(s=>s.done||s.skipped);
+  const completedCount=steps.filter(s=>s.done||s.skipped).length;
+  const pct=Math.round(completedCount/steps.length*100);
+  let html='';
+
+  if(!allDoneOrSkipped){
+    // Show onboarding steps
+    html+=`<div class="ldr-onboard-section-title">はじめの設定</div>`;
+    html+=`<div class="ldr-onboard-progress"><div class="ldr-onboard-progress-label">${completedCount} / ${steps.length} 完了</div><div class="ldr-onboard-progress-bar"><div class="ldr-onboard-progress-fill" style="width:${pct}%"></div></div></div>`;
+    steps.forEach((s,i)=>{
+      const isDone=s.done||s.skipped;
+      const badgeClass=s.done?'done':s.skipped?'skipped':'';
+      const badgeText=s.done?'✓':s.skipped?'–':(i+1);
+      const stepClass=s.done?'done':s.skipped?'skipped':'';
+      const skipLabel=s.skipped?'戻す':'この手順は使わない';
+      html+=`<div class="ldr-onboard-step ${stepClass}">
+        <div class="ldr-onboard-step-hdr">
+          <div class="ldr-onboard-step-badge ${badgeClass}">${badgeText}</div>
+          <div>
+            <div class="ldr-onboard-step-title">${esc(s.title)}</div>
+            <div class="ldr-onboard-step-desc">${esc(s.desc)}</div>
+            ${s.hint?`<div class="ldr-onboard-step-hint">${esc(s.hint)}</div>`:''}
+          </div>
+        </div>
+        ${!isDone?`<div class="ldr-onboard-step-actions">
+          <button class="ldr-onboard-open-btn" onclick="event.stopPropagation();_ldrOpenTab('${s.openTab}')">${esc(s.openTabLabel)}</button>
+          <button class="ldr-onboard-skip-btn" onclick="event.stopPropagation();_setOnboardSkip(${i},true)">${skipLabel}</button>
+        </div>`:`<div class="ldr-onboard-step-actions">
+          ${s.skipped?`<button class="ldr-onboard-skip-btn" onclick="event.stopPropagation();_setOnboardSkip(${i},false)">戻す</button>`:''}
+        </div>`}
+      </div>`;
+    });
+  } else {
+    // All complete - show collapsed onboarding row
+    html+=`<div class="ldr-onboard-complete-row" onclick="event.stopPropagation();this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      はじめの設定 完了
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;margin-left:auto;color:var(--ink3);">▾</span>
+    </div>
+    <div style="display:none">`;
+    steps.forEach((s,i)=>{
+      const badgeText=s.done?'✓':'–';
+      const badgeClass=s.done?'done':'skipped';
+      html+=`<div class="ldr-onboard-step ${s.skipped?'skipped':'done'}" style="margin-bottom:6px;">
+        <div class="ldr-onboard-step-hdr">
+          <div class="ldr-onboard-step-badge ${badgeClass}">${badgeText}</div>
+          <div>
+            <div class="ldr-onboard-step-title">${esc(s.title)}</div>
+            ${s.skipped?`<div class="ldr-onboard-step-actions"><button class="ldr-onboard-skip-btn" onclick="event.stopPropagation();_setOnboardSkip(${i},false)">戻す</button></div>`:''}
+          </div>
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+    // Weekly tasks
+    html+=_renderGuideWeekly();
+  }
+  // Tips box always shown
+  html+=`<div class="ldr-tips-box" style="margin-top:10px">
+    <div class="ldr-tips-hdr">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      運用のコツ
+    </div>
+    <div class="ldr-tips-item">週1回 CSV を取り込むだけでOK</div>
+    <div class="ldr-tips-item">固定費はサブスクに登録しておく</div>
+    <div class="ldr-tips-item">カテゴリは少なめにまとめると分析しやすい</div>
+    <div class="ldr-tips-item">カードの引き落としは銀行→カードの振替で記録</div>
+  </div>`;
+  el.innerHTML=html;
+}
+
+function _renderGuideWeekly(){
+  const now=new Date();
+  const last=getLastImportAt();
+  let weeklyHtml='';
+  // Import info
+  let importLine='';
+  if(!last){
+    importLine=`<div class="ldr-weekly-item"><span class="ldr-weekly-label">まだ取り込んでいません</span> <button class="ldr-weekly-btn" onclick="event.stopPropagation();_ldrOpenTab('import')">CSV を取り込む ›</button></div>`;
+  } else {
+    const diffDays=_daysSinceLocal(last);
+    const lastDate=`${last.getMonth()+1}/${last.getDate()}`;
+    if(diffDays>=7){
+      importLine=`<div class="ldr-weekly-item"><span class="ldr-weekly-accent">取り込みから ${diffDays} 日たちました</span> <button class="ldr-weekly-btn" onclick="event.stopPropagation();_ldrOpenTab('import')">CSV を取り込む ›</button></div>`;
+    } else {
+      importLine=`<div class="ldr-weekly-item"><span class="ldr-weekly-label">最後の取り込み: ${diffDays}日前（${lastDate}）</span></div>`;
+    }
+  }
+  // Uncategorized count
+  const cy=now.getFullYear(),cm=now.getMonth();
+  const uncatCount=txs.filter(t=>{
+    if(t.type!=='expense')return false;
+    if(!t.date)return false;
+    const d=new Date(t.date+'T00:00:00');
+    return d.getFullYear()===cy&&d.getMonth()===cm&&(t.category==='その他'||!t.category);
+  }).length;
+  let uncatLine='';
+  if(uncatCount>0){
+    uncatLine=`<div class="ldr-weekly-item"><span class="ldr-weekly-label">未分類（その他）が今月 <b>${uncatCount}</b> 件</span> <button class="ldr-weekly-btn" onclick="event.stopPropagation();ldrListCat='その他';_ldrOpenTab('txlist');setTimeout(()=>{const s=document.getElementById('ldrListCatSel');if(s){s.value='その他';renderLdrTxList();}},80)">取引一覧で確認 ›</button></div>`;
+  }
+  // Monthly review prompt
+  const dom=now.getDate();
+  const prevM=cm===0?11:cm-1;
+  const prevMLabel=`${prevM+1}月`;
+  let monthlyLine='';
+  const reviewBtn=`<button class="ldr-weekly-btn" onclick="event.stopPropagation();_openReviewLastMonth()">振り返る ›</button>`;
+  if(dom>=1&&dom<=7){
+    monthlyLine=`<div class="ldr-weekly-item"><span class="ldr-weekly-label">先月（${prevMLabel}）の振り返りをしましょう</span> ${reviewBtn}</div>`;
+  } else {
+    monthlyLine=`<div class="ldr-weekly-item" style="opacity:0.6"><span class="ldr-weekly-label">月初に先月の振り返りをしましょう</span> ${reviewBtn}</div>`;
+  }
+  weeklyHtml=`<div class="ldr-weekly-card">
+    <div class="ldr-weekly-title">今週の作業</div>
+    ${importLine}${uncatLine}
+  </div>
+  <div class="ldr-weekly-card">
+    <div class="ldr-weekly-title">今月の作業</div>
+    ${monthlyLine}
+  </div>`;
+  return weeklyHtml;
+}
+
+function _openReviewLastMonth(){
+  const now=new Date();
+  let py=now.getFullYear(),pm=now.getMonth()-1;
+  if(pm<0){pm=11;py--;}
+  vy=py;vm=pm;
+  const btn=document.querySelector('#ldrSubtabs .ui-seg-btn[onclick*="\'review\'"]');
+  if(btn)ldrTab('review',btn);
+}
+
+// ── render mobile onboard ──
+function renderLdrMobOnboard(){
+  const el=document.getElementById('ldrMobOnboard');if(!el)return;
+  const steps=_ldrOnboardSteps();
+  const allDone=steps.every(s=>s.done||s.skipped);
+  const completedCount=steps.filter(s=>s.done||s.skipped).length;
+  const pct=Math.round(completedCount/steps.length*100);
+  let inner='';
+  if(!allDone){
+    inner=`<div class="ldr-mob-onboard-card">
+      <div class="ldr-mob-onboard-hdr" onclick="const b=this.nextElementSibling;b.style.display=b.style.display==='none'?'block':'none';this.querySelector('.ldr-mob-onboard-toggle').textContent=b.style.display==='none'?'∨':'∧'">
+        <span class="ldr-mob-onboard-hdr-title">はじめの設定 ${completedCount}/${steps.length}</span>
+        <span class="ldr-mob-onboard-toggle">∨</span>
+      </div>
+      <div class="ldr-mob-onboard-body" style="display:none">
+        <div class="ldr-onboard-progress-bar" style="margin-bottom:12px"><div class="ldr-onboard-progress-fill" style="width:${pct}%"></div></div>
+        ${steps.map((s,i)=>{
+          const isDone=s.done||s.skipped;
+          const badge=s.done?'✓':s.skipped?'–':(i+1);
+          const bCls=s.done?'done':s.skipped?'skipped':'';
+          return `<div class="ldr-onboard-step ${s.done?'done':s.skipped?'skipped':''}" style="margin-bottom:8px">
+            <div class="ldr-onboard-step-hdr">
+              <div class="ldr-onboard-step-badge ${bCls}">${badge}</div>
+              <div>
+                <div class="ldr-onboard-step-title">${esc(s.title)}</div>
+                ${s.hint?`<div class="ldr-onboard-step-hint">${esc(s.hint)}</div>`:''}
+              </div>
+            </div>
+            ${!isDone?`<div class="ldr-onboard-step-actions">
+              <button class="ldr-onboard-open-btn" onclick="event.stopPropagation();_ldrOpenTab('${s.openTab}')">${esc(s.openTabLabel)}</button>
+              <button class="ldr-onboard-skip-btn" onclick="event.stopPropagation();_setOnboardSkip(${i},true)">この手順は使わない</button>
+            </div>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  } else {
+    // Weekly / monthly tasks
+    inner=`<div class="ldr-mob-onboard-card">
+      <div class="ldr-mob-onboard-hdr" onclick="const b=this.nextElementSibling;b.style.display=b.style.display==='none'?'block':'none';this.querySelector('.ldr-mob-onboard-toggle').textContent=b.style.display==='none'?'∨':'∧'">
+        <span class="ldr-mob-onboard-hdr-title">やること</span>
+        <span class="ldr-mob-onboard-toggle">∨</span>
+      </div>
+      <div class="ldr-mob-onboard-body" style="display:none">
+        ${_renderGuideWeekly()}
+      </div>
+    </div>`;
+  }
+  el.innerHTML=inner;
 }
 
 // ── add menu ──
@@ -5175,6 +5576,146 @@ function renderFinance(){
     </div>
   </div>
 </div>`;
+  // Update guide panel with latest data
+  renderGuidePanel();
+  renderLdrMobOnboard();
+}
+
+// ── renderReviewPanel ──
+function renderReviewPanel(){
+  const panel=document.getElementById('ldrPanelReview');if(!panel)return;
+  // Update month nav
+  const ml=document.getElementById('ldrMonLabel');
+  if(ml)ml.textContent=`${vy}年 ${LDR_MONTHS[vm]}`;
+  const firstDay=new Date(vy,vm,1),lastDay=new Date(vy,vm+1,0);
+  const pEl=document.getElementById('ldrPeriod');
+  if(pEl)pEl.textContent=`${vy}年${vm+1}月${firstDay.getDate()}日 〜 ${vy}年${vm+1}月${lastDay.getDate()}日`;
+
+  const moTxs=txs.filter(t=>{if(!t.date)return false;const d=new Date(t.date);return d.getFullYear()===vy&&d.getMonth()===vm;});
+  const inc=moTxs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const exp=moTxs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const net=inc-exp;
+  const rate=inc>0?((net/inc)*100):0;
+
+  let py=vy,pm=vm-1;if(pm<0){pm=11;py--;}
+  const prevTxs=txs.filter(t=>{if(!t.date)return false;const d=new Date(t.date);return d.getFullYear()===py&&d.getMonth()===pm;});
+  const prevInc=prevTxs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const prevExp=prevTxs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const prevNet=prevInc-prevExp;
+  const prevRate=prevInc>0?((prevNet/prevInc)*100):0;
+
+  function diffStr(v){if(!isFinite(v)||v===0)return'±0';return(v>0?'+':'')+(v<0?'-':'')+'¥'+fmt(Math.abs(v));}
+  function diffPct(v){if(!isFinite(v))return'';return(v>0?'+':'')+v.toFixed(1)+'%';}
+
+  // 1. Summary
+  const sumHtml=`<div class="ldr-review-sum-row">
+    <div class="ui-card ldr-review-sum-card">
+      <div class="ldr-review-sum-label">収入</div>
+      <div class="ldr-review-sum-val inc">¥${fmt(inc)}</div>
+      <div class="ldr-review-sum-diff">前月比 ${diffStr(inc-prevInc)}</div>
+    </div>
+    <div class="ui-card ldr-review-sum-card">
+      <div class="ldr-review-sum-label">支出</div>
+      <div class="ldr-review-sum-val exp">¥${fmt(exp)}</div>
+      <div class="ldr-review-sum-diff">前月比 ${diffStr(exp-prevExp)}</div>
+    </div>
+    <div class="ui-card ldr-review-sum-card">
+      <div class="ldr-review-sum-label">収支</div>
+      <div class="ldr-review-sum-val ${net>=0?'pos':'neg'}">${net>=0?'+':''}¥${fmt(Math.abs(net))}</div>
+      <div class="ldr-review-sum-diff">前月比 ${diffStr(net-prevNet)}</div>
+    </div>
+    <div class="ui-card ldr-review-sum-card">
+      <div class="ldr-review-sum-label">貯蓄率</div>
+      <div class="ldr-review-sum-val ${rate>=0?'pos':'neg'}">${rate.toFixed(1)}%</div>
+      <div class="ldr-review-sum-diff">前月 ${prevRate.toFixed(1)}%</div>
+    </div>
+  </div>`;
+
+  // 2. Budget vs actual
+  const eb=getEffBudget(vy,vm);
+  const catExpMap={};moTxs.filter(t=>t.type==='expense').forEach(t=>{catExpMap[t.category]=(catExpMap[t.category]||0)+t.amount;});
+  const allBudCats=[...new Set([...Object.keys(eb.cats),...Object.keys(catExpMap)])];
+  // Sort: over budget first, then by actual amount
+  const budRows=allBudCats.map(cat=>{
+    const bud=eb.cats[cat];
+    const act=catExpMap[cat]||0;
+    const hasB=bud!==null&&bud!==undefined;
+    const over=hasB&&act>bud;
+    const warn=hasB&&!over&&act/bud>=0.8;
+    return{cat,bud,act,hasB,over,warn};
+  }).sort((a,b)=>{
+    if(a.over!==b.over)return a.over?-1:1;
+    return b.act-a.act;
+  });
+  // Also show overall budget
+  const budRowsHtml=budRows.map(r=>{
+    const pct=r.hasB&&r.bud>0?r.act/r.bud*100:null;
+    const overAmt=r.hasB?r.act-r.bud:null;
+    const barColor=r.over?'var(--accent)':r.warn?'var(--warn)':'var(--ok)';
+    const dot=TX_CAT_COLORS[r.cat]||'#6b7280';
+    return`<tr>
+      <td class="name"><div style="display:flex;align-items:center;gap:5px;"><div style="width:7px;height:7px;border-radius:50%;background:${dot};flex-shrink:0"></div>${esc(r.cat)}</div></td>
+      <td class="r">${r.hasB?'¥'+fmt(r.bud):'—'}</td>
+      <td class="r ${r.over?'ldr-review-over':r.warn?'ldr-review-warn':''}">¥${fmt(r.act)}</td>
+      <td class="r">${r.hasB&&pct!==null?`<div style="display:flex;align-items:center;gap:5px;"><div style="flex:1;min-width:40px;height:4px;background:rgba(26,24,20,0.1);border-radius:2px;overflow:hidden"><div style="height:100%;width:${Math.min(pct,100).toFixed(1)}%;background:${barColor};border-radius:2px"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:11px;${r.over?'color:var(--accent);font-weight:700':''}">${pct.toFixed(0)}%${r.over?' <span class="ldr-review-over">¥'+fmt(overAmt)+' 超過</span>':''}</span></div>`:'—'}</td>
+    </tr>`;
+  }).join('');
+  const overallBudHtml=(eb.total!==null&&eb.total!==undefined)?`<tr style="border-top:2px solid rgba(26,24,20,0.15);font-weight:700">
+    <td class="name">合計</td><td class="r">¥${fmt(eb.total)}</td>
+    <td class="r ${exp>eb.total?'ldr-review-over':''}">¥${fmt(exp)}</td>
+    <td class="r">${exp>eb.total?`<span class="ldr-review-over">¥${fmt(exp-eb.total)} 超過</span>`:(eb.total>0?`${(exp/eb.total*100).toFixed(0)}%`:'—')}</td>
+  </tr>`:'';
+  const budSection=`<div class="ui-card" style="overflow-x:auto"><table class="ldr-review-table">
+    <thead><tr><th style="min-width:80px;">カテゴリ</th><th class="r" style="min-width:80px;">予算</th><th class="r" style="min-width:80px;">実績</th><th style="min-width:120px;">進捗</th></tr></thead>
+    <tbody>${budRowsHtml}${overallBudHtml}</tbody>
+  </table></div>`;
+
+  // 3. Category MoM diff
+  const prevCatMap={};prevTxs.filter(t=>t.type==='expense').forEach(t=>{prevCatMap[t.category]=(prevCatMap[t.category]||0)+t.amount;});
+  const momCats=[...new Set([...Object.keys(catExpMap),...Object.keys(prevCatMap)])];
+  const momRows=momCats.map(c=>({cat:c,cur:catExpMap[c]||0,prev:prevCatMap[c]||0,diff:(catExpMap[c]||0)-(prevCatMap[c]||0)}))
+    .sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff));
+  const momHtml=momRows.length?`<div class="ui-card" style="overflow-x:auto"><table class="ldr-review-table">
+    <thead><tr><th style="min-width:80px;">カテゴリ</th><th class="r hide-mob" style="min-width:80px;">今月</th><th class="r hide-mob" style="min-width:80px;">前月</th><th class="r" style="min-width:80px;">差額</th></tr></thead>
+    <tbody>${momRows.map(r=>{
+      const isUp=r.diff>0;const col=isUp?'ldr-review-up':'ldr-review-down';const arrow=isUp?'▲':'▼';
+      const dot=TX_CAT_COLORS[r.cat]||'#6b7280';
+      return`<tr><td class="name"><div style="display:flex;align-items:center;gap:5px;"><div style="width:7px;height:7px;border-radius:50%;background:${dot};flex-shrink:0"></div>${esc(r.cat)}</div></td>
+        <td class="r hide-mob">¥${fmt(r.cur)}</td>
+        <td class="r hide-mob">¥${fmt(r.prev)}</td>
+        <td class="r ${col}">${arrow} ¥${fmt(Math.abs(r.diff))}</td></tr>`;
+    }).join('')}</tbody>
+  </table></div>`:`<div style="padding:16px;font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--mute);">前月データなし</div>`;
+
+  // 4. Top merchants (top 5)
+  const merchantMap={};
+  moTxs.filter(t=>t.type==='expense').forEach(t=>{
+    const key=t.srcName||t.title||'不明';
+    if(!merchantMap[key])merchantMap[key]={amt:0,count:0};
+    merchantMap[key].amt+=t.amount;merchantMap[key].count++;
+  });
+  const top5=Object.entries(merchantMap).sort((a,b)=>b[1].amt-a[1].amt).slice(0,5);
+  const merchantHtml=top5.length?`<div class="ui-card" style="overflow-x:auto"><table class="ldr-review-table">
+    <thead><tr><th style="min-width:120px;">お店</th><th class="r" style="min-width:80px;">合計</th><th class="r" style="min-width:50px;">回数</th></tr></thead>
+    <tbody>${top5.map(([name,{amt,count}])=>`<tr><td class="name">${esc(name)}</td><td class="r">¥${fmt(amt)}</td><td class="r">${count}</td></tr>`).join('')}</tbody>
+  </table></div>`:`<div style="padding:16px;font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--mute);">支出データなし</div>`;
+
+  // 5. Subs (subId を持つ取引)
+  const subTxs=moTxs.filter(t=>t.subId);
+  const subTotal=subTxs.reduce((s,t)=>s+t.amount,0);
+  const subsHtml=subTxs.length?`<div class="ui-card" style="padding:14px 16px">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3);letter-spacing:0.1em;text-transform:uppercase;font-weight:600;margin-bottom:6px">この月の固定費合計</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;margin-bottom:8px">¥${fmt(subTotal)}</div>
+    <table class="ldr-review-table"><tbody>${subTxs.map(t=>`<tr><td class="name">${esc(t.title||'')}</td><td class="r">¥${fmt(t.amount)}</td></tr>`).join('')}</tbody></table>
+  </div>`:`<div style="padding:16px;font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--mute);">この月の固定費なし</div>`;
+
+  panel.innerHTML=`
+<div class="ldr-review-section">${sumHtml}</div>
+<div class="ldr-review-section"><div class="ldr-review-section-title">予算と実績</div>${budSection}</div>
+<div class="ldr-review-section"><div class="ldr-review-section-title">カテゴリ別の前月比</div>${momHtml}</div>
+<div class="ldr-review-section"><div class="ldr-review-section-title">支出の多いお店 トップ5</div>${merchantHtml}</div>
+<div class="ldr-review-section"><div class="ldr-review-section-title">固定費</div>${subsHtml}</div>
+`;
 }
 
 // ── renderLdrTxList ──
@@ -5722,7 +6263,7 @@ function saveCandEdit(ci){
 }
 
 // ── SUBS ──
-function saveSubs(){localStorage.setItem('hd_subs',JSON.stringify(subs));saveToSupabase();renderHome();}
+function saveSubs(){localStorage.setItem('hd_subs',JSON.stringify(subs));saveToSupabase();renderHome();renderGuidePanel();renderLdrMobOnboard();}
 
 // Default txCategory from sub category
 function _subDefaultTxCat(subCat){
