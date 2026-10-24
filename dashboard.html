@@ -1460,7 +1460,7 @@
     }
 
     /* ── NOTES ── */
-    .notes-page { padding:28px 40px 80px; max-width:900px; margin:0 auto; }
+    .notes-page { padding:28px 40px 80px; }
     .notes-header-row { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
     .notes-header-icon { color:var(--accent); display:flex; flex-shrink:0; }
     .notes-header-title { font-family:'Newsreader',serif; font-size:34px; font-weight:800; font-style:normal; line-height:1; color:var(--ink); }
@@ -1545,7 +1545,74 @@
       .notes-save-btn { width:100%; height:44px; font-size:15px; }
       .notes-search-in { width:100%; }
       .notes-filter-row { flex-direction:column; align-items:stretch; }
+      .notes-cal-sidebar { display:none; }
+      #page-notes .notes-cal-mob-wrap { display:block; }
     }
+
+    /* ── FOOD TAG CHIPS ── */
+    .food-chip { display:inline-flex; align-items:center; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; padding:2px 7px; border-radius:10px; background:rgba(139,58,24,0.09); color:var(--accent); white-space:nowrap; }
+    .food-chip-sm { font-size:10px; padding:1px 5px; }
+    .food-chip-cnt { margin-left:3px; opacity:0.7; }
+    .food-chip-btn { cursor:pointer; border:none; transition:background 0.12s; }
+    .food-chip-btn:hover { background:rgba(139,58,24,0.18); }
+    .food-chip-btn.active { background:var(--accent); color:var(--paper); }
+    .food-chip-row { display:flex; gap:4px; flex-wrap:wrap; margin-top:4px; }
+    .food-chip-row-sm { display:inline-flex; gap:3px; flex-wrap:nowrap; overflow:hidden; vertical-align:middle; margin-left:4px; }
+    .food-day-tags-section { padding:10px 20px 12px; border-top:1px solid rgba(26,24,20,0.08); }
+    .food-day-tags-label { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); margin-bottom:6px; }
+    /* Food tag input in modal */
+    .food-dish-tag-wrap { display:flex; align-items:center; gap:4px; flex-wrap:wrap; border:1px solid rgba(26,24,20,0.2); border-radius:4px; background:var(--paper); padding:3px 7px; cursor:text; position:relative; min-height:30px; }
+    .food-dish-tag-wrap:focus-within { border-color:var(--ink); }
+    .food-dish-tag-text-in { border:none; background:transparent; outline:none; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink); min-width:60px; max-width:120px; padding:1px 0; height:22px; }
+    .food-dish-tag-text-in::placeholder { color:var(--mute); }
+    .food-dish-tag-ac { display:none; position:absolute; top:calc(100%+3px); left:0; right:0; background:var(--paper); border:1px solid rgba(26,24,20,0.18); border-radius:6px; box-shadow:0 3px 12px rgba(26,24,20,0.1); z-index:400; overflow:hidden; max-height:140px; overflow-y:auto; }
+    .food-dish-tag-ac.open { display:block; }
+    .food-dish-tag-ac-item { padding:6px 10px; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink); cursor:pointer; border-bottom:1px solid rgba(26,24,20,0.06); }
+    .food-dish-tag-ac-item:last-child { border-bottom:none; }
+    .food-dish-tag-ac-item:hover { background:var(--paper2); }
+    /* Food tag filter select */
+    .food-tag-sel { font-family:'Space Grotesk',sans-serif; font-size:13px; padding:0 10px; border:1.5px solid rgba(26,24,20,0.2); border-radius:8px; background:var(--paper); color:var(--ink2); cursor:pointer; outline:none; height:40px; }
+    .food-tag-sel:focus { border-color:var(--ink); }
+    /* Dish tags in detail/popup */
+    .food-detail-dish-tags { display:flex; gap:4px; flex-wrap:wrap; margin-top:4px; margin-bottom:4px; }
+    .food-popup-dish-tags { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:8px; }
+
+    /* ── NOTES 2-COL ── */
+    .notes-2col { display:flex; gap:24px; align-items:flex-start; }
+    .notes-main { flex:1; min-width:0; max-width:860px; }
+    .notes-cal-sidebar { width:280px; flex-shrink:0; position:sticky; top:calc(var(--mast-h,57px) + 16px); }
+    .notes-cal-mob-wrap { display:none; margin-bottom:14px; }
+    .notes-cal-mob-toggle { width:100%; display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--paper2); border:1px solid rgba(26,24,20,0.12); border-radius:8px; font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; color:var(--ink2); cursor:pointer; transition:background 0.12s; }
+    .notes-cal-mob-toggle:hover { background:var(--paper3); }
+    .notes-cal-mob-body { display:none; background:var(--paper); border:1px solid rgba(26,24,20,0.12); border-top:none; border-radius:0 0 8px 8px; overflow:hidden; }
+    .notes-cal-mob-body.open { display:block; }
+    /* Notes mini-calendar */
+    .notes-mcal-top { display:flex; align-items:center; gap:6px; padding:12px 14px 10px; border-bottom:1px solid rgba(26,24,20,0.1); }
+    .notes-mcal-month { font-family:'Newsreader',serif; font-size:18px; font-weight:800; font-style:normal; flex:1; text-align:center; white-space:nowrap; }
+    .notes-mcal-nav { width:30px; height:30px; border:1px solid rgba(26,24,20,0.2); border-radius:6px; background:transparent; color:var(--ink2); cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; transition:all 0.12s; font-family:'JetBrains Mono',monospace; flex-shrink:0; }
+    .notes-mcal-nav:hover { border-color:var(--ink); background:var(--paper2); }
+    .notes-mcal-today-btn { font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:600; padding:3px 8px; border:1px solid rgba(26,24,20,0.2); border-radius:5px; background:transparent; color:var(--ink2); cursor:pointer; transition:all 0.12s; flex-shrink:0; }
+    .notes-mcal-today-btn:hover { border-color:var(--ink); color:var(--ink); }
+    .notes-mcal-dow-row { display:grid; grid-template-columns:repeat(7,1fr); background:var(--paper2); border-bottom:1px solid rgba(26,24,20,0.1); }
+    .notes-mcal-dow { text-align:center; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; color:var(--ink3); padding:5px 2px; }
+    .notes-mcal-dow.dow-sun { color:var(--accent); }
+    .notes-mcal-dow.dow-sat { color:#4a7ab5; }
+    .notes-mcal-grid { display:grid; grid-template-columns:repeat(7,1fr); padding:4px; gap:2px; }
+    .notes-mcal-cell { text-align:center; padding:4px 2px 3px; cursor:pointer; border-radius:6px; transition:background 0.1s; position:relative; min-height:36px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .notes-mcal-cell:hover:not(.notes-mcal-other) { background:rgba(26,24,20,0.05); }
+    .notes-mcal-cell.notes-mcal-other { opacity:0.25; pointer-events:none; cursor:default; }
+    .notes-mcal-cell.notes-mcal-today .notes-mcal-num { display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center; border-radius:50%; background:rgba(139,58,24,0.15); color:var(--accent); font-weight:800; }
+    .notes-mcal-num { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600; line-height:1; }
+    .notes-mcal-num.dow-sun { color:var(--accent); }
+    .notes-mcal-num.dow-sat { color:#4a7ab5; }
+    .notes-mcal-dot { width:5px; height:5px; border-radius:50%; background:rgba(139,58,24,0.4); margin-top:2px; flex-shrink:0; }
+    .notes-mcal-dot.many { background:var(--accent); }
+    /* scroll-margin for list sections */
+    .notes-month-hdr { scroll-margin-top:var(--mast-h,57px); }
+    .notes-date-group { scroll-margin-top:calc(var(--mast-h,57px) + 52px); }
+    /* HL animation on notes date label */
+    @keyframes notesDateHL { 0%,20%{background:rgba(139,58,24,0.1)} 100%{background:transparent} }
+    .notes-date-hl { animation:notesDateHL 1.6s ease forwards; border-radius:4px; }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -2157,6 +2224,9 @@
         <button class="ui-pill" onclick="setFoodFilter('home',this)">自炊</button>
         <button class="ui-pill" onclick="setFoodFilter('out',this)">外食</button>
       </div>
+      <select id="foodTagSel" class="food-tag-sel" onchange="setFoodTagFilter(this.value)">
+        <option value="">タグ: すべて</option>
+      </select>
     </div>
     <!-- Search summary -->
     <div id="foodSearchSummary" class="food-summary-bar" style="display:none"></div>
@@ -2222,39 +2292,59 @@
 <!-- ══ NOTES ══ -->
 <div class="page" id="page-notes">
   <div class="notes-page">
-    <!-- Header -->
-    <div class="notes-header-row">
-      <span class="notes-header-icon">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="5" y="4" width="22" height="26" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M10 11h12M10 16h12M10 21h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M22 19l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" display="none"/></svg>
-      </span>
-      <h1 class="notes-header-title">所感</h1>
-    </div>
-
-    <!-- Input card -->
-    <div class="ui-card notes-input-card" id="notesInputCard">
-      <textarea id="notesBodyInput" class="notes-body-ta" placeholder="気づいたこと、思ったことをメモ…" rows="3"
-        oninput="notesBodyInput(event)" onkeydown="notesNewBodyKeydown(event)"></textarea>
-      <div class="notes-input-bottom">
-        <input type="date" id="notesDateInput" class="notes-date-in">
-        <div class="notes-tag-wrap" id="notesInputTagWrap" onclick="document.getElementById('notesTagTextIn').focus()">
-          <span id="notesInputTagChips"></span>
-          <input type="text" id="notesTagTextIn" class="notes-tag-text-in" placeholder="タグを追加（Enter）"
-            onkeydown="notesInputTagKeydown(event)" oninput="notesInputTagOninput(event)" onblur="_notesHideInputAC()">
-          <div class="notes-tag-autocomplete" id="notesInputTagAC"></div>
+    <div class="notes-2col">
+      <!-- Left: main content -->
+      <div class="notes-main">
+        <!-- Header -->
+        <div class="notes-header-row">
+          <span class="notes-header-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><rect x="5" y="4" width="22" height="26" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M10 11h12M10 16h12M10 21h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M22 19l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" display="none"/></svg>
+          </span>
+          <h1 class="notes-header-title">所感</h1>
         </div>
-        <button class="notes-save-btn" onclick="saveNewNote()">保存</button>
+
+        <!-- Input card -->
+        <div class="ui-card notes-input-card" id="notesInputCard">
+          <textarea id="notesBodyInput" class="notes-body-ta" placeholder="気づいたこと、思ったことをメモ…" rows="3"
+            oninput="notesBodyInput(event)" onkeydown="notesNewBodyKeydown(event)"></textarea>
+          <div class="notes-input-bottom">
+            <input type="date" id="notesDateInput" class="notes-date-in">
+            <div class="notes-tag-wrap" id="notesInputTagWrap" onclick="document.getElementById('notesTagTextIn').focus()">
+              <span id="notesInputTagChips"></span>
+              <input type="text" id="notesTagTextIn" class="notes-tag-text-in" placeholder="タグを追加（Enter）"
+                onkeydown="notesInputTagKeydown(event)" oninput="notesInputTagOninput(event)" onblur="_notesHideInputAC()">
+              <div class="notes-tag-autocomplete" id="notesInputTagAC"></div>
+            </div>
+            <button class="notes-save-btn" onclick="saveNewNote()">保存</button>
+          </div>
+        </div>
+
+        <!-- Filter row -->
+        <div class="notes-filter-row">
+          <input type="search" id="notesSearchIn" class="notes-search-in" placeholder="メモ・タグを検索…"
+            oninput="setNotesSearch(this.value)">
+          <div class="notes-tag-pills-wrap" id="notesTagPills"></div>
+        </div>
+
+        <!-- Mobile calendar (collapsible) -->
+        <div class="notes-cal-mob-wrap" id="notesCalMobWrap">
+          <button class="notes-cal-mob-toggle" onclick="notesCalToggleMobile()">
+            カレンダー <span id="notesCalMobArrow">▾</span>
+          </button>
+          <div class="notes-cal-mob-body" id="notesCalMobBody"></div>
+        </div>
+
+        <!-- List -->
+        <div id="notesList"></div>
+      </div>
+
+      <!-- Right: mini-calendar sidebar (PC only) -->
+      <div class="notes-cal-sidebar" id="notesCalSidebar">
+        <div class="ui-card" id="notesMiniCalCard">
+          <div id="notesMiniCal"></div>
+        </div>
       </div>
     </div>
-
-    <!-- Filter row -->
-    <div class="notes-filter-row">
-      <input type="search" id="notesSearchIn" class="notes-search-in" placeholder="メモ・タグを検索…"
-        oninput="setNotesSearch(this.value)">
-      <div class="notes-tag-pills-wrap" id="notesTagPills"></div>
-    </div>
-
-    <!-- List -->
-    <div id="notesList"></div>
   </div>
 </div>
 
@@ -2288,6 +2378,7 @@ let notesVisibleCount = 50;
 let notesNewTags = [];
 let notesEditId = null;
 let notesEditTags = [];
+let _notesCal = { y: new Date().getFullYear(), m: new Date().getMonth() };
 
 // ── TODO STATE ──
 let todoState = {
@@ -6742,6 +6833,7 @@ function guessKindByHour() {
 
 let foodFilter = 'all';
 let foodSearch = '';
+let foodTagFilter = '';
 let foodView = 'calendar';
 let foodCalY = new Date().getFullYear();
 let foodCalM = new Date().getMonth();
@@ -6770,6 +6862,38 @@ function setFoodFilter(f, el) {
   renderFood();
 }
 
+function setFoodTagFilter(val) {
+  foodTagFilter = val;
+  _foodListWeeks = 0;
+  if (val) {
+    foodView = 'list';
+    _foodViewManual = true;
+  }
+  renderFood();
+}
+
+function _getFoodTagUsage() {
+  const map = {};
+  meals.forEach(m => {
+    (m.sittings||[]).forEach(s => {
+      (s.dishes||[]).forEach(d => {
+        (d.tags||[]).forEach(t => { map[t] = (map[t]||0) + 1; });
+      });
+    });
+  });
+  return map;
+}
+
+function _renderFoodTagSelect() {
+  const sel = document.getElementById('foodTagSel');
+  if (!sel) return;
+  const usage = _getFoodTagUsage();
+  const tags = Object.entries(usage).sort((a,b) => b[1]-a[1]).map(([t]) => t);
+  sel.innerHTML = `<option value="">タグ: すべて</option>`
+    + tags.map(t => `<option value="${esc(t)}"${foodTagFilter===t?' selected':''}>${esc(t)}</option>`).join('');
+  if (foodTagFilter && !tags.includes(foodTagFilter)) { foodTagFilter = ''; sel.value = ''; }
+}
+
 function foodSearchInput(val) {
   foodSearch = val;
   _foodListWeeks = 0;
@@ -6782,6 +6906,8 @@ function foodSearchInput(val) {
 }
 
 function renderFood() {
+  _renderFoodTagSelect();
+  _renderFoodStats();
   const calEl = document.getElementById('foodCalendar');
   const listEl = document.getElementById('foodListView');
   // Sync view toggle buttons
@@ -6823,8 +6949,8 @@ function renderFoodList() {
         const memoMatch = (m.memo||'').toLowerCase().includes(q);
         for (const s of (m.sittings||[])) {
           for (const dish of (s.dishes||[])) {
-            if (memoMatch || (dish.name+' '+(dish.place||'')+' '+(dish.note||'')).toLowerCase().includes(q)) {
-              if (foodFilter === 'all' || dish.type === foodFilter) {
+            if (memoMatch || (dish.name+' '+(dish.place||'')+' '+(dish.note||'')+' '+(dish.tags||[]).join(' ')).toLowerCase().includes(q)) {
+              if ((foodFilter === 'all' || dish.type === foodFilter) && (!foodTagFilter || (dish.tags||[]).includes(foodTagFilter))) {
                 matchCount++;
                 if (!latestDate || m.date > latestDate) latestDate = m.date;
               }
@@ -6871,7 +6997,7 @@ function renderFoodList() {
   const displayDays = allDays.filter(d => d >= windowStartStr);
 
   // Helper: get matched sittings for a day (with filter/search applied)
-  const isFiltered = foodFilter !== 'all' || q;
+  const isFiltered = foodFilter !== 'all' || q || foodTagFilter;
   function getMatchedSittings(date) {
     const meal = mealByDate[date];
     if (!meal) return null;
@@ -6880,7 +7006,8 @@ function renderFoodList() {
     for (const s of (meal.sittings||[])) {
       const dishes = (s.dishes||[]).filter(dish => {
         if (foodFilter !== 'all' && dish.type !== foodFilter) return false;
-        if (q && !memoMatch && !(dish.name+' '+(dish.place||'')+' '+(dish.note||'')).toLowerCase().includes(q)) return false;
+        if (foodTagFilter && !(dish.tags||[]).includes(foodTagFilter)) return false;
+        if (q && !memoMatch && !(dish.name+' '+(dish.place||'')+' '+(dish.note||'')+' '+(dish.tags||[]).join(' ')).toLowerCase().includes(q)) return false;
         return true;
       });
       if (dishes.length) out.push({...s, dishes});
@@ -6963,7 +7090,11 @@ function renderFoodList() {
           const dishParts = s.dishes.map(dish => {
             const isOut = dish.type==='out';
             const placeHTML = isOut&&dish.place ? ` <span class="food-day-place">@${esc(dish.place)}</span>` : '';
-            return `<span class="food-day-dish-link" onclick="event.stopPropagation();openFoodDetailPopup('${esc(mealId)}','${esc(String(dish.id))}')">${esc(dish.name||'（名前なし）')}${placeHTML}</span>`;
+            const tags = dish.tags||[];
+            const tagsShown = tags.slice(0,2);
+            const tagsExtra = tags.length > 2 ? tags.length - 2 : 0;
+            const tagHTML = tagsShown.length ? `<span class="food-chip-row-sm">${tagsShown.map(t=>`<button class="food-chip food-chip-sm food-chip-btn" onclick="event.stopPropagation();setFoodTagFilter('${esc(t)}')">${esc(t)}</button>`).join('')}${tagsExtra?`<span class="food-chip food-chip-sm">+${tagsExtra}</span>`:''}</span>` : '';
+            return `<span class="food-day-dish-link" onclick="event.stopPropagation();openFoodDetailPopup('${esc(mealId)}','${esc(String(dish.id))}')">${esc(dish.name||'（名前なし）')}${placeHTML}</span>${tagHTML}`;
           }).join('<span style="color:var(--mute);margin:0 2px">・</span>');
           return `<div class="food-day-sitting-group"><span class="food-day-kind-tag">${esc(kShort)}</span>${dishParts}</div>`;
         }).join('');
@@ -7001,9 +7132,11 @@ function renderFoodList() {
             const photoHTML = ph.length
               ? `<div class="food-day-dishrow-photo"><img data-path="${esc(ph[0].path)}" alt="" loading="lazy">${ph.length>1?`<span class="food-day-dishrow-more">+${ph.length-1}</span>`:''}</div>`
               : '';
+            const tags = dish.tags||[];
+            const mobTagHTML = tags.length ? `<div class="food-chip-row" style="margin-top:2px;flex-wrap:nowrap;overflow:hidden;">${tags.map(t=>`<button class="food-chip food-chip-sm food-chip-btn" onclick="event.stopPropagation();setFoodTagFilter('${esc(t)}')">${esc(t)}</button>`).join('')}</div>` : '';
             dishRows += `<div class="food-day-dishrow" onclick="event.stopPropagation();openFoodDetailPopup('${esc(mealId)}','${esc(String(dish.id))}')">
               <span class="food-day-kind-tag${i===0?'':' is-blank'}">${esc(kShort)}</span>
-              <span class="food-day-dishrow-name">${esc(dish.name||'（名前なし）')}${placeHTML}</span>
+              <div style="min-width:0;flex:1"><span class="food-day-dishrow-name">${esc(dish.name||'（名前なし）')}${placeHTML}</span>${mobTagHTML}</div>
               ${photoHTML}
             </div>`;
           });
@@ -7076,21 +7209,14 @@ function foodCalCellClick(dateStr) {
   renderFoodCalendar();
 }
 
-function renderFoodCalendar() {
-  const months = '1月 2月 3月 4月 5月 6月 7月 8月 9月 10月 11月 12月'.split(' ');
-  const labelEl = document.getElementById('foodCalLabel');
-  if (labelEl) labelEl.textContent = `${foodCalY}年 ${months[foodCalM]}`;
-  const firstDow = new Date(foodCalY, foodCalM, 1).getDay();
-  const daysInMonth = new Date(foodCalY, foodCalM + 1, 0).getDate();
-  const prevDays = new Date(foodCalY, foodCalM, 0).getDate();
-  const todayStr = localDate();
-
-  // Update stats for current month
+function _renderFoodStats() {
+  // 表示中の月の集計（タグの絞り込みを反映）
   const monthMeals = meals.filter(m => {
     const mDate = new Date(m.date + 'T00:00:00');
     return mDate.getFullYear() === foodCalY && mDate.getMonth() === foodCalM;
   });
-  const allSittings = monthMeals.flatMap(m => m.sittings || []);
+  const allSittings = monthMeals.flatMap(m => m.sittings || [])
+    .filter(s => !foodTagFilter || (s.dishes||[]).some(d => (d.tags||[]).includes(foodTagFilter)));
   const totalDishes = allSittings.length; // sitting count = 食事回数
   const homeDishes = allSittings.filter(s => !_sittingIsOut(s)).length;
   const outDishes  = allSittings.filter(s => _sittingIsOut(s)).length;
@@ -7105,6 +7231,19 @@ function renderFoodCalendar() {
       <div class="food-stat-card"><span class="food-stat-icon">${storeIcon}</span><div class="food-stat-body"><div class="food-stat-label">外食</div><div class="food-stat-num-row"><span class="food-stat-num">${outDishes}</span><span class="food-stat-unit">回</span></div></div></div>
     `;
   }
+
+}
+
+function renderFoodCalendar() {
+  const months = '1月 2月 3月 4月 5月 6月 7月 8月 9月 10月 11月 12月'.split(' ');
+  const labelEl = document.getElementById('foodCalLabel');
+  if (labelEl) labelEl.textContent = `${foodCalY}年 ${months[foodCalM]}`;
+  const firstDow = new Date(foodCalY, foodCalM, 1).getDay();
+  const daysInMonth = new Date(foodCalY, foodCalM + 1, 0).getDate();
+  const prevDays = new Date(foodCalY, foodCalM, 0).getDate();
+  const todayStr = localDate();
+
+  _renderFoodStats();
 
   // Auto-select default day on PC if no selection
   if (!foodCalSelDay && window.innerWidth > 640) {
@@ -7128,6 +7267,7 @@ function renderFoodCalendar() {
   const mealMap = {};
   for (const m of meals) {
     if (foodFilter !== 'all' && !(m.sittings||[]).some(s=>(s.dishes||[]).some(d=>d.type===foodFilter))) continue;
+    if (foodTagFilter && !(m.sittings||[]).some(s=>(s.dishes||[]).some(d=>(d.tags||[]).includes(foodTagFilter)))) continue;
     mealMap[m.date] = m;
   }
 
@@ -7238,6 +7378,8 @@ function renderFoodDayDetail(dateStr) {
       const isValidUrl = /^https?:\/\//.test(dish.recipeUrl || '');
       const linkHTML = isValidUrl ? `<a class="food-detail-dish-link" href="${esc(dish.recipeUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${linkSVG} レシピ</a>` : '';
       const noteHTML = dish.note ? `<div class="food-detail-dish-note">${esc(dish.note)}</div>` : '';
+      const dishTags = dish.tags||[];
+      const dishTagsHTML = dishTags.length ? `<div class="food-detail-dish-tags">${dishTags.map(t=>`<button class="food-chip food-chip-sm food-chip-btn" onclick="event.stopPropagation();closeFoodDetailPopupAndFilter('${esc(t)}')">${esc(t)}</button>`).join('')}</div>` : '';
       return `<div class="food-detail-dish-row" onclick="openFoodDetailPopup('${esc(String(meal.id))}','${esc(String(dish.id))}')">
         ${thumbHTML}
         <div class="food-detail-dish-info">
@@ -7246,6 +7388,7 @@ function renderFoodDayDetail(dateStr) {
             <span class="food-detail-dish-pill ${pillCls}">${pillLabel}</span>
             ${placeHTML}${linkHTML}
           </div>
+          ${dishTagsHTML}
           ${noteHTML}
         </div>
       </div>`;
@@ -7259,6 +7402,20 @@ function renderFoodDayDetail(dateStr) {
   }
 
   const memoHTML = meal && meal.memo ? `<div class="food-detail-memo">${esc(meal.memo)}</div>` : '';
+
+  // Build day-tags summary
+  let dayTagsHTML = '';
+  if (meal) {
+    const dayTagMap = {};
+    (meal.sittings||[]).forEach(s => (s.dishes||[]).forEach(d => (d.tags||[]).forEach(t => { dayTagMap[t] = (dayTagMap[t]||0)+1; })));
+    const dayTags = Object.entries(dayTagMap).sort((a,b)=>b[1]-a[1]);
+    if (dayTags.length) {
+      dayTagsHTML = `<div class="food-day-tags-section">
+        <div class="food-day-tags-label">この日のタグ</div>
+        <div class="food-chip-row">${dayTags.map(([t,n])=>`<button class="food-chip food-chip-btn" onclick="event.stopPropagation();closeFoodDetailPopupAndFilter('${esc(t)}')">${esc(t)}${n>1?`<span class="food-chip-cnt">${n}</span>`:''}</button>`).join('')}</div>
+      </div>`;
+    }
+  }
 
   const editDelHTML = meal ? `
     <div id="foodDetailDelWrap">
@@ -7280,6 +7437,7 @@ function renderFoodDayDetail(dateStr) {
     </div>
     ${meal ? `<div class="food-detail-count"><span class="food-detail-count-icon">${countIconSVG}</span><span class="food-detail-count-label">この日の食事数</span><span class="food-detail-count-num">${sittings.length}</span><span class="food-detail-count-unit">回</span></div>` : ''}
     ${sittingsHTML}
+    ${dayTagsHTML}
     ${memoHTML}
     ${!meal ? `<div class="food-detail-empty"><div class="food-detail-empty-text">記録がありません</div></div>` : ''}
     <div class="food-detail-actions">
@@ -7351,7 +7509,7 @@ function openFoodModalNew(dateStr) {
     id: crypto.randomUUID(), date: dateStr, memo: '', v: 2,
     sittings: [{
       id: crypto.randomUUID(), kind,
-      dishes: [{ id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '', note: '', photos: [] }]
+      dishes: [{ id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '', note: '', tags: [], photos: [] }]
     }],
     isNew: true, _focusDishId: null
   };
@@ -7459,6 +7617,17 @@ function foodDishRowHTML(sittingId, d, i) {
       <textarea class="food-dish-note-ta" placeholder="料理の感想（任意）"
         oninput="foodDishFieldInput('${sid}','${did}','note',this.value)"
         onfocus="event.stopPropagation();_setFocusDishId('${did}')">${esc(d.note||'')}</textarea>
+      <div class="food-dish-tag-row">
+        <div class="food-dish-tag-wrap" onclick="event.stopPropagation();document.getElementById('foodDishTagIn-${did}').focus()">
+          <span id="foodDishTagChips-${did}">${(d.tags||[]).map((t,i)=>`<span class="notes-tag-chip-in">${esc(t)}<button type="button" class="notes-tag-chip-in-x" onclick="event.stopPropagation();foodDishTagRemove('${did}',${i})">×</button></span>`).join('')}</span>
+          <input type="text" id="foodDishTagIn-${did}" class="food-dish-tag-text-in" placeholder="タグ（Enter）"
+            onkeydown="event.stopPropagation();foodDishTagKeydown(event,'${did}')"
+            oninput="event.stopPropagation();foodDishTagOninput(event,'${did}')"
+            onfocus="event.stopPropagation();_setFocusDishId('${did}')"
+            onblur="setTimeout(()=>{const a=document.getElementById('foodDishTagAC-${did}');if(a)a.classList.remove('open');},150)">
+          <div class="food-dish-tag-ac" id="foodDishTagAC-${did}"></div>
+        </div>
+      </div>
       <div class="food-dish-photo-area" id="foodDishPhotoArea-${did}"
         ondragover="foodDishDragOver(event,'${did}')" ondragleave="foodDragLeave(event)" ondrop="foodDishDrop(event,'${did}')">
         <div class="food-photos-wrap" id="foodDishPhotos-${did}">${photosHTML}
@@ -7508,6 +7677,92 @@ function foodDishFieldInput(sittingId, dishId, field, val) {
   dish[field] = val;
 }
 
+function _findDishById(dishId) {
+  if (!_foodModalState) return null;
+  for (const s of (_foodModalState.sittings||[])) {
+    const d = (s.dishes||[]).find(d => String(d.id) === String(dishId));
+    if (d) return d;
+  }
+  return null;
+}
+
+function _renderFoodDishTagChips(dishId, tags) {
+  const el = document.getElementById(`foodDishTagChips-${dishId}`);
+  if (!el) return;
+  const did = esc(String(dishId));
+  el.innerHTML = (tags||[]).map((t,i) =>
+    `<span class="notes-tag-chip-in">${esc(t)}<button type="button" class="notes-tag-chip-in-x" onclick="event.stopPropagation();foodDishTagRemove('${did}',${i})">×</button></span>`
+  ).join('');
+}
+
+function foodDishTagAdd(dishId, tag) {
+  tag = tag.trim();
+  if (!tag) return;
+  const d = _findDishById(dishId);
+  if (!d) return;
+  if (!d.tags) d.tags = [];
+  if (!d.tags.includes(tag)) d.tags.push(tag);
+  _renderFoodDishTagChips(dishId, d.tags);
+}
+
+function foodDishTagRemove(dishId, idx) {
+  const d = _findDishById(dishId);
+  if (!d || !d.tags) return;
+  d.tags.splice(idx, 1);
+  _renderFoodDishTagChips(dishId, d.tags);
+  document.getElementById(`foodDishTagIn-${dishId}`)?.focus();
+}
+
+function foodDishTagKeydown(e, dishId) {
+  const input = e.target;
+  const val = input.value;
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const tag = val.trim().replace(/,/g, '');
+    if (tag) foodDishTagAdd(dishId, tag);
+    input.value = '';
+    document.getElementById(`foodDishTagAC-${dishId}`)?.classList.remove('open');
+  } else if (e.key === 'Backspace' && !val) {
+    const d = _findDishById(dishId);
+    if (d && d.tags && d.tags.length > 0) {
+      d.tags.pop();
+      _renderFoodDishTagChips(dishId, d.tags);
+    }
+  }
+}
+
+function foodDishTagOninput(e, dishId) {
+  const val = e.target.value;
+  if (val.endsWith(',')) {
+    const tag = val.slice(0,-1).trim();
+    if (tag) foodDishTagAdd(dishId, tag);
+    e.target.value = '';
+    document.getElementById(`foodDishTagAC-${dishId}`)?.classList.remove('open');
+    return;
+  }
+  const ac = document.getElementById(`foodDishTagAC-${dishId}`);
+  if (!ac || !val.trim()) { ac?.classList.remove('open'); return; }
+  const usage = _getFoodTagUsage();
+  const curTags = (_findDishById(dishId)||{}).tags||[];
+  const matches = Object.entries(usage)
+    .filter(([t]) => t.toLowerCase().includes(val.toLowerCase()) && !curTags.includes(t))
+    .sort((a,b) => b[1]-a[1]).slice(0, 6);
+  if (!matches.length) { ac.classList.remove('open'); return; }
+  const did = esc(String(dishId));
+  ac.innerHTML = matches.map(([t]) =>
+    `<div class="food-dish-tag-ac-item" onmousedown="event.preventDefault();foodDishTagPickAC('${did}','${esc(t)}')">${esc(t)}</div>`
+  ).join('');
+  ac.classList.add('open');
+}
+
+function foodDishTagPickAC(dishId, tag) {
+  foodDishTagAdd(dishId, tag);
+  const inp = document.getElementById(`foodDishTagIn-${dishId}`);
+  if (inp) inp.value = '';
+  document.getElementById(`foodDishTagAC-${dishId}`)?.classList.remove('open');
+  inp?.focus();
+}
+
 function setFoodDishType(sittingId, dishId, type) {
   if (!_foodModalState) return;
   const sitting = (_foodModalState.sittings||[]).find(s=>String(s.id)===String(sittingId));
@@ -7526,7 +7781,7 @@ function addFoodSitting(kind) {
   if (!_foodModalState) return;
   _collectModalInputs();
   if ((_foodModalState.sittings||[]).some(s=>s.kind===kind)) return; // already exists
-  const newSitting = { id: crypto.randomUUID(), kind, dishes: [{ id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '', note: '', photos: [] }] };
+  const newSitting = { id: crypto.randomUUID(), kind, dishes: [{ id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '', note: '', tags: [], photos: [] }] };
   _foodModalState.sittings.push(newSitting);
   renderFoodModalBody();
 }
@@ -7544,7 +7799,7 @@ function addFoodDish(sittingId) {
   _collectModalInputs();
   const sitting = (_foodModalState.sittings||[]).find(s=>String(s.id)===String(sittingId));
   if (!sitting) return;
-  const newDish = { id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '', note: '', photos: [] };
+  const newDish = { id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '', note: '', tags: [], photos: [] };
   sitting.dishes.push(newDish);
   const i = sitting.dishes.length - 1;
   const listEl = document.getElementById(`foodDishList-${sittingId}`);
@@ -7563,7 +7818,7 @@ function removeFoodDish(sittingId, dishId) {
   const sitting = (_foodModalState.sittings||[]).find(s=>String(s.id)===String(sittingId));
   if (!sitting) return;
   if (sitting.dishes.length <= 1) {
-    sitting.dishes[0] = { id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '', note: '', photos: [] };
+    sitting.dishes[0] = { id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '', note: '', tags: [], photos: [] };
   } else {
     sitting.dishes = sitting.dishes.filter(d=>String(d.id)!==String(dishId));
   }
@@ -7885,6 +8140,11 @@ function closeFoodDetailPopup() {
   document.getElementById('foodPopupOverlay').style.display = 'none';
 }
 
+function closeFoodDetailPopupAndFilter(tag) {
+  closeFoodDetailPopup();
+  setFoodTagFilter(tag);
+}
+
 function renderFoodDetailPopup() {
   if (!_foodPopupId) return;
   const meal = meals.find(m => String(m.id) === _foodPopupId);
@@ -7920,6 +8180,8 @@ function renderFoodDetailPopup() {
       const isValidUrl = /^https?:\/\//.test(dish.recipeUrl||'');
       const linkHtml = isValidUrl ? `<a class="food-popup-dish-link" href="${esc(dish.recipeUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${linkSVG} レシピ</a>` : '';
       const noteHtml = dish.note ? `<div class="food-popup-dish-note">${esc(dish.note)}</div>` : '';
+      const dishTags2 = dish.tags||[];
+      const dishTagsHtml2 = dishTags2.length ? `<div class="food-popup-dish-tags">${dishTags2.map(t=>`<button class="food-chip food-chip-btn" onclick="event.stopPropagation();closeFoodDetailPopupAndFilter('${esc(t)}')">${esc(t)}</button>`).join('')}</div>` : '';
       // Gallery
       const galleryHTML = photos.length ? `<div class="food-popup-gallery">${photos.map((p,pi) =>
         `<div class="food-popup-gallery-img" onclick="event.stopPropagation();openFoodLightboxForDish('${esc(String(dish.id))}',${pi})">
@@ -7932,6 +8194,7 @@ function renderFoodDetailPopup() {
           <span class="food-popup-dish-pill ${pillCls}">${pillLabel}</span>
           ${placeHtml}${linkHtml}
         </div>
+        ${dishTagsHtml2}
         ${noteHtml}
         ${galleryHTML}
       </div>`;
@@ -7941,6 +8204,16 @@ function renderFoodDetailPopup() {
         <span class="food-popup-sitting-kind">${esc(KIND_LABELS[s.kind]||s.kind)}</span>${placeHTML}
       </div>
       ${dishesHTML}
+    </div>`;
+  }
+  // Build day-tags summary for popup
+  const popupTagMap = {};
+  (meal.sittings||[]).forEach(s=>(s.dishes||[]).forEach(d=>(d.tags||[]).forEach(t=>{popupTagMap[t]=(popupTagMap[t]||0)+1;})));
+  const popupDayTags = Object.entries(popupTagMap).sort((a,b)=>b[1]-a[1]);
+  if (popupDayTags.length) {
+    bodyHTML += `<div class="food-day-tags-section">
+      <div class="food-day-tags-label">この日のタグ</div>
+      <div class="food-chip-row">${popupDayTags.map(([t,n])=>`<button class="food-chip food-chip-btn" onclick="event.stopPropagation();closeFoodDetailPopupAndFilter('${esc(t)}')">${esc(t)}${n>1?`<span class="food-chip-cnt">${n}</span>`:''}</button>`).join('')}</div>
     </div>`;
   }
   if (meal.memo) {
@@ -8052,6 +8325,14 @@ function renderNotes() {
   _renderNotesInputChips();
   _renderNotesFilterPills();
   _renderNotesList();
+  _renderNotesCalendar();
+  // Mobile: restore open state
+  try {
+    const open = localStorage.getItem('notes_cal_open') === '1';
+    const body = document.getElementById('notesCalMobBody');
+    const arrow = document.getElementById('notesCalMobArrow');
+    if (body && open) { body.classList.add('open'); if (arrow) arrow.textContent = '▴'; }
+  } catch(e) {}
 }
 
 function _getTagUsage() {
@@ -8160,6 +8441,7 @@ function saveNewNote() {
   notesVisibleCount = 50;
   _renderNotesFilterPills();
   _renderNotesList();
+  _renderNotesCalendar();
 }
 
 function setNotesTagFilter(tag) {
@@ -8167,12 +8449,14 @@ function setNotesTagFilter(tag) {
   notesVisibleCount = 50;
   _renderNotesFilterPills();
   _renderNotesList();
+  _renderNotesCalendar();
 }
 
 function setNotesSearch(val) {
   notesFilter.search = val;
   notesVisibleCount = 50;
   _renderNotesList();
+  _renderNotesCalendar();
 }
 
 function _renderNotesFilterPills() {
@@ -8239,7 +8523,7 @@ function _renderNotesList() {
     if (ym !== curYm) {
       curYm = ym;
       const [yy, mm] = ym.split('-').map(Number);
-      html += `<div class="notes-month-hdr"><span class="notes-month-label">${yy}年${mm}月</span><span class="notes-month-count">${monthCount[ym]||0}件</span></div>`;
+      html += `<div class="notes-month-hdr" id="notesMonth-${esc(ym)}"><span class="notes-month-label">${yy}年${mm}月</span><span class="notes-month-count">${monthCount[ym]||0}件</span></div>`;
     }
     const dObj = new Date(date + 'T00:00:00');
     const dowCls = dObj.getDay()===6 ? ' is-sat' : dObj.getDay()===0 ? ' is-sun' : '';
@@ -8251,7 +8535,7 @@ function _renderNotesList() {
       const y = d.getFullYear(), m = d.getMonth()+1, day = d.getDate(), dow = DOW[d.getDay()];
       label = y === currentYear ? `${m}/${day}（${dow}）` : `${y}/${m}/${day}（${dow}）`;
     }
-    html += `<div class="notes-date-group">
+    html += `<div class="notes-date-group" id="notesDay-${esc(date)}">
       <div class="notes-date-label${dowCls}">${esc(label)}</div>
       ${groups[date].map(r => _notesRenderCard(r)).join('')}
     </div>`;
@@ -8359,6 +8643,7 @@ function saveNotesEdit(id) {
   notesEditTags = [];
   saveReflections();
   _renderNotesList();
+  _renderNotesCalendar();
 }
 
 function notesEditRemoveTag(i) {
@@ -8439,6 +8724,7 @@ function deleteNote(id) {
   saveReflections();
   _renderNotesList();
   _renderNotesFilterPills();
+  _renderNotesCalendar();
 }
 
 function notesToggleExpand(id) {
@@ -8453,6 +8739,136 @@ function notesToggleExpand(id) {
 function notesLoadMore() {
   notesVisibleCount += 50;
   _renderNotesList();
+  _renderNotesCalendar();
+}
+
+// ── NOTES CALENDAR ──
+function _getNotesDateMap() {
+  // Returns map: dateStr -> count of matching reflections
+  const filtered = _getFilteredReflections();
+  const map = {};
+  filtered.forEach(r => { map[r.date] = (map[r.date]||0) + 1; });
+  return map;
+}
+
+function _renderNotesCalendar() {
+  const months = '1月 2月 3月 4月 5月 6月 7月 8月 9月 10月 11月 12月'.split(' ');
+  const { y, m } = _notesCal;
+  const todayStr = today();
+  const dateMap = _getNotesDateMap();
+
+  const calHTML = `
+    <div class="notes-mcal-top">
+      <button class="notes-mcal-nav" onclick="notesCalNav(-1)">‹</button>
+      <div class="notes-mcal-month">${y}年 ${months[m]}</div>
+      <button class="notes-mcal-nav" onclick="notesCalNav(1)">›</button>
+      <button class="notes-mcal-today-btn" onclick="notesCalToday()">今月</button>
+    </div>
+    <div class="notes-mcal-dow-row">
+      <div class="notes-mcal-dow dow-sun">日</div>
+      <div class="notes-mcal-dow">月</div>
+      <div class="notes-mcal-dow">火</div>
+      <div class="notes-mcal-dow">水</div>
+      <div class="notes-mcal-dow">木</div>
+      <div class="notes-mcal-dow">金</div>
+      <div class="notes-mcal-dow dow-sat">土</div>
+    </div>
+    <div class="notes-mcal-grid">${_buildNotesMiniCalGrid(y, m, todayStr, dateMap)}</div>
+  `;
+  const pc = document.getElementById('notesMiniCal');
+  if (pc) pc.innerHTML = calHTML;
+  const mob = document.getElementById('notesCalMobBody');
+  if (mob) mob.innerHTML = calHTML;
+}
+
+function _buildNotesMiniCalGrid(y, m, todayStr, dateMap) {
+  const firstDow = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  const prevDays = new Date(y, m, 0).getDate();
+  const cells = [];
+  for (let i = firstDow - 1; i >= 0; i--) cells.push({ d: prevDays - i, other: true, dow: (7 - firstDow + (firstDow - 1 - i)) % 7 });
+  for (let d = 1; d <= daysInMonth; d++) cells.push({ d, other: false, dow: (firstDow + d - 1) % 7 });
+  while (cells.length % 7 !== 0) cells.push({ d: cells.length - daysInMonth - firstDow + 1, other: true, dow: cells.length % 7 });
+
+  return cells.map(c => {
+    if (c.other) return `<div class="notes-mcal-cell notes-mcal-other"><span class="notes-mcal-num">${c.d}</span></div>`;
+    const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(c.d).padStart(2,'0')}`;
+    const isToday = ds === todayStr;
+    const cnt = dateMap[ds] || 0;
+    const dowCls = c.dow === 0 ? ' dow-sun' : c.dow === 6 ? ' dow-sat' : '';
+    const dotHTML = cnt > 0 ? `<div class="notes-mcal-dot${cnt >= 2 ? ' many' : ''}"></div>` : '';
+    return `<div class="notes-mcal-cell${isToday?' notes-mcal-today':''}" onclick="notesCalCellClick('${esc(ds)}')">
+      <span class="notes-mcal-num${dowCls}">${c.d}</span>
+      ${dotHTML}
+    </div>`;
+  }).join('');
+}
+
+function notesCalNav(delta) {
+  _notesCal.m += delta;
+  if (_notesCal.m > 11) { _notesCal.m = 0; _notesCal.y++; }
+  if (_notesCal.m < 0)  { _notesCal.m = 11; _notesCal.y--; }
+  _renderNotesCalendar();
+  // If navigating to a month that has notes, scroll to it
+  const ym = `${_notesCal.y}-${String(_notesCal.m+1).padStart(2,'0')}`;
+  setTimeout(() => {
+    const el = document.getElementById(`notesMonth-${ym}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
+}
+
+function notesCalToday() {
+  const now = new Date();
+  _notesCal.y = now.getFullYear();
+  _notesCal.m = now.getMonth();
+  _renderNotesCalendar();
+}
+
+function notesCalCellClick(dateStr) {
+  const cnt = _getNotesDateMap()[dateStr] || 0;
+  if (cnt === 0) {
+    // Set input date to this day and focus body
+    const dateIn = document.getElementById('notesDateInput');
+    if (dateIn) dateIn.value = dateStr;
+    const ta = document.getElementById('notesBodyInput');
+    if (ta) { ta.focus(); ta.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+    return;
+  }
+  // Ensure date is visible (expand notesVisibleCount if needed)
+  const filtered = _getFilteredReflections();
+  filtered.sort((a,b) => {
+    if (b.date !== a.date) return b.date < a.date ? -1 : 1;
+    return (b.createdAt||'') < (a.createdAt||'') ? -1 : 1;
+  });
+  const idx = filtered.findIndex(r => r.date === dateStr);
+  if (idx >= notesVisibleCount) {
+    notesVisibleCount = idx + 50;
+    _renderNotesList();
+  }
+  // Scroll to the day header
+  setTimeout(() => {
+    const el = document.getElementById(`notesDay-${dateStr}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Briefly highlight date label
+      const lbl = el.querySelector('.notes-date-label');
+      if (lbl) {
+        lbl.classList.remove('notes-date-hl');
+        void lbl.offsetWidth;
+        lbl.classList.add('notes-date-hl');
+      }
+    }
+  }, 60);
+}
+
+function notesCalToggleMobile() {
+  const body = document.getElementById('notesCalMobBody');
+  const arrow = document.getElementById('notesCalMobArrow');
+  if (!body) return;
+  const isOpen = body.classList.toggle('open');
+  if (arrow) arrow.textContent = isOpen ? '▴' : '▾';
+  try { localStorage.setItem('notes_cal_open', isOpen ? '1' : '0'); } catch(e) {}
+  if (isOpen) _renderNotesCalendar();
 }
 
 // ── UTILS ──
