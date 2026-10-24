@@ -507,6 +507,44 @@
     .ldr-col-assign { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; padding:14px 16px; background:var(--paper2); border-radius:10px; margin-bottom:14px; }
     .ldr-col-assign-col { display:flex; flex-direction:column; gap:4px; }
     .ldr-col-lbl { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); }
+    /* ── SETTINGS PANEL ── */
+    .ldr-settings-section { margin-bottom:20px; }
+    .ldr-settings-title { font-family:'Newsreader',serif; font-size:17px; font-weight:800; font-style:normal; color:var(--ink); margin-bottom:12px; }
+    .ldr-cat-kind-label { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); margin:14px 0 6px; }
+    .ldr-cat-table { width:100%; border-collapse:collapse; }
+    .ldr-cat-table th { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); padding:5px 8px; border-bottom:2px solid rgba(26,24,20,0.12); text-align:left; white-space:nowrap; }
+    .ldr-cat-table th.r { text-align:right; }
+    .ldr-cat-tr { height:42px; transition:background 0.1s; }
+    .ldr-cat-tr:hover { background:rgba(26,24,20,0.025); }
+    .ldr-cat-tr td { padding:4px 8px; border-bottom:1px solid rgba(26,24,20,0.07); vertical-align:middle; }
+    .ldr-cat-tr.hidden-cat { opacity:0.45; }
+    .ldr-cat-handle { cursor:grab; color:var(--mute); font-size:14px; padding:0 4px; user-select:none; }
+    .ldr-cat-handle:active { cursor:grabbing; }
+    .ldr-cat-swatch-btn { width:22px; height:22px; border-radius:4px; border:1.5px solid rgba(26,24,20,0.15); cursor:pointer; position:relative; flex-shrink:0; }
+    .ldr-cat-name-cell { font-family:'Space Grotesk',sans-serif; font-size:13px; min-width:80px; }
+    .ldr-cat-name-text { cursor:pointer; padding:2px 4px; border-radius:4px; display:inline-block; }
+    .ldr-cat-name-text:hover { background:rgba(26,24,20,0.06); text-decoration:underline; text-decoration-style:dotted; }
+    .ldr-cat-name-in { font-family:'Space Grotesk',sans-serif; font-size:13px; padding:2px 6px; border:1.5px solid var(--ink); border-radius:4px; background:var(--paper); color:var(--ink); outline:none; }
+    .ldr-cat-count { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--mute); text-align:right; white-space:nowrap; }
+    .ldr-cat-vis-btn { background:transparent; border:1.5px solid rgba(26,24,20,0.2); border-radius:5px; cursor:pointer; font-size:11px; padding:2px 7px; font-family:'JetBrains Mono',monospace; color:var(--ink3); transition:all 0.12s; white-space:nowrap; }
+    .ldr-cat-vis-btn:hover { border-color:var(--ink); color:var(--ink); }
+    .ldr-cat-del-btn { background:transparent; border:none; cursor:pointer; color:var(--mute); font-size:13px; padding:3px 6px; font-family:'JetBrains Mono',monospace; transition:color 0.12s; }
+    .ldr-cat-del-btn:hover { color:var(--accent); }
+    .ldr-cat-add-row { display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap; }
+    .ldr-cat-add-in { font-family:'Space Grotesk',sans-serif; font-size:13px; padding:5px 10px; border:1.5px solid rgba(26,24,20,0.2); border-radius:6px; background:var(--paper); color:var(--ink); outline:none; width:160px; }
+    .ldr-cat-add-in:focus { border-color:var(--ink); }
+    .ldr-cat-palette { position:absolute; top:28px; left:0; background:var(--paper); border:1px solid rgba(26,24,20,0.18); border-radius:8px; box-shadow:0 4px 16px rgba(26,24,20,0.12); padding:8px; z-index:500; display:none; }
+    .ldr-cat-palette.open { display:block; }
+    .ldr-cat-palette-grid { display:grid; grid-template-columns:repeat(6,20px); gap:4px; }
+    .ldr-cat-palette-swatch { width:20px; height:20px; border-radius:3px; border:1.5px solid transparent; cursor:pointer; transition:transform 0.1s; }
+    .ldr-cat-palette-swatch:hover { transform:scale(1.2); border-color:rgba(26,24,20,0.4); }
+    .ldr-cat-drag-over { border-top:2px solid var(--accent) !important; }
+    .ldr-settings-rules-link { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink3); padding:12px 0; }
+    .ldr-settings-rules-link a { color:var(--accent); cursor:pointer; text-decoration:underline; }
+    @media (max-width:640px){
+      .ldr-cat-handle { display:none; }
+      .ldr-cat-count { display:none; }
+    }
     @media (max-width:640px){
       .ldr-imp-tbl thead { display:none; }
       .ldr-imp-row { height:auto; display:flex; flex-wrap:wrap; align-items:center; gap:4px; padding:6px 0; }
@@ -1697,6 +1735,7 @@
       <button class="ui-seg-btn" onclick="ldrTab('budget',this)">予算</button>
       <button class="ui-seg-btn" onclick="ldrTab('review',this)">振り返り</button>
       <button class="ui-seg-btn" onclick="ldrTab('import',this)">インポート</button>
+      <button class="ui-seg-btn" onclick="ldrTab('settings',this)">設定</button>
     </div>
     <div class="ldr-add-wrap">
       <button class="ldr-add-btn" onclick="openTxModal('expense')">＋ 取引を追加</button>
@@ -1730,6 +1769,7 @@
       <div id="ldrPanelBudget" style="display:none"></div>
       <div id="ldrPanelReview" style="display:none"></div>
       <div id="ldrPanelImport" style="display:none"></div>
+      <div id="ldrPanelSettings" style="display:none"></div>
     </div>
 
     <!-- Guide panel -->
@@ -1845,12 +1885,7 @@
         </div>
         <div id="ldrTxCatRow">
           <label class="ldr-modal-lbl" for="ldrTxCat">カテゴリ</label>
-          <select class="ldr-modal-in" id="ldrTxCat">
-            <option value="食費">食費</option><option value="家賃">家賃</option><option value="光熱費">光熱費</option>
-            <option value="通信費">通信費</option><option value="交通費">交通費</option><option value="娯楽">娯楽</option><option value="医療">医療</option>
-            <option value="衣服">衣服</option><option value="日用品">日用品</option><option value="給与">給与</option>
-            <option value="副収入">副収入</option><option value="その他">その他</option>
-          </select>
+          <select class="ldr-modal-in" id="ldrTxCat" onclick="event.stopPropagation()"></select>
         </div>
         <div id="ldrTxAccRow">
           <label class="ldr-modal-lbl" for="ldrTxAcc">口座</label>
@@ -1926,11 +1961,7 @@
           </div>
           <div>
             <label class="ldr-modal-lbl" for="ldrSubTxCat">取引カテゴリ</label>
-            <select class="ldr-modal-in" id="ldrSubTxCat" onclick="event.stopPropagation()">
-              <option value="食費">食費</option><option value="家賃">家賃</option><option value="光熱費">光熱費</option>
-              <option value="通信費">通信費</option><option value="交通費">交通費</option><option value="娯楽">娯楽</option>
-              <option value="医療">医療</option><option value="衣服">衣服</option><option value="日用品">日用品</option><option value="その他">その他</option>
-            </select>
+            <select class="ldr-modal-in" id="ldrSubTxCat" onclick="event.stopPropagation()"></select>
           </div>
         </div>
         <div>
@@ -2466,7 +2497,7 @@ function mergeCollections(base, local, server) {
     meals:       mergeArrayById(b.meals,      l.meals,      s.meals),
     budgets:     mergeObjKeysDeep(b.budgets,     l.budgets,     s.budgets),
     accounts:    mergeArrayById(b.accounts,   l.accounts,   s.accounts),
-    tx_rules:    { rules: mergeArrayById(b.tx_rules && b.tx_rules.rules, l.tx_rules && l.tx_rules.rules, s.tx_rules && s.tx_rules.rules) },
+    tx_rules:    { rules: mergeArrayById(b.tx_rules && b.tx_rules.rules, l.tx_rules && l.tx_rules.rules, s.tx_rules && s.tx_rules.rules), categories: mergeArrayById(b.tx_rules && b.tx_rules.categories, l.tx_rules && l.tx_rules.categories, s.tx_rules && s.tx_rules.categories) },
     reflections: mergeArrayById(b.reflections, l.reflections, s.reflections),
     seed_flags:  mergeObjKeysDeep(b.seed_flags,  l.seed_flags,  s.seed_flags),
   };
@@ -2713,6 +2744,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     localStorage.setItem('food_meals', JSON.stringify(meals));
   }
   const synced = await syncFromSupabase(session.user.id);
+  // Initialize category master after sync (sync may have loaded server categories)
+  const _catsBefore = JSON.stringify(txRules.categories||[]);
+  _initCategories();
+  // Save only if _syncReady and categories changed (newly generated or supplemented)
+  if(_syncReady && JSON.stringify(txRules.categories||[]) !== _catsBefore) { saveTxRules(); }
   if (synced) autoPostSubs(); // only after server data has been loaded
   // After sync, re-apply migration in case server had v1 data; save if changed
   const _postSyncMeals = JSON.stringify(meals);
@@ -3566,11 +3602,64 @@ function undoCompleteById(id) {
 }
 
 // ── FINANCE ──
-const TX_CAT_COLORS = {
-  '食費':'#f97316','家賃':'#92400e','光熱費':'#f59e0b','通信費':'#0e7490','交通費':'#3b82f6',
-  '娯楽':'#8b5cf6','医療':'#ef4444','衣服':'#ec4899','日用品':'#22c55e',
-  '給与':'#5a6b3a','副収入':'#059669','その他':'#6b7280'
-};
+// ── Category master helpers ──
+function _catDefaultDefs(){
+  // Closed-scope defaults used only for initialization
+  const EXP=[
+    {name:'食費',color:'#f97316'},{name:'家賃',color:'#92400e'},{name:'光熱費',color:'#f59e0b'},
+    {name:'通信費',color:'#0e7490'},{name:'交通費',color:'#3b82f6'},{name:'娯楽',color:'#8b5cf6'},
+    {name:'医療',color:'#ef4444'},{name:'衣服',color:'#ec4899'},{name:'日用品',color:'#22c55e'},
+    {name:'その他',color:'#6b7280'}
+  ];
+  const INC=[
+    {name:'給与',color:'#5a6b3a'},{name:'副収入',color:'#059669'}
+  ];
+  return{exp:EXP,inc:INC};
+}
+
+// 自動で作るカテゴリは名前から決まる ID にする（複数の端末で同時に作っても、同期のマージで重複しない）
+function _catAutoId(kind,name){return 'cat:'+kind+':'+name;}
+function _initCategories(){
+  // Build from defaults if missing or empty
+  const defs=_catDefaultDefs();
+  if(!txRules.categories||!txRules.categories.length){
+    let order=0;
+    txRules.categories=[
+      ...defs.exp.map(d=>({id:_catAutoId('expense',d.name),name:d.name,kind:'expense',color:d.color,order:order++,hidden:false})),
+      ...defs.inc.map(d=>({id:_catAutoId('income',d.name),name:d.name,kind:'income',color:d.color,order:order++,hidden:false}))
+    ];
+  }
+  // Ensure 'その他' exists and is undeletable/uneditable
+  if(!txRules.categories.some(c=>c.name==='その他')){
+    txRules.categories.push({id:_catAutoId('expense','その他'),name:'その他',kind:'expense',color:'#6b7280',order:9999,hidden:false});
+  }
+  // Add categories from existing txs that are not in master
+  const masterNames=new Set(txRules.categories.map(c=>c.name));
+  const PALETTE=['#f97316','#f59e0b','#22c55e','#3b82f6','#8b5cf6','#ef4444','#ec4899','#06b6d4','#84cc16','#14b8a6','#a78bfa','#fb923c'];
+  let extraOrder=txRules.categories.length;
+  txs.forEach(t=>{
+    if(t.category&&!masterNames.has(t.category)){
+      const kind=(t.type==='income')?'income':'expense';
+      const color=PALETTE[extraOrder%PALETTE.length];
+      txRules.categories.push({id:_catAutoId(kind,t.category),name:t.category,kind,color,order:extraOrder++,hidden:false});
+      masterNames.add(t.category);
+    }
+  });
+}
+
+function getCategories(kind){
+  if(!txRules.categories)return[];
+  return txRules.categories.filter(c=>c.kind===kind&&!c.hidden).sort((a,b)=>(a.order||0)-(b.order||0));
+}
+function getAllCategories(){
+  if(!txRules.categories)return[];
+  return txRules.categories.slice().sort((a,b)=>(a.order||0)-(b.order||0));
+}
+function catColor(name){
+  if(!txRules.categories)return'#6b7280';
+  const c=txRules.categories.find(x=>x.name===name);
+  return c?c.color:'#6b7280';
+}
 const LDR_MONTHS='1月 2月 3月 4月 5月 6月 7月 8月 9月 10月 11月 12月'.split(' ');
 let ldrTxFilter='all';        // overview recent: all/income/expense
 let ldrListFilter='all';      // txlist: all/income/expense
@@ -3585,7 +3674,7 @@ function _ldrActiveTab(){const a=document.querySelector('#ldrSubtabs .ui-seg-btn
 function chMonth(d){vm+=d;if(vm>11){vm=0;vy++;}if(vm<0){vm=11;vy--;}const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();else if(t==='accounts')renderAccountsPanel();else if(t==='subs')renderSubs();else if(t==='review')renderReviewPanel();}
 function goMonthToday(){const n=new Date();vy=n.getFullYear();vm=n.getMonth();const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();else if(t==='accounts')renderAccountsPanel();else if(t==='subs')renderSubs();else if(t==='review')renderReviewPanel();}
 function saveTx(){localStorage.setItem('hd_tx',JSON.stringify(txs));saveToSupabase();renderHome();}
-function saveTxRules(){localStorage.setItem('ledger_tx_rules',JSON.stringify(txRules));saveToSupabase();}
+function saveTxRules(){localStorage.setItem('ledger_tx_rules',JSON.stringify(txRules));saveToSupabase();ldrListInitDone=false;}
 
 // ── normTxName ──
 function normTxName(s,forMatch){
@@ -3602,7 +3691,7 @@ function ldrTab(tab, el){
   try{localStorage.setItem('ledger_subtab',tab);}catch(e){}
   document.querySelectorAll('#ldrSubtabs .ui-seg-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  ['overview','txlist','accounts','subs','budget','review','import'].forEach(t=>{
+  ['overview','txlist','accounts','subs','budget','review','import','settings'].forEach(t=>{
     const p=document.getElementById('ldrPanel'+t.charAt(0).toUpperCase()+t.slice(1));
     if(p)p.style.display=(t===tab?'block':'none');
   });
@@ -3619,6 +3708,7 @@ function ldrTab(tab, el){
   else if(tab==='budget')renderBudgetPanel();
   else if(tab==='review')renderReviewPanel();
   else if(tab==='import')renderLdrImport();
+  else if(tab==='settings')renderLdrSettings();
 }
 function restoreLdrSubtab(){
   let tab='overview';
@@ -3976,7 +4066,10 @@ function _refreshImportConfirmCount(){
 function _importRowHtml(row,st){
   const id=esc(String(row._id));
   const noAcc=!st.accountId;
-  const catKeys=Object.keys(TX_CAT_COLORS);
+  // Show visible cats; also include current row.category even if hidden
+  const visCats=getAllCategories().filter(c=>!c.hidden);
+  const extraCat=(row.category&&!visCats.some(c=>c.name===row.category))?[{name:row.category}]:[];
+  const catKeys=[...visCats,...extraCat].map(c=>c.name);
   const catOpts=catKeys.map(c=>`<option value="${esc(c)}"${c===row.category?' selected':''}>${esc(c)}</option>`).join('');
   const toAccList=accounts.filter(a=>!a.archived&&String(a.id)!==String(st.accountId));
   const toAccOpts=`<option value="">振替先を選択</option>`+toAccList.map(a=>`<option value="${esc(String(a.id))}"${String(a.id)===String(row.toAccountId)?' selected':''}>${esc(a.name)}</option>`).join('');
@@ -4026,13 +4119,16 @@ function _renderColAssignUI(csvRows,colAssign){
   </div>`;
 }
 
+let _rulesCatFilter='all';
 function _renderImportRulesSection(){
   const rules=txRules.rules||[];
-  const catKeys=Object.keys(TX_CAT_COLORS);
+  const catKeys=getAllCategories().filter(c=>!c.hidden).map(c=>c.name);
   const catOpts=catKeys.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
   const activeAcc=accounts.filter(a=>!a.archived);
   const toAccOpts=`<option value="">選択</option>`+activeAcc.map(a=>`<option value="${esc(String(a.id))}">${esc(a.name)}</option>`).join('');
-  const rulesRows=rules.map(r=>{
+  // Filter rules
+  const filteredRules=_rulesCatFilter==='all'?rules:rules.filter(r=>r.category===_rulesCatFilter||(r.type==='transfer'&&_rulesCatFilter==='__transfer__')||(r.type==='skip'&&_rulesCatFilter==='__skip__'));
+  const rulesRows=filteredRules.map(r=>{
     const rid=esc(String(r.id));
     let cls='';
     if(r.type==='skip')cls='取り込まない';
@@ -4041,9 +4137,15 @@ function _renderImportRulesSection(){
     const kw=r.keyword||'';
     return`<tr class="ldr-rules-row"><td><input class="ldr-rules-kw-in" value="${esc(kw)}" style="width:${Math.max(80,kw.length*9+20)}px;" onchange="event.stopPropagation();_ruleUpdateKw('${rid}',this.value)" oninput="event.stopPropagation();this.style.width=Math.max(80,this.value.length*9+20)+'px'" onclick="event.stopPropagation()" onfocus="event.stopPropagation()"></td><td style="font-family:'Space Grotesk',sans-serif;font-size:13px;">${cls}</td><td><button class="btn-kill" onclick="event.stopPropagation();_ruleDelete('${rid}')">✕</button></td></tr>`;
   }).join('');
-  return`<div class="ldr-rules-section ui-card" style="padding:16px 18px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;"><div style="font-family:'Newsreader',serif;font-size:17px;font-weight:800;">分類ルール</div></div>
-    ${rules.length?`<table class="ldr-rules-table"><thead><tr><th>キーワード</th><th>分類</th><th style="width:40px;"></th></tr></thead><tbody>${rulesRows}</tbody></table>`:'<div style="font-family:\'Space Grotesk\',sans-serif;font-size:13px;color:var(--mute);margin-bottom:12px;">ルールはまだありません</div>'}
+  const filterSel=rules.length?`<select class="ldr-imp-sel" onclick="event.stopPropagation()" onchange="event.stopPropagation();_rulesCatFilter=this.value;renderLdrSettings()" style="margin-left:auto;min-width:100px;">
+    <option value="all"${_rulesCatFilter==='all'?' selected':''}>すべて</option>
+    ${catKeys.map(c=>`<option value="${esc(c)}"${_rulesCatFilter===c?' selected':''}>${esc(c)}</option>`).join('')}
+    <option value="__transfer__"${_rulesCatFilter==='__transfer__'?' selected':''}>振替</option>
+    <option value="__skip__"${_rulesCatFilter==='__skip__'?' selected':''}>取り込まない</option>
+  </select>`:'';
+  return`<div class="ldr-rules-section" style="padding:0;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;"><div style="font-family:'Newsreader',serif;font-size:17px;font-weight:800;">分類ルール</div>${filterSel}</div>
+    ${rules.length?`<table class="ldr-rules-table"><thead><tr><th>キーワード</th><th>分類</th><th style="width:40px;"></th></tr></thead><tbody>${rulesRows||'<tr><td colspan="3" style="text-align:center;padding:12px;color:var(--mute);font-size:12px;">該当なし</td></tr>'}</tbody></table>`:'<div style="font-family:\'Space Grotesk\',sans-serif;font-size:13px;color:var(--mute);margin-bottom:12px;">ルールはまだありません</div>'}
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-top:${rules.length?'14px':'0'};">
       <div class="ldr-col-assign-col"><span class="ldr-col-lbl">キーワード</span><input id="ruleNewKw" class="ldr-rules-kw-in" placeholder="例: スーパー" onclick="event.stopPropagation()" onfocus="event.stopPropagation()" style="width:160px;"></div>
       <div class="ldr-col-assign-col"><span class="ldr-col-lbl">種類</span><select id="ruleNewType" class="ldr-imp-sel" onchange="event.stopPropagation();_ruleAddFormTypeChange()" onclick="event.stopPropagation()" style="min-width:100px;"><option value="expense">支出</option><option value="income">収入</option><option value="transfer">振替</option><option value="skip">取り込まない</option></select></div>
@@ -4073,14 +4175,14 @@ function _ruleAdd(){
   const ruleObj={id:existing>=0?txRules.rules[existing].id:crypto.randomUUID(),keyword:kw,type,category:cat,toAccountId:toAccId};
   if(existing>=0)txRules.rules[existing]=ruleObj;else txRules.rules.push(ruleObj);
   saveTxRules();
-  renderLdrImport();
+  renderLdrSettings();
 }
 
 function _ruleDelete(id){
   if(!txRules.rules)return;
   txRules.rules=txRules.rules.filter(r=>String(r.id)!==String(id));
   saveTxRules();
-  renderLdrImport();
+  renderLdrSettings();
 }
 
 function _ruleUpdateKw(id,val){
@@ -4152,7 +4254,7 @@ function renderLdrImport(){
         <input type="file" id="ldrImportFileIn" accept=".csv" multiple style="display:none" onchange="event.stopPropagation();_importFromFileInput(this.files)">
       </div>
       ${colAssignHtml}
-      ${_renderImportRulesSection()}
+      <div class="ldr-settings-rules-link">分類ルールは <a onclick="ldrTab('settings',document.querySelector('#ldrSubtabs .ui-seg-btn[onclick*=\'settings\']'))">設定 ›</a> で管理できます。</div>
     </div>`;
     const dz=document.getElementById('ldrImportDrop');
     if(dz){
@@ -4205,8 +4307,268 @@ function renderLdrImport(){
       <button class="btn btn-ghost" onclick="_importCancel()">キャンセル</button>
       <button class="btn btn-primary" id="ldrImportConfirmBtn" onclick="_importConfirm()">${checkedCount} 件を取り込む</button>
     </div>
-    ${_renderImportRulesSection()}
   </div>`;
+}
+
+// ── SETTINGS ──
+let _catEditId=null; // id of category being name-edited
+let _catPaletteId=null; // id of category whose palette is open
+
+const CAT_PALETTE=['#f97316','#f59e0b','#22c55e','#3b82f6','#8b5cf6','#ef4444','#ec4899',
+  '#06b6d4','#84cc16','#14b8a6','#a78bfa','#fb923c','#92400e','#0e7490','#5a6b3a','#059669',
+  '#6b7280','#1d4ed8','#be185d','#047857'];
+
+function renderLdrSettings(){
+  const p=document.getElementById('ldrPanelSettings');if(!p)return;
+  const cats=txRules.categories||[];
+  const expCats=cats.filter(c=>c.kind==='expense').sort((a,b)=>(a.order||0)-(b.order||0));
+  const incCats=cats.filter(c=>c.kind==='income').sort((a,b)=>(a.order||0)-(b.order||0));
+
+  function _countUsage(name){
+    return txs.filter(t=>t.category===name).length;
+  }
+
+  function _catRowHtml(c){
+    const isOther=c.name==='その他';
+    const count=_countUsage(c.name);
+    const swatchStyle=`background:${esc(c.color)};`;
+    const nameCell=_catEditId===String(c.id)
+      ?`<input class="ldr-cat-name-in" id="catNameIn_${esc(String(c.id))}" value="${esc(c.name)}" style="width:${Math.max(60,c.name.length*9+16)}px;" onclick="event.stopPropagation()" onfocus="event.stopPropagation()" onkeydown="event.stopPropagation();_catNameKey(event,'${esc(String(c.id))}')" onblur="event.stopPropagation();_catNameSave('${esc(String(c.id))}')">`
+      :`<span class="ldr-cat-name-text" onclick="event.stopPropagation();${isOther?'':` _catStartEdit('${esc(String(c.id))}')`}">${esc(c.name)}</span>`;
+    const paletteHtml=`<div class="ldr-cat-palette${_catPaletteId===String(c.id)?' open':''}" id="catPal_${esc(String(c.id))}" onclick="event.stopPropagation()">
+      <div class="ldr-cat-palette-grid">${CAT_PALETTE.map(col=>`<div class="ldr-cat-palette-swatch" style="background:${esc(col)};" onclick="event.stopPropagation();_catSetColor('${esc(String(c.id))}','${esc(col)}')"></div>`).join('')}</div>
+    </div>`;
+    const visBtn=`<button class="ldr-cat-vis-btn" onclick="event.stopPropagation();_catToggleHidden('${esc(String(c.id))}')">${c.hidden?'表示':'非表示'}</button>`;
+    const delBtn=isOther?'':`<button class="ldr-cat-del-btn" onclick="event.stopPropagation();_catDelete('${esc(String(c.id))}')" title="削除">✕</button>`;
+    return`<tr class="ldr-cat-tr${c.hidden?' hidden-cat':''}" id="catRow_${esc(String(c.id))}" draggable="true" ondragstart="event.stopPropagation();_catDragStart(event,'${esc(String(c.id))}')" ondragover="event.stopPropagation();_catDragOver(event,'${esc(String(c.id))}')" ondrop="event.stopPropagation();_catDrop(event,'${esc(String(c.id))}')" ondragleave="event.stopPropagation();_catDragLeave(event)">
+      <td onclick="event.stopPropagation()"><span class="ldr-cat-handle">⠿</span></td>
+      <td onclick="event.stopPropagation()" style="position:relative;">${paletteHtml}<button class="ldr-cat-swatch-btn" style="${swatchStyle}" onclick="event.stopPropagation();_catTogglePalette('${esc(String(c.id))}')" title="色を変更"></button></td>
+      <td class="ldr-cat-name-cell" onclick="event.stopPropagation()">${nameCell}</td>
+      <td class="ldr-cat-count r" onclick="event.stopPropagation()">${count}</td>
+      <td onclick="event.stopPropagation()">${visBtn}</td>
+      <td onclick="event.stopPropagation()">${delBtn}</td>
+    </tr>`;
+  }
+
+  const expTable=`<table class="ldr-cat-table"><thead><tr><th style="width:28px;"></th><th style="width:32px;">色</th><th>名前</th><th class="r hide-mob" style="min-width:50px;">件数</th><th style="min-width:60px;"></th><th style="width:32px;"></th></tr></thead><tbody>${expCats.map(_catRowHtml).join('')}</tbody></table>
+    <div class="ldr-cat-add-row"><input class="ldr-cat-add-in" id="catAddExpIn" placeholder="カテゴリ名" onclick="event.stopPropagation()" onkeydown="event.stopPropagation();if(event.key==='Enter'){event.preventDefault();_catAdd('expense');}"><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();_catAdd('expense')">＋ 追加</button></div>`;
+  const incTable=`<table class="ldr-cat-table"><thead><tr><th style="width:28px;"></th><th style="width:32px;">色</th><th>名前</th><th class="r hide-mob" style="min-width:50px;">件数</th><th style="min-width:60px;"></th><th style="width:32px;"></th></tr></thead><tbody>${incCats.map(_catRowHtml).join('')}</tbody></table>
+    <div class="ldr-cat-add-row"><input class="ldr-cat-add-in" id="catAddIncIn" placeholder="カテゴリ名" onclick="event.stopPropagation()" onkeydown="event.stopPropagation();if(event.key==='Enter'){event.preventDefault();_catAdd('income');}"><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();_catAdd('income')">＋ 追加</button></div>`;
+
+  p.innerHTML=`<div style="padding:20px;max-width:780px;">
+    <div class="ldr-settings-section ui-card" style="padding:16px 18px;">
+      <div class="ldr-settings-title">カテゴリ</div>
+      <div class="ldr-cat-kind-label">支出</div>${expTable}
+      <div class="ldr-cat-kind-label" style="margin-top:18px;">収入</div>${incTable}
+    </div>
+    <div class="ldr-settings-section ui-card" style="padding:16px 18px;margin-top:14px;">
+      ${_renderImportRulesSection()}
+    </div>
+  </div>`;
+  // Re-attach palette close handler
+  setTimeout(()=>{
+    document.querySelectorAll('.ldr-cat-name-in').forEach(el=>{if(el.id&&el.id.startsWith('catNameIn_'))el.focus&&el.focus();});
+  },10);
+}
+
+function _catRenderRefresh(){
+  if(!txRules.categories)return;
+  _catEditId=null; // reset edit state on save
+  saveTxRules();
+  renderLdrSettings();
+}
+
+// ── drag and drop for categories ──
+let _catDragSrcId=null;
+function _catDragStart(e,id){_catDragSrcId=id;e.dataTransfer.effectAllowed='move';}
+function _catDragOver(e,id){e.preventDefault();e.dataTransfer.dropEffect='move';const row=document.getElementById('catRow_'+id);if(row)row.classList.add('ldr-cat-drag-over');}
+function _catDragLeave(e){document.querySelectorAll('.ldr-cat-drag-over').forEach(r=>r.classList.remove('ldr-cat-drag-over'));}
+function _catDrop(e,targetId){
+  e.preventDefault();
+  document.querySelectorAll('.ldr-cat-drag-over').forEach(r=>r.classList.remove('ldr-cat-drag-over'));
+  if(!_catDragSrcId||_catDragSrcId===targetId)return;
+  const cats=txRules.categories;
+  const srcIdx=cats.findIndex(c=>String(c.id)===_catDragSrcId);
+  const tgtIdx=cats.findIndex(c=>String(c.id)===targetId);
+  if(srcIdx<0||tgtIdx<0)return;
+  // Only reorder within same kind
+  if(cats[srcIdx].kind!==cats[tgtIdx].kind)return;
+  // Re-assign orders
+  const sameKind=cats.filter(c=>c.kind===cats[srcIdx].kind).sort((a,b)=>(a.order||0)-(b.order||0));
+  const srcPos=sameKind.findIndex(c=>String(c.id)===_catDragSrcId);
+  const tgtPos=sameKind.findIndex(c=>String(c.id)===targetId);
+  sameKind.splice(tgtPos,0,sameKind.splice(srcPos,1)[0]);
+  sameKind.forEach((c,i)=>c.order=i);
+  _catDragSrcId=null;
+  _catRenderRefresh();
+}
+
+// ── palette ──
+function _catTogglePalette(id){
+  _catPaletteId=(_catPaletteId===String(id))?null:String(id);
+  renderLdrSettings();
+}
+function _catSetColor(id,color){
+  const c=txRules.categories&&txRules.categories.find(x=>String(x.id)===String(id));
+  if(!c)return;
+  c.color=color;
+  _catPaletteId=null;
+  _catRenderRefresh();
+}
+
+// ── name edit ──
+function _catStartEdit(id){
+  _catEditId=String(id);
+  _catPaletteId=null;
+  renderLdrSettings();
+  setTimeout(()=>{const el=document.getElementById('catNameIn_'+id);if(el){el.focus();el.select();}},10);
+}
+function _catNameKey(e,id){
+  if(e.key==='Enter'){e.preventDefault();_catNameSave(id);}
+  else if(e.key==='Escape'){e.preventDefault();_catEditId=null;renderLdrSettings();}
+}
+async function _catNameSave(id){
+  const inp=document.getElementById('catNameIn_'+id);
+  if(!inp)return;
+  const newName=inp.value.trim();
+  const c=txRules.categories&&txRules.categories.find(x=>String(x.id)===String(id));
+  if(!c){_catEditId=null;renderLdrSettings();return;}
+  const oldName=c.name;
+  if(!newName||newName===oldName){_catEditId=null;renderLdrSettings();return;}
+  // Check duplicate
+  if(txRules.categories.some(x=>x.name===newName&&String(x.id)!==String(id))){
+    await uiAlert(`「${newName}」は既に存在します`);
+    setTimeout(()=>{const el=document.getElementById('catNameIn_'+id);if(el){el.focus();el.select();}},10);
+    return;
+  }
+  // Count usages
+  const usedTxs=txs.filter(t=>t.category===oldName).length;
+  const usedBudgets=(()=>{let n=0;const bc=budgets.base&&budgets.base.cats;if(bc&&bc[oldName]!==undefined)n++;if(budgets.months)Object.values(budgets.months).forEach(m=>{if(m.cats&&m.cats[oldName]!==undefined)n++;});return n;})();
+  const usedRules=(txRules.rules||[]).filter(r=>r.category===oldName).length;
+  const usedSubs=subs.filter(s=>s.txCategory===oldName).length;
+  const total=usedTxs+usedBudgets+usedRules+usedSubs;
+  if(total>0){
+    const ok=await uiConfirm(`${total} 件の取引・予算・ルールが新しい名前「${newName}」に変わります。続けますか？`,{title:'カテゴリ名の変更',okLabel:'変更する'});
+    if(!ok){_catEditId=null;renderLdrSettings();return;}
+  }
+  // Apply rename
+  c.name=newName;
+  txs.forEach(t=>{if(t.category===oldName)t.category=newName;});
+  if(budgets.base&&budgets.base.cats&&budgets.base.cats[oldName]!==undefined){budgets.base.cats[newName]=budgets.base.cats[oldName];delete budgets.base.cats[oldName];}
+  if(budgets.months)Object.values(budgets.months).forEach(m=>{if(m.cats&&m.cats[oldName]!==undefined){m.cats[newName]=m.cats[oldName];delete m.cats[oldName];}});
+  (txRules.rules||[]).forEach(r=>{if(r.category===oldName)r.category=newName;});
+  subs.forEach(s=>{if(s.txCategory===oldName)s.txCategory=newName;});
+  _catEditId=null;
+  saveTx();saveBudgets();saveSubs();
+  saveTxRules();
+  renderLdrSettings();
+}
+
+// ── toggle hidden ──
+function _catToggleHidden(id){
+  const c=txRules.categories&&txRules.categories.find(x=>String(x.id)===String(id));
+  if(!c||c.name==='その他')return;
+  c.hidden=!c.hidden;
+  _catRenderRefresh();
+}
+
+// ── add category ──
+function _catAdd(kind){
+  const inputId=kind==='expense'?'catAddExpIn':'catAddIncIn';
+  const inp=document.getElementById(inputId);
+  if(!inp)return;
+  const name=inp.value.trim();
+  if(!name){inp.focus();return;}
+  if(txRules.categories&&txRules.categories.some(c=>c.name===name)){
+    uiAlert(`「${name}」は既に存在します`);
+    return;
+  }
+  // Pick unused color
+  const usedColors=new Set((txRules.categories||[]).map(c=>c.color));
+  const color=CAT_PALETTE.find(col=>!usedColors.has(col))||CAT_PALETTE[0];
+  const maxOrder=Math.max(0,...(txRules.categories||[]).filter(c=>c.kind===kind).map(c=>c.order||0));
+  if(!txRules.categories)txRules.categories=[];
+  txRules.categories.push({id:crypto.randomUUID(),name,kind,color,order:maxOrder+1,hidden:false});
+  inp.value='';
+  _catRenderRefresh();
+}
+
+// ── delete category ──
+async function _catDelete(id){
+  const c=txRules.categories&&txRules.categories.find(x=>String(x.id)===String(id));
+  if(!c||c.name==='その他')return;
+  const count=txs.filter(t=>t.category===c.name).length;
+  const inBudget=(()=>{const bc=budgets.base&&budgets.base.cats;let n=0;if(bc&&bc[c.name]!==undefined)n++;if(budgets.months)Object.values(budgets.months).forEach(m=>{if(m.cats&&m.cats[c.name]!==undefined)n++;});return n;})();
+  const inRules=(txRules.rules||[]).filter(r=>r.category===c.name).length;
+  const inSubs=subs.filter(s=>s.txCategory===c.name).length;
+  const total=count+inBudget+inRules+inSubs;
+  if(total===0){
+    const ok=await uiConfirm(`「${esc(c.name)}」を削除しますか？`,{title:'カテゴリを削除',okLabel:'削除',danger:true});
+    if(!ok)return;
+    txRules.categories=txRules.categories.filter(x=>String(x.id)!==String(id));
+    _catRenderRefresh();
+    return;
+  }
+  // Show migration dialog
+  _catDeleteWithMigration(c);
+}
+
+async function _catDeleteWithMigration(c){
+  const sameKindCats=(txRules.categories||[]).filter(x=>x.kind===c.kind&&x.name!=='その他'&&String(x.id)!==String(c.id)&&!x.hidden);
+  const fallback='その他';
+  const opts=[{name:fallback},...sameKindCats];
+  const count=txs.filter(t=>t.category===c.name).length;
+  const inBudget=(()=>{const bc=budgets.base&&budgets.base.cats;let n=0;if(bc&&bc[c.name]!==undefined)n++;if(budgets.months)Object.values(budgets.months).forEach(m=>{if(m.cats&&m.cats[c.name]!==undefined)n++;});return n;})();
+  const inRules=(txRules.rules||[]).filter(r=>r.category===c.name).length;
+  const inSubs=subs.filter(s=>s.txCategory===c.name).length;
+  // Show a custom dialog for migration
+  let overlay=document.getElementById('catDelMigOverlay');
+  if(!overlay){overlay=document.createElement('div');overlay.id='catDelMigOverlay';overlay.className='ldr-modal-overlay';document.body.appendChild(overlay);}
+  const selOpts=opts.map(o=>`<option value="${esc(o.name)}">${esc(o.name)}</option>`).join('');
+  overlay.innerHTML=`<div class="ldr-modal" onclick="event.stopPropagation()" style="max-width:480px;">
+    <div class="ldr-modal-hdr"><div class="ldr-modal-title">「${esc(c.name)}」を削除</div><button class="ldr-modal-close" onclick="document.getElementById('catDelMigOverlay').classList.remove('open')">✕</button></div>
+    <div class="ldr-modal-body">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--ink2);line-height:1.6;">このカテゴリは ${count} 件の取引・${inBudget>0?`予算 ${inBudget} 件・`:''}${inRules>0?`ルール ${inRules} 件・`:''}${inSubs>0?`固定費 ${inSubs} 件・`:''}で使用されています。<br>移し先のカテゴリを選んでください。<br><small style="color:var(--mute);">予算は移し先に合算せず、移し先に予算がある場合は削除元の予算を破棄します。</small></div>
+      <div><label class="ldr-modal-lbl" for="catDelMigSel">移し先カテゴリ</label><select class="ldr-modal-in" id="catDelMigSel" onclick="event.stopPropagation()">${selOpts}</select></div>
+    </div>
+    <div class="ldr-modal-ftr"><div></div><div class="ldr-modal-ftr-r">
+      <button class="btn btn-ghost" onclick="document.getElementById('catDelMigOverlay').classList.remove('open')">キャンセル</button>
+      <button class="btn btn-primary" style="background:var(--accent);" onclick="event.stopPropagation();_catDeleteConfirm('${esc(String(c.id))}')">削除して移す</button>
+    </div></div>
+  </div>`;
+  overlay.classList.add('open');
+}
+
+function _catDeleteConfirm(id){
+  const overlay=document.getElementById('catDelMigOverlay');
+  const sel=document.getElementById('catDelMigSel');
+  const toName=sel?sel.value:'その他';
+  const c=txRules.categories&&txRules.categories.find(x=>String(x.id)===String(id));
+  if(!c){if(overlay)overlay.classList.remove('open');return;}
+  const oldName=c.name;
+  // Migrate txs
+  txs.forEach(t=>{if(t.category===oldName)t.category=toName;});
+  // Migrate rules
+  (txRules.rules||[]).forEach(r=>{if(r.category===oldName)r.category=toName;});
+  // Migrate subs
+  subs.forEach(s=>{if(s.txCategory===oldName)s.txCategory=toName;});
+  // Handle budgets: base
+  if(budgets.base&&budgets.base.cats&&budgets.base.cats[oldName]!==undefined){
+    // If toName has no budget, move; otherwise discard
+    if(budgets.base.cats[toName]===undefined)budgets.base.cats[toName]=budgets.base.cats[oldName];
+    delete budgets.base.cats[oldName];
+  }
+  if(budgets.months)Object.values(budgets.months).forEach(m=>{
+    if(m.cats&&m.cats[oldName]!==undefined){
+      if(m.cats[toName]===undefined)m.cats[toName]=m.cats[oldName];
+      delete m.cats[oldName];
+    }
+  });
+  txRules.categories=txRules.categories.filter(x=>String(x.id)!==String(id));
+  if(overlay)overlay.classList.remove('open');
+  saveTx();saveBudgets();saveSubs();
+  saveTxRules();
+  renderLdrSettings();
 }
 
 // ── ACCOUNTS ──
@@ -4538,8 +4900,6 @@ function getEffBudget(y,m){
   return{total,cats};
 }
 
-const STD_EXP_CATS=['食費','家賃','光熱費','通信費','交通費','娯楽','医療','衣服','日用品','その他'];
-
 function renderBudgetPanel(){
   const panel=document.getElementById('ldrPanelBudget');if(!panel)return;
   // Update month nav labels
@@ -4574,9 +4934,11 @@ function renderBudgetPanel(){
     </div>`;
   }
 
-  // Build category list: 'total' + STD_EXP_CATS + extra cats in txs
-  const txCats=[...new Set(expTxs.map(t=>t.category).filter(c=>c&&!STD_EXP_CATS.includes(c)&&c!=='給与'&&c!=='副収入'))];
-  const allCats=['total',...STD_EXP_CATS,...txCats];
+  // Build category list: 'total' + expense categories from master + extra cats in txs
+  const masterExpNames=getCategories('expense').map(c=>c.name);
+  const masterExpSet=new Set(masterExpNames);
+  const txCats=[...new Set(expTxs.map(t=>t.category).filter(c=>c&&!masterExpSet.has(c)))];
+  const allCats=['total',...masterExpNames,...txCats];
   const catExpMap={total:totalExp};
   expTxs.forEach(t=>{catExpMap[t.category]=(catExpMap[t.category]||0)+t.amount;});
 
@@ -4589,7 +4951,7 @@ function renderBudgetPanel(){
 
   const rowsHtml=allCats.map(cat=>{
     const catLabel=cat==='total'?'全体（合計）':cat;
-    const color=cat==='total'?'var(--ink)':TX_CAT_COLORS[cat]||'#6b7280';
+    const color=cat==='total'?'var(--ink)':catColor(cat);
     const baseV=_baseBudGet(cat);
     const moV=_moBudGet(cat);
     const effV=_effBud(cat);
@@ -5126,6 +5488,16 @@ function toggleLdrAddMenu(e){e.stopPropagation();const m=document.getElementById
 function closeLdrAddMenu(){const m=document.getElementById('ldrAddMenu');if(m)m.classList.remove('open');}
 
 // ── TX modal ──
+function _populateTxCatSelect(kind, currentCat){
+  const sel=document.getElementById('ldrTxCat');if(!sel)return;
+  const cats=getCategories(kind);
+  // If currentCat is hidden, include it too
+  const extra=(currentCat&&!cats.some(c=>c.name===currentCat)&&getAllCategories().some(c=>c.name===currentCat))?[getAllCategories().find(c=>c.name===currentCat)]:[];
+  sel.innerHTML=[...cats,...extra].map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('');
+  if(currentCat)sel.value=currentCat;
+  if(!sel.value&&cats.length)sel.value=cats[0].name;
+}
+
 function openTxModal(type,txId){
   closeLdrAddMenu();
   ldrTxModalType=type||'expense';
@@ -5147,7 +5519,7 @@ function openTxModal(type,txId){
     document.getElementById('ldrTxDate').value=tx.date||today();
     document.getElementById('ldrTxAmt').value=tx.type==='adjust'?Math.abs(tx.amount):tx.amount||'';
     document.getElementById('ldrTxTitle').value=tx.title||'';
-    document.getElementById('ldrTxCat').value=tx.category||'その他';
+    _populateTxCatSelect(tx.type==='income'?'income':'expense',tx.category||'その他');
     document.getElementById('ldrTxNote').value=tx.note||'';
     // Restore account / from / to
     const accSel=document.getElementById('ldrTxAcc');
@@ -5162,7 +5534,7 @@ function openTxModal(type,txId){
     document.getElementById('ldrTxDate').value=today();
     document.getElementById('ldrTxAmt').value='';
     document.getElementById('ldrTxTitle').value='';
-    document.getElementById('ldrTxCat').value='その他';
+    _populateTxCatSelect(ldrTxModalType==='income'?'income':'expense','その他');
     document.getElementById('ldrTxNote').value='';
     // Restore last used account
     try{const la=localStorage.getItem('ledger_last_account')||'';const accSel=document.getElementById('ldrTxAcc');if(accSel&&la)accSel.value=la;}catch(e){}
@@ -5223,6 +5595,12 @@ function closeTxModal(){
 function setLdrTxType(type,el){
   ldrTxModalType=type;
   _setLdrTxType(type);
+  // Re-populate category select for the new type
+  if(type==='expense'||type==='income'){
+    const catEl=document.getElementById('ldrTxCat');
+    const currentCat=catEl?catEl.value:'';
+    _populateTxCatSelect(type,currentCat);
+  }
 }
 function _setLdrTxType(type){
   const expBtn=document.getElementById('ldrTxTypeExp');
@@ -5424,7 +5802,7 @@ function _txRowHtml(t,hideMobCols){
     accHtml=`<td class="${mobCls}">${an?`<span style="font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--ink3);">${esc(an)}</span>`:'<span style="color:var(--mute);">—</span>'}</td>`;
     titleStr=t.title||'残高調整';
   } else {
-    const col=TX_CAT_COLORS[t.category]||'#6b7280';
+    const col=catColor(t.category);
     catHtml=`<div class="ldr-tx-cat-cell"><div class="ldr-tx-cat-dot" style="background:${col}"></div><span class="ldr-tx-cat-lbl">${esc(t.category||'')}</span></div>`;
     const sign=t.type==='income'?'+':'-';
     const amtCls=t.type==='income'?'inc':'exp';
@@ -5498,7 +5876,7 @@ function renderFinance(){
   const _ovSubProg=_ovSubM>0?_ovSubN/_ovSubM*100:0;
   // Category breakdown (expense only, account-filtered)
   const cats={};mt.filter(t=>t.type==='expense').forEach(t=>{cats[t.category]=(cats[t.category]||0)+t.amount;});
-  const sortedCats=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([name,amt])=>({name,amt,color:TX_CAT_COLORS[name]||'#6b7280'}));
+  const sortedCats=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([name,amt])=>({name,amt,color:catColor(name)}));
   // Recent txs (filtered by type pill)
   const filtered=ldrTxFilter==='all'?mt:ldrTxFilter==='unset_account'?mt.filter(t=>(t.type==='income'||t.type==='expense')&&!t.accountId):mt.filter(t=>t.type===ldrTxFilter);
   const recent=[...filtered].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,10);
@@ -5616,7 +5994,7 @@ function renderFinance(){
         const catExpMap={};mt.filter(t=>t.type==='expense').forEach(t=>{catExpMap[t.category]=(catExpMap[t.category]||0)+t.amount;});
         const catEntries=Object.entries(eb.cats).filter(([c,v])=>v!==null&&v!==undefined);
         if(!catEntries.length)return`<div style="font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--mute);padding:12px 0;">カテゴリの予算が未設定です</div><button class="ldr-card-link" style="font-size:11px;background:transparent;border:none;cursor:pointer;padding:0;color:var(--accent);" onclick="ldrTab('budget',document.querySelector('#ldrSubtabs .ui-seg-btn:nth-child(5)'))">カテゴリ予算を設定する ›</button>`;
-        const rows=catEntries.map(([cat,bud])=>{const act=catExpMap[cat]||0;const pct=bud>0?act/bud*100:0;const over=act>bud;const col=TX_CAT_COLORS[cat]||'#6b7280';const barColor=over?'var(--accent)':pct>=80?'var(--warn)':'var(--ok)';return{cat,bud,act,pct,over,col,barColor};}).sort((a,b)=>b.pct-a.pct);
+        const rows=catEntries.map(([cat,bud])=>{const act=catExpMap[cat]||0;const pct=bud>0?act/bud*100:0;const over=act>bud;const col=catColor(cat);const barColor=over?'var(--accent)':pct>=80?'var(--warn)':'var(--ok)';return{cat,bud,act,pct,over,col,barColor};}).sort((a,b)=>b.pct-a.pct);
         return`<table class="ldr-tx-table"><thead><tr><th>カテゴリ</th><th class="r">予算</th><th class="r">実績</th><th>進捗</th></tr></thead><tbody>${rows.map(r=>`<tr><td><div style="display:flex;align-items:center;gap:5px;"><div style="width:7px;height:7px;border-radius:50%;background:${r.col};flex-shrink:0;"></div><span style="font-family:'Space Grotesk',sans-serif;font-size:12px;">${esc(r.cat)}</span></div></td><td class="ldr-tx-amt" style="color:var(--ink3);font-size:12px;">¥${fmt(r.bud)}</td><td class="ldr-tx-amt ${r.over?'exp':''}" style="font-size:12px;">¥${fmt(r.act)}</td><td style="min-width:90px;"><div style="display:flex;align-items:center;gap:4px;"><div style="flex:1;height:4px;background:rgba(26,24,20,0.1);border-radius:2px;overflow:hidden;min-width:40px;"><div style="height:100%;width:${Math.min(r.pct,100).toFixed(1)}%;background:${r.barColor};border-radius:2px;"></div></div><span style="font-family:'JetBrains Mono',monospace;font-size:10px;${r.over?'color:var(--accent);font-weight:700;':'color:var(--ink3);'}width:32px;text-align:right;flex-shrink:0;">${r.pct.toFixed(0)}%</span></div></td></tr>`).join('')}</tbody></table>`;
       })()}
     </div>
@@ -5698,7 +6076,7 @@ function renderReviewPanel(){
     const pct=r.hasB&&r.bud>0?r.act/r.bud*100:null;
     const overAmt=r.hasB?r.act-r.bud:null;
     const barColor=r.over?'var(--accent)':r.warn?'var(--warn)':'var(--ok)';
-    const dot=TX_CAT_COLORS[r.cat]||'#6b7280';
+    const dot=catColor(r.cat);
     return`<tr>
       <td class="name"><div style="display:flex;align-items:center;gap:5px;"><div style="width:7px;height:7px;border-radius:50%;background:${dot};flex-shrink:0"></div>${esc(r.cat)}</div></td>
       <td class="r">${r.hasB?'¥'+fmt(r.bud):'—'}</td>
@@ -5725,7 +6103,7 @@ function renderReviewPanel(){
     <thead><tr><th style="min-width:80px;">カテゴリ</th><th class="r hide-mob" style="min-width:80px;">今月</th><th class="r hide-mob" style="min-width:80px;">前月</th><th class="r" style="min-width:80px;">差額</th></tr></thead>
     <tbody>${momRows.map(r=>{
       const isUp=r.diff>0;const col=isUp?'ldr-review-up':'ldr-review-down';const arrow=isUp?'▲':'▼';
-      const dot=TX_CAT_COLORS[r.cat]||'#6b7280';
+      const dot=catColor(r.cat);
       return`<tr><td class="name"><div style="display:flex;align-items:center;gap:5px;"><div style="width:7px;height:7px;border-radius:50%;background:${dot};flex-shrink:0"></div>${esc(r.cat)}</div></td>
         <td class="r hide-mob">¥${fmt(r.cur)}</td>
         <td class="r hide-mob">¥${fmt(r.prev)}</td>
@@ -5786,10 +6164,7 @@ function renderLdrTxList(){
       </div>
       <select class="ldr-txlist-cat-sel" id="ldrListCatSel" onchange="ldrListCat=this.value;renderLdrTxList()" onclick="event.stopPropagation()">
         <option value="all">すべてのカテゴリ</option>
-        <option value="食費">食費</option><option value="家賃">家賃</option><option value="光熱費">光熱費</option>
-        <option value="通信費">通信費</option><option value="交通費">交通費</option><option value="娯楽">娯楽</option><option value="医療">医療</option>
-        <option value="衣服">衣服</option><option value="日用品">日用品</option><option value="給与">給与</option>
-        <option value="副収入">副収入</option><option value="その他">その他</option>
+        ${getAllCategories().map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('')}
       </select>
       <select class="ldr-txlist-cat-sel" id="ldrListAccSel" onchange="ldrListAccFilter=this.value;renderLdrTxList()" onclick="event.stopPropagation()">${accOpts}</select>
     </div>
@@ -6123,7 +6498,10 @@ function saveSubs(){localStorage.setItem('hd_subs',JSON.stringify(subs));saveToS
 // Default txCategory from sub category
 function _subDefaultTxCat(subCat){
   const MAP={'住居':'家賃','光熱費':'光熱費','通信':'通信費','交通':'交通費','動画':'娯楽','音楽':'娯楽','ゲーム':'娯楽'};
-  return MAP[subCat]||'その他';
+  const result=MAP[subCat]||'その他';
+  // If mapped result exists in master, use it; otherwise fall back to その他
+  const cats=getAllCategories();
+  return cats.some(c=>c.name===result)?result:'その他';
 }
 
 // autoPostSubs: create expense txs for active subs with payDay, from autoFrom up to today
@@ -6167,6 +6545,15 @@ function autoPostSubs(){
 
 // Sub modal
 let _ldrSubEditId=null;
+function _populateLdrSubTxCatSel(selectedCat){
+  const sel=document.getElementById('ldrSubTxCat');if(!sel)return;
+  const cats=getCategories('expense');
+  // If selectedCat is hidden or missing, include it
+  const extra=(selectedCat&&!cats.some(c=>c.name===selectedCat)&&getAllCategories().some(c=>c.name===selectedCat))?[getAllCategories().find(c=>c.name===selectedCat)]:[];
+  sel.innerHTML=[...cats,...extra].map(c=>`<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('');
+  if(selectedCat)sel.value=selectedCat;
+  if(!sel.value&&cats.length)sel.value=cats[0].name;
+}
 function _populateLdrSubAccSel(selectedId){
   const sel=document.getElementById('ldrSubAccId');if(!sel)return;
   sel.innerHTML=`<option value="">口座未設定</option>${accounts.filter(a=>!a.archived).map(a=>`<option value="${esc(String(a.id))}">${esc(a.name)}</option>`).join('')}`;
@@ -6190,7 +6577,7 @@ function openLdrSubModal(id){
     document.getElementById('ldrSubPayDay').value=s.payDay||'';
     document.getElementById('ldrSubPayMonth').value=s.payMonth||'';
     document.getElementById('ldrSubCat').value=s.category||'その他';
-    document.getElementById('ldrSubTxCat').value=s.txCategory||_subDefaultTxCat(s.category||'その他');
+    _populateLdrSubTxCatSel(s.txCategory||_subDefaultTxCat(s.category||'その他'));
     _populateLdrSubAccSel(s.accountId||'');
     document.getElementById('ldrSubNote').value=s.note||'';
     ldrSubCycleChange();
@@ -6204,7 +6591,7 @@ function openLdrSubModal(id){
     document.getElementById('ldrSubPayDay').value='';
     document.getElementById('ldrSubPayMonth').value='';
     document.getElementById('ldrSubCat').value='その他';
-    document.getElementById('ldrSubTxCat').value='その他';
+    _populateLdrSubTxCatSel('その他');
     _populateLdrSubAccSel('');
     document.getElementById('ldrSubNote').value='';
     ldrSubCycleChange();
@@ -6226,8 +6613,7 @@ function ldrSubCycleChange(){
 }
 function ldrSubCatChange(){
   const cat=document.getElementById('ldrSubCat');
-  const txCat=document.getElementById('ldrSubTxCat');
-  if(cat&&txCat)txCat.value=_subDefaultTxCat(cat.value);
+  if(cat)_populateLdrSubTxCatSel(_subDefaultTxCat(cat.value));
 }
 function saveLdrSubModal(){
   const name=document.getElementById('ldrSubName').value.trim();
