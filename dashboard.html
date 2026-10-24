@@ -187,7 +187,7 @@
     /* ── FOOD DAY-LIST ── */
     .food-day-list { display:flex; flex-direction:column; }
     .food-week-hdr { padding:8px 16px 6px; font-family:'Newsreader',serif; font-size:13px; font-weight:800; font-style:normal; color:var(--ink2); border-bottom:2px solid var(--ink); background:var(--paper2); letter-spacing:0.01em; }
-    .food-day-row { display:grid; grid-template-columns:96px 1fr; min-height:74px; border-bottom:1px solid rgba(26,24,20,0.08); border-left:4px solid transparent; cursor:pointer; transition:background 0.12s; align-items:stretch; }
+    .food-day-row { display:grid; grid-template-columns:96px minmax(0,1fr); min-height:74px; border-bottom:1px solid rgba(26,24,20,0.08); border-left:4px solid transparent; cursor:pointer; transition:background 0.12s; align-items:stretch; }
     .food-day-row:hover { background:rgba(26,24,20,0.03); }
     .food-day-row.is-sat { background:rgba(60,100,180,0.11); border-left-color:#4a7ab5; }
     .food-day-row.is-sat:hover { background:rgba(60,100,180,0.16); }
@@ -199,7 +199,7 @@
     .food-day-row.is-sat .food-day-date-num, .food-day-row.is-sat .food-day-dow-label { color:#4a7ab5; }
     .food-day-row.is-sun .food-day-date-num, .food-day-row.is-sun .food-day-dow-label { color:var(--accent); }
     .food-day-today-badge { background:var(--accent); color:var(--paper); font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; padding:1px 5px; border-radius:3px; line-height:1.4; margin-top:2px; display:inline-block; }
-    .food-day-meals-col { padding:8px 12px 8px 14px; display:flex; flex-direction:row; flex-wrap:wrap; align-items:center; gap:4px 18px; }
+    .food-day-meals-col { min-width:0; padding:8px 12px 8px 14px; display:flex; flex-direction:row; flex-wrap:wrap; align-items:center; gap:4px 18px; }
     .food-day-sitting-group { display:flex; align-items:baseline; gap:5px; flex-wrap:wrap; }
     .food-day-kind-tag { font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--mute); background:var(--paper2); padding:1px 5px; border-radius:2px; flex-shrink:0; line-height:1.6; }
     .food-day-dish-link { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink); cursor:pointer; transition:color 0.12s; }
@@ -209,6 +209,7 @@
     .food-day-thumb { width:56px; height:56px; border-radius:6px; overflow:hidden; flex-shrink:0; background:var(--paper3); cursor:pointer; }
     .food-day-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
     .food-day-thumb:hover { opacity:0.85; }
+    .food-day-thumb.is-extra { display:none; }
     .food-day-thumb-more { width:56px; height:56px; border-radius:6px; background:var(--paper3); color:var(--ink3); font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer; }
     .food-day-empty { color:var(--mute); font-family:'Space Grotesk',sans-serif; font-size:12px; font-style:italic; padding:2px 0; }
     .food-list-more-btn { display:flex; align-items:center; justify-content:center; padding:14px; border:none; background:var(--paper2); cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.1em; color:var(--ink3); width:100%; transition:background 0.12s; text-transform:uppercase; border-top:1px solid rgba(26,24,20,0.1); }
@@ -1254,11 +1255,15 @@
       .hm-food-grid { grid-template-columns:repeat(7,1fr); gap:3px; }
 
       /* ── Food day-list (mobile) ── */
-      .food-day-row { grid-template-columns:64px 1fr; min-height:60px; }
+      .food-day-row { grid-template-columns:64px minmax(0,1fr); min-height:60px; }
       .food-day-date-col { padding:8px 6px 8px 10px; }
       .food-day-date-num { font-size:15px; }
       .food-day-dow-label { font-size:12px; }
-      .food-day-thumb, .food-day-thumb-more { width:44px; height:44px; }
+      .food-day-thumbs { flex-basis:100%; max-width:100%; min-width:0; margin-left:0; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; gap:6px; padding-bottom:2px; scrollbar-width:none; }
+      .food-day-thumbs::-webkit-scrollbar { display:none; }
+      .food-day-thumb { width:88px; height:88px; border-radius:8px; scroll-snap-align:start; }
+      .food-day-thumb.is-extra { display:block; }
+      .food-day-thumb-more { display:none; }
       .food-day-meals-col { padding:6px 10px; }
 
       /* ── タブ (スマホ: ヘッダータブ非表示、ボトムバー表示) ── */
@@ -6941,13 +6946,13 @@ function renderFoodList() {
         let totalPhotos = 0;
         for (const s of sorted) for (const d of s.dishes) totalPhotos += (d.photos||[]).length;
 
-        outer: for (const s of sorted) {
+        // 全部の写真を出力し、PC では 5 枚目以降を CSS で隠す（スマホは横スクロールで全部見られる）
+        for (const s of sorted) {
           for (const dish of s.dishes) {
             for (const p of (dish.photos||[])) {
-              if (tCount < MAX_T) {
-                thumbs += `<div class="food-day-thumb" onclick="event.stopPropagation();openFoodDetailPopup('${esc(mealId)}','${esc(String(dish.id))}')"><img data-path="${esc(p.path)}" alt=""></div>`;
-                tCount++;
-              } else { break outer; }
+              const extra = tCount >= MAX_T ? ' is-extra' : '';
+              thumbs += `<div class="food-day-thumb${extra}" onclick="event.stopPropagation();openFoodDetailPopup('${esc(mealId)}','${esc(String(dish.id))}')"><img data-path="${esc(p.path)}" alt="" loading="lazy"></div>`;
+              tCount++;
             }
           }
         }
