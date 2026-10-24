@@ -1,0 +1,91 @@
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:  #f1ece2;
+      --paper2: #e6dfcf;
+      --paper3: #d8d0bd;
+      --ink:    #1a1814;
+      --ink2:   #3a3530;
+      --ink3:   #6a6358;
+      --mute:   #a39a87;
+      --accent: #8b3a18;
+      --ok:     #5a6b3a;
+      --warn:   #a36a18;
+      --green:  #5a6b3a;
+      --red:    #8b3a18;
+      --yellow: #a36a18;
+      --rule:   #1a1814;
+    }
+
+    html, body { background: var(--paper); color: var(--ink); }
+    body { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 14px; line-height: 1.5; min-height: 100vh; }
+
+    /* ── MASTHEAD + NAV ── */
+    .masthead { display:flex; align-items:center; gap:0; padding:0 24px; background:var(--paper); border-bottom:1.5px solid var(--rule); position:sticky; top:0; z-index:100; }
+    .masthead-brand { flex-shrink:0; display:flex; flex-direction:column; gap:2px; padding:10px 0; }
+    .masthead-title { font-family:'Newsreader',serif; font-weight:800; font-style:italic; font-size:22px; line-height:1; letter-spacing:-0.02em; color:var(--ink); }
+    .masthead-date { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.06em; color:var(--ink3); }
+    .masthead-divider { width:1.5px; height:32px; background:rgba(26,24,20,0.15); margin:0 20px; flex-shrink:0; }
+
+    /* ── TABS ── */
+    .tabs { display:flex; align-items:stretch; gap:0; flex:1; }
+    .tab-btn { padding:0 20px; min-height:44px; border:none; border-bottom:2px solid transparent; background:transparent; color:var(--ink3); cursor:pointer; font-family:'Newsreader',serif; font-size:20px; font-weight:800; font-style:italic; line-height:1; transition:color 0.15s,border-color 0.15s; white-space:nowrap; margin-bottom:-1.5px; display:flex; align-items:center; gap:4px; }
+    .tab-btn:hover:not(.active) { color:var(--ink2); }
+    .tab-btn.active { color:var(--ink); border-bottom-color:var(--accent); }
+    .tab-badge { background:var(--accent); color:var(--paper); font-family:'JetBrains Mono',monospace; font-size:10px; padding:1px 5px; margin-left:4px; font-weight:700; border-radius:3px; font-style:normal; }
+
+    /* ── BOTTOM TAB BAR (mobile) ── */
+    .hm-bottom-nav { display:none; }
+    .hm-bnav-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; border:none; background:transparent; cursor:pointer; color:var(--ink3); padding:0; position:relative; transition:color 0.12s; }
+    .hm-bnav-item.active { color:var(--accent); }
+    .hm-bnav-icon { display:flex; align-items:center; justify-content:center; }
+    .hm-bnav-label { font-family:'Space Grotesk',sans-serif; font-size:9px; font-weight:600; letter-spacing:0.02em; line-height:1; }
+    .hm-bnav-badge { position:absolute; top:4px; right:50%; transform:translateX(10px); background:var(--accent); color:var(--paper); font-family:'JetBrains Mono',monospace; font-size:9px; padding:1px 4px; border-radius:10px; font-weight:700; min-width:14px; text-align:center; line-height:1.4; }
+
+    /* ── PAGE ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ── SECTION HEADER ── */
+    .sec-head { border-top: 8px solid var(--rule); }
+    .sec-head-inner { display: flex; align-items: flex-end; justify-content: space-between; padding: 13px 40px 10px; }
+    .sec-num { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); }
+    .sec-title { font-family: 'Newsreader', serif; font-size: 42px; font-weight: 800; font-style: italic; letter-spacing: -0.02em; line-height: 1; margin-top: 3px; }
+    .sec-sub { font-family: 'Newsreader', serif; font-style: italic; font-size: 16px; color: var(--ink3); max-width: 460px; text-align: right; }
+    .sec-rule { border: none; border-top: 2px solid var(--rule); }
+
+    /* ── PAGE BAR ── */
+    .page-bar { display: flex; align-items: center; justify-content: space-between; padding: 12px 40px; border-bottom: 1px solid var(--rule); background: var(--paper2); }
+    .page-bar h2 { font-family: 'Newsreader', serif; font-size: 20px; font-weight: 700; font-style: italic; }
+
+    /* ── BUTTONS ── */
+    .btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 8px 18px; border: none; cursor: pointer; transition: opacity 0.15s; }
+    .btn-primary { background: var(--ink); color: var(--paper); }
+    .btn-primary:hover { background: var(--ink2); }
+    .btn-ghost { background: transparent; color: var(--ink2); border: 1px solid var(--ink3); }
+    .btn-ghost:hover { border-color: var(--ink); color: var(--ink); }
+    .btn-sm { padding: 5px 12px; font-size: 10px; }
+    .btn-kill { background: transparent; border: none; color: var(--mute); cursor: pointer; font-size: 12px; padding: 3px 7px; font-family: 'JetBrains Mono', monospace; transition: color 0.15s; }
+    .btn-kill:hover { color: var(--accent); }
+    .draft-btn-cancel { padding: 6px 18px; font-size: 14px; border: 1px solid var(--ink3); background: transparent; color: var(--ink2); }
+    .draft-btn-cancel:hover { border-color: var(--ink); color: var(--ink); }
+    .draft-btn-save { padding: 6px 18px; font-size: 14px; background: var(--accent); color: var(--paper); border: none; box-shadow: 0 1px 4px rgba(139,58,24,0.25); }
+    .draft-btn-save:hover { opacity: 0.88; }
+
+    /* ── FORMS ── */
+    .add-form { background: var(--paper2); border-bottom: 2px solid var(--rule); padding: 18px 40px; display: none; }
+    .add-form.open { display: block; }
+    .form-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .fg { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 145px; }
+    .fg label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink3); }
+    input, select { background: var(--paper); border: 1px solid var(--ink3); color: var(--ink); padding: 7px 10px; font-size: 14px; outline: none; font-family: 'Space Grotesk', system-ui, sans-serif; transition: border-color 0.15s; border-radius: 0; }
+    input:focus, select:focus { border-color: var(--ink); }
+    input::placeholder { color: var(--mute); }
+    select option { background: var(--paper); color: var(--ink); }
+    .gap-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
+
+    /* ── FILTER BAR ── */
+    .fbar { display: flex; gap: 0; border-bottom: 1px solid var(--rule); background: var(--paper3); }
+    .fchip { padding: 9px 18px; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em; font-weight: 600; border: none; border-right: 1px solid var(--rule); background: transparent; color: var(--ink3); cursor: pointer; transition: all 0.15s; }
+    .fchip.active { background: var(--ink); color: var(--paper); }
+    .fchip:hover:not(.active) { background: var(--paper2); color: var(--ink); }

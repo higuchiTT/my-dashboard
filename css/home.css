@@ -1,0 +1,83 @@
+    /* ── HOME v2 ── */
+    .hm-task-strip { display:flex; align-items:center; gap:10px; padding:8px 24px; background:var(--paper2); border-bottom:1px solid rgba(26,24,20,0.12); cursor:pointer; flex-wrap:wrap; transition:background 0.12s; font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink2); }
+    .hm-task-strip:hover { background:var(--paper3); }
+    .hm-ts-num { font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px; color:var(--ink); }
+    .hm-ts-od .hm-ts-num { color:var(--accent); }
+    .hm-ts-sep { color:var(--mute); }
+    .hm-ts-arrow { margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); letter-spacing:0.06em; }
+    .hm-task-strip:hover .hm-ts-arrow { color:var(--accent); }
+    .hm-body { display:flex; flex-direction:column; gap:16px; padding:20px; }
+    .hm-upper-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:stretch; }
+    .hm-upper-row > div { display:flex; }
+    .hm-upper-row > div > .hm-card { flex:1; }
+    .hm-card { background:var(--paper); border:1px solid rgba(26,24,20,0.15); border-radius:12px; box-shadow:0 2px 10px rgba(26,24,20,0.07); overflow:hidden; }
+    .hm-card-hdr { display:flex; align-items:center; justify-content:space-between; padding:14px 18px 12px; border-bottom:1px solid rgba(26,24,20,0.1); cursor:pointer; transition:background 0.12s; }
+    .hm-card-hdr:hover { background:rgba(26,24,20,0.03); }
+    .hm-card-hdr-left { display:flex; flex-direction:column; gap:2px; }
+    .hm-card-title { font-family:'Newsreader',serif; font-size:18px; font-weight:800; font-style:normal; color:var(--ink); line-height:1; }
+    .hm-card-sub { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink3); letter-spacing:0.06em; margin-top:2px; }
+    .hm-card-link { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); letter-spacing:0.06em; flex-shrink:0; }
+    .hm-card-hdr:hover .hm-card-link { color:var(--accent); }
+    .hm-card-body { padding:0; }
+    .hm-schedule-body { overflow-y:auto; max-height:420px; }
+    .hm-sched-group { border-bottom:1px solid rgba(26,24,20,0.07); padding:8px 16px; }
+    .hm-sched-group:last-child { border-bottom:none; }
+    .hm-sched-date-label { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.08em; color:var(--ink3); margin-bottom:5px; display:flex; align-items:center; gap:5px; text-transform:uppercase; }
+    .hm-sched-date-label.hm-sched-today { color:var(--accent); }
+    .hm-sched-od-label { color:var(--accent) !important; }
+    .hm-sched-od-count { font-weight:400; text-transform:none; }
+    .hm-sched-item { display:flex; align-items:center; gap:8px; padding:4px 0; cursor:pointer; min-height:28px; }
+    .hm-sched-item:hover .hm-sched-title { text-decoration:underline; text-decoration-style:dotted; }
+    .hm-sched-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .hm-sched-title { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .hm-sched-time { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); flex-shrink:0; }
+    .hm-sched-sub-icon { color:var(--ink3); flex-shrink:0; display:flex; }
+    .hm-sched-paid { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ok); flex-shrink:0; font-weight:700; }
+    .hm-sched-more { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); cursor:pointer; padding:3px 0; }
+    .hm-sched-more:hover { text-decoration:underline; }
+    .hm-empty { padding:24px 18px; font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--mute); text-align:center; }
+    .hm-finance-nums { display:grid; grid-template-columns:repeat(3,1fr); gap:0; padding:12px 14px 10px; border-bottom:1px solid rgba(26,24,20,0.07); }
+    .hm-finance-num-item { text-align:center; }
+    .hm-finance-num-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); font-weight:600; margin-bottom:3px; }
+    .hm-finance-num-val { font-family:'JetBrains Mono',monospace; font-size:15px; font-weight:700; line-height:1.1; }
+    .hm-finance-num-val.inc { color:var(--ok); }
+    .hm-finance-num-val.exp { color:var(--accent); }
+    .hm-finance-num-val.pos { color:var(--ok); }
+    .hm-finance-num-val.neg { color:var(--accent); }
+    .hm-finance-budget { padding:8px 16px; border-bottom:1px solid rgba(26,24,20,0.07); }
+    .hm-finance-budget-row { display:flex; align-items:center; gap:6px; margin-bottom:4px; }
+    .hm-finance-budget-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); font-weight:600; flex-shrink:0; }
+    .hm-finance-budget-val { font-family:'JetBrains Mono',monospace; font-size:12px; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .hm-finance-budget-val.hm-finance-budget-over { color:var(--accent); }
+    .hm-finance-budget-val.hm-finance-budget-warn { color:var(--warn); }
+    .hm-finance-budget-pct { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); flex-shrink:0; }
+    .hm-finance-budget-pct.over { color:var(--accent); font-weight:700; }
+    .hm-finance-budget-pct.warn { color:var(--warn); font-weight:700; }
+    .hm-prog-wrap { height:5px; background:rgba(26,24,20,0.1); border-radius:3px; overflow:hidden; }
+    .hm-prog-bar { height:100%; border-radius:3px; transition:width 0.3s; }
+    .hm-finance-no-budget { padding:8px 16px; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--mute); }
+    .hm-finance-net { padding:10px 16px 4px; }
+    .hm-finance-net-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); font-weight:600; margin-bottom:3px; }
+    .hm-finance-net-val { font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:700; line-height:1; }
+    .hm-finance-net-val.neg { color:var(--accent); }
+    .hm-acc-list { padding:2px 16px 12px; display:flex; flex-direction:column; }
+    .hm-acc-row { display:flex; align-items:center; justify-content:space-between; padding:3px 0; border-bottom:1px solid rgba(26,24,20,0.05); }
+    .hm-acc-row:last-child { border-bottom:none; }
+    .hm-acc-name { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink2); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .hm-acc-bal { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; flex-shrink:0; }
+    .hm-acc-bal.neg { color:var(--accent); }
+    .hm-finance-no-acc { padding:14px 16px; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--mute); }
+    .hm-food-grid { display:grid; grid-template-columns:repeat(14,1fr); gap:4px; padding:10px 12px 6px; }
+    @media (max-width:1000px) { .hm-food-grid { grid-template-columns:repeat(7,1fr); } }
+    .hm-food-cell { cursor:pointer; padding:4px 2px; border-radius:6px; transition:background 0.12s; text-align:center; min-width:0; overflow:hidden; }
+    .hm-food-cell:hover { background:rgba(26,24,20,0.06); }
+    .hm-food-today { background:rgba(139,58,24,0.07); outline:1.5px solid var(--accent); outline-offset:-1px; }
+    .hm-food-day { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; color:var(--ink2); margin-bottom:2px; line-height:1; }
+    .hm-food-today .hm-food-day { color:var(--accent); font-weight:800; }
+    .hm-food-sun { color:var(--accent) !important; }
+    .hm-food-sat { color:#4a7ab5 !important; }
+    .hm-food-dots { display:flex; justify-content:center; gap:2px; margin-top:2px; }
+    .hm-food-dot { width:5px; height:5px; border-radius:50%; background:rgba(26,24,20,0.12); flex-shrink:0; }
+    .hm-food-dot.active { background:var(--accent); }
+    .hm-food-summary { padding:4px 14px 12px; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); text-align:center; }
+    .hm-food-dow-sm { font-family:'Space Grotesk',sans-serif; font-size:9px; font-weight:600; text-align:center; line-height:1; margin-bottom:2px; }

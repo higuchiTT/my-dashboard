@@ -1,0 +1,218 @@
+    @media (max-width: 640px) {
+
+      /* ── グローバル ── */
+      body { font-size: 13px; }
+
+      /* ── マストヘッド ── */
+      .masthead { padding: 0 10px; }
+      .masthead-title { font-size: 18px; }
+      .masthead-date { display: none; }
+      .masthead-divider { margin: 0 8px; }
+
+      /* ── セクション共通パディング ── */
+      .sec-head-inner { padding: 10px 14px 8px; }
+      .sec-title { font-size: 28px; }
+      .page-bar { padding: 10px 14px; }
+      .add-form { padding: 14px 14px; }
+      .mnav { padding: 10px 14px; }
+
+      /* ── フィルターバー横スクロール ── */
+      .fbar { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+      .fbar::-webkit-scrollbar { display: none; }
+      .fchip { white-space: nowrap; }
+
+      /* ── Home ── */
+      .hm-body { padding:10px; gap:10px; }
+      .hm-upper-row { grid-template-columns:1fr; }
+      .hm-schedule-body { max-height:none; }
+      .hm-task-strip { padding:8px 14px; }
+      .hm-food-grid { grid-template-columns:repeat(7,1fr); gap:3px; }
+
+      /* ── Food day-list (mobile) ── */
+      .food-day-row { grid-template-columns:64px minmax(0,1fr); min-height:60px; }
+      .food-day-date-col { padding:8px 6px 8px 10px; }
+      .food-day-date-num { font-size:15px; }
+      .food-day-dow-label { font-size:12px; }
+      .food-day-sitting-group, .food-day-thumbs { display:none !important; }
+      .food-day-meals-col { padding:4px 10px 4px 10px; }
+      .food-day-dishlist { display:flex; flex-direction:column; width:100%; }
+      .food-day-dishrow { display:flex; align-items:center; gap:8px; min-height:40px; padding:6px 0; border-bottom:1px dashed rgba(26,24,20,0.08); cursor:pointer; }
+      .food-day-dishrow:last-child { border-bottom:none; }
+      .food-day-dishrow .food-day-kind-tag { flex-shrink:0; }
+      .food-day-kind-tag.is-blank { visibility:hidden; }
+      .food-day-dishrow-name { flex:1; min-width:0; font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.4; color:var(--ink); word-break:break-word; }
+      .food-day-dishrow-name .food-day-place { display:block; font-size:11px; }
+      .food-day-dishrow-photo { position:relative; width:64px; height:64px; flex-shrink:0; border-radius:8px; overflow:hidden; background:var(--paper3); }
+      .food-day-dishrow-photo img { width:100%; height:100%; object-fit:cover; display:block; }
+      .food-day-dishrow-more { position:absolute; right:3px; bottom:3px; background:rgba(26,24,20,0.7); color:#fff; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; padding:1px 5px; border-radius:8px; }
+      .food-day-meals-col { padding:6px 10px; }
+
+      /* ── タブ (スマホ: ヘッダータブ非表示、ボトムバー表示) ── */
+      .tabs { display:none !important; }
+      .masthead-divider { display:none; }
+      body { padding-bottom:calc(60px + env(safe-area-inset-bottom,0px)); }
+      .hm-bottom-nav { display:flex; position:fixed; bottom:0; left:0; right:0; height:calc(60px + env(safe-area-inset-bottom,0px)); padding-bottom:env(safe-area-inset-bottom,0px); background:var(--paper); border-top:1.5px solid rgba(26,24,20,0.18); z-index:6000; }
+      .food-fab { bottom:calc(76px + env(safe-area-inset-bottom,0px)) !important; }
+      .undo-toast { bottom:calc(68px + env(safe-area-inset-bottom,0px)) !important; }
+      #saveErrToast { bottom:calc(68px + env(safe-area-inset-bottom,0px)) !important; }
+      #syncInfoToast { bottom:calc(68px + env(safe-area-inset-bottom,0px)); left:16px; }
+      #backupBtn .backup-label { display:none; }
+      #backupBtn .backup-icon { display:inline; }
+      .ldr-modal-overlay { z-index:7000; }
+      .food-modal-overlay { z-index:7000; }
+      .food-popup-overlay { z-index:7100; }
+
+      /* ── ToDo（1列レイアウト） ── */
+      #page-todo { min-width: unset; overflow-x: hidden; }
+      /* グリッドを1列に変更・min-height 解除 */
+      .todo-app { grid-template-columns: 1fr; min-height: unset; }
+      /* sidebar-l を display:contents に → 子要素がグリッドの直接アイテムになる */
+      .todo-sidebar-l { display: contents; }
+      /* ☑ Todo 見出しは非表示 */
+      .ts-head { display: none; }
+      /* "ビュー" ラベルも非表示（ボタン自体が自明） */
+      .ts-view-label { display: none; }
+      /* ① ビュー切替：横並び・横スクロール (order:1 = 最上部) */
+      #tvViewNav {
+        order: 1;
+        display: flex; flex-direction: row; flex-wrap: nowrap;
+        overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+        padding: 8px 10px; gap: 4px;
+        background: var(--paper2); border-bottom: 1px solid var(--rule);
+      }
+      #tvViewNav::-webkit-scrollbar { display: none; }
+      #tvViewNav .ts-nav-item {
+        flex-shrink: 0; width: auto; padding: 6px 12px;
+        border-radius: 20px; border: 1px solid rgba(26,24,20,0.12);
+      }
+      #tvViewNav .ts-nav-item.active { border-color: var(--accent); }
+      /* ② メイン (order:2) */
+      .todo-main { order: 2; overflow: visible; }
+      .tv-sections { overflow-y: visible; flex: none; }
+      /* ③ カテゴリ・タグ (order:3) */
+      .ts-cat-label { order: 3; border-top: 1px solid var(--rule); }
+      #tvCatNav { order: 3; flex-direction: row; flex-wrap: wrap; }
+      #tvCatNav .ts-sec-item { width: auto; padding: 4px 10px; border-radius: 14px; }
+      .ts-tag-label { order: 3; }
+      #tvTagNav { order: 3; }
+      /* ④ 右サイドバー (order:4) */
+      .todo-sidebar-r { order: 4; border-left: none; border-top: 2px solid var(--rule); background: var(--paper2); }
+      /* メイン内パディング調整 */
+      .tm-head { padding: 14px 14px 10px; }
+      .todo-main .add-form { padding: 14px 14px; }
+      .todo-main { min-width: 0; }
+      .tv-row { padding: 8px 14px; }
+      .tv-sec-hdr { padding: 10px 14px; }
+      .tv-add-row { padding: 8px 14px; }
+      .tv-sec-preview { padding: 6px 14px 8px; }
+      /* 統計カード 2列 */
+      .tv-stats { grid-template-columns: repeat(2, 1fr); }
+      .tv-stat-card:nth-child(even) { border-right: none; }
+      /* 行内カテゴリ・タグチップは非表示（省略） */
+      .tv-cat { display: none; }
+      .tv-tags { display: none; }
+      /* 時刻は非表示（横スペース確保） */
+      .tv-time { display: none; }
+      /* 完了ボタン：押しやすい大きさ */
+      .tv-done-btn { min-height: 32px; min-width: 56px; font-size: 12px; padding: 4px 8px; }
+
+      /* ── Ledger ── */
+      .ldr-topbar { padding:8px 10px; }
+      .ldr-subtabs .ui-seg { flex-wrap:nowrap; }
+      .ldr-subtabs .ui-seg-btn { font-size:11px; padding:5px 8px; }
+      .ldr-monnav { padding:8px 10px; gap:6px; }
+      .ldr-mon-label { font-size:20px; }
+      .ldr-body { flex-direction:column; }
+      .ldr-guide { display:none; }
+      .ldr-guide-collapsed { display:none !important; }
+      .ldr-mob-onboard { display:block; }
+      .ldr-main { padding:12px; }
+      .ldr-summary-row { grid-template-columns:1fr 1fr; gap:8px; }
+      .ldr-sum-card { min-height:70px; }
+      .ldr-sum-val { font-size:15px; }
+      .ldr-sum-chart { display:none; }
+      .ldr-mid-row { grid-template-columns:1fr; gap:10px; }
+      .ldr-bot-row { grid-template-columns:1fr; gap:10px; }
+      .ldr-tx-table .hide-mob { display:none; }
+      .ldr-sub-row2 .hide-mob { display:none; }
+      .ldr-txlist-search { width:100%; }
+      .ldr-txlist-toolbar { flex-direction:column; align-items:stretch; }
+      .ldr-modal { border-radius:0; max-width:100%; margin:0; margin-top:auto; }
+      .ldr-modal-overlay { padding:0; align-items:flex-end; }
+      .ldr-modal-2col { grid-template-columns:1fr; gap:10px; }
+      /* Budget table on mobile: hide base/month cols, show expand panel */
+      .ldr-bdg-table .hide-mob { display:none; }
+      /* Always show dashed border on editable cells (no hover on touch) */
+      .ldr-bdg-amt { border-color:rgba(139,58,24,0.2); }
+      /* Review panel on mobile */
+      .ldr-review-sum-row { grid-template-columns:1fr 1fr; gap:8px; }
+      .ldr-review-table .hide-mob { display:none; }
+
+
+      /* ── Accounts ── */
+      .ldr-acc-summary-row { grid-template-columns: 1fr; gap:8px; }
+      .ldr-acc-table .hide-mob { display:none; }
+
+      /* ── WishList サマリー ── */
+      .shop-summary { grid-template-columns: 1fr; }
+      .shop-stat { border-right: none; border-bottom: 1px solid var(--rule); padding: 12px 14px; }
+      .shop-stat:last-child { border-bottom: none; }
+      .shop-content { padding: 0 0 16px; }
+
+      /* ── Travel ── */
+      .trip-summary { grid-template-columns: 1fr 1fr; }
+      .trip-stat { padding: 12px 14px; }
+      .trip-stat:nth-child(2) { border-right: none; }
+      .trip-stat:nth-child(1),
+      .trip-stat:nth-child(2) { border-bottom: 1px solid var(--rule); }
+      .trip-content { padding: 14px; }
+      .trip-grid { grid-template-columns: 1fr; }
+      .trip-card { border-right: none; border-bottom: 1px solid var(--rule); }
+      .trip-card:last-child { border-bottom: none; }
+
+      /* ── ログインオーバーレイ ── */
+      .login-box { max-width: 90vw; padding: 36px 20px; }
+
+      /* ── Food ── */
+      .food-page { padding:14px; }
+      .food-cal-month-label { font-size:19px; }
+      .food-cal-nav-btn { width:34px; height:34px; }
+      .food-cal-today-btn { height:34px; padding:0 10px; }
+      .food-header-row { flex-direction:column; align-items:flex-start; gap:10px; margin-bottom:14px; }
+      .food-header-title { font-size:22px; }
+      .food-stats-row { flex:none; width:100%; gap:6px; }
+      .food-stat-card { flex:1; min-width:0; min-height:unset; padding:8px 10px; gap:8px; }
+      .food-stat-num { font-size:18px; }
+      .food-stat-label { font-size:9px; }
+      .food-stat-icon { display:none; }
+      .food-add-btn-desktop { display:none; }
+      .food-fab { display:flex !important; }
+      .food-toolbar-row { gap:8px; margin-bottom:14px; }
+      .food-search-wrap { flex:1; }
+      .food-search-new { width:100%; height:40px; }
+      .food-summary-bar { padding:0 0 10px; }
+      .food-modal-overlay { padding:0; align-items:flex-end; }
+      .food-modal { max-width:100%; max-height:92svh; overflow-y:auto; }
+      .food-popup-overlay { padding:0; align-items:flex-end; }
+      .food-popup { max-width:100%; max-height:96svh; border-radius:12px 12px 0 0; }
+      .food-popup-gallery-img { height:min(56vw,220px); }
+      .food-2col { grid-template-columns:1fr; gap:14px; }
+      .food-detail-panel { position:static; }
+      .food-detail-panel:not(.has-content) { display:none; }
+      .food-detail-thumb { width:80px; height:70px; }
+      .food-cal-top { padding:10px 14px 8px; }
+      .food-cal-cell { height:unset; aspect-ratio:1/1; padding:2px; }
+      .food-cal-num { font-size:9px; position:relative; z-index:1; }
+      .food-cal-thumbs { display:none; }
+      .food-cal-dish-row { display:none; }
+      .food-cal-type-pills { display:none; }
+      .food-cal-photo-mob { position:absolute; inset:0; display:block; overflow:hidden; }
+      .food-cal-photo-mob img { width:100%; height:100%; object-fit:cover; display:block; }
+      .food-cal-more-sm { position:absolute; bottom:2px; right:2px; background:rgba(26,24,20,0.65); color:#fff; font-family:'JetBrains Mono',monospace; font-size:8px; font-weight:700; padding:1px 3px; }
+      .food-cal-dot-mob { display:block; width:6px; height:6px; border-radius:50%; position:absolute; bottom:4px; left:50%; transform:translateX(-50%); }
+      .food-cal-dot-mob.home { background:var(--ok); }
+      .food-cal-dot-mob.out  { background:var(--accent); }
+      #page-food .ui-seg-btn { height:36px; font-size:13px; }
+      #page-food .ui-pill { height:36px; font-size:13px; }
+
+    }

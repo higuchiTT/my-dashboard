@@ -1,0 +1,31 @@
+    /* ── FOOD DAY-LIST ── */
+    .food-day-list { display:flex; flex-direction:column; }
+    .food-week-hdr { padding:8px 16px 6px; font-family:'Newsreader',serif; font-size:13px; font-weight:800; font-style:normal; color:var(--ink2); border-bottom:2px solid var(--ink); background:var(--paper2); letter-spacing:0.01em; }
+    .food-day-row { display:grid; grid-template-columns:96px minmax(0,1fr); min-height:74px; border-bottom:1px solid rgba(26,24,20,0.08); border-left:4px solid transparent; cursor:pointer; transition:background 0.12s; align-items:stretch; }
+    .food-day-row:hover { background:rgba(26,24,20,0.03); }
+    .food-day-row.is-sat { background:rgba(60,100,180,0.11); border-left-color:#4a7ab5; }
+    .food-day-row.is-sat:hover { background:rgba(60,100,180,0.16); }
+    .food-day-row.is-sun { background:rgba(139,58,24,0.09); border-left-color:var(--accent); }
+    .food-day-row.is-sun:hover { background:rgba(139,58,24,0.14); }
+    .food-day-date-col { padding:8px 8px 8px 12px; display:flex; flex-direction:row; flex-wrap:wrap; align-items:baseline; align-content:center; gap:3px 6px; border-right:1px solid rgba(26,24,20,0.07); min-height:56px; }
+    .food-day-date-num { font-family:'JetBrains Mono',monospace; font-size:18px; font-weight:700; line-height:1; color:var(--ink); }
+    .food-day-dow-label { font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; line-height:1; color:var(--ink2); }
+    .food-day-row.is-sat .food-day-date-num, .food-day-row.is-sat .food-day-dow-label { color:#4a7ab5; }
+    .food-day-row.is-sun .food-day-date-num, .food-day-row.is-sun .food-day-dow-label { color:var(--accent); }
+    .food-day-today-badge { background:var(--accent); color:var(--paper); font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; padding:1px 5px; border-radius:3px; line-height:1.4; margin-top:2px; display:inline-block; }
+    .food-day-meals-col { min-width:0; padding:8px 12px 8px 14px; display:flex; flex-direction:row; flex-wrap:wrap; align-items:center; gap:4px 18px; }
+    .food-day-sitting-group { display:flex; align-items:baseline; gap:5px; flex-wrap:wrap; }
+    .food-day-kind-tag { font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:var(--mute); background:var(--paper2); padding:1px 5px; border-radius:2px; flex-shrink:0; line-height:1.6; }
+    .food-day-dish-link { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink); cursor:pointer; transition:color 0.12s; }
+    .food-day-dish-link:hover { color:var(--accent); text-decoration:underline; text-decoration-style:dotted; }
+    .food-day-place { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--mute); }
+    .food-day-thumbs { display:flex; gap:4px; flex-wrap:nowrap; margin-left:auto; }
+    .food-day-thumb { width:56px; height:56px; border-radius:6px; overflow:hidden; flex-shrink:0; background:var(--paper3); cursor:pointer; }
+    .food-day-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .food-day-thumb:hover { opacity:0.85; }
+    .food-day-thumb.is-extra { display:none; }
+    .food-day-dishlist { display:none; }
+    .food-day-thumb-more { width:56px; height:56px; border-radius:6px; background:var(--paper3); color:var(--ink3); font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer; }
+    .food-day-empty { color:var(--mute); font-family:'Space Grotesk',sans-serif; font-size:12px; font-style:italic; padding:2px 0; }
+    .food-list-more-btn { display:flex; align-items:center; justify-content:center; padding:14px; border:none; background:var(--paper2); cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.1em; color:var(--ink3); width:100%; transition:background 0.12s; text-transform:uppercase; border-top:1px solid rgba(26,24,20,0.1); }
+    .food-list-more-btn:hover { background:var(--paper3); color:var(--ink); }

@@ -1,0 +1,127 @@
+    /* ── 左サイドバー ── */
+    .todo-sidebar-l { background: #fafafa; border-right: 1px solid var(--rule); display: flex; flex-direction: column; padding: 0; overflow-y: auto; }
+    .ts-head { display: flex; align-items: center; gap: 10px; padding: 20px 16px 14px; border-bottom: 1px solid rgba(26,24,20,0.12); }
+    .ts-head-icon { font-size: 22px; }
+    .ts-head-title { font-family: 'Newsreader', serif; font-size: 20px; font-weight: 800; font-style: italic; }
+    .ts-nav { display: flex; flex-direction: column; padding: 8px 0; }
+    .ts-nav-item { display: flex; align-items: center; gap: 0; padding: 8px 16px; border: none; background: transparent; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--ink2); transition: background 0.12s; text-align: left; width: 100%; }
+    .ts-nav-item:hover { background: rgba(26,24,20,0.06); }
+    .ts-nav-item.active { background: rgba(139,58,24,0.09); color: var(--accent); font-weight: 600; }
+    .ts-nav-label { flex: 1; }
+    .ts-nav-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--ink3); background: var(--paper3); padding: 1px 6px; border-radius: 10px; min-width: 22px; text-align: center; }
+    .ts-group-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mute); padding: 12px 16px 4px; }
+    .ts-sec-nav { display: flex; flex-direction: column; padding: 0 0 4px; }
+    .ts-sec-item { display: flex; align-items: center; gap: 0; padding: 7px 16px; border: none; background: transparent; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink2); transition: background 0.12s; text-align: left; width: 100%; }
+    .ts-sec-item:hover { background: rgba(26,24,20,0.06); }
+    .ts-sec-item.active { background: rgba(139,58,24,0.09); color: var(--accent); font-weight: 600; }
+    .ts-sec-cnt { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); margin-left: auto; }
+    .tv-tag-list { display: flex; flex-wrap: wrap; gap: 5px; padding: 4px 16px 12px; }
+    .tv-sidebar-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 3px; border: 1px solid rgba(26,24,20,0.15); background: transparent; cursor: pointer; font-weight: 600; transition: all 0.12s; }
+    .tv-sidebar-tag:hover { background: rgba(26,24,20,0.06); }
+    .tv-sidebar-tag.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+    /* ── メインエリア ── */
+    .todo-main { background: #fff; display: flex; flex-direction: column; overflow: hidden; }
+    .tm-head { display: flex; align-items: flex-start; justify-content: space-between; padding: 20px 24px 12px; border-bottom: 1px solid rgba(26,24,20,0.12); }
+    .tm-title { font-family: 'Newsreader', serif; font-size: 22px; font-weight: 800; font-style: italic; }
+    .tm-sub { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); margin-top: 4px; }
+    .tm-head-act { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .todo-main .add-form { margin: 0; border-bottom: 1px solid var(--rule); padding: 14px 24px; background: var(--paper2); border-radius: 0; }
+
+    /* ── 統計カード ── */
+    .tv-stats { display: grid; grid-template-columns: repeat(4,1fr); border-bottom: 1px solid rgba(26,24,20,0.12); background: #fafafa; flex-shrink: 0; }
+    .tv-stat-card { padding: 14px 20px; border-right: 1px solid rgba(26,24,20,0.1); }
+    .tv-stat-card:last-child { border-right: none; }
+    .tv-stat-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3); font-weight: 600; margin-bottom: 4px; }
+    .tv-stat-num { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--ink); }
+    .tv-stat-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); margin-top: 2px; }
+
+    /* ── セクション ── */
+    .tv-sections { flex: 1; overflow-y: auto; }
+    .tv-section { border-bottom: 1px solid rgba(26,24,20,0.1); }
+    .tv-sec-hdr { display: flex; align-items: center; gap: 8px; padding: 10px 24px; cursor: pointer; user-select: none; background: #fafafa; border-bottom: 1px solid rgba(26,24,20,0.08); }
+    .tv-sec-hdr:hover { background: rgba(26,24,20,0.03); }
+    .tv-sec-hdr.today-hdr { background: #fff; cursor: default; border-bottom: 2px solid var(--rule); }
+    .tv-sec-hdr.today-hdr:hover { background: #fff; }
+    .tv-sec-label { font-family: 'Newsreader', serif; font-size: 15px; font-weight: 700; font-style: italic; }
+    .tv-sec-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); }
+    .tv-sec-chevron { font-size: 11px; color: var(--mute); margin-left: auto; }
+    .tv-sec-preview { padding: 6px 24px 8px; background: #fafafa; }
+    .tv-sec-preview-item { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink3); padding: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tv-sec-preview-more { display: inline-block; margin-top: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); cursor: pointer; }
+    .tv-sec-preview-more:hover { text-decoration: underline; }
+
+    /* ── タスク行 ── */
+    .tv-row { display: flex; align-items: center; gap: 10px; padding: 10px 24px; border-bottom: 1px solid rgba(26,24,20,0.06); min-height: 44px; transition: background 0.12s; }
+    .tv-row:hover { background: rgba(26,24,20,0.02); }
+    .tv-dot { width: 8px; height: 8px; min-width: 8px; border-radius: 50%; flex-shrink: 0; }
+    .tv-done-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(26,24,20,0.2); background: transparent; cursor: pointer; flex-shrink: 0; color: var(--ink); white-space: nowrap; transition: border-color 0.15s, color 0.15s; }
+    .tv-done-btn:hover { border-color: var(--ok); color: var(--ok); }
+    .tv-done-btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+    .tv-title { font-family: 'Space Grotesk', sans-serif; font-size: 14px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tv-pin { font-size: 14px; cursor: pointer; color: var(--mute); flex-shrink: 0; line-height: 1; padding: 2px 4px; border: none; background: transparent; }
+    .tv-pin.pinned { color: #f59e0b; }
+    .tv-pin:hover { opacity: 0.7; }
+    .tv-time { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); flex-shrink: 0; }
+    .tv-cat { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 3px; white-space: nowrap; flex-shrink: 0; color: #fff; font-weight: 600; }
+    .tv-tags { display: flex; gap: 4px; flex-shrink: 0; cursor: pointer; }
+    .tv-tag-chip { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 1px 6px; border-radius: 2px; white-space: nowrap; font-weight: 600; cursor: pointer; }
+    .tv-tag-pop { display:none; position:fixed; background:var(--paper); border:1px solid var(--rule); border-radius:4px; padding:10px; width:220px; z-index:8000; box-shadow:0 4px 16px rgba(0,0,0,0.12); }
+    .tv-tag-pop.open { display:block; }
+    .tv-tag-pop-grid { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px; }
+    .tv-tag-pop-chip { font-family:'JetBrains Mono',monospace; font-size:10px; padding:2px 7px; border-radius:2px; cursor:pointer; border:1px solid transparent; background:rgba(26,24,20,0.06); color:var(--ink2); font-weight:600; }
+    .tv-tag-pop-chip.sel { outline:2px solid var(--ink); }
+    .tv-tag-pop-input-wrap { border-top:1px solid var(--rule); padding-top:8px; }
+    .tv-tag-pop-input { width:100%; border:none; background:transparent; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink); outline:none; }
+    .tv-due-wrap { position: relative; flex-shrink: 0; }
+    .tv-due { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); cursor: pointer; white-space: nowrap; padding: 2px 4px; border-radius: 3px; display: inline-block; }
+    .tv-due:hover { background: rgba(26,24,20,0.06); }
+    .tv-due-empty { color: var(--mute); }
+    .tv-due-overdue { color: var(--accent); font-weight: 600; }
+    .tv-due-today { color: var(--ok); font-weight: 600; }
+    .tv-due-soon { color: var(--warn); font-weight: 600; }
+    .tv-due-input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; left: 0; top: 100%; border: none; padding: 0; }
+    .tv-add-row { display: flex; align-items: center; gap: 6px; padding: 8px 24px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mute); cursor: pointer; transition: background 0.12s; border-bottom: 1px solid rgba(26,24,20,0.05); }
+    .tv-add-row:hover { background: rgba(26,24,20,0.04); color: var(--ink3); }
+
+    /* ── タグ色 (tv-) ── */
+    .tv-tag-chip.tag-重要 { background: rgba(220,38,38,0.12); color: #dc2626; }
+    .tv-tag-chip.tag-手続き { background: rgba(37,99,235,0.12); color: #1d4ed8; }
+    .tv-tag-chip.tag-準備 { background: rgba(234,88,12,0.12); color: #c2410c; }
+    .tv-tag-chip.tag-連絡 { background: rgba(22,163,74,0.12); color: #15803d; }
+    .tv-tag-chip.tag-見直し { background: rgba(124,58,237,0.12); color: #7c3aed; }
+    .tv-tag-chip.tag-家事 { background: rgba(219,39,119,0.12); color: #db2777; }
+    .tv-tag-chip.tag-検討 { background: rgba(6,182,212,0.12); color: #0891b2; }
+    .tv-tag-chip.tag-レジャー { background: rgba(20,184,166,0.12); color: #0d9488; }
+    .tv-tag-chip.tag-学習 { background: rgba(202,138,4,0.12); color: #a16207; }
+    .tv-tag-chip.tag-経理 { background: rgba(4,120,87,0.12); color: #047857; }
+    .tv-tag-chip.tag-買い物 { background: rgba(163,106,24,0.12); color: var(--warn); }
+    .tv-tag-chip.tag-修理 { background: rgba(107,114,128,0.12); color: #6b7280; }
+
+    /* ── 右サイドバー ── */
+    .todo-sidebar-r { background: #fafafa; border-left: 1px solid var(--rule); overflow-y: auto; }
+    .trs-block { padding: 16px 16px 12px; border-bottom: 1px solid rgba(26,24,20,0.10); }
+    .trs-title { font-family: 'Newsreader', serif; font-size: 15px; font-weight: 700; font-style: italic; margin-bottom: 10px; display: flex; align-items: baseline; gap: 8px; }
+    .trs-donut-svg { width: 140px; height: 140px; display: block; margin: 0 auto; }
+    .trs-donut-num { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 26px; font-weight: 700; fill: var(--ink); }
+    .trs-donut-label { font-family: 'Space Grotesk', sans-serif; font-size: 11px; fill: var(--ink3); }
+    .trs-donut-empty { text-align: center; color: var(--mute); font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 20px 0; }
+    .trs-donut-legend { list-style: none; margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+    .trs-donut-legend li { display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink2); }
+    .trs-donut-legend .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .trs-donut-legend .n { margin-left: auto; font-weight: 700; color: var(--ink3); }
+    .trs-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+    .trs-tag-btn { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 3px; border: none; cursor: pointer; font-weight: 600; transition: opacity 0.12s; }
+    .trs-tag-btn:hover { opacity: 0.75; }
+    .trs-tag-btn.active { outline: 2px solid var(--ink); }
+
+    /* ── クイックメモ ── */
+    .tv-quick-memo { width: 100%; min-height: 80px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--ink); border: 1px solid rgba(26,24,20,0.15); border-radius: 4px; padding: 8px 10px; background: #fff; outline: none; resize: vertical; line-height: 1.5; box-sizing: border-box; }
+    .tv-quick-memo:focus { border-color: var(--ink3); }
+    .tv-quick-memo::placeholder { color: var(--mute); font-style: italic; }
+
+    /* ── 今後の予定 ── */
+    .tv-upcoming-item { display: flex; align-items: baseline; gap: 8px; padding: 5px 0; border-bottom: 1px dotted rgba(26,24,20,0.1); }
+    .tv-upcoming-item:last-child { border-bottom: none; }
+    .tv-upcoming-date { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink3); flex-shrink: 0; white-space: nowrap; }
+    .tv-upcoming-title { font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink2); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

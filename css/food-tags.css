@@ -1,0 +1,64 @@
+    /* ── FOOD TAG CHIPS ── */
+    .food-chip { display:inline-flex; align-items:center; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; padding:2px 7px; border-radius:10px; background:rgba(139,58,24,0.09); color:var(--accent); white-space:nowrap; }
+    .food-chip-sm { font-size:10px; padding:1px 5px; }
+    .food-chip-cnt { margin-left:3px; opacity:0.7; }
+    .food-chip-btn { cursor:pointer; border:none; transition:background 0.12s; }
+    .food-chip-btn:hover { background:rgba(139,58,24,0.18); }
+    .food-chip-btn.active { background:var(--accent); color:var(--paper); }
+    .food-chip-row { display:flex; gap:4px; flex-wrap:wrap; margin-top:4px; }
+    .food-chip-row-sm { display:inline-flex; gap:3px; flex-wrap:nowrap; overflow:hidden; vertical-align:middle; margin-left:4px; }
+    .food-day-tags-section { padding:10px 20px 12px; border-top:1px solid rgba(26,24,20,0.08); }
+    .food-day-tags-label { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); margin-bottom:6px; }
+    /* Food tag input in modal */
+    .food-dish-tag-wrap { display:flex; align-items:center; gap:4px; flex-wrap:wrap; border:1px solid rgba(26,24,20,0.2); border-radius:4px; background:var(--paper); padding:3px 7px; cursor:text; position:relative; min-height:30px; }
+    .food-dish-tag-wrap:focus-within { border-color:var(--ink); }
+    .food-dish-tag-text-in { border:none; background:transparent; outline:none; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink); min-width:60px; max-width:120px; padding:1px 0; height:22px; }
+    .food-dish-tag-text-in::placeholder { color:var(--mute); }
+    .food-dish-tag-ac { display:none; position:absolute; top:calc(100%+3px); left:0; right:0; background:var(--paper); border:1px solid rgba(26,24,20,0.18); border-radius:6px; box-shadow:0 3px 12px rgba(26,24,20,0.1); z-index:400; overflow:hidden; max-height:140px; overflow-y:auto; }
+    .food-dish-tag-ac.open { display:block; }
+    .food-dish-tag-ac-item { padding:6px 10px; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink); cursor:pointer; border-bottom:1px solid rgba(26,24,20,0.06); }
+    .food-dish-tag-ac-item:last-child { border-bottom:none; }
+    .food-dish-tag-ac-item:hover { background:var(--paper2); }
+    /* Food tag filter select */
+    .food-tag-sel { font-family:'Space Grotesk',sans-serif; font-size:13px; padding:0 10px; border:1.5px solid rgba(26,24,20,0.2); border-radius:8px; background:var(--paper); color:var(--ink2); cursor:pointer; outline:none; height:40px; }
+    .food-tag-sel:focus { border-color:var(--ink); }
+    /* Dish tags in detail/popup */
+    .food-detail-dish-tags { display:flex; gap:4px; flex-wrap:wrap; margin-top:4px; margin-bottom:4px; }
+    .food-popup-dish-tags { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:8px; }
+
+    /* ── NOTES 2-COL ── */
+    .notes-2col { display:flex; gap:24px; align-items:flex-start; }
+    .notes-main { flex:1; min-width:0; max-width:860px; }
+    .notes-cal-sidebar { width:280px; flex-shrink:0; position:sticky; top:calc(var(--mast-h,57px) + 16px); }
+    .notes-cal-mob-wrap { display:none; margin-bottom:14px; }
+    .notes-cal-mob-toggle { width:100%; display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:var(--paper2); border:1px solid rgba(26,24,20,0.12); border-radius:8px; font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; color:var(--ink2); cursor:pointer; transition:background 0.12s; }
+    .notes-cal-mob-toggle:hover { background:var(--paper3); }
+    .notes-cal-mob-body { display:none; background:var(--paper); border:1px solid rgba(26,24,20,0.12); border-top:none; border-radius:0 0 8px 8px; overflow:hidden; }
+    .notes-cal-mob-body.open { display:block; }
+    /* Notes mini-calendar */
+    .notes-mcal-top { display:flex; align-items:center; gap:6px; padding:12px 14px 10px; border-bottom:1px solid rgba(26,24,20,0.1); }
+    .notes-mcal-month { font-family:'Newsreader',serif; font-size:18px; font-weight:800; font-style:normal; flex:1; text-align:center; white-space:nowrap; }
+    .notes-mcal-nav { width:30px; height:30px; border:1px solid rgba(26,24,20,0.2); border-radius:6px; background:transparent; color:var(--ink2); cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; transition:all 0.12s; font-family:'JetBrains Mono',monospace; flex-shrink:0; }
+    .notes-mcal-nav:hover { border-color:var(--ink); background:var(--paper2); }
+    .notes-mcal-today-btn { font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:600; padding:3px 8px; border:1px solid rgba(26,24,20,0.2); border-radius:5px; background:transparent; color:var(--ink2); cursor:pointer; transition:all 0.12s; flex-shrink:0; }
+    .notes-mcal-today-btn:hover { border-color:var(--ink); color:var(--ink); }
+    .notes-mcal-dow-row { display:grid; grid-template-columns:repeat(7,1fr); background:var(--paper2); border-bottom:1px solid rgba(26,24,20,0.1); }
+    .notes-mcal-dow { text-align:center; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; color:var(--ink3); padding:5px 2px; }
+    .notes-mcal-dow.dow-sun { color:var(--accent); }
+    .notes-mcal-dow.dow-sat { color:#4a7ab5; }
+    .notes-mcal-grid { display:grid; grid-template-columns:repeat(7,1fr); padding:4px; gap:2px; }
+    .notes-mcal-cell { text-align:center; padding:4px 2px 3px; cursor:pointer; border-radius:6px; transition:background 0.1s; position:relative; min-height:36px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .notes-mcal-cell:hover:not(.notes-mcal-other) { background:rgba(26,24,20,0.05); }
+    .notes-mcal-cell.notes-mcal-other { opacity:0.25; pointer-events:none; cursor:default; }
+    .notes-mcal-cell.notes-mcal-today .notes-mcal-num { display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center; border-radius:50%; background:rgba(139,58,24,0.15); color:var(--accent); font-weight:800; }
+    .notes-mcal-num { font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600; line-height:1; }
+    .notes-mcal-num.dow-sun { color:var(--accent); }
+    .notes-mcal-num.dow-sat { color:#4a7ab5; }
+    .notes-mcal-dot { width:5px; height:5px; border-radius:50%; background:rgba(139,58,24,0.4); margin-top:2px; flex-shrink:0; }
+    .notes-mcal-dot.many { background:var(--accent); }
+    /* scroll-margin for list sections */
+    .notes-month-hdr { scroll-margin-top:var(--mast-h,57px); }
+    .notes-date-group { scroll-margin-top:calc(var(--mast-h,57px) + 52px); }
+    /* HL animation on notes date label */
+    @keyframes notesDateHL { 0%,20%{background:rgba(139,58,24,0.1)} 100%{background:transparent} }
+    .notes-date-hl { animation:notesDateHL 1.6s ease forwards; border-radius:4px; }

@@ -1,0 +1,9 @@
+{
+  "name": "my-dashboard",
+  "private": true,
+  "description": "個人ダッシュボード（ビルドなしの静的サイト）",
+  "scripts": {
+    "test": "node --test tests/logic.test.js",
+    "bump": "python tools/bump_assets.py"
+  }
+}

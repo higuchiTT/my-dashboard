@@ -1,0 +1,13 @@
+    /* ── FOOTER ── */
+    .footer { background:var(--paper); padding:18px 40px 28px; border-top:2px solid var(--rule); margin-top:0; }
+    .footer-inner { display:flex; justify-content:space-between; align-items:baseline; padding-top:12px; }
+    .footer-text { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.14em; color:var(--ink3); text-transform:uppercase; }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: var(--mute); }
+
+    /* ══ TODO 3カラムレイアウト ══ */
+    #page-todo { min-width: 1400px; }
+    #page-todo.active { display: block; }
+    .todo-app { display: grid; grid-template-columns: 260px 1fr 280px; min-height: calc(100vh - 50px); }
