@@ -556,69 +556,12 @@
     .ldr-sub-row2.inactive { opacity:0.4; }
     .ldr-sub-row2 .ldr-tx-menu { top:calc(100% - 4px); right:8px; }
 
-    /* ── CALENDAR v2 ── */
-    .cal2-page { padding: 20px 28px 40px; }
-    .cal2-layout { display: grid; grid-template-columns: 1fr 390px; gap: 20px; align-items: start; }
-    .cal2-card { overflow: hidden; }
-    .cal2-top { display: flex; align-items: center; gap: 8px; padding: 14px 18px 12px; flex-wrap: wrap; }
-    .cal2-month-label { font-family: 'Newsreader', serif; font-size: 24px; font-weight: 800; font-style: normal; margin: 0 6px; white-space: nowrap; }
-    .cal2-nav-btn { width: 40px; height: 40px; border: 1.5px solid rgba(26,24,20,0.2); border-radius: 8px; background: transparent; color: var(--ink2); cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; font-family: 'JetBrains Mono', monospace; line-height: 1; flex-shrink: 0; }
-    .cal2-nav-btn:hover { border-color: var(--ink); color: var(--ink); background: var(--paper2); }
-    .cal2-today-btn { white-space: nowrap; padding: 0 14px; height: 40px; border: 1.5px solid rgba(26,24,20,0.2); border-radius: 8px; background: transparent; color: var(--ink2); cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; transition: all 0.15s; flex-shrink: 0; }
-    .cal2-today-btn:hover { border-color: var(--ink); color: var(--ink); }
-    .cal2-filters { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
-    .cal2-dow-row { display: grid; grid-template-columns: repeat(7,1fr); background: var(--paper2); border-top: 1px solid rgba(26,24,20,0.15); border-bottom: 1px solid rgba(26,24,20,0.15); }
-    .cal2-dow { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--ink3); padding: 8px 4px; }
-    .cal2-dow.dow-sun { color: var(--accent); }
-    .cal2-dow.dow-sat { color: #4a7ab5; }
-    .cal2-grid { display: grid; grid-template-columns: repeat(7,1fr); }
-    .cal2-cell { border-right: 1px solid rgba(26,24,20,0.08); border-bottom: 1px solid rgba(26,24,20,0.08); padding: 5px 5px 4px; cursor: pointer; height: 105px; position: relative; background: var(--paper); transition: background 0.15s; overflow: hidden; min-width: 0; }
-    .cal2-trip-dot-mob { display: none; }
-    .cal2-cell:nth-child(7n) { border-right: none; }
-    .cal2-cell:hover:not(.cal2-other) { background: rgba(26,24,20,0.03); }
-    .cal2-cell.cal2-other { opacity: 0.25; cursor: default; pointer-events: none; }
-    .cal2-cell.cal2-today .cal2-num { display: inline-flex; width: 28px; height: 28px; align-items: center; justify-content: center; border-radius: 50%; background: #f3d9c4; color: var(--ink); font-weight: 800; }
-    .cal2-cell.cal2-sel { outline: 2px solid var(--accent); outline-offset: -1px; background: rgba(139,58,24,0.04); }
-    .cal2-num { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; display: block; line-height: 1.2; margin-bottom: 2px; }
-    .cal2-num.dow-sun { color: var(--accent); }
-    .cal2-num.dow-sat { color: #4a7ab5; }
-    .cal2-trip-bar { height: 16px; border-radius: 3px; font-family: 'Space Grotesk', sans-serif; font-size: 10px; font-weight: 600; display: flex; align-items: center; padding: 0 4px; overflow: hidden; white-space: nowrap; margin-bottom: 2px; color: var(--paper); min-width: 0; }
-    .cal2-trip-bar.s-検討中 { background: var(--warn); }
-    .cal2-trip-bar.s-計画中 { background: var(--ok); }
-    .cal2-trip-bar.s-予約済み { background: var(--accent); }
-    .cal2-trip-bar.s-完了 { background: var(--mute); }
-    .cal2-task-row { display: flex; align-items: center; gap: 3px; overflow: hidden; margin-bottom: 1px; }
-    .cal2-task-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-    .cal2-task-dot.high { background: var(--accent); }
-    .cal2-task-dot.medium { background: var(--warn); }
-    .cal2-task-dot.low { background: var(--ok); }
-    .cal2-task-title { font-family: 'Space Grotesk', sans-serif; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
-    .cal2-sub-row-cell { display: flex; align-items: center; gap: 3px; overflow: hidden; margin-bottom: 1px; }
-    .cal2-sub-title-cell { font-family: 'Space Grotesk', sans-serif; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
-    .cal2-cell-more { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink3); }
-    /* Detail panel */
-    .cal2-detail-panel { position: sticky; top: 66px; }
-    .cal2-detail-nav { display: flex; align-items: center; gap: 8px; padding: 14px 20px 10px; border-bottom: 1px solid rgba(26,24,20,0.1); }
-    .cal2-detail-nav-btn { width: 38px; height: 38px; border: 1.5px solid rgba(26,24,20,0.2); border-radius: 8px; background: transparent; color: var(--ink2); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.15s; font-family: 'JetBrains Mono', monospace; line-height: 1; flex-shrink: 0; }
-    .cal2-detail-nav-btn:hover { border-color: var(--ink); background: var(--paper2); }
-    .cal2-detail-date { flex: 1; text-align: center; font-family: 'Newsreader', serif; font-size: 20px; font-weight: 700; font-style: normal; }
-    .cal2-section-hdr { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink3); padding: 12px 20px 6px; }
-    .cal2-trip-item { padding: 10px 20px; border-bottom: 1px solid rgba(26,24,20,0.08); cursor: pointer; transition: background 0.12s; }
-    .cal2-trip-item:hover { background: rgba(26,24,20,0.025); }
-    .cal2-task-item { padding: 10px 20px; border-bottom: 1px solid rgba(26,24,20,0.08); display: flex; align-items: center; gap: 10px; }
-    .cal2-task-done { opacity: 0.4; }
-    .cal2-task-done .cal2-panel-title { text-decoration: line-through; }
-    .cal2-sub-item { padding: 10px 20px; border-bottom: 1px solid rgba(26,24,20,0.08); cursor: pointer; transition: background 0.12s; display: flex; align-items: center; gap: 8px; }
-    .cal2-sub-item:hover { background: rgba(26,24,20,0.025); }
-    .cal2-panel-title { font-family: 'Space Grotesk', sans-serif; font-size: 14px; color: var(--ink); }
-    .cal2-panel-sub { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); margin-top: 2px; }
-    .cal2-empty-day { padding: 28px 20px; text-align: center; font-family: 'Newsreader', serif; font-style: italic; font-size: 15px; color: var(--ink3); }
     /* Trip edit button */
     .trip-edit-btn { padding: 3px 9px; font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; border: 1px solid rgba(26,24,20,0.2); border-radius: 3px; background: transparent; color: var(--ink3); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
     .trip-edit-btn:hover { border-color: var(--ink); color: var(--ink); }
 
     /* ── SHOPPING (Master-Detail v3) ── */
-    .shop-summary { display:grid; grid-template-columns:repeat(3,1fr); border-bottom:1px solid var(--rule); }
+    .shop-summary { display:grid; grid-template-columns:repeat(2,1fr); border-bottom:1px solid var(--rule); }
     .shop-stat { padding:20px 32px; border-right:1px solid var(--rule); }
     .shop-stat:last-child { border-right:none; }
     .shop-stat-label { font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink3); font-weight:600; margin-bottom:8px; }
@@ -1375,21 +1318,6 @@
       .ldr-review-sum-row { grid-template-columns:1fr 1fr; gap:8px; }
       .ldr-review-table .hide-mob { display:none; }
 
-      /* ── Calendar v2 ── */
-      .cal2-layout { grid-template-columns: 1fr; }
-      .cal2-detail-panel { position: static; }
-      .cal2-cell { height: 60px; }
-      .cal2-filters { margin-left: 0; margin-top: 4px; }
-      .cal2-trip-bar { display: none; }
-      .cal2-task-row { display: none; }
-      .cal2-sub-row-cell { display: none; }
-      .cal2-cell-more { display: none; }
-      .cal2-trip-dot-mob { display: block; position: absolute; bottom: 3px; left: 2px; right: 2px; display: flex; gap: 2px; }
-      .cal2-mob-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
-      .cal2-mob-dot.trip { background: var(--accent); }
-      .cal2-mob-dot.task { background: var(--ink3); }
-      .cal2-mob-dot.sub { background: var(--warn); }
-      .cal2-page { padding: 10px; }
 
       /* ── Accounts ── */
       .ldr-acc-summary-row { grid-template-columns: 1fr; gap:8px; }
@@ -1629,7 +1557,6 @@
     <button class="tab-btn nav-item active" onclick="nav('home')">Home</button>
     <button class="tab-btn nav-item" onclick="nav('todo')">To-Do <span class="tab-badge" id="navBadge" style="display:none">0</span></button>
     <button class="tab-btn nav-item" onclick="nav('finance')">Ledger</button>
-    <button class="tab-btn nav-item" onclick="nav('calendar')">Calendar</button>
     <button class="tab-btn nav-item" onclick="nav('shopping')">Wishlist</button>
     <button class="tab-btn nav-item" onclick="nav('travel')">Travel</button>
     <button class="tab-btn nav-item" onclick="nav('food')">Food</button>
@@ -1736,7 +1663,6 @@
       <div class="trs-block">
         <h4 class="trs-title">今後の予定</h4>
         <div id="tvUpcoming"></div>
-        <button onclick="nav('calendar')" style="margin-top:10px;width:100%;padding:7px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;background:transparent;border:1px solid rgba(26,24,20,0.2);color:var(--ink3);cursor:pointer;border-radius:3px;transition:all 0.12s;" onmouseover="this.style.color='var(--ink)';this.style.borderColor='var(--ink3)'" onmouseout="this.style.color='var(--ink3)';this.style.borderColor='rgba(26,24,20,0.2)'">カレンダーを開く</button>
       </div>
 
       <div class="trs-block">
@@ -2027,47 +1953,13 @@
   </div>
 </div>
 
-<!-- ══ CALENDAR ══ -->
-<div class="page" id="page-calendar">
-  <div class="cal2-page">
-    <div class="cal2-layout">
-      <!-- Left: calendar card -->
-      <div class="ui-card cal2-card">
-        <div class="cal2-top">
-          <button class="cal2-nav-btn" onclick="chCal(-1)">‹</button>
-          <span class="cal2-month-label" id="calLabel"></span>
-          <button class="cal2-nav-btn" onclick="chCal(1)">›</button>
-          <button class="cal2-today-btn" onclick="goCalToday()">今月</button>
-          <div class="cal2-filters">
-            <button class="ui-pill active" id="calFilter-task" onclick="toggleCalFilter('task')">タスク</button>
-            <button class="ui-pill active" id="calFilter-sub" onclick="toggleCalFilter('sub')">支払い</button>
-            <button class="ui-pill active" id="calFilter-trip" onclick="toggleCalFilter('trip')">旅行</button>
-          </div>
-        </div>
-        <div class="cal2-dow-row">
-          <div class="cal2-dow dow-sun">日</div>
-          <div class="cal2-dow">月</div>
-          <div class="cal2-dow">火</div>
-          <div class="cal2-dow">水</div>
-          <div class="cal2-dow">木</div>
-          <div class="cal2-dow">金</div>
-          <div class="cal2-dow dow-sat">土</div>
-        </div>
-        <div class="cal2-grid" id="calGrid"></div>
-      </div>
-      <!-- Right: detail panel -->
-      <div class="ui-card cal2-detail-panel" id="calDetailPanel"></div>
-    </div>
-  </div>
-</div>
 
 <!-- ══ SHOPPING ══ -->
 <div class="page" id="page-shopping">
 
   <div class="shop-summary">
-    <div class="shop-stat"><div class="shop-stat-label">予算合計</div><div class="shop-stat-value" id="shopTotal">¥0</div></div>
-    <div class="shop-stat"><div class="shop-stat-label">購入済み</div><div class="shop-stat-value" id="shopBought" style="color:var(--ok)">¥0</div></div>
-    <div class="shop-stat"><div class="shop-stat-label">残り予算</div><div class="shop-stat-value" id="shopRemain" style="color:var(--accent)">¥0</div></div>
+    <div class="shop-stat"><div class="shop-stat-label">検討中</div><div class="shop-stat-value" id="shopStatKentou" style="color:var(--warn)">¥0（0件）</div></div>
+    <div class="shop-stat"><div class="shop-stat-label">保留中</div><div class="shop-stat-value" id="shopStatHoryu" style="color:var(--ink3)">¥0（0件）</div></div>
   </div>
 
   <div class="page-bar">
@@ -2388,9 +2280,7 @@ let todoState = {
 };
 const tvOpenSections = { today: true, thisweek: false, later: false, undef: false };
 let vy = new Date().getFullYear(), vm = new Date().getMonth();
-let calY = new Date().getFullYear(), calM = new Date().getMonth();
-let selDay = null;
-const PAGE_TITLES = { home:'ホーム', todo:'TODO', finance:'家計 / 資産', calendar:'カレンダー', shopping:'買い物リスト', travel:'旅行', food:'食事' };
+const PAGE_TITLES = { home:'ホーム', todo:'TODO', finance:'家計 / 資産', shopping:'買い物リスト', travel:'旅行', food:'食事' };
 
 const SUB_CAT_COLORS = {
   '住居':'#6366f1','光熱費':'#f59e0b','通信':'#06b6d4','交通':'#10b981',
@@ -2843,7 +2733,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function rerenderAll() {
-  renderHome(); renderTodayView(); renderCalendar(); renderShopping(); renderTravel(); renderFood(); renderNotes(); updateBadge();
+  renderHome(); renderTodayView(); renderShopping(); renderTravel(); renderFood(); renderNotes(); updateBadge();
   restoreLdrSubtab();
 }
 
@@ -2889,6 +2779,8 @@ document.addEventListener('click', () => {
 
 // ── NAV ──
 function nav(page) {
+  if(page==='calendar') page='home';
+  if(!document.getElementById('page-'+page)) page='home';
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.hm-bnav-item').forEach(b=>b.classList.remove('active'));
@@ -2898,7 +2790,6 @@ function nav(page) {
   if(page==='home')     renderHome();
   if(page==='todo')     renderTodayView();
   if(page==='finance')  { restoreLdrSubtab(); }
-  if(page==='calendar') renderCalendar();
   if(page==='shopping') renderShopping();
   if(page==='travel')   renderTravel();
   if(page==='food')     renderFood();
@@ -3198,10 +3089,10 @@ function addTask(){
   document.getElementById('taskTitle').value='';
   document.getElementById('taskDue').value='';
   toggleAddTask();
-  renderTodayView();renderHome();renderCalendar();updateBadge();
+  renderTodayView();renderHome();updateBadge();
 }
-function toggleTask(id){const t=tasks.find(t=>String(t.id)===String(id));if(t){t.done=!t.done;saveTasks();renderTodayView();renderHome();renderCalendar();updateBadge();}}
-function delTask(id){tasks=tasks.filter(t=>String(t.id)!==String(id));saveTasks();renderTodayView();renderHome();renderCalendar();updateBadge();}
+function toggleTask(id){const t=tasks.find(t=>String(t.id)===String(id));if(t){t.done=!t.done;saveTasks();renderTodayView();renderHome();updateBadge();}}
+function delTask(id){tasks=tasks.filter(t=>String(t.id)!==String(id));saveTasks();renderTodayView();renderHome();updateBadge();}
 
 // ── CATEGORY COLOR MAP ──
 const CAT_COLORS = {
@@ -3273,7 +3164,6 @@ function completeTask(id) {
     saveTasks();
     renderTodayView();
     renderHome();
-    renderCalendar();
     updateBadge();
     showUndoToast(id, t.title);
   }, 600);
@@ -3295,7 +3185,7 @@ function showUndoToast(id, title) {
 function undoComplete() {
   if (!_undoTaskId) return;
   const t = tasks.find(t => String(t.id) === String(_undoTaskId));
-  if (t) { t.done = false; t.completedAt = null; saveTasks(); renderTodayView(); renderHome(); renderCalendar(); updateBadge(); }
+  if (t) { t.done = false; t.completedAt = null; saveTasks(); renderTodayView(); renderHome(); updateBadge(); }
   clearTimeout(_undoTimer);
   document.getElementById('undoToast').classList.remove('show');
   _undoTaskId = null;
@@ -3315,7 +3205,6 @@ function saveTaskCategory(id, val) {
   saveTasks();
   renderTodayView();
   renderHome();
-  renderCalendar();
 }
 function saveTaskDue(id, val) {
   const t = tasks.find(t => String(t.id) === String(id));
@@ -3324,7 +3213,6 @@ function saveTaskDue(id, val) {
   saveTasks();
   renderTodayView();
   renderHome();
-  renderCalendar();
 }
 
 // ── DUE DATE LABEL ──
@@ -3674,7 +3562,7 @@ function closeTvTagPop() {
 
 function undoCompleteById(id) {
   const t = tasks.find(t => String(t.id) === String(id));
-  if (t) { t.done = false; t.completedAt = null; saveTasks(); renderTodayView(); renderHome(); renderCalendar(); updateBadge(); }
+  if (t) { t.done = false; t.completedAt = null; saveTasks(); renderTodayView(); renderHome(); updateBadge(); }
 }
 
 // ── FINANCE ──
@@ -3893,7 +3781,7 @@ function _buildImportRows(parsedRows,accountId){
     return{
       _id:crypto.randomUUID(),checked:!alreadyImported,date:p.date,title:srcName||p.rawTitle,
       srcName,rawTitle:p.rawTitle,amount,kind,note:p.note||'',importKey,dupStatus,
-      basis:'none',type:kind,category:'その他',toAccountId:'',autoRule:false,
+      basis:'none',type:kind,category:'その他',toAccountId:'',autoRule:false,_autoRuleSet:false,_userToggledRule:false,_initial:null,
     };
   });
 }
@@ -3926,6 +3814,23 @@ function _applyAutoClassify(rows,accountId){
   });
 }
 
+function _initImportInitial(rows){
+  rows.forEach(r=>{
+    r._initial={type:r.type,category:r.category,toAccountId:r.toAccountId};
+    r._autoRuleSet=false;r._userToggledRule=false;
+  });
+}
+
+function _checkAutoRule(row){
+  if(!row._initial)return;
+  const differs=row.type!==row._initial.type||row.category!==row._initial.category||row.toAccountId!==row._initial.toAccountId;
+  if(differs){
+    if(!row._userToggledRule){row.autoRule=true;row._autoRuleSet=true;}
+  } else {
+    if(row._autoRuleSet&&!row._userToggledRule){row.autoRule=false;row._autoRuleSet=false;}
+  }
+}
+
 async function _importHandleFiles(files){
   if(!files||!files.length)return;
   const file=files[0];
@@ -3950,6 +3855,7 @@ async function _importHandleFiles(files){
   else pr=_parseRakutenRows(csvRows);
   const rows=_buildImportRows(pr.rows,accountId);
   _applyAutoClassify(rows,accountId);
+  _initImportInitial(rows);
   _importState={format:detectedFormat,formatName:detectedFormat==='mufg'?'三菱UFJ銀行':'楽天カード',accountId,rows,skipCount:pr.skipCount,totalCount:pr.rows.length+pr.skipCount,csvRows,colAssign:{iDate:-1,iTitle:-1,iDebit:-1,iCredit:-1,iSigned:-1},pendingParse:false,showColAssign:false};
   _importFilter='all';
   renderLdrImport();
@@ -3964,6 +3870,7 @@ function _importApplyColAssign(){
   const pr=_parseUnknownRows(st.csvRows,colAssign);
   const rows=_buildImportRows(pr.rows,st.accountId);
   _applyAutoClassify(rows,st.accountId);
+  _initImportInitial(rows);
   st.rows=rows;st.skipCount=pr.skipCount;st.totalCount=pr.rows.length+pr.skipCount;st.colAssign=colAssign;st.pendingParse=false;st.showColAssign=false;
   renderLdrImport();
 }
@@ -3976,7 +3883,7 @@ function _importSetAccount(accId){
   if(!_importState)return;
   _importState.accountId=accId;
   // Re-apply classify with new accountId
-  if(_importState.rows.length)_applyAutoClassify(_importState.rows,accId);
+  if(_importState.rows.length){_applyAutoClassify(_importState.rows,accId);_initImportInitial(_importState.rows);}
   renderLdrImport();
 }
 
@@ -4000,8 +3907,9 @@ function _importSetType(id,type){
   if(!_importState)return;
   const row=_importState.rows.find(r=>r._id===id);if(!row)return;
   row.type=type;if(type==='skip')row.checked=false;
+  _checkAutoRule(row);
   const srcKey=normTxName(row.title,true);
-  _importState.rows.forEach(r=>{if(r._id!==id&&normTxName(r.title,true)===srcKey&&srcKey!=''){r.type=type;if(type==='skip')r.checked=false;}});
+  _importState.rows.forEach(r=>{if(r._id!==id&&normTxName(r.title,true)===srcKey&&srcKey!=''){r.type=type;if(type==='skip')r.checked=false;_checkAutoRule(r);}});
   _refreshImportTbody();
 }
 
@@ -4009,8 +3917,9 @@ function _importSetCat(id,cat){
   if(!_importState)return;
   const row=_importState.rows.find(r=>r._id===id);if(!row)return;
   row.category=cat;
+  _checkAutoRule(row);
   const srcKey=normTxName(row.title,true);
-  _importState.rows.forEach(r=>{if(r._id!==id&&normTxName(r.title,true)===srcKey&&srcKey!='')r.category=cat;});
+  _importState.rows.forEach(r=>{if(r._id!==id&&normTxName(r.title,true)===srcKey&&srcKey!=''){r.category=cat;_checkAutoRule(r);}});
   _refreshImportTbody();
 }
 
@@ -4018,14 +3927,15 @@ function _importSetToAcc(id,accId){
   if(!_importState)return;
   const row=_importState.rows.find(r=>r._id===id);if(!row)return;
   row.toAccountId=accId;
+  _checkAutoRule(row);
   const srcKey=normTxName(row.title,true);
-  _importState.rows.forEach(r=>{if(r._id!==id&&normTxName(r.title,true)===srcKey&&srcKey!='')r.toAccountId=accId;});
+  _importState.rows.forEach(r=>{if(r._id!==id&&normTxName(r.title,true)===srcKey&&srcKey!=''){r.toAccountId=accId;_checkAutoRule(r);}});
   _refreshImportTbody();
 }
 
 function _importToggleAutoRule(id){
   const row=_importState&&_importState.rows.find(r=>r._id===id);
-  if(row)row.autoRule=!row.autoRule;
+  if(row){row.autoRule=!row.autoRule;row._autoRuleSet=false;row._userToggledRule=true;}
 }
 
 function _importEditTitle(id,el){
@@ -4093,7 +4003,7 @@ function _importRowHtml(row,st){
     <td class="imp-col-type" onclick="event.stopPropagation()">${typeSel}</td>
     <td class="imp-col-cat" onclick="event.stopPropagation()">${catCell}</td>
     <td class="imp-col-badges">${basisBadge}${dupBadge}</td>
-    <td class="imp-col-autorule" onclick="event.stopPropagation()">${row.type==='skip'?'<span style="color:var(--mute);">—</span>':`<label class="imp-autorule-lbl" onclick="event.stopPropagation()"><input type="checkbox" ${row.autoRule?'checked':''} title="今後もこの分類" onclick="event.stopPropagation();_importToggleAutoRule('${id}')"><span class="imp-autorule-txt">今後もこの分類</span></label>`}</td>
+    <td class="imp-col-autorule" onclick="event.stopPropagation()"><label class="imp-autorule-lbl" onclick="event.stopPropagation()"><input type="checkbox" ${row.autoRule?'checked':''} title="今後もこの分類" onclick="event.stopPropagation();_importToggleAutoRule('${id}')"><span class="imp-autorule-txt">今後もこの分類</span></label></td>
   </tr>`;
 }
 
@@ -4184,14 +4094,18 @@ function _importConfirm(){
   const st=_importState;
   const toAdd=st.rows.filter(r=>r.checked&&r.type!=='skip');
   if(!toAdd.length){uiAlert('取り込む取引がありません');return;}
-  toAdd.filter(r=>r.autoRule).forEach(r=>{
+  const ruleRows=st.rows.filter(r=>r.autoRule);
+  const ruleKeys=new Set(); // 同じお店の行は1件として数える
+  ruleRows.forEach(r=>{
     const kw=normTxName(r.title,true);if(!kw)return;
     if(!txRules.rules)txRules.rules=[];
     const idx=txRules.rules.findIndex(x=>x.keyword===kw);
     const obj={id:idx>=0?txRules.rules[idx].id:crypto.randomUUID(),keyword:kw,type:r.type,category:r.category,toAccountId:r.toAccountId};
     if(idx>=0)txRules.rules[idx]=obj;else txRules.rules.push(obj);
+    ruleKeys.add(kw);
   });
-  if(toAdd.some(r=>r.autoRule))saveTxRules();
+  const ruleCount=ruleKeys.size;
+  if(ruleRows.length)saveTxRules();
   toAdd.forEach(r=>{
     let tx;
     const _now=new Date().toISOString();
@@ -4208,9 +4122,11 @@ function _importConfirm(){
   saveTx();
   renderGuidePanel();renderLdrMobOnboard();
   const count=toAdd.length;
+  const savedRuleCount=ruleCount;
   _importState=null;_importFilter='all';
   const p=document.getElementById('ldrPanelImport');
-  if(p)p.innerHTML=`<div style="padding:48px 20px;text-align:center;"><div style="font-family:'Newsreader',serif;font-size:24px;font-weight:800;margin-bottom:12px;">${count} 件を取り込みました</div><div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;"><button class="btn btn-primary" onclick="ldrTab('txlist',document.querySelector('#ldrSubtabs .ui-seg-btn:nth-child(2)'))">取引一覧を見る</button><button class="btn btn-ghost" onclick="renderLdrImport()">さらに取り込む</button></div></div>`;
+  const ruleMsg=savedRuleCount?`<div style="font-family:'Space Grotesk',sans-serif;font-size:14px;color:var(--ok);margin-top:8px;">${savedRuleCount} 件の分類を覚えました</div>`:'';
+  if(p)p.innerHTML=`<div style="padding:48px 20px;text-align:center;"><div style="font-family:'Newsreader',serif;font-size:24px;font-weight:800;margin-bottom:12px;">${count} 件を取り込みました</div>${ruleMsg}<div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;"><button class="btn btn-primary" onclick="ldrTab('txlist',document.querySelector('#ldrSubtabs .ui-seg-btn:nth-child(2)'))">取引一覧を見る</button><button class="btn btn-ghost" onclick="renderLdrImport()">さらに取り込む</button></div></div>`;
 }
 
 function _importCancel(){
@@ -4280,7 +4196,7 @@ function renderLdrImport(){
           <th style="min-width:100px;">種類</th>
           <th style="min-width:100px;">カテゴリ・振替先</th>
           <th style="min-width:80px;">根拠</th>
-          <th style="width:60px;">今後も</th>
+          <th style="width:60px;">今後も<br><span style="font-weight:400;font-size:9px;letter-spacing:0;text-transform:none;color:var(--mute);">直した行は自動でオン</span></th>
         </tr></thead>
         <tbody id="ldrImportTbody">${filtRows.map(r=>_importRowHtml(r,st)).join('')}</tbody>
       </table>
@@ -5923,199 +5839,6 @@ function ldrListSetUnset(){
   renderLdrTxList();
 }
 
-// ── CALENDAR v2 ──
-let calFilters = (()=>{try{const v=JSON.parse(localStorage.getItem('cal_filters'));if(Array.isArray(v))return v;}catch(e){}return['task','sub','trip'];})();
-function saveCalFilters(){try{localStorage.setItem('cal_filters',JSON.stringify(calFilters));}catch(e){}}
-function toggleCalFilter(f){const idx=calFilters.indexOf(f);if(idx>=0)calFilters.splice(idx,1);else calFilters.push(f);saveCalFilters();renderCalendar();}
-function chCal(d){calM+=d;if(calM>11){calM=0;calY++;}if(calM<0){calM=11;calY--;}renderCalendar();}
-function goCalToday(){const t=new Date();calY=t.getFullYear();calM=t.getMonth();selDay=today();renderCalendar();}
-function selectDay(ds){selDay=ds;renderCalendar();}
-function cal2NavDay(dir){
-  if(!selDay)return;
-  const d=new Date(selDay+'T00:00:00');
-  d.setDate(d.getDate()+dir);
-  selDay=localDate(d);
-  if(d.getMonth()!==calM||d.getFullYear()!==calY){calM=d.getMonth();calY=d.getFullYear();}
-  renderCalendar();
-}
-function renderCalendar(){
-  const months='1月 2月 3月 4月 5月 6月 7月 8月 9月 10月 11月 12月'.split(' ');
-  const todayStr=today();
-  // Auto-select: if no selection, default to today (if in current month) or month-start
-  if(!selDay){
-    const now=new Date();
-    selDay=(calY===now.getFullYear()&&calM===now.getMonth())?todayStr:`${calY}-${String(calM+1).padStart(2,'0')}-01`;
-  }
-  document.getElementById('calLabel').textContent=`${calY}年 ${months[calM]}`;
-  // Filter buttons
-  ['task','sub','trip'].forEach(f=>{
-    const btn=document.getElementById(`calFilter-${f}`);
-    if(btn)btn.classList.toggle('active',calFilters.includes(f));
-  });
-  const firstDow=new Date(calY,calM,1).getDay();
-  const daysInMonth=new Date(calY,calM+1,0).getDate();
-  const prevDays=new Date(calY,calM,0).getDate();
-  const cells=[];
-  for(let i=firstDow-1;i>=0;i--) cells.push({d:prevDays-i,m:calM-1,y:calY,other:true});
-  for(let d=1;d<=daysInMonth;d++) cells.push({d,m:calM,y:calY,other:false});
-  while(cells.length%7!==0){const x=cells.length-daysInMonth-firstDow+1;cells.push({d:x,m:calM+1,y:calY,other:true});}
-  const grid=document.getElementById('calGrid');
-  grid.innerHTML=cells.map(c=>{
-    const rm=((c.m%12)+12)%12;
-    const ry=c.m<0?c.y-1:c.m>11?c.y+1:c.y;
-    const ds=`${ry}-${String(rm+1).padStart(2,'0')}-${String(c.d).padStart(2,'0')}`;
-    const dow=new Date(ds+'T00:00:00').getDay();
-    const isToday=ds===todayStr;
-    const isSel=ds===selDay;
-    let numCls='cal2-num'+(dow===0?' dow-sun':dow===6?' dow-sat':'');
-    let cellCls='cal2-cell'+(c.other?' cal2-other':'')+(isToday?' cal2-today':'')+(isSel?' cal2-sel':'');
-    let inner=`<span class="${numCls}">${c.d}</span>`;
-    const mob=[];
-    if(!c.other){
-      // Trips
-      if(calFilters.includes('trip')){
-        const dTrips=trips.filter(t=>t.startDate&&t.endDate&&ds>=t.startDate&&ds<=t.endDate);
-        const shown=dTrips.slice(0,2);const more=dTrips.length-shown.length;
-        if(dTrips.length)mob.push('trip');
-        shown.forEach(t=>{
-          const isStart=ds===t.startDate,isWkStart=dow===0;
-          inner+=`<div class="cal2-trip-bar s-${esc(t.status)}">${isStart||isWkStart?esc(t.dest):''}</div>`;
-        });
-        if(more>0)inner+=`<div class="cal2-cell-more">+${more}</div>`;
-      }
-      // Tasks
-      if(calFilters.includes('task')){
-        const dTasks=tasks.filter(t=>t.due===ds&&!t.done);
-        const shT=dTasks.slice(0,2);const morT=dTasks.length-shT.length;
-        if(dTasks.length)mob.push('task');
-        shT.forEach(t=>{inner+=`<div class="cal2-task-row"><div class="cal2-task-dot ${t.priority}"></div><span class="cal2-task-title">${esc(t.title)}</span></div>`;});
-        if(morT>0)inner+=`<div class="cal2-cell-more">+${morT}件</div>`;
-      }
-      // Subs
-      if(calFilters.includes('sub')){
-        const dt2=new Date(ds+'T00:00:00');
-        const sy=dt2.getFullYear(),sm=dt2.getMonth(),sd=dt2.getDate();
-        const dim=new Date(sy,sm+1,0).getDate();
-        const dSubs=subs.filter(s=>{
-          if(!s.active||!s.payDay)return false;
-          const aDay=Math.min(s.payDay,dim);
-          if(sd!==aDay)return false;
-          if(s.cycle==='yearly'&&(s.payMonth||1)!==sm+1)return false;
-          return true;
-        });
-        const shS=dSubs.slice(0,1);const morS=dSubs.length-shS.length;
-        if(dSubs.length)mob.push('sub');
-        shS.forEach(s=>{
-          const ym=`${sy}-${String(sm+1).padStart(2,'0')}`;
-          const paid=txs.some(tx=>String(tx.subId)===String(s.id)&&tx.subYm===ym);
-          inner+=`<div class="cal2-sub-row-cell"><svg width="9" height="9" viewBox="0 0 12 12" fill="none" style="flex-shrink:0"><rect x="1" y="2.5" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 5h10" stroke="currentColor" stroke-width="1.3"/></svg><span class="cal2-sub-title-cell">${esc(s.name)}${paid?' ✓':''}</span></div>`;
-        });
-        if(morS>0)inner+=`<div class="cal2-cell-more">+${morS}</div>`;
-      }
-      if(mob.length)inner+=`<div class="cal2-trip-dot-mob">${mob.map(k=>`<span class="cal2-mob-dot ${k}"></span>`).join('')}</div>`;
-    }
-    return`<div class="${cellCls}" onclick="${c.other?'':` selectDay('${ds}')`}">${inner}</div>`;
-  }).join('');
-  renderCalDetail();
-}
-function renderCalDetail(){
-  const panel=document.getElementById('calDetailPanel');
-  if(!panel)return;
-  if(!selDay){panel.innerHTML='';return;}
-  const d=new Date(selDay+'T00:00:00');
-  const dayNames='日月火水木金土'.split('');
-  const y=d.getFullYear(),mo=d.getMonth()+1,dy=d.getDate(),dow=d.getDay();
-  const curY=new Date().getFullYear();
-  const yearPfx=y!==curY?`${y}年`:'';
-  const dateLabel=`${yearPfx}${mo}月${dy}日（${dayNames[dow]}）`;
-  let html=`<div class="cal2-detail-nav">
-    <button class="cal2-detail-nav-btn" onclick="cal2NavDay(-1)">‹</button>
-    <span class="cal2-detail-date">${dateLabel}</span>
-    <button class="cal2-detail-nav-btn" onclick="cal2NavDay(1)">›</button>
-  </div>`;
-  let hasContent=false;
-  // Trips
-  if(calFilters.includes('trip')){
-    const dTrips=trips.filter(t=>t.startDate&&t.endDate&&selDay>=t.startDate&&selDay<=t.endDate);
-    if(dTrips.length){
-      hasContent=true;
-      html+=`<div class="cal2-section-hdr">旅行</div>`;
-      dTrips.forEach(t=>{
-        const sd2=new Date(t.startDate+'T00:00:00'),ed2=new Date(t.endDate+'T00:00:00');
-        const daysTotal=Math.round((ed2-sd2)/86400000)+1;
-        const dayNum=Math.round((new Date(selDay+'T00:00:00')-sd2)/86400000)+1;
-        const sY=sd2.getFullYear(),eY=ed2.getFullYear();
-        const sPfx=sY!==curY?`${sY}/`:'';const ePfx=eY!==curY?`${eY}/`:'';
-        const rangeStr=`${sPfx}${sd2.getMonth()+1}/${sd2.getDate()}〜${ePfx}${ed2.getMonth()+1}/${ed2.getDate()}（${daysTotal}日間）`;
-        html+=`<div class="cal2-trip-item" onclick="nav('travel');event.stopPropagation()">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
-            <span style="font-family:'Newsreader',serif;font-size:17px;font-weight:800;">${esc(t.dest)}</span>
-            <span class="trip-badge ${esc(t.status)}">${esc(t.status)}</span>
-          </div>
-          <div class="cal2-panel-sub">${rangeStr} · ${dayNum}日目</div>
-          ${t.budget?`<div class="cal2-panel-sub">予算 ¥${fmt(t.budget)}</div>`:''}
-        </div>`;
-      });
-    }
-  }
-  // Tasks
-  if(calFilters.includes('task')){
-    const incomp=tasks.filter(t=>t.due===selDay&&!t.done);
-    const comp=tasks.filter(t=>t.due===selDay&&t.done);
-    if(incomp.length||comp.length){
-      hasContent=true;
-      html+=`<div class="cal2-section-hdr">タスク</div>`;
-      incomp.forEach(t=>{
-        html+=`<div class="cal2-task-item">
-          <div class="cal2-task-dot ${t.priority}" style="flex-shrink:0;width:8px;height:8px;border-radius:50%;"></div>
-          <div style="flex:1;min-width:0;">
-            <div class="cal2-panel-title" onclick="nav('todo')" style="cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.title)}</div>
-            <div class="cal2-panel-sub">${esc(t.category)}${t.dueTime?` · ${esc(t.dueTime)}`:''}</div>
-          </div>
-          <button class="tv-done-btn" onclick="completeTask('${esc(String(t.id))}');event.stopPropagation()">完了</button>
-        </div>`;
-      });
-      comp.forEach(t=>{
-        html+=`<div class="cal2-task-item cal2-task-done">
-          <div class="cal2-task-dot ${t.priority}" style="flex-shrink:0;width:8px;height:8px;border-radius:50%;"></div>
-          <div class="cal2-panel-title" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.title)}</div>
-        </div>`;
-      });
-    }
-  }
-  // Subs
-  if(calFilters.includes('sub')){
-    const dt2=new Date(selDay+'T00:00:00');
-    const sy=dt2.getFullYear(),sm=dt2.getMonth(),sd=dt2.getDate();
-    const dim=new Date(sy,sm+1,0).getDate();
-    const dSubs=subs.filter(s=>{
-      if(!s.active||!s.payDay)return false;
-      const aDay=Math.min(s.payDay,dim);
-      if(sd!==aDay)return false;
-      if(s.cycle==='yearly'&&(s.payMonth||1)!==sm+1)return false;
-      return true;
-    });
-    if(dSubs.length){
-      hasContent=true;
-      html+=`<div class="cal2-section-hdr">支払い</div>`;
-      dSubs.forEach(s=>{
-        const ym=`${sy}-${String(sm+1).padStart(2,'0')}`;
-        const paid=txs.some(tx=>String(tx.subId)===String(s.id)&&tx.subYm===ym);
-        const acc=accounts.find(a=>String(a.id)===String(s.accountId));
-        html+=`<div class="cal2-sub-item" onclick="nav('finance');setTimeout(()=>{const btn=document.querySelector('#ldrSubtabs .ui-seg-btn:nth-child(4)');if(btn)ldrTab('subs',btn);},60);event.stopPropagation()">
-          <svg width="14" height="14" viewBox="0 0 12 12" fill="none" style="flex-shrink:0"><rect x="1" y="2.5" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 5h10" stroke="currentColor" stroke-width="1.3"/></svg>
-          <div style="flex:1;min-width:0;">
-            <div class="cal2-panel-title" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(s.name)}</div>
-            <div class="cal2-panel-sub">¥${fmt(s.price)}${acc?` · ${esc(acc.name)}`:''}</div>
-          </div>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;flex-shrink:0;color:${paid?'var(--ok)':'var(--warn)'};">${paid?'✓ 支払済':'未払い'}</span>
-        </div>`;
-      });
-    }
-  }
-  if(!hasContent){html+=`<div class="cal2-empty-day">この日の予定はありません</div>`;}
-  panel.innerHTML=html;
-}
 
 // ── SHOPPING ──
 let expandedShopId = null;
@@ -6208,12 +5931,14 @@ function cancelExpand(){expandedShopId=null;shopDraft=null;renderShopping();}
 
 function renderShopping(){
   const all=shopping;
-  const withPrice=all.filter(s=>s.price);
-  const total=withPrice.reduce((s,i)=>s+(i.price||0),0);
-  const bought=all.filter(s=>s.status==='購入済み'&&s.price).reduce((s,i)=>s+(i.price||0),0);
-  document.getElementById('shopTotal').textContent='¥'+fmt(total);
-  document.getElementById('shopBought').textContent='¥'+fmt(bought);
-  document.getElementById('shopRemain').textContent='¥'+fmt(Math.max(0,total-bought));
+  const kentouItems=all.filter(s=>s.status==='検討中');
+  const horyuItems=all.filter(s=>s.status==='保留中');
+  const kentouAmt=kentouItems.reduce((s,i)=>s+(i.price||0),0);
+  const horyuAmt=horyuItems.reduce((s,i)=>s+(i.price||0),0);
+  const el1=document.getElementById('shopStatKentou');
+  const el2=document.getElementById('shopStatHoryu');
+  if(el1)el1.textContent='¥'+fmt(kentouAmt)+'（'+kentouItems.length+'件）';
+  if(el2)el2.textContent='¥'+fmt(horyuAmt)+'（'+horyuItems.length+'件）';
   const grid=document.getElementById('shopGrid');
   if(!all.length&&!newShopDraft){grid.innerHTML='<div style="grid-column:1/-1;padding:48px;text-align:center;color:var(--mute)">アイテムがありません</div>';return;}
   const statuses=['検討中','保留中','購入済み'];
@@ -9141,10 +8866,6 @@ async function deleteOrphanPhotos() {
   <button class="hm-bnav-item" onclick="nav('finance')">
     <span class="hm-bnav-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 6.5v1m0 5v1m2.5-3.5c0-.83-.67-1.5-2.5-1.5s-2.5.67-2.5 1.5c0 .83 1 1.5 2.5 1.5s2.5.67 2.5 1.5c0 .83-.67 1.5-2.5 1.5s-2.5-.67-2.5-1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
     <span class="hm-bnav-label">家計</span>
-  </button>
-  <button class="hm-bnav-item" onclick="nav('calendar')">
-    <span class="hm-bnav-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="4.5" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M3 8.5h14" stroke="currentColor" stroke-width="1.5"/><path d="M7 3v3M13 3v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
-    <span class="hm-bnav-label">予定</span>
   </button>
   <button class="hm-bnav-item" onclick="nav('shopping')">
     <span class="hm-bnav-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3.5c-2.21 0-4 1.79-4 4v.5H4.5l-.5 9h12l-.5-9H14V7.5c0-2.21-1.79-4-4-4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M7.5 8v-1a2.5 2.5 0 015 0v1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
