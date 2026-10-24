@@ -1,11 +1,12 @@
 ---
 name: checker
 description: |
-  dashboard.html の UI を Playwright で視覚的に確認するエージェント。
+  ダッシュボード（dashboard.html と css/・js/）の UI を Playwright で視覚的に確認するエージェント。
   呼び出し元から「確認項目リスト」を受け取り、その項目だけを検証して pass/fail を報告する。
-  呼び出しタイミング: dashboard.html を編集した後、UI の視覚的な確認を行いたいとき
+  呼び出しタイミング: dashboard.html・css/・js/ を編集した後、UI の視覚的な確認を行いたいとき
 tools:
   - Read
+  - Grep
   - mcp__playwright__browser_navigate
   - mcp__playwright__browser_screenshot
   - mcp__playwright__browser_click
@@ -26,7 +27,13 @@ model: claude-sonnet-4-6
 ### Step 1: ブラウザで開く
 
 ```
-navigate: file:///c:/work/private/dashboard.html
+navigate: http://localhost:8765/dashboard.html
+```
+
+- 事前にローカルサーバーを起動しておく（.claude/launch.json の dashboard = `python -m http.server 8765`）。css/・js/ を読み込むため file:// では開かない
+- ログイン画面（#loginOverlay）が出るので非表示にし、`saveToSupabase` を空の関数に置き換えてから、テスト用のデータを入れて描画する（本番データに書き込まない）。テスト用のデータと全タブの描画は `tests/smoke.js` の runSmoke() が使える
+
+```
 ```
 
 ### Step 2: 変更対象のページに移動
@@ -70,10 +77,10 @@ evaluate: `getComputedStyle(document.querySelector('.shop-cell-price')).justifyC
 ```
 
 #### 項目6: stopPropagation の網羅
-Read で dashboard.html を確認し、対象要素に stopPropagation または closest チェックがあるか確認。
+Read で該当する js/ のファイルを確認し、対象要素に stopPropagation または closest チェックがあるか確認。
 
 #### 項目7: 不要要素の完全削除
-Read で dashboard.html の CSS・JS を確認し、削除対象クラス・関数の残骸がないか確認。
+Grep で css/・js/・dashboard.html を検索し、削除対象クラス・関数の残骸がないか確認。
 
 #### 項目8: 最小幅の保持
 ```javascript
@@ -82,7 +89,7 @@ evaluate: `getComputedStyle(document.querySelector('.shop-grid')).gridTemplateCo
 ```
 
 #### 項目9: ID型ミスマッチの検出
-Read で dashboard.html を確認し、以下のパターンが混在していないか確認する。
+Grep で js/ を検索し、以下のパターンが混在していないか確認する。
 
 **問題パターン（fail）:**
 - onclick 属性でタスクIDを文字列として渡している（例: `onclick="someFunc('${t.id}')"` ）
