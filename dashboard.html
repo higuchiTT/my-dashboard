@@ -3599,7 +3599,8 @@ let ldrListSearch='';
 let ldrListCat='all';
 let ldrEditingTxId=null;      // null=new, string=edit
 let ldrTxModalType='expense'; // current modal type
-let _ldrOpenMenuId=null;      // currently open ... menu
+let _ldrOpenMenuId=null;
+let _ldrOpenMenuEl=null;      // currently open ... menu
 
 function _ldrActiveTab(){const a=document.querySelector('#ldrSubtabs .ui-seg-btn.active');return a?a.getAttribute('onclick').match(/'(\w+)'/)?.[1]||'overview':'overview';}
 function chMonth(d){vm+=d;if(vm>11){vm=0;vy++;}if(vm<0){vm=11;vy--;}const t=_ldrActiveTab();if(t==='overview')renderFinance();else if(t==='txlist')renderLdrTxList();else if(t==='budget')renderBudgetPanel();else if(t==='accounts')renderAccountsPanel();else if(t==='subs')renderSubs();else if(t==='review')renderReviewPanel();}
@@ -3843,7 +3844,7 @@ async function _importHandleFiles(files){
   catch(e){text=new TextDecoder('shift_jis').decode(buf);}
   if(text.charCodeAt(0)===0xFEFF)text=text.slice(1);
   const csvRows=_parseCSV(text);
-  if(!csvRows.length){alert('CSVを読み込めませんでした');return;}
+  if(!csvRows.length){uiAlert('CSVを読み込めませんでした');return;}
   const headers=csvRows[0].map(h=>h.trim());
   const detectedFormat=_detectImportFormat(headers);
   const accountId=_defaultAccountForFormat(detectedFormat);
@@ -4091,7 +4092,7 @@ function _importConfirm(){
   if(!_importState)return;
   const st=_importState;
   const toAdd=st.rows.filter(r=>r.checked&&r.type!=='skip');
-  if(!toAdd.length){alert('取り込む取引がありません');return;}
+  if(!toAdd.length){uiAlert('取り込む取引がありません');return;}
   toAdd.filter(r=>r.autoRule).forEach(r=>{
     const kw=normTxName(r.title,true);if(!kw)return;
     if(!txRules.rules)txRules.rules=[];
@@ -4425,10 +4426,10 @@ function execDelAcc(accId){
   renderAccountsPanel();
   renderFinance();
 }
-function confirmDelAcc(accId){
+async function confirmDelAcc(accId){
   const hasRef=txs.some(t=>String(t.accountId)===accId||String(t.fromAccountId)===accId||String(t.toAccountId)===accId);
-  if(hasRef){alert('この口座を参照している取引があります。取引を削除または変更してから削除してください。「非表示にする」で一覧から隠すこともできます。');return;}
-  if(confirm('この口座を削除しますか？'))execDelAcc(accId);
+  if(hasRef){uiAlert('この口座を参照している取引があります。取引を削除または変更してから削除してください。「非表示にする」で一覧から隠すこともできます。');return;}
+  if(await uiConfirm('この口座を削除しますか？',{title:'口座の削除',danger:true}))execDelAcc(accId);
 }
 function archiveAcc(accId){
   const a=accounts.find(a=>String(a.id)===String(accId));
@@ -4719,7 +4720,7 @@ function openBudgetSuggest(){
     if(hasData)months.push({y,m});
   }
   if(!months.length){
-    alert('提案するための実績がまだありません');return;
+    uiAlert('提案するための実績がまだありません');return;
   }
   // Compute per-category averages
   const catTotals={};
@@ -5247,7 +5248,7 @@ function saveTxModal(){
     const toId=document.getElementById('ldrTxTo').value;
     if(!fromId){document.getElementById('ldrTxFrom').focus();return;}
     if(!toId){document.getElementById('ldrTxTo').focus();return;}
-    if(fromId===toId){alert('出金元と入金先は異なる口座を選んでください');return;}
+    if(fromId===toId){uiAlert('出金元と入金先は異なる口座を選んでください');return;}
     const titleVal=document.getElementById('ldrTxTitle').value.trim()||'振替';
     txObj={type:'transfer',title:titleVal,amount,fromAccountId:fromId,toAccountId:toId,date:document.getElementById('ldrTxDate').value,note:document.getElementById('ldrTxNote').value.trim()};
   } else if(ldrTxModalType==='adjust'){
@@ -5296,15 +5297,35 @@ function delTx(id){txs=txs.filter(t=>String(t.id)!==String(id));saveTx();renderF
 // ── ... menu ──
 function toggleTxMenu(e,id){
   e.stopPropagation();
-  const menuId='ldrTxMenu_'+id;
-  if(_ldrOpenMenuId&&_ldrOpenMenuId!==menuId){
-    const old=document.getElementById(_ldrOpenMenuId);if(old)old.classList.remove('open');
-  }
-  const m=document.getElementById(menuId);
-  if(m){m.classList.toggle('open');_ldrOpenMenuId=m.classList.contains('open')?menuId:null;}
+  // 同じ取引が Overview と取引一覧の両方に描画されるので、ID ではなく押したボタンの隣のメニューを開く
+  const btn=e.currentTarget;
+  const m=btn&&btn.nextElementSibling;
+  if(!m)return;
+  const wasOpen=m.classList.contains('open');
+  closeLdrTxMenus();
+  if(wasOpen)return;
+  m.classList.add('open');
+  // カードの overflow で切れないよう、画面に固定して表示する
+  const r=btn.getBoundingClientRect();
+  m.style.position='fixed';
+  m.style.right='auto';
+  m.style.top=(r.bottom+4)+'px';
+  m.style.left='0px';
+  const mw=m.offsetWidth, mh=m.offsetHeight;
+  let left=r.right-mw; if(left<8)left=8;
+  let top=r.bottom+4; if(top+mh>window.innerHeight-8)top=Math.max(8,r.top-mh-4);
+  m.style.left=left+'px'; m.style.top=top+'px';
+  _ldrOpenMenuEl=m;
+}
+window.addEventListener('scroll',()=>{if(_ldrOpenMenuEl)closeLdrTxMenus();},{passive:true,capture:true});
+async function confirmDelTxFromMenu(id){
+  const t=txs.find(x=>String(x.id)===String(id)); if(!t)return;
+  const label=`${t.date||''} ${t.title||''} ¥${fmt(t.amount||0)}`;
+  if(await uiConfirm(`この取引を削除しますか？
+${label}`,{title:'取引の削除',okLabel:'削除する',danger:true}))execDelTx(id);
 }
 function closeLdrTxMenus(){
-  if(_ldrOpenMenuId){const m=document.getElementById(_ldrOpenMenuId);if(m)m.classList.remove('open');_ldrOpenMenuId=null;}
+  if(_ldrOpenMenuEl){_ldrOpenMenuEl.classList.remove('open');_ldrOpenMenuEl.style.position='';_ldrOpenMenuEl.style.top='';_ldrOpenMenuEl.style.left='';_ldrOpenMenuEl.style.right='';_ldrOpenMenuEl=null;}
 }
 
 // ── SVG mini charts ──
@@ -5416,8 +5437,8 @@ function _txRowHtml(t,hideMobCols){
       <div class="ldr-tx-more-wrap">
         <button class="ldr-tx-more" onclick="toggleTxMenu(event,'${esc(String(t.id))}')">⋯</button>
         <div class="ldr-tx-menu" id="ldrTxMenu_${esc(String(t.id))}">
-          <button onclick="openTxModal(null,'${esc(String(t.id))}');closeLdrTxMenus()">編集</button>
-          <button onclick="execDelTx('${esc(String(t.id))}');closeLdrTxMenus()">削除</button>
+          <button onclick="closeLdrTxMenus();openTxModal(null,'${esc(String(t.id))}')">編集</button>
+          <button onclick="closeLdrTxMenus();confirmDelTxFromMenu('${esc(String(t.id))}')">削除</button>
         </div>
       </div>
     </td>
@@ -6064,9 +6085,9 @@ function delShopItem(id){
   if(String(expandedShopId)===String(id)){expandedShopId=null;shopDraft=null;}
   saveShop();renderShopping();
 }
-function confirmDelShop(id){
+async function confirmDelShop(id){
   const s=shopping.find(s=>String(s.id)===String(id));if(!s)return;
-  if(confirm(`「${s.name}」を削除しますか？`))delShopItem(id);
+  if(await uiConfirm(`「${s.name}」を削除しますか？`,{title:'アイテムの削除',danger:true}))delShopItem(id);
 }
 function saveShop(){localStorage.setItem('hd_shopping',JSON.stringify(shopping));saveToSupabase();}
 function toggleShopExpand(id){
@@ -6463,9 +6484,9 @@ function checkSubPayment(id,ym){
   }
   saveSubs();renderSubs();renderFinance();ldrListInitDone=false;renderLdrTxList();
 }
-function uncheckSubPayment(id,ym){
+async function uncheckSubPayment(id,ym){
   const s=subs.find(s=>String(s.id)===String(id));if(!s)return;
-  if(!confirm(`${ym} の「${s.name}」の支払いを取り消しますか？`))return;
+  if(!(await uiConfirm(`${ym} の「${s.name}」の支払いを取り消しますか？`,{title:'支払いの取り消し'})))return;
   txs=txs.filter(t=>!(String(t.subId)===String(id)&&t.subYm===ym));
   if(!s.skip)s.skip={};s.skip[ym]=true;
   saveTx();saveSubs();renderSubs();renderFinance();ldrListInitDone=false;renderLdrTxList();
@@ -7510,9 +7531,9 @@ function addFoodSitting(kind) {
   renderFoodModalBody();
 }
 
-function removeFoodSitting(sittingId) {
+async function removeFoodSitting(sittingId) {
   if (!_foodModalState) return;
-  if (!confirm(`このセクションを削除しますか？`)) return;
+  if (!(await uiConfirm('このセクションを削除しますか？',{title:'セクションの削除',danger:true}))) return;
   _collectModalInputs();
   _foodModalState.sittings = (_foodModalState.sittings||[]).filter(s=>String(s.id)!==String(sittingId));
   renderFoodModalBody();
@@ -8441,6 +8462,47 @@ function fmtS(d){return`${d.getMonth()+1}/${d.getDate()}`;}
 function fmtFull(d){const days='日月火水木金土'.split('');return`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`;}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
+// ── UI DIALOG ──
+function uiAlert(message, {title=''} = {}) {
+  return new Promise(resolve => {
+    _openUiDialog({title, message, okLabel:'OK', cancelLabel:null, danger:false, resolve});
+  });
+}
+function uiConfirm(message, {title='', okLabel='OK', cancelLabel='キャンセル', danger=false} = {}) {
+  return new Promise(resolve => {
+    _openUiDialog({title, message, okLabel, cancelLabel, danger, resolve});
+  });
+}
+function _openUiDialog({title, message, okLabel, cancelLabel, danger, resolve}) {
+  const overlay = document.getElementById('uiDialogOverlay');
+  const titleEl = document.getElementById('uiDialogTitle');
+  const msgEl   = document.getElementById('uiDialogMsg');
+  const okBtn   = document.getElementById('uiDialogOk');
+  const cancelBtn = document.getElementById('uiDialogCancel');
+  titleEl.textContent = title;
+  titleEl.style.display = title ? '' : 'none';
+  msgEl.innerHTML = esc(message).replace(/\n/g,'<br>');
+  okBtn.textContent = okLabel;
+  okBtn.style.background = danger ? 'var(--accent)' : 'var(--ink)';
+  if (cancelLabel) { cancelBtn.textContent = cancelLabel; cancelBtn.style.display = ''; }
+  else { cancelBtn.style.display = 'none'; }
+  overlay.style.display = 'flex';
+  okBtn.focus();
+  function close(result) {
+    overlay.style.display = 'none';
+    overlay.removeEventListener('keydown', onKey);
+    resolve(result);
+  }
+  function onKey(e) {
+    if (e.key === 'Escape') { e.preventDefault(); close(false); }
+    else if (e.key === 'Enter') { e.preventDefault(); close(true); }
+  }
+  okBtn.onclick = () => close(true);
+  cancelBtn.onclick = () => close(false);
+  overlay.onclick = (e) => { if (e.target === overlay) close(false); };
+  overlay.addEventListener('keydown', onKey);
+}
+
 // ── BACKUP ──
 function openBackupModal() {
   document.getElementById('backupModal').classList.add('open');
@@ -8448,6 +8510,11 @@ function openBackupModal() {
   document.getElementById('restoreConfirmBtn').style.display = 'none';
   document.getElementById('restoreFileInput').value = '';
   _restoreData = null;
+  document.getElementById('photoCleanResult').style.display = 'none';
+  document.getElementById('photoCleanResult').textContent = '';
+  document.getElementById('photoCleanDeleteBtn').style.display = 'none';
+  document.getElementById('photoCleanCheckBtn').disabled = !_syncReady;
+  _orphanPhotos = [];
 }
 
 function closeBackupModal() {
@@ -8480,7 +8547,7 @@ function handleRestoreFile(e) {
   reader.onload = (ev) => {
     try {
       const parsed = JSON.parse(ev.target.result);
-      if (!parsed.app || !parsed.data) { alert('このファイルはバックアップとして認識できません。'); return; }
+      if (!parsed.app || !parsed.data) { uiAlert('このファイルはバックアップとして認識できません。'); return; }
       _restoreData = parsed;
       const d = parsed.data;
       const exportedAt = parsed.exportedAt ? new Date(parsed.exportedAt).toLocaleString('ja-JP') : '不明';
@@ -8495,14 +8562,14 @@ function handleRestoreFile(e) {
         `ウィッシュリスト: <b>${Array.isArray(d.shopping)?d.shopping.length:0}</b> 件</div>`;
       preview.style.display = 'block';
       document.getElementById('restoreConfirmBtn').style.display = 'inline-block';
-    } catch (err) { alert('ファイルの読み込みに失敗しました。'); }
+    } catch (err) { uiAlert('ファイルの読み込みに失敗しました。'); }
   };
   reader.readAsText(file);
 }
 
 async function doRestore() {
   if (!_restoreData || !_syncReady) return;
-  if (!confirm('今のデータはすべてこのバックアップの内容に置き換わります。念のため、今のデータのバックアップを先にダウンロードします。')) return;
+  if (!(await uiConfirm('今のデータはすべてこのバックアップの内容に置き換わります。念のため、今のデータのバックアップを先にダウンロードします。',{title:'復元の確認',okLabel:'復元する',danger:true}))) return;
   downloadBackup(); // save current data first
   const d = _restoreData.data;
   _applyCollections({
@@ -8537,6 +8604,97 @@ async function doRestore() {
   }
   closeBackupModal();
   _restoreData = null;
+}
+
+// ── PHOTO CLEANUP ──
+let _orphanPhotos = [];
+
+async function checkOrphanPhotos() {
+  if (!_syncReady) return;
+  const checkBtn = document.getElementById('photoCleanCheckBtn');
+  const resultDiv = document.getElementById('photoCleanResult');
+  const deleteBtn = document.getElementById('photoCleanDeleteBtn');
+  checkBtn.disabled = true;
+  checkBtn.textContent = '確認中…';
+  resultDiv.style.display = 'none';
+  resultDiv.textContent = '';
+  deleteBtn.style.display = 'none';
+  _orphanPhotos = [];
+  try {
+    // ほかの端末で追加された写真を「未使用」と誤判定しないよう、先にサーバーの最新を取り込む
+    try { await _checkRemoteChanges(); } catch (e) {}
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) { resultDiv.textContent = 'ログインが必要です。'; resultDiv.style.display = ''; return; }
+    const userId = user.id;
+    const { data: folders, error: fErr } = await sb.storage.from('meal-photos').list(userId, { limit: 1000 });
+    if (fErr) { _showSaveErrToast('写真一覧の取得に失敗しました'); return; }
+    const allFiles = [];
+    for (const folder of (folders || [])) {
+      const { data: files, error: fErr2 } = await sb.storage.from('meal-photos').list(`${userId}/${folder.name}`, { limit: 1000 });
+      if (!fErr2 && files) {
+        files.forEach(f => allFiles.push({ path: `${userId}/${folder.name}/${f.name}`, created_at: f.created_at, size: f.metadata && f.metadata.size != null ? f.metadata.size : null }));
+      }
+    }
+    const refPaths = new Set();
+    (meals || []).forEach(meal => {
+      ((meal.sittings) || []).forEach(sitting => {
+        (sitting.dishes || []).forEach(dish => {
+          (dish.photos || []).forEach(p => { if (p.path) refPaths.add(p.path); });
+        });
+      });
+    });
+    if (_foodModalState) {
+      ((_foodModalState.sittings) || []).forEach(sitting => {
+        (sitting.dishes || []).forEach(dish => {
+          (dish.photos || []).forEach(p => { if (p.path) refPaths.add(p.path); });
+        });
+      });
+    }
+    const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+    _orphanPhotos = allFiles.filter(f => {
+      if (refPaths.has(f.path)) return false;
+      if (!f.created_at) return false;
+      return new Date(f.created_at).getTime() < cutoff;
+    });
+    if (_orphanPhotos.length === 0) {
+      resultDiv.textContent = '使われていない写真はありません。';
+    } else {
+      const totalBytes = _orphanPhotos.reduce((s, f) => s + (f.size != null ? f.size : 0), 0);
+      const mb = (totalBytes / 1024 / 1024).toFixed(1);
+      resultDiv.textContent = `使われていない写真が ${_orphanPhotos.length} 件あります（約 ${mb} MB）`;
+      deleteBtn.textContent = `${_orphanPhotos.length} 件を削除する`;
+      deleteBtn.style.display = 'inline-block';
+    }
+    resultDiv.style.display = '';
+  } finally {
+    checkBtn.disabled = false;
+    checkBtn.textContent = '確認する';
+  }
+}
+
+async function deleteOrphanPhotos() {
+  if (!_syncReady || !_orphanPhotos.length) return;
+  if (!(await uiConfirm(`${_orphanPhotos.length} 件の写真を削除します。この操作は元に戻せません。`, { title: '写真の削除', okLabel: '削除する', danger: true }))) return;
+  const deleteBtn = document.getElementById('photoCleanDeleteBtn');
+  const resultDiv = document.getElementById('photoCleanResult');
+  deleteBtn.disabled = true;
+  deleteBtn.textContent = '削除中…';
+  const paths = _orphanPhotos.map(f => f.path);
+  let deleted = 0;
+  try {
+    for (let i = 0; i < paths.length; i += 100) {
+      const chunk = paths.slice(i, i + 100);
+      const { error } = await sb.storage.from('meal-photos').remove(chunk);
+      if (error) { _showSaveErrToast('削除に失敗しました: ' + error.message); break; }
+      deleted += chunk.length;
+    }
+    resultDiv.textContent = `${deleted} 件を削除しました。`;
+    _orphanPhotos = [];
+    deleteBtn.style.display = 'none';
+  } finally {
+    deleteBtn.disabled = false;
+    deleteBtn.textContent = '削除する';
+  }
 }
 </script>
 
@@ -8612,6 +8770,17 @@ async function doRestore() {
         <input type="file" id="restoreFileInput" accept=".json" onchange="handleRestoreFile(event)" style="font-size:13px;font-family:'Space Grotesk',sans-serif;color:var(--ink);">
         <div id="restorePreview" style="display:none;margin-top:12px;padding:12px;background:var(--paper2);border-radius:6px;border:1px solid rgba(26,24,20,0.1);"></div>
       </div>
+      <hr style="border:none;border-top:1px solid rgba(26,24,20,0.12);">
+      <!-- Photo cleanup -->
+      <div>
+        <div class="ldr-modal-lbl">使われていない写真の掃除</div>
+        <p style="font-size:13px;color:var(--ink3);margin-bottom:10px;line-height:1.6;">Food の写真のうち、どの料理からも参照されていないファイルを検出します（アップロードから24時間以内のものは除外）。</p>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <button id="photoCleanCheckBtn" class="btn btn-ghost btn-sm" onclick="checkOrphanPhotos()" style="white-space:nowrap;">確認する</button>
+          <button id="photoCleanDeleteBtn" class="btn btn-sm" onclick="deleteOrphanPhotos()" style="display:none;background:var(--accent);color:var(--paper);white-space:nowrap;border:none;"></button>
+        </div>
+        <div id="photoCleanResult" style="display:none;margin-top:10px;font-size:13px;color:var(--ink2);font-family:'Space Grotesk',sans-serif;"></div>
+      </div>
     </div>
     <div class="ldr-modal-ftr">
       <button class="btn btn-ghost btn-sm" onclick="closeBackupModal()">閉じる</button>
@@ -8635,6 +8804,18 @@ async function doRestore() {
       <input type="password" id="resetPassword" placeholder="新しいパスワード" style="background:var(--paper); border:1px solid var(--ink3); color:var(--ink); padding:10px 12px; font-size:14px; font-family:'Space Grotesk',sans-serif; outline:none; border-radius:0; width:100%;" onfocus="this.style.borderColor='var(--ink)'" onblur="this.style.borderColor='var(--ink3)'" onkeydown="if(event.key==='Enter')updatePassword()">
       <button onclick="updatePassword()" id="resetBtn" style="background:var(--accent); color:var(--paper); border:none; padding:12px; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; cursor:pointer; width:100%;">パスワードを更新</button>
       <div id="resetError" style="color:var(--accent); font-family:'JetBrains Mono',monospace; font-size:11px; min-height:16px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ UI DIALOG OVERLAY ══ -->
+<div id="uiDialogOverlay" style="display:none;position:fixed;inset:0;background:rgba(26,24,20,0.55);z-index:9800;align-items:center;justify-content:center;padding:16px;box-sizing:border-box;">
+  <div onclick="event.stopPropagation()" style="background:var(--paper);width:min(420px,92vw);border:1.5px solid var(--rule);border-radius:12px;overflow:hidden;">
+    <div id="uiDialogTitle" style="font-family:'Newsreader',serif;font-size:20px;font-weight:800;font-style:normal;padding:18px 22px 0;"></div>
+    <div id="uiDialogMsg" style="font-family:'Space Grotesk',sans-serif;font-size:14px;line-height:1.65;padding:16px 22px 20px;color:var(--ink);"></div>
+    <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;padding:12px 22px;border-top:1px solid rgba(26,24,20,0.12);">
+      <button id="uiDialogCancel" class="btn btn-ghost btn-sm"></button>
+      <button id="uiDialogOk" class="btn btn-sm" style="background:var(--ink);color:var(--paper);border:none;"></button>
     </div>
   </div>
 </div>
