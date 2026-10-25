@@ -18,7 +18,8 @@ c:\work\private\
     ├── architecture.md     ← このファイル
     ├── agents\
     │   ├── coder.md        ← 実装専任エージェント
-    │   └── checker.md      ← Playwright 視覚確認エージェント
+    │   ├── checker.md      ← Playwright 視覚確認エージェント
+    │   └── advisor.md      ← 改善案を出すエージェント（読むだけ。ユーザーが「改善案を出して」と言ったときに呼ぶ）
     └── hooks\
         ├── mark-dirty.ps1  ← 編集検知フラグ（dashboard.html と css\・js\ 配下）
         └── check-ui.ps1    ← 完了ブロック
