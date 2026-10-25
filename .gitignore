@@ -6,3 +6,5 @@
 .claude/debug.log
 # Playwright MCP のログ
 .playwright-mcp/
+# 仕事用のファイル（公開リポジトリに入れない）
+sample/
