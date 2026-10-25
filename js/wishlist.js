@@ -416,14 +416,14 @@ function renderShopList(){
     const catOptsNd=shopCategories.map(c=>`<option${nd.category===c?' selected':''}>${c}</option>`).join('');
     const priOptsNd=Object.entries(PRIORITY_LABELS).map(([v,l])=>`<option value="${v}"${(nd.priority||'mid')===v?' selected':''}>${l}</option>`).join('');
     newDraftRow=`<div class="shop-row-draft">
-      <div class="shop-cell"></div>
-      <div class="shop-cell" onclick="event.stopPropagation()"><input class="shop-name-in" id="ndName" value="${esc(nd.name)}" placeholder="品名を入力" onclick="event.stopPropagation()" autofocus></div>
-      <div class="shop-cell" onclick="event.stopPropagation()"><select class="cat-sel" id="ndCat" onclick="event.stopPropagation()">${catOptsNd}</select></div>
-      <div class="shop-cell shop-cell-price" onclick="event.stopPropagation()"><input type="number" class="inline-edit-num" id="ndPrice" value="${nd.price||''}" placeholder="金額" style="width:88px;text-align:right" onclick="event.stopPropagation()"></div>
-      <div class="shop-cell" onclick="event.stopPropagation()"><select class="priority-sel p-sel-${nd.priority||'mid'}" id="ndPriority" onclick="event.stopPropagation()">${priOptsNd}</select></div>
-      <div class="shop-cell" onclick="event.stopPropagation()"><select class="month-sel" id="ndTargetMonth" onclick="event.stopPropagation()">${shopMonthOptions(nd.targetMonth)}</select></div>
-      <div class="shop-cell" onclick="event.stopPropagation()"><select class="status-sel s-sel-${nd.status}" id="ndStatus" onclick="event.stopPropagation()">${statuses.map(st=>`<option${nd.status===st?' selected':''}>${st}</option>`).join('')}</select></div>
-      <div class="shop-cell" onclick="event.stopPropagation()"><input class="shop-memo-in" id="ndMemo" value="${esc(nd.note||'')}" placeholder="メモ" onclick="event.stopPropagation()" style="width:100%;min-width:0"></div>
+      <div class="shop-cell nd-cell-handle"></div>
+      <div class="shop-cell nd-cell-name" onclick="event.stopPropagation()"><input class="shop-name-in" id="ndName" value="${esc(nd.name)}" placeholder="品名を入力" onclick="event.stopPropagation()" autofocus></div>
+      <div class="shop-cell nd-cell-cat" onclick="event.stopPropagation()"><select class="cat-sel" id="ndCat" onclick="event.stopPropagation()">${catOptsNd}</select></div>
+      <div class="shop-cell shop-cell-price nd-cell-price" onclick="event.stopPropagation()"><input type="number" class="inline-edit-num" id="ndPrice" value="${nd.price||''}" placeholder="金額" style="width:88px;text-align:right" onclick="event.stopPropagation()"></div>
+      <div class="shop-cell nd-cell-pri" onclick="event.stopPropagation()"><select class="priority-sel p-sel-${nd.priority||'mid'}" id="ndPriority" onclick="event.stopPropagation()">${priOptsNd}</select></div>
+      <div class="shop-cell nd-cell-month" onclick="event.stopPropagation()"><select class="month-sel" id="ndTargetMonth" onclick="event.stopPropagation()">${shopMonthOptions(nd.targetMonth)}</select></div>
+      <div class="shop-cell nd-cell-status" onclick="event.stopPropagation()"><select class="status-sel s-sel-${nd.status}" id="ndStatus" onclick="event.stopPropagation()">${statuses.map(st=>`<option${nd.status===st?' selected':''}>${st}</option>`).join('')}</select></div>
+      <div class="shop-cell nd-cell-memo" onclick="event.stopPropagation()"><input class="shop-memo-in" id="ndMemo" value="${esc(nd.note||'')}" placeholder="メモ" onclick="event.stopPropagation()" style="width:100%;min-width:0"></div>
       <div class="shop-cell shop-cell-draft-act" onclick="event.stopPropagation()"><button class="btn btn-ghost btn-sm draft-btn-cancel" onclick="event.stopPropagation();cancelNewShopDraft()">キャンセル</button><button class="btn btn-primary btn-sm draft-btn-save" onclick="event.stopPropagation();saveNewShopDraft()">保存</button></div>
     </div>`;
   }

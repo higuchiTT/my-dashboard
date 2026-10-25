@@ -173,6 +173,117 @@
       .cmp-cell { min-width: 150px; width: 165px; }
       .cmp-scroll-wrap { margin: 0 -14px; padding: 0 14px 8px 14px; }
 
+      /* ── WishList カード（スマホ） ── */
+      /* Outer grid → plain block */
+      #shopGrid {
+        display: block;
+        min-width: unset;
+        border-top: none;
+        padding: 10px 0;
+      }
+      /* Hide column header row */
+      .shop-hdr-cell { display: none; }
+
+      /* Each row becomes a card using grid-template-areas */
+      .shop-row {
+        display: grid;
+        grid-template-columns: minmax(0,1fr) auto auto;
+        grid-template-areas:
+          "name   status chev"
+          "cat    pri    month"
+          "price  price  price"
+          "memo   memo   memo"
+          "del    del    del";
+        background: #fdfaf5;
+        border: 1px solid rgba(26,24,20,0.12);
+        border-radius: 10px;
+        margin: 0 14px 10px;
+        overflow: hidden;
+        cursor: pointer;
+      }
+      /* Reset per-cell background/border from PC grid rules */
+      .shop-row > * { background: transparent !important; border-bottom: none; }
+      .shop-row:hover { background: #f6f0e6; }
+      .shop-row:hover > * { background: transparent !important; }
+      /* Purchased: dim whole card, not each cell */
+      .shop-row.s-購入済み { opacity: 0.45; }
+      .shop-row.s-購入済み > * { opacity: 1; }
+      /* Remove PC expanded box-shadow from first cell */
+      .shop-row.expanded > *:nth-child(1) { box-shadow: none; }
+      /* When expanded, merge bottom edge with panel */
+      .shop-row.expanded { border-radius: 10px 10px 0 0; margin-bottom: 0; }
+
+      /* Separator only between row 1 and row 2 of the card */
+      .shop-row .shop-cell-name,
+      .shop-row .shop-cell-status,
+      .shop-row .shop-chev-cell { border-bottom: 1px solid rgba(26,24,20,0.08); }
+
+      /* Cell area assignments */
+      .shop-row .shop-chev-cell   { grid-area: chev;   padding: 10px 12px 10px 4px; align-self: center; }
+      .shop-row .shop-cell-name   { grid-area: name;   padding: 12px 8px 10px 14px; }
+      .shop-row .shop-cell-status { grid-area: status; padding: 10px 4px; align-self: center; }
+      .shop-row .shop-cell-cat    { grid-area: cat;    padding: 6px 4px 6px 14px; }
+      .shop-row .shop-cell-pri    { grid-area: pri;    padding: 6px 4px; }
+      .shop-row .shop-cell-month  { grid-area: month;  padding: 6px 12px 6px 4px; }
+      .shop-row .shop-cell-price  { grid-area: price;  padding: 6px 14px; justify-content: flex-end; }
+      .shop-row .shop-cell-memo   { grid-area: memo;   padding: 0 14px 8px; }
+      .shop-row .shop-del-cell    { grid-area: del;    padding: 4px 14px 10px !important; justify-content: flex-end; }
+
+      /* Priority/month selects: no forced 100% width inside auto columns */
+      .shop-row .shop-cell-pri .priority-sel,
+      .shop-row .shop-cell-month .month-sel { width: auto; }
+
+      /* Memo: show max 2 lines; hide row when empty (progressive enhancement) */
+      .shop-row .shop-cell-memo .shop-memo-in {
+        max-height: calc(1.4em * 2 + 6px);
+        overflow: hidden;
+      }
+      .shop-row .shop-cell-memo .shop-memo-in:focus {
+        max-height: none;
+        overflow: auto;
+      }
+      .shop-row .shop-cell-memo:has(.shop-memo-in:placeholder-shown) { display: none; }
+
+      /* Expand panel: connects visually to the card above */
+      .shop-expand-panel {
+        grid-column: unset;
+        margin: 0 14px 10px;
+        padding: 12px 14px;
+        border-radius: 0 0 10px 10px;
+        border-left: 3px solid var(--accent);
+        border-top: none;
+      }
+
+      /* New item draft → card on mobile */
+      .shop-row-draft {
+        display: grid;
+        grid-template-columns: auto auto minmax(0,1fr);
+        grid-template-areas:
+          "ndname   ndname   ndname"
+          "ndcat    ndpri    ndmonth"
+          "ndstatus ndprice  ndprice"
+          "ndmemo   ndmemo   ndmemo"
+          "ndact    ndact    ndact";
+        background: rgba(139,58,24,0.04);
+        border: 1.5px dashed rgba(139,58,24,0.3);
+        border-radius: 10px;
+        margin: 0 14px 10px;
+        overflow: hidden;
+      }
+      .shop-row-draft > * { background: transparent !important; border-bottom: none; }
+      .shop-row-draft .nd-cell-handle  { display: none; }
+      .shop-row-draft .nd-cell-name    { grid-area: ndname;   padding: 12px 14px 8px; }
+      .shop-row-draft .nd-cell-cat     { grid-area: ndcat;    padding: 6px 4px 6px 14px; }
+      .shop-row-draft .nd-cell-pri     { grid-area: ndpri;    padding: 6px 4px; }
+      .shop-row-draft .nd-cell-month   { grid-area: ndmonth;  padding: 6px 12px 6px 4px; }
+      .shop-row-draft .nd-cell-status  { grid-area: ndstatus; padding: 6px 4px 6px 14px; }
+      .shop-row-draft .nd-cell-price   { grid-area: ndprice;  padding: 6px 12px 6px 4px; justify-content: flex-end; }
+      .shop-row-draft .nd-cell-memo    { grid-area: ndmemo;   padding: 4px 14px; }
+      .shop-row-draft .shop-cell-draft-act { grid-area: ndact; padding: 8px 14px 12px !important; justify-content: flex-end; }
+      /* Priority/month in draft: no forced 100% width */
+      .shop-row-draft .nd-cell-pri .priority-sel,
+      .shop-row-draft .nd-cell-month .month-sel { width: auto; }
+
       /* ── Travel ── */
       .trip-summary { grid-template-columns: 1fr 1fr; }
       .trip-stat { padding: 12px 14px; }
