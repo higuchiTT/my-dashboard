@@ -149,6 +149,7 @@ async function checkOrphanPhotos() {
     // Add trip photo paths so they are never treated as orphans
     (trips || []).forEach(t => {
       (t.photos || []).forEach(p => { if (p.path) refPaths.add(p.path); });
+      if (t.coverPhoto && t.coverPhoto.path) refPaths.add(t.coverPhoto.path);
     });
     const cutoff = Date.now() - 24 * 60 * 60 * 1000;
     _orphanPhotos = allFiles.filter(f => {

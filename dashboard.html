@@ -13,14 +13,14 @@
   <link rel="stylesheet" href="css/todo-list.css?v=cba4c8d7">
   <link rel="stylesheet" href="css/ledger.css?v=621633c1">
   <link rel="stylesheet" href="css/wishlist.css?v=e4179203">
-  <link rel="stylesheet" href="css/travel.css?v=b47d9caa">
+  <link rel="stylesheet" href="css/travel.css?v=88949081">
   <link rel="stylesheet" href="css/ui.css?v=9b3587fd">
   <link rel="stylesheet" href="css/food.css?v=32ff1637">
   <link rel="stylesheet" href="css/misc.css?v=be82bcb4">
   <link rel="stylesheet" href="css/todo.css?v=d60ac8a2">
   <link rel="stylesheet" href="css/feedback.css?v=b8c1df10">
   <link rel="stylesheet" href="css/accounts.css?v=8517bda7">
-  <link rel="stylesheet" href="css/responsive.css?v=a18b4dd9">
+  <link rel="stylesheet" href="css/responsive.css?v=7469ada4">
   <link rel="stylesheet" href="css/notes.css?v=598142bd">
   <link rel="stylesheet" href="css/food-tags.css?v=f6ab335f">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.min.js" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
@@ -465,63 +465,63 @@
 
   <!-- LIST VIEW -->
   <div id="tripListView">
-    <div class="trip-summary">
-      <div class="trip-stat"><div class="trip-stat-label">検討中</div><div class="trip-stat-value" id="tripN1" style="color:var(--warn)">0</div></div>
-      <div class="trip-stat"><div class="trip-stat-label">計画中</div><div class="trip-stat-value" id="tripN2" style="color:var(--ok)">0</div></div>
-      <div class="trip-stat"><div class="trip-stat-label">予約済み</div><div class="trip-stat-value" id="tripN3" style="color:var(--accent)">0</div></div>
-      <div class="trip-stat"><div class="trip-stat-label">予算合計</div><div class="trip-stat-value" id="tripBudget">¥0</div></div>
-    </div>
 
-    <div class="page-bar">
-      <h2>旅行プラン</h2>
-      <button class="btn btn-primary" onclick="toggleAddTrip()">＋ 追加</button>
-    </div>
-
-    <div class="add-form" id="addTripForm">
-      <div class="form-row">
-        <div class="fg" style="flex:2;min-width:180px;"><label>行き先</label><input type="text" id="tripDest" placeholder="例: 京都、台湾・台北" /></div>
-        <div class="fg"><label>時期（テキスト）</label><input type="text" id="tripTiming" placeholder="例: 2026年秋" /></div>
-        <div class="fg"><label>開始日</label><input type="date" id="tripStartDate" /></div>
-        <div class="fg"><label>終了日</label><input type="date" id="tripEndDate" /></div>
+    <!-- 1. Hero -->
+    <div class="tv-hero">
+      <div class="tv-hero-left">
+        <span class="tv-hero-icon">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none" stroke="var(--accent)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="22" cy="22" r="18"/>
+            <line x1="22" y1="4" x2="22" y2="8"/><line x1="22" y1="36" x2="22" y2="40"/>
+            <line x1="4" y1="22" x2="8" y2="22"/><line x1="36" y1="22" x2="40" y2="22"/>
+            <polygon points="22,12 27,28 22,25 17,28" fill="var(--accent)" stroke="none" opacity="0.9"/>
+            <circle cx="22" cy="22" r="2.5" fill="var(--paper)" stroke="var(--accent)" stroke-width="1.4"/>
+          </svg>
+        </span>
+        <div class="tv-hero-text">
+          <h1 class="tv-hero-title">旅の計画</h1>
+          <div class="tv-hero-tagline">行きたい場所から、旅をかたちに。</div>
+        </div>
       </div>
-      <div class="form-row" style="margin-top:10px;">
-        <div class="fg"><label>予算 (¥)</label><input type="number" id="tripBudgetInput" placeholder="未定は空欄" min="0" /></div>
-        <div class="fg"><label>ステータス</label><select id="tripStatus"><option value="検討中">検討中</option><option value="計画中">計画中</option><option value="予約済み">予約済み</option></select></div>
-        <div class="fg" style="flex:2;min-width:180px;"><label>メモ</label><input type="text" id="tripNote" placeholder="見どころ・食べたいもの・参考URLなど" /></div>
-      </div>
-      <div class="gap-row">
-        <button class="btn btn-ghost" onclick="toggleAddTrip()">キャンセル</button>
-        <button class="btn btn-primary" onclick="addTrip()">追加</button>
+      <button class="btn btn-primary" onclick="openNewTripModal()">＋ 旅を追加</button>
+    </div>
+
+    <!-- 2. Summary bar (JS rendered) -->
+    <div class="tv-summary-bar" id="tvSummaryBar"></div>
+
+    <!-- 3. Main 2 cols -->
+    <div class="tv-main-cols">
+      <div class="tv-cards-col" id="tvCardsCol"></div>
+      <div class="tv-right-col">
+        <div class="ui-card tv-progress-card" id="tvProgressCard"></div>
       </div>
     </div>
 
-    <div class="fbar">
-      <button class="fchip active" onclick="setTripF('all',this)">すべて</button>
-      <button class="fchip" onclick="setTripF('検討中',this)">検討中</button>
-      <button class="fchip" onclick="setTripF('計画中',this)">計画中</button>
-      <button class="fchip" onclick="setTripF('予約済み',this)">予約済み</button>
-      <button class="fchip" onclick="setTripF('完了',this)">完了</button>
-    </div>
-
-    <div class="trip-content">
-      <div class="trip-grid" id="tripGrid"></div>
+    <!-- 4. Lower 2 cols -->
+    <div class="tv-lower-cols">
+      <div class="ui-card tv-todos-section" id="tvTodosCard"></div>
+      <div class="ui-card tv-ideas-section" id="tvIdeasCard"></div>
     </div>
   </div>
 
   <!-- DETAIL VIEW (populated by JS) -->
   <div id="tripDetailView" style="display:none"></div>
 
-  <!-- Trip Edit Modal -->
+  <!-- Trip Edit / Add Modal -->
   <div class="ldr-modal-overlay" id="tripModal" onclick="if(event.target===this)closeTripModal()">
     <div class="ldr-modal" onclick="event.stopPropagation()">
       <div class="ldr-modal-hdr">
-        <div class="ldr-modal-title">旅行を編集</div>
+        <div class="ldr-modal-title" id="tripModalTitle">旅行を編集</div>
         <button class="ldr-modal-close" onclick="closeTripModal()">✕</button>
       </div>
       <div class="ldr-modal-body">
         <div>
-          <label class="ldr-modal-lbl">行き先</label>
-          <input class="ldr-modal-in" id="tripModalDest" type="text" placeholder="例: 京都、台湾・台北" />
+          <label class="ldr-modal-lbl">旅の名前（行き先）<span style="color:var(--accent)"> *</span></label>
+          <input class="ldr-modal-in" id="tripModalDest" type="text" placeholder="例: 北海道（函館・大間）" />
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">場所（表示用）</label>
+          <input class="ldr-modal-in" id="tripModalPlace" type="text" placeholder="例: 北海道（函館・大間）" />
         </div>
         <div class="ldr-modal-2col">
           <div>
@@ -553,8 +553,24 @@
           </div>
         </div>
         <div>
+          <label class="ldr-modal-lbl">説明</label>
+          <textarea class="ldr-modal-in" id="tripModalDesc" rows="3" style="resize:vertical;" placeholder="旅のコンセプト・見どころなど"></textarea>
+        </div>
+        <div>
           <label class="ldr-modal-lbl">メモ</label>
           <input class="ldr-modal-in" id="tripModalNote" type="text" placeholder="見どころ・食べたいもの・参考URLなど" />
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">カバー写真</label>
+          <div class="tv-cover-upload-row">
+            <div id="tripModalCoverPreview" class="tv-cover-preview"></div>
+            <div class="tv-cover-btns">
+              <button class="btn btn-ghost btn-sm" onclick="openTripCoverInput();event.stopPropagation()">アップロード</button>
+              <button class="btn btn-ghost btn-sm" id="tripModalCoverFromPhotosBtn" style="display:none" onclick="openCoverPickModal();event.stopPropagation()">記録から選ぶ</button>
+              <button class="btn btn-ghost btn-sm" id="tripModalCoverClearBtn" style="display:none;color:var(--accent)" onclick="clearTripCover();event.stopPropagation()">削除</button>
+            </div>
+          </div>
+          <div id="tripModalCoverError" class="food-photo-error"></div>
         </div>
       </div>
       <div class="ldr-modal-ftr">
@@ -567,7 +583,134 @@
     </div>
   </div>
 
-  <!-- Plan Item Modal -->
+  <!-- Todos Modal (all todos) -->
+  <div class="ldr-modal-overlay" id="tripTodosModal" onclick="if(event.target===this)closeTripTodosModal()">
+    <div class="ldr-modal" style="max-width:600px" onclick="event.stopPropagation()">
+      <div class="ldr-modal-hdr">
+        <div class="ldr-modal-title">次に決めること</div>
+        <button class="ldr-modal-close" onclick="closeTripTodosModal()">✕</button>
+      </div>
+      <div class="ldr-modal-body" id="tripTodosModalBody"></div>
+      <div class="ldr-modal-ftr">
+        <div class="ldr-modal-ftr-r">
+          <button class="btn btn-primary btn-sm" onclick="openTripTodoEditModal(null);event.stopPropagation()">＋ 追加</button>
+          <button class="btn btn-ghost btn-sm" onclick="closeTripTodosModal()">閉じる</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Todo Edit Modal -->
+  <div class="ldr-modal-overlay" id="tripTodoEditModal" onclick="if(event.target===this)closeTripTodoEditModal()">
+    <div class="ldr-modal" style="max-width:480px" onclick="event.stopPropagation()">
+      <div class="ldr-modal-hdr">
+        <div class="ldr-modal-title" id="tripTodoEditTitle">Todoを追加</div>
+        <button class="ldr-modal-close" onclick="closeTripTodoEditModal()">✕</button>
+      </div>
+      <div class="ldr-modal-body">
+        <div>
+          <label class="ldr-modal-lbl">旅 <span style="color:var(--accent)">*</span></label>
+          <select class="ldr-modal-in" id="todoEditTrip"></select>
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">タイトル <span style="color:var(--accent)">*</span></label>
+          <input class="ldr-modal-in" id="todoEditTitle" type="text" placeholder="例: ホテルを予約する" />
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">説明</label>
+          <input class="ldr-modal-in" id="todoEditNote" type="text" placeholder="メモ・詳細など" />
+        </div>
+        <div class="ldr-modal-2col">
+          <div>
+            <label class="ldr-modal-lbl">優先度</label>
+            <select class="ldr-modal-in" id="todoEditPriority">
+              <option value="high">最優先</option>
+              <option value="mid">優先</option>
+              <option value="low">通常</option>
+            </select>
+          </div>
+          <div>
+            <label class="ldr-modal-lbl">期限</label>
+            <input class="ldr-modal-in" id="todoEditDue" type="date" />
+          </div>
+        </div>
+      </div>
+      <div class="ldr-modal-ftr">
+        <div id="tripTodoEditDelWrap"></div>
+        <div class="ldr-modal-ftr-r">
+          <button class="btn btn-ghost btn-sm" onclick="closeTripTodoEditModal()">キャンセル</button>
+          <button class="btn btn-primary btn-sm" onclick="saveTripTodoEdit()">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Idea Modal -->
+  <div class="ldr-modal-overlay" id="tripIdeaModal" onclick="if(event.target===this)closeIdeaModal()">
+    <div class="ldr-modal" onclick="event.stopPropagation()">
+      <div class="ldr-modal-hdr">
+        <div class="ldr-modal-title" id="ideaModalTitle">アイデアを追加</div>
+        <button class="ldr-modal-close" onclick="closeIdeaModal()">✕</button>
+      </div>
+      <div class="ldr-modal-body">
+        <div>
+          <label class="ldr-modal-lbl">名前 <span style="color:var(--accent)">*</span></label>
+          <input class="ldr-modal-in" id="ideaTitle" type="text" placeholder="例: アムステルダム" />
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">場所</label>
+          <input class="ldr-modal-in" id="ideaPlace" type="text" placeholder="例: オランダ" />
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">メモ</label>
+          <textarea class="ldr-modal-in" id="ideaNote" rows="3" style="resize:vertical;"></textarea>
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">リンク</label>
+          <input class="ldr-modal-in" id="ideaUrl" type="url" placeholder="https://..." />
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">カバー写真</label>
+          <div class="tv-cover-upload-row">
+            <div id="ideaCoverPreview" class="tv-cover-preview"></div>
+            <div class="tv-cover-btns">
+              <button class="btn btn-ghost btn-sm" onclick="openIdeaCoverInput();event.stopPropagation()">アップロード</button>
+              <button class="btn btn-ghost btn-sm" id="ideaCoverClearBtn" style="display:none;color:var(--accent)" onclick="clearIdeaCover();event.stopPropagation()">削除</button>
+            </div>
+          </div>
+          <div id="ideaCoverError" class="food-photo-error"></div>
+        </div>
+      </div>
+      <div class="ldr-modal-ftr">
+        <div id="ideaModalActLeft">
+          <div id="ideaModalDelWrap"></div>
+          <button class="btn btn-ghost btn-sm" id="ideaConvertBtn" style="display:none" onclick="convertIdeaToTrip();event.stopPropagation()">この場所で旅を作る →</button>
+        </div>
+        <div class="ldr-modal-ftr-r">
+          <button class="btn btn-ghost btn-sm" onclick="closeIdeaModal()">キャンセル</button>
+          <button class="btn btn-primary btn-sm" onclick="saveIdeaModal()">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cover Pick Modal (pick from existing review photos) -->
+  <div class="ldr-modal-overlay" id="tripCoverPickModal" onclick="if(event.target===this)closeCoverPickModal()">
+    <div class="ldr-modal" style="max-width:560px" onclick="event.stopPropagation()">
+      <div class="ldr-modal-hdr">
+        <div class="ldr-modal-title">カバー写真を選ぶ</div>
+        <button class="ldr-modal-close" onclick="closeCoverPickModal()">✕</button>
+      </div>
+      <div class="ldr-modal-body" id="coverPickModalBody"></div>
+      <div class="ldr-modal-ftr">
+        <div class="ldr-modal-ftr-r">
+          <button class="btn btn-ghost btn-sm" onclick="closeCoverPickModal()">キャンセル</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Plan Item Modal (unchanged) -->
   <div class="ldr-modal-overlay" id="tripPlanModal" onclick="if(event.target===this)closePlanItemModal()">
     <div class="ldr-modal" onclick="event.stopPropagation()">
       <div class="ldr-modal-hdr">
@@ -622,9 +765,13 @@
     </div>
   </div>
 
-  <!-- Photo file input -->
+  <!-- Photo file inputs -->
   <input type="file" id="tripPhotoInput" accept="image/*" multiple style="display:none"
     onchange="handleTripPhotoUpload(Array.from(this.files));this.value=''">
+  <input type="file" id="tripCoverInput" accept="image/*" style="display:none"
+    onchange="handleTripCoverUpload(this.files,'trip');this.value=''">
+  <input type="file" id="ideaCoverInput" accept="image/*" style="display:none"
+    onchange="handleTripCoverUpload(this.files,'idea');this.value=''">
 </div>
 
 <!-- ══ FOOD ══ -->
@@ -799,7 +946,7 @@
 <script src="js/core/sync.js?v=d49064ec"></script>
 <script src="js/core/init.js?v=9ccd7285"></script>
 <script src="js/core/nav.js?v=430dfaed"></script>
-<script src="js/home.js?v=860bb0c8"></script>
+<script src="js/home.js?v=9474bf64"></script>
 <script src="js/todo.js?v=02bbbefc"></script>
 <script src="js/ledger/core.js?v=c60c1f2c"></script>
 <script src="js/ledger/import.js?v=6ea1265b"></script>
@@ -810,14 +957,14 @@
 <script src="js/ledger/transactions.js?v=0eeb4f6c"></script>
 <script src="js/wishlist.js?v=cf9f0b03"></script>
 <script src="js/ledger/subs.js?v=3e1d587d"></script>
-<script src="js/travel.js?v=aa7e87e5"></script>
+<script src="js/travel.js?v=a571284a"></script>
 <script src="js/food/list.js?v=85000268"></script>
 <script src="js/food/calendar.js?v=75b962a7"></script>
 <script src="js/food/modal.js?v=61ac8228"></script>
 <script src="js/food/popup.js?v=37194fc9"></script>
 <script src="js/notes.js?v=173dee67"></script>
 <script src="js/core/utils.js?v=cfa44c59"></script>
-<script src="js/core/backup.js?v=319b361a"></script>
+<script src="js/core/backup.js?v=79718970"></script>
 
 <div id="tvTagPop" class="tv-tag-pop" onclick="event.stopPropagation()">
   <div class="tv-tag-pop-grid" id="tvTagPopGrid"></div>

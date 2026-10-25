@@ -285,15 +285,22 @@
       .shop-row-draft .nd-cell-month .month-sel { width: auto; }
 
       /* ── Travel ── */
-      .trip-summary { grid-template-columns: 1fr 1fr; }
-      .trip-stat { padding: 12px 14px; }
-      .trip-stat:nth-child(2) { border-right: none; }
-      .trip-stat:nth-child(1),
-      .trip-stat:nth-child(2) { border-bottom: 1px solid var(--rule); }
-      .trip-content { padding: 14px; }
-      .trip-grid { grid-template-columns: 1fr; }
-      .trip-card { border-right: none; border-bottom: 1px solid var(--rule); }
-      .trip-card:last-child { border-bottom: none; }
+      .tv-hero { padding: 16px 16px 14px; }
+      .tv-hero-title { font-size: 26px; }
+      .tv-hero-tagline { display: none; }
+      .tv-summary-bar { margin: 12px 16px; flex-wrap: wrap; }
+      .tv-sum-item { flex: 1 1 120px; padding: 10px 12px; }
+      .tv-sum-divider { display: none; }
+      .tv-main-cols { grid-template-columns: minmax(0,1fr); padding: 12px 16px; gap: 16px; }
+      .tv-main-cols > *, .tv-lower-cols > * { min-width: 0; }
+      .tv-right-col { position: static; }
+      .tv-lower-cols { grid-template-columns: minmax(0,1fr); padding: 0 16px 24px; gap: 16px; }
+      .tv-sub-cards { flex-direction: column; }
+      .tv-sub-card { min-width: 0; max-width: 100%; }
+      .tv-ideas-grid { display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 10px; }
+      .tv-ideas-grid::-webkit-scrollbar { display: none; }
+      .tv-idea-thumb { flex: 0 0 160px; }
+      .tv-idea-thumb-img { height: 110px; }
       .trip-detail-hdr { padding: 14px 16px 12px; flex-wrap: wrap; gap: 10px; }
       .trip-detail-dest { font-size: 26px; }
       .trip-detail-dates { font-size: 12px; }

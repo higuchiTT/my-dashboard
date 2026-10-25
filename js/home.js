@@ -66,7 +66,7 @@ function renderHome() {
     }
   });
   // Trips: show once per trip — on today's row if ongoing, else on startDate if within range
-  trips.filter(t=>t.startDate&&t.endDate).forEach(t=>{
+  trips.filter(t=>!t.isIdea&&t.startDate&&t.endDate).forEach(t=>{
     const isOngoing=todayStr>=t.startDate&&todayStr<=t.endDate;
     let ds;
     if(isOngoing){
