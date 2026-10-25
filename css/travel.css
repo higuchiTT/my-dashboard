@@ -6,13 +6,15 @@
     .trip-stat-value { font-family:'Helvetica Neue',Helvetica,Arial,sans-serif; font-size:28px; font-weight:700; }
     .trip-content { padding:24px 40px; }
     .trip-grid { display:grid; grid-template-columns:repeat(3,1fr); border:1px solid var(--rule); }
-    .trip-card { padding:24px 24px 28px; border-right:1px solid var(--rule); border-top:4px solid transparent; background:var(--paper); transition:background 0.15s; }
+    .trip-card { padding:24px 24px 28px; border-right:1px solid var(--rule); border-top:4px solid transparent; background:var(--paper); transition:background 0.15s; cursor:pointer; }
     .trip-card:last-child { border-right:none; }
     .trip-card:hover { background:var(--paper2); }
     .trip-card.s-検討中   { border-top-color:var(--warn); }
     .trip-card.s-計画中   { border-top-color:var(--ok); }
     .trip-card.s-予約済み { border-top-color:var(--accent); }
     .trip-card.s-完了     { border-top-color:var(--mute); opacity:0.65; }
+    .trip-card-thumb { width:100%; aspect-ratio:3/1; overflow:hidden; margin-bottom:12px; border-radius:4px; }
+    .trip-card-thumb-img { width:100%; height:100%; object-fit:cover; display:block; }
     .trip-card-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; }
     .trip-dest { font-family:'Newsreader',serif; font-size:32px; font-weight:800; font-style:italic; letter-spacing:-0.02em; line-height:1; }
     .trip-badge { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; padding:3px 8px; flex-shrink:0; }
@@ -23,6 +25,9 @@
     .trip-meta { display:flex; flex-direction:column; gap:5px; margin-bottom:12px; }
     .trip-meta-row { display:flex; align-items:center; gap:8px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink2); }
     .trip-meta-icon { opacity:0.6; width:14px; }
+    .trip-meta-chips-row { flex-wrap:wrap; gap:4px; }
+    .trip-meta-chip { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600; padding:2px 7px; background:rgba(26,24,20,0.06); color:var(--ink2); border-radius:3px; white-space:nowrap; }
+    .trip-meta-chip-star { background:rgba(163,106,24,0.12); color:var(--warn); }
     .trip-note { font-family:'Newsreader',serif; font-style:italic; font-size:15px; color:var(--ink3); margin-bottom:14px; line-height:1.5; min-height:1.4em; }
     .trip-actions { display:flex; gap:4px; flex-wrap:wrap; align-items:center; }
     .trip-sbtn { padding:3px 8px; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; border:1px solid; cursor:pointer; transition:all 0.15s; background:transparent; }
@@ -34,3 +39,81 @@
     .trip-sbtn.act.計画中   { background:var(--ok);     color:var(--paper); border-color:var(--ok); }
     .trip-sbtn.act.予約済み { background:var(--accent); color:var(--paper); border-color:var(--accent); }
     .trip-sbtn.act.完了     { background:var(--mute);   color:var(--paper); border-color:var(--mute); }
+
+    /* ── TRAVEL DETAIL ── */
+    #tripDetailView { min-height:50vh; }
+    .trip-detail-hdr { display:flex; align-items:flex-start; gap:16px; padding:20px 40px 16px; border-bottom:1px solid var(--rule); }
+    .trip-detail-back { display:flex; align-items:center; gap:6px; background:none; border:1px solid var(--rule); color:var(--ink2); font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.08em; padding:6px 12px; cursor:pointer; white-space:nowrap; flex-shrink:0; margin-top:4px; transition:border-color 0.15s,color 0.15s; }
+    .trip-detail-back:hover { border-color:var(--ink); color:var(--ink); }
+    .trip-detail-meta { flex:1; min-width:0; }
+    .trip-detail-dest { font-family:'Newsreader',serif; font-size:36px; font-weight:800; font-style:normal; letter-spacing:-0.02em; line-height:1.1; margin:0 0 10px; }
+    .trip-detail-meta-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .trip-detail-dates { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink2); }
+    .trip-detail-budget { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink2); }
+    .trip-detail-seg-wrap { padding:16px 40px 0; border-bottom:1px solid var(--rule); }
+
+    /* ── PLAN ── */
+    .trip-plan { padding:24px 40px; }
+    .trip-day-group { margin-bottom:28px; }
+    .trip-day-hdr { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:2px solid var(--rule); margin-bottom:8px; }
+    .trip-day-label { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink); }
+    .trip-undated-group .trip-day-label { color:var(--ink3); }
+    .trip-plan-add-btn { background:none; border:1px solid var(--rule); color:var(--ink3); font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.08em; padding:4px 10px; cursor:pointer; transition:all 0.15s; }
+    .trip-plan-add-btn:hover { border-color:var(--accent); color:var(--accent); }
+    .trip-day-items { display:flex; flex-direction:column; gap:2px; }
+    .trip-day-empty { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink3); padding:12px 0; }
+    .trip-plan-item { display:flex; align-items:flex-start; gap:10px; padding:10px 12px; background:var(--paper2); border-left:3px solid transparent; cursor:pointer; transition:background 0.12s; }
+    .trip-plan-item:hover { background:var(--paper3); }
+    .trip-plan-kind-icon { flex-shrink:0; margin-top:2px; }
+    .trip-plan-time { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); min-width:38px; flex-shrink:0; margin-top:3px; }
+    .trip-plan-item-body { flex:1; min-width:0; }
+    .trip-plan-item-title { font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:600; color:var(--ink); margin-bottom:2px; }
+    .trip-plan-item-place { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); }
+    .trip-plan-item-link { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); text-decoration:none; }
+    .trip-plan-item-link:hover { text-decoration:underline; }
+    .trip-plan-item-note { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink3); margin-top:3px; font-style:italic; }
+
+    /* ── REVIEW ── */
+    .trip-review { padding:24px 40px; max-width:720px; }
+    .trip-review-section { margin-bottom:28px; }
+    .trip-review-lbl { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink3); margin-bottom:10px; }
+    .trip-review-lbl-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .trip-review-lbl-row .trip-review-lbl { margin-bottom:0; }
+    .trip-stars { display:flex; gap:4px; }
+    .trip-star-btn { background:none; border:none; font-size:28px; cursor:pointer; color:var(--rule); padding:0 2px; transition:color 0.12s; line-height:1; }
+    .trip-star-btn.active { color:var(--warn); }
+    .trip-star-btn:hover { color:var(--warn); }
+    .trip-review-ta { width:100%; min-height:80px; resize:none; overflow:hidden; font-family:'Space Grotesk',sans-serif; font-size:14px; line-height:1.6; color:var(--ink); background:var(--paper2); border:1px solid var(--rule); padding:10px 12px; outline:none; box-sizing:border-box; transition:border-color 0.15s; }
+    .trip-review-ta:focus { border-color:var(--ink); }
+    .trip-photo-add-btn-text { background:none; border:1px solid var(--rule); color:var(--ink2); font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.08em; padding:5px 12px; cursor:pointer; transition:all 0.15s; }
+    .trip-photo-add-btn-text:hover { border-color:var(--accent); color:var(--accent); }
+    .trip-photos-drop-zone { min-height:80px; padding:8px 0; transition:background 0.15s; border-radius:4px; }
+    .trip-photos-drop-zone.drag-over { background:rgba(139,58,24,0.06); outline:2px dashed var(--accent); outline-offset:4px; }
+    .trip-photos-empty { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink3); padding:24px 0; text-align:center; line-height:1.8; }
+    .trip-photo-group { margin-bottom:20px; }
+    .trip-photo-date-label { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); margin-bottom:8px; }
+    .trip-photo-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; }
+    .trip-photo-thumb { position:relative; display:flex; flex-direction:column; gap:4px; }
+    .trip-photo-thumb img { width:100%; aspect-ratio:1; object-fit:cover; display:block; border-radius:4px; cursor:pointer; border:2px solid transparent; transition:border-color 0.15s; }
+    .trip-photo-thumb img:hover { border-color:var(--accent); }
+    .trip-photo-del { position:absolute; top:4px; right:4px; background:rgba(26,24,20,0.65); color:#fff; border:none; width:20px; height:20px; border-radius:50%; cursor:pointer; font-size:11px; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.15s; }
+    .trip-photo-thumb:hover .trip-photo-del { opacity:1; }
+    .trip-photo-date-sel { width:100%; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink2); background:var(--paper); border:1px solid var(--rule); padding:2px 4px; cursor:pointer; }
+    .trip-photo-caption { font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--ink3); min-height:1.4em; outline:none; padding:2px 4px; border:1px solid transparent; border-radius:3px; transition:border-color 0.12s; }
+    .trip-photo-caption:focus { border-color:var(--rule); color:var(--ink); }
+    .trip-photo-caption:empty::before { content:attr(data-placeholder); color:var(--ink3); opacity:0.5; }
+
+    /* ── PERIOD CONTENT ── */
+    .trip-period-meals { display:flex; flex-wrap:wrap; gap:8px; }
+    .trip-period-meal-item { display:flex; align-items:center; gap:8px; padding:8px 10px; background:var(--paper2); border:1px solid var(--rule); border-radius:4px; cursor:pointer; transition:background 0.12s; min-width:140px; max-width:220px; }
+    .trip-period-meal-item:hover { background:var(--paper3); }
+    .trip-period-meal-thumb { width:40px; height:40px; object-fit:cover; border-radius:3px; flex-shrink:0; }
+    .trip-period-meal-thumb-empty { width:40px; height:40px; background:var(--paper3); border-radius:3px; flex-shrink:0; }
+    .trip-period-meal-info { min-width:0; }
+    .trip-period-meal-date { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink3); margin-bottom:2px; }
+    .trip-period-meal-dishes { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:120px; }
+    .trip-period-notes { display:flex; flex-direction:column; gap:6px; }
+    .trip-period-note-item { padding:8px 12px; background:var(--paper2); border-left:3px solid var(--rule); cursor:pointer; transition:background 0.12s; }
+    .trip-period-note-item:hover { background:var(--paper3); }
+    .trip-period-note-date { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink3); margin-bottom:3px; }
+    .trip-period-note-text { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink2); line-height:1.5; }

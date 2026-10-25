@@ -125,6 +125,7 @@ async function checkOrphanPhotos() {
     if (fErr) { _showSaveErrToast('写真一覧の取得に失敗しました'); return; }
     const allFiles = [];
     for (const folder of (folders || [])) {
+      if (folder.name === 'trips') continue; // trips photos are in subfolders — managed separately, never cleaned here
       const { data: files, error: fErr2 } = await sb.storage.from('meal-photos').list(`${userId}/${folder.name}`, { limit: 1000 });
       if (!fErr2 && files) {
         files.forEach(f => allFiles.push({ path: `${userId}/${folder.name}/${f.name}`, created_at: f.created_at, size: f.metadata && f.metadata.size != null ? f.metadata.size : null }));
@@ -145,6 +146,10 @@ async function checkOrphanPhotos() {
         });
       });
     }
+    // Add trip photo paths so they are never treated as orphans
+    (trips || []).forEach(t => {
+      (t.photos || []).forEach(p => { if (p.path) refPaths.add(p.path); });
+    });
     const cutoff = Date.now() - 24 * 60 * 60 * 1000;
     _orphanPhotos = allFiles.filter(f => {
       if (refPaths.has(f.path)) return false;

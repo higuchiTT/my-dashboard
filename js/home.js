@@ -105,7 +105,7 @@ function renderHome() {
         <span class="hm-sched-title">${esc(sub.name)} の支払い ¥${fmt(sub.price)}</span>
         ${paid?`<span class="hm-sched-paid">✓</span>`:''}
       </div>`),
-      ...(dayTrips||[]).map(({label})=>`<div class="hm-sched-item" onclick="nav('travel')">
+      ...(dayTrips||[]).map(({label,trip})=>`<div class="hm-sched-item" onclick="openTripDetail('${esc(String(trip.id))}');nav('travel')">
         <span class="hm-sched-dot" style="background:var(--accent)"></span>
         <span class="hm-sched-title">${esc(label)}</span>
       </div>`)

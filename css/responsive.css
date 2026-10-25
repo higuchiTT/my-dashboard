@@ -183,6 +183,15 @@
       .trip-grid { grid-template-columns: 1fr; }
       .trip-card { border-right: none; border-bottom: 1px solid var(--rule); }
       .trip-card:last-child { border-bottom: none; }
+      .trip-detail-hdr { padding: 14px 16px 12px; flex-wrap: wrap; gap: 10px; }
+      .trip-detail-dest { font-size: 26px; }
+      .trip-detail-dates { font-size: 12px; }
+      .trip-detail-seg-wrap { padding: 12px 16px 0; }
+      .trip-plan { padding: 16px; }
+      .trip-review { padding: 16px; }
+      .trip-photo-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); }
+      .trip-period-meals { flex-direction: column; }
+      .trip-period-meal-item { max-width: none; }
 
       /* ── ログインオーバーレイ ── */
       .login-box { max-width: 90vw; padding: 36px 20px; }
