@@ -84,6 +84,21 @@ function openTxModal(type,txId){
         if(ref.category)catEl.value=ref.category;
         const accEl=document.getElementById('ldrTxAcc');
         if(accEl&&!accEl.value&&ref.accountId)accEl.value=String(ref.accountId);
+      } else {
+        // ③ 類似店舗（txCoreName）で提案
+        const coreName=txCoreName(raw);
+        if(coreName&&coreName!==srcKey){
+          const coreMatching=txs.filter(t=>{
+            const ts=t.srcName?txCoreName(t.srcName):txCoreName(t.title);
+            return ts===coreName&&ts!==''&&(t.type==='expense'||t.type==='income');
+          });
+          if(coreMatching.length){
+            const ref=coreMatching.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
+            if(ref.category)catEl.value=ref.category;
+            const accEl=document.getElementById('ldrTxAcc');
+            if(accEl&&!accEl.value&&ref.accountId)accEl.value=String(ref.accountId);
+          }
+        }
       }
     };
   }

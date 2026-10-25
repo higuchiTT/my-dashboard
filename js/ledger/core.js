@@ -82,6 +82,21 @@ function normTxName(s,forMatch){
   if(forMatch)n=n.toLowerCase();
   return n;
 }
+// ── txCoreName: 類似店舗マッチ用のコア店名を取り出す ──
+function txCoreName(name){
+  const n=normTxName(name,true);
+  if(!n)return'';
+  let parts=n.split(/\s+/).filter(p=>p.length>0);
+  // 末尾のトークンが店舗名サフィックスなら除去（複数語のときのみ）
+  if(parts.length>1){
+    const locSuffix=/(店|支店|店舗|駅前|駅東口|駅西口|本店|本町)$/;
+    if(locSuffix.test(parts[parts.length-1]))parts=parts.slice(0,-1);
+  }
+  // 数字のみのトークン・#N・No.N（店番号）を除去
+  parts=parts.filter(p=>!/^(\d+|#\d+|no\.\d+)$/i.test(p));
+  const result=parts.join(' ');
+  return result.length>=2?result:n;
+}
 
 // ── sub-tab navigation ──
 function ldrTab(tab, el){

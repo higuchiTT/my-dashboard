@@ -16,7 +16,7 @@ function renderLdrSettings(){
     return txs.filter(t=>t.category===name).length;
   }
 
-  function _catRowHtml(c){
+  function _catRowHtml(c,idx,total){
     const isOther=c.name==='その他';
     const count=_countUsage(c.name);
     const swatchStyle=`background:${esc(c.color)};`;
@@ -28,8 +28,14 @@ function renderLdrSettings(){
     </div>`;
     const visBtn=`<button class="ldr-cat-vis-btn" onclick="event.stopPropagation();_catToggleHidden('${esc(String(c.id))}')">${c.hidden?'表示':'非表示'}</button>`;
     const delBtn=isOther?'':`<button class="ldr-cat-del-btn" onclick="event.stopPropagation();_catDelete('${esc(String(c.id))}')" title="削除">✕</button>`;
+    const upDis=idx===0;
+    const downDis=idx===total-1;
+    const upClick=upDis?'':` _catMoveUp('${esc(String(c.id))}')`;
+    const downClick=downDis?'':` _catMoveDown('${esc(String(c.id))}')`;
+    const moveHtml=`<div class="ldr-cat-move-btns"><button class="ldr-cat-move-btn" onclick="event.stopPropagation();${upClick}" ${upDis?'disabled':''} title="上へ">▲</button><button class="ldr-cat-move-btn" onclick="event.stopPropagation();${downClick}" ${downDis?'disabled':''} title="下へ">▼</button></div>`;
     return`<tr class="ldr-cat-tr${c.hidden?' hidden-cat':''}" id="catRow_${esc(String(c.id))}" draggable="true" ondragstart="event.stopPropagation();_catDragStart(event,'${esc(String(c.id))}')" ondragover="event.stopPropagation();_catDragOver(event,'${esc(String(c.id))}')" ondrop="event.stopPropagation();_catDrop(event,'${esc(String(c.id))}')" ondragleave="event.stopPropagation();_catDragLeave(event)">
       <td onclick="event.stopPropagation()"><span class="ldr-cat-handle">⠿</span></td>
+      <td onclick="event.stopPropagation()">${moveHtml}</td>
       <td onclick="event.stopPropagation()" style="position:relative;">${paletteHtml}<button class="ldr-cat-swatch-btn" style="${swatchStyle}" onclick="event.stopPropagation();_catTogglePalette('${esc(String(c.id))}')" title="色を変更"></button></td>
       <td class="ldr-cat-name-cell" onclick="event.stopPropagation()">${nameCell}</td>
       <td class="ldr-cat-count r" onclick="event.stopPropagation()">${count}</td>
@@ -38,9 +44,9 @@ function renderLdrSettings(){
     </tr>`;
   }
 
-  const expTable=`<table class="ldr-cat-table"><thead><tr><th style="width:28px;"></th><th style="width:32px;">色</th><th>名前</th><th class="r hide-mob" style="min-width:50px;">件数</th><th style="min-width:60px;"></th><th style="width:32px;"></th></tr></thead><tbody>${expCats.map(_catRowHtml).join('')}</tbody></table>
+  const expTable=`<table class="ldr-cat-table"><thead><tr><th style="width:28px;"></th><th style="width:40px;"></th><th style="width:32px;">色</th><th>名前</th><th class="r hide-mob" style="min-width:50px;">件数</th><th style="min-width:60px;"></th><th style="width:32px;"></th></tr></thead><tbody>${expCats.map((c,i)=>_catRowHtml(c,i,expCats.length)).join('')}</tbody></table>
     <div class="ldr-cat-add-row"><input class="ldr-cat-add-in" id="catAddExpIn" placeholder="カテゴリ名" onclick="event.stopPropagation()" onkeydown="event.stopPropagation();if(event.key==='Enter'){event.preventDefault();_catAdd('expense');}"><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();_catAdd('expense')">＋ 追加</button></div>`;
-  const incTable=`<table class="ldr-cat-table"><thead><tr><th style="width:28px;"></th><th style="width:32px;">色</th><th>名前</th><th class="r hide-mob" style="min-width:50px;">件数</th><th style="min-width:60px;"></th><th style="width:32px;"></th></tr></thead><tbody>${incCats.map(_catRowHtml).join('')}</tbody></table>
+  const incTable=`<table class="ldr-cat-table"><thead><tr><th style="width:28px;"></th><th style="width:40px;"></th><th style="width:32px;">色</th><th>名前</th><th class="r hide-mob" style="min-width:50px;">件数</th><th style="min-width:60px;"></th><th style="width:32px;"></th></tr></thead><tbody>${incCats.map((c,i)=>_catRowHtml(c,i,incCats.length)).join('')}</tbody></table>
     <div class="ldr-cat-add-row"><input class="ldr-cat-add-in" id="catAddIncIn" placeholder="カテゴリ名" onclick="event.stopPropagation()" onkeydown="event.stopPropagation();if(event.key==='Enter'){event.preventDefault();_catAdd('income');}"><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();_catAdd('income')">＋ 追加</button></div>`;
 
   p.innerHTML=`<div style="padding:20px;max-width:780px;">
@@ -71,6 +77,29 @@ let _catDragSrcId=null;
 function _catDragStart(e,id){_catDragSrcId=id;e.dataTransfer.effectAllowed='move';}
 function _catDragOver(e,id){e.preventDefault();e.dataTransfer.dropEffect='move';const row=document.getElementById('catRow_'+id);if(row)row.classList.add('ldr-cat-drag-over');}
 function _catDragLeave(e){document.querySelectorAll('.ldr-cat-drag-over').forEach(r=>r.classList.remove('ldr-cat-drag-over'));}
+// ── ▲▼ ボタンによる順序移動 ──
+function _catMoveUp(id){
+  const cats=txRules.categories;
+  const c=cats&&cats.find(x=>String(x.id)===String(id));
+  if(!c)return;
+  const sameKind=cats.filter(x=>x.kind===c.kind).sort((a,b)=>(a.order||0)-(b.order||0));
+  const idx=sameKind.findIndex(x=>String(x.id)===String(id));
+  if(idx<=0)return;
+  sameKind.splice(idx-1,0,sameKind.splice(idx,1)[0]);
+  sameKind.forEach((x,i)=>x.order=i);
+  _catRenderRefresh();
+}
+function _catMoveDown(id){
+  const cats=txRules.categories;
+  const c=cats&&cats.find(x=>String(x.id)===String(id));
+  if(!c)return;
+  const sameKind=cats.filter(x=>x.kind===c.kind).sort((a,b)=>(a.order||0)-(b.order||0));
+  const idx=sameKind.findIndex(x=>String(x.id)===String(id));
+  if(idx<0||idx>=sameKind.length-1)return;
+  sameKind.splice(idx+1,0,sameKind.splice(idx,1)[0]);
+  sameKind.forEach((x,i)=>x.order=i);
+  _catRenderRefresh();
+}
 function _catDrop(e,targetId){
   e.preventDefault();
   document.querySelectorAll('.ldr-cat-drag-over').forEach(r=>r.classList.remove('ldr-cat-drag-over'));

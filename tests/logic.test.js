@@ -94,3 +94,21 @@ test('getEffBudget: 月ごとの上書きを優先する', () => {
 test('esc: HTML の特殊文字をエスケープする', () => {
   assert.equal(A.esc(`<a href="x">'&'</a>`), '&lt;a href=&quot;x&quot;&gt;&#39;&amp;&#39;&lt;/a&gt;');
 });
+
+test('txCoreName: 末尾の店舗名サフィックスを除く', () => {
+  assert.equal(A.txCoreName('lawson 駅前店'), 'lawson');
+  assert.equal(A.txCoreName('セブンイレブン 渋谷2丁目店'), 'セブンイレブン');
+  assert.equal(A.txCoreName('イオン 本店'), 'イオン');
+});
+
+test('txCoreName: 数字・店番号トークンを除く', () => {
+  assert.equal(A.txCoreName('スーパー #123'), 'スーパー');
+  assert.equal(A.txCoreName('ファミマ 456'), 'ファミマ');
+});
+
+test('txCoreName: 短くなりすぎる場合は元の値（normTxName 結果）を返す', () => {
+  // 'a' は1文字 < 2 → 元の値 'a 店' (normTxName) を返す
+  assert.equal(A.txCoreName('a 店'), 'a 店');
+  // 単語が1つのみで除去対象なし → そのまま返す
+  assert.equal(A.txCoreName('マクドナルド'), 'マクドナルド');
+});

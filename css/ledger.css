@@ -242,6 +242,7 @@
     .ldr-imp-badge { font-family:'JetBrains Mono',monospace; font-size:10px; padding:2px 6px; border-radius:3px; white-space:nowrap; display:inline-block; }
     .ldr-imp-badge-rule { background:rgba(90,107,58,0.15); color:var(--ok); }
     .ldr-imp-badge-learned { background:rgba(59,130,246,0.12); color:#2563eb; }
+    .ldr-imp-badge-similar { background:rgba(139,92,246,0.12); color:#7c3aed; }
     .ldr-imp-badge-none { background:rgba(163,106,24,0.12); color:var(--warn); }
     .ldr-imp-badge-dup { background:rgba(139,58,24,0.1); color:var(--accent); margin-left:4px; }
     .ldr-imp-badge-imported { background:rgba(26,24,20,0.08); color:var(--mute); margin-left:4px; }
@@ -297,6 +298,11 @@
     .ldr-cat-palette-swatch:hover { transform:scale(1.2); border-color:rgba(26,24,20,0.4); }
     .ldr-cat-drag-over { border-top:2px solid var(--accent) !important; }
     .ldr-settings-rules-link { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink3); padding:12px 0; }
+    /* ── Category sort move buttons ── */
+    .ldr-cat-move-btns { display:flex; flex-direction:column; gap:0; }
+    .ldr-cat-move-btn { background:transparent; border:none; cursor:pointer; color:rgba(26,24,20,0.22); font-size:8px; padding:2px 4px; line-height:1.2; font-family:'JetBrains Mono',monospace; transition:color 0.12s; display:block; width:100%; text-align:center; }
+    .ldr-cat-move-btn:hover:not([disabled]) { color:var(--ink); }
+    .ldr-cat-move-btn[disabled] { cursor:default; opacity:0.15; }
     .ldr-settings-rules-link a { color:var(--accent); cursor:pointer; text-decoration:underline; }
     @media (max-width:640px){
       .ldr-cat-handle { display:none; }

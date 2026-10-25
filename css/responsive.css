@@ -147,6 +147,9 @@
       /* Review panel on mobile */
       .ldr-review-sum-row { grid-template-columns:1fr 1fr; gap:8px; }
       .ldr-review-table .hide-mob { display:none; }
+      /* Category sort move buttons on mobile: larger tap targets */
+      .ldr-cat-tr { height:auto; min-height:42px; }
+      .ldr-cat-move-btn { font-size:11px; min-height:22px; padding:3px 6px; color:rgba(26,24,20,0.45); }
 
 
       /* ── Accounts ── */

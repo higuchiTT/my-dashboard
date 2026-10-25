@@ -161,10 +161,11 @@ function _applyAutoClassify(rows,accountId){
     for(const r of rules){
       if(!r.keyword)continue;
       if(srcKey.includes(r.keyword.toLowerCase())){
-        row.type=r.type;row.category=r.category||'その他';row.toAccountId=r.toAccountId||'';row.basis='rule';found=true;break;
+        row.type=r.type;row.category=r.category||'その他';row.toAccountId=r.toAccountId||'';row.basis='rule';row._ruleId=String(r.id);found=true;break;
       }
     }
     if(!found){
+      // ② 学習（srcName/タイトルの完全一致）
       const matching=txs.filter(t=>{const ts=t.srcName?normTxName(t.srcName,true):normTxName(t.title,true);return ts===srcKey&&ts!=='';});
       if(matching.length){
         const ref=matching.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
@@ -175,6 +176,20 @@ function _applyAutoClassify(rows,accountId){
           row.toAccountId=toAcc||'';
         } else {
           row.type=ref.type||row.kind;row.category=ref.category||'その他';row.toAccountId='';
+        }
+      } else {
+        // ③ 学習（txCoreName が一致する類似店舗）
+        const coreName=txCoreName(row.title);
+        if(coreName&&coreName!==srcKey){
+          const coreMatching=txs.filter(t=>{
+            const ts=t.srcName?txCoreName(t.srcName):txCoreName(t.title);
+            return ts===coreName&&ts!==''&&(t.type==='expense'||t.type==='income');
+          });
+          if(coreMatching.length){
+            const ref=coreMatching.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
+            row.basis='similar';
+            row.type=ref.type||row.kind;row.category=ref.category||'その他';row.toAccountId='';
+          }
         }
       }
     }
@@ -358,6 +373,7 @@ function _importRowHtml(row,st){
   let basisBadge='';
   if(row.basis==='rule')basisBadge=`<span class="ldr-imp-badge ldr-imp-badge-rule">ルール</span>`;
   else if(row.basis==='learned')basisBadge=`<span class="ldr-imp-badge ldr-imp-badge-learned">前回と同じ</span>`;
+  else if(row.basis==='similar')basisBadge=`<span class="ldr-imp-badge ldr-imp-badge-similar">似たお店</span>`;
   else basisBadge=`<span class="ldr-imp-badge ldr-imp-badge-none">未分類</span>`;
   let dupBadge='';
   if(row.dupStatus==='imported')dupBadge=`<span class="ldr-imp-badge ldr-imp-badge-imported">取り込み済み</span>`;
@@ -397,6 +413,7 @@ function _renderColAssignUI(csvRows,colAssign){
 }
 
 let _rulesCatFilter='all';
+let _rulesSortOrder='keyword'; // 'keyword' | 'hits' | 'lastUsed'
 function _renderImportRulesSection(){
   const rules=txRules.rules||[];
   const catKeys=getAllCategories().filter(c=>!c.hidden).map(c=>c.name);
@@ -404,7 +421,14 @@ function _renderImportRulesSection(){
   const activeAcc=accounts.filter(a=>!a.archived);
   const toAccOpts=`<option value="">選択</option>`+activeAcc.map(a=>`<option value="${esc(String(a.id))}">${esc(a.name)}</option>`).join('');
   // Filter rules
-  const filteredRules=_rulesCatFilter==='all'?rules:rules.filter(r=>r.category===_rulesCatFilter||(r.type==='transfer'&&_rulesCatFilter==='__transfer__')||(r.type==='skip'&&_rulesCatFilter==='__skip__'));
+  let filteredRules=_rulesCatFilter==='all'?rules.slice():rules.filter(r=>r.category===_rulesCatFilter||(r.type==='transfer'&&_rulesCatFilter==='__transfer__')||(r.type==='skip'&&_rulesCatFilter==='__skip__'));
+  // Sort rules
+  if(_rulesSortOrder==='hits')filteredRules.sort((a,b)=>(b.hits||0)-(a.hits||0));
+  else if(_rulesSortOrder==='lastUsed')filteredRules.sort((a,b)=>(b.lastUsedAt||'').localeCompare(a.lastUsedAt||''));
+  else filteredRules.sort((a,b)=>(a.keyword||'').localeCompare(b.keyword||''));
+  // Date age check
+  const todayStr=today();
+  const _isOldDate=(d)=>{if(!d)return true;return(new Date(todayStr)-new Date(d))/(864e5)>=180;};
   const rulesRows=filteredRules.map(r=>{
     const rid=esc(String(r.id));
     let cls='';
@@ -412,17 +436,25 @@ function _renderImportRulesSection(){
     else if(r.type==='transfer'){const an=accounts.find(a=>String(a.id)===String(r.toAccountId));cls=`振替 → ${an?esc(an.name):'?'}`;}
     else{const tl=r.type==='expense'?'支出':'収入';cls=`${tl}・${esc(r.category||'その他')}`;}
     const kw=r.keyword||'';
-    return`<tr class="ldr-rules-row"><td><input class="ldr-rules-kw-in" value="${esc(kw)}" style="width:${Math.max(80,kw.length*9+20)}px;" onchange="event.stopPropagation();_ruleUpdateKw('${rid}',this.value)" oninput="event.stopPropagation();this.style.width=Math.max(80,this.value.length*9+20)+'px'" onclick="event.stopPropagation()" onfocus="event.stopPropagation()"></td><td style="font-family:'Space Grotesk',sans-serif;font-size:13px;">${cls}</td><td><button class="btn-kill" onclick="event.stopPropagation();_ruleDelete('${rid}')">✕</button></td></tr>`;
+    const hitsVal=r.hits||0;
+    const dateVal=r.lastUsedAt||'';
+    const dateOld=_isOldDate(dateVal);
+    return`<tr class="ldr-rules-row"><td><input class="ldr-rules-kw-in" value="${esc(kw)}" style="width:${Math.max(80,kw.length*9+20)}px;" onchange="event.stopPropagation();_ruleUpdateKw('${rid}',this.value)" oninput="event.stopPropagation();this.style.width=Math.max(80,this.value.length*9+20)+'px'" onclick="event.stopPropagation()" onfocus="event.stopPropagation()"></td><td style="font-family:'Space Grotesk',sans-serif;font-size:13px;">${cls}</td><td class="r" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink3);white-space:nowrap;">${hitsVal}</td><td class="r" style="font-family:'JetBrains Mono',monospace;font-size:12px;white-space:nowrap;${dateOld?'color:var(--mute);':''}">${esc(dateVal||'—')}</td><td><button class="btn-kill" onclick="event.stopPropagation();_ruleDelete('${rid}')">✕</button></td></tr>`;
   }).join('');
-  const filterSel=rules.length?`<select class="ldr-imp-sel" onclick="event.stopPropagation()" onchange="event.stopPropagation();_rulesCatFilter=this.value;renderLdrSettings()" style="margin-left:auto;min-width:100px;">
+  const filterSel=rules.length?`<select class="ldr-imp-sel" onclick="event.stopPropagation()" onchange="event.stopPropagation();_rulesCatFilter=this.value;renderLdrSettings()" style="min-width:100px;">
     <option value="all"${_rulesCatFilter==='all'?' selected':''}>すべて</option>
     ${catKeys.map(c=>`<option value="${esc(c)}"${_rulesCatFilter===c?' selected':''}>${esc(c)}</option>`).join('')}
     <option value="__transfer__"${_rulesCatFilter==='__transfer__'?' selected':''}>振替</option>
     <option value="__skip__"${_rulesCatFilter==='__skip__'?' selected':''}>取り込まない</option>
   </select>`:'';
+  const sortSel=rules.length?`<select class="ldr-imp-sel" onclick="event.stopPropagation()" onchange="event.stopPropagation();_rulesSortOrder=this.value;renderLdrSettings()" style="min-width:130px;">
+    <option value="keyword"${_rulesSortOrder==='keyword'?' selected':''}>キーワード順</option>
+    <option value="hits"${_rulesSortOrder==='hits'?' selected':''}>使用回数の多い順</option>
+    <option value="lastUsed"${_rulesSortOrder==='lastUsed'?' selected':''}>最近使った順</option>
+  </select>`:'';
   return`<div class="ldr-rules-section" style="padding:0;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;"><div style="font-family:'Newsreader',serif;font-size:17px;font-weight:800;">分類ルール</div>${filterSel}</div>
-    ${rules.length?`<table class="ldr-rules-table"><thead><tr><th>キーワード</th><th>分類</th><th style="width:40px;"></th></tr></thead><tbody>${rulesRows||'<tr><td colspan="3" style="text-align:center;padding:12px;color:var(--mute);font-size:12px;">該当なし</td></tr>'}</tbody></table>`:'<div style="font-family:\'Space Grotesk\',sans-serif;font-size:13px;color:var(--mute);margin-bottom:12px;">ルールはまだありません</div>'}
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;"><div style="font-family:'Newsreader',serif;font-size:17px;font-weight:800;">分類ルール</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;">${filterSel}${sortSel}</div></div>
+    ${rules.length?`<table class="ldr-rules-table"><thead><tr><th>キーワード</th><th>分類</th><th class="r" style="min-width:60px;">使用回数</th><th class="r" style="min-width:100px;">最後に使った日</th><th style="width:40px;"></th></tr></thead><tbody>${rulesRows||'<tr><td colspan="5" style="text-align:center;padding:12px;color:var(--mute);font-size:12px;">該当なし</td></tr>'}</tbody></table>`:'<div style="font-family:\'Space Grotesk\',sans-serif;font-size:13px;color:var(--mute);margin-bottom:12px;">ルールはまだありません</div>'}
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-top:${rules.length?'14px':'0'};">
       <div class="ldr-col-assign-col"><span class="ldr-col-lbl">キーワード</span><input id="ruleNewKw" class="ldr-rules-kw-in" placeholder="例: スーパー" onclick="event.stopPropagation()" onfocus="event.stopPropagation()" style="width:160px;"></div>
       <div class="ldr-col-assign-col"><span class="ldr-col-lbl">種類</span><select id="ruleNewType" class="ldr-imp-sel" onchange="event.stopPropagation();_ruleAddFormTypeChange()" onclick="event.stopPropagation()" style="min-width:100px;"><option value="expense">支出</option><option value="income">収入</option><option value="transfer">振替</option><option value="skip">取り込まない</option></select></div>
@@ -479,12 +511,20 @@ function _importConfirm(){
     const kw=normTxName(r.title,true);if(!kw)return;
     if(!txRules.rules)txRules.rules=[];
     const idx=txRules.rules.findIndex(x=>x.keyword===kw);
-    const obj={id:idx>=0?txRules.rules[idx].id:crypto.randomUUID(),keyword:kw,type:r.type,category:r.category,toAccountId:r.toAccountId};
+    const existing=idx>=0?txRules.rules[idx]:{};
+    const obj={...existing,id:existing.id||crypto.randomUUID(),keyword:kw,type:r.type,category:r.category,toAccountId:r.toAccountId};
     if(idx>=0)txRules.rules[idx]=obj;else txRules.rules.push(obj);
     ruleKeys.add(kw);
   });
   const ruleCount=ruleKeys.size;
-  if(ruleRows.length)saveTxRules();
+  // ルールの使用回数・最終使用日を更新
+  const todayStr=today();
+  toAdd.filter(r=>r.basis==='rule'&&r._ruleId).forEach(r=>{
+    const rule=(txRules.rules||[]).find(x=>String(x.id)===String(r._ruleId));
+    if(rule){rule.hits=(rule.hits||0)+1;rule.lastUsedAt=todayStr;}
+  });
+  const needSaveRules=ruleRows.length||toAdd.some(r=>r.basis==='rule'&&r._ruleId);
+  if(needSaveRules)saveTxRules();
   toAdd.forEach(r=>{
     let tx;
     const _now=new Date().toISOString();
