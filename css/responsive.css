@@ -157,10 +157,21 @@
       .ldr-acc-table .hide-mob { display:none; }
 
       /* ── WishList サマリー ── */
-      .shop-summary { grid-template-columns: 1fr; }
+      .shop-summary { grid-template-columns: 1fr 1fr; }
       .shop-stat { border-right: none; border-bottom: 1px solid var(--rule); padding: 12px 14px; }
-      .shop-stat:last-child { border-bottom: none; }
+      .shop-stat:nth-child(1) { border-right: 1px solid var(--rule); }
+      .shop-stat:last-child { grid-column: 1 / -1; border-bottom: none; }
+      .shop-stat-value { font-size: 20px; }
       .shop-content { padding: 0 0 16px; }
+      .shop-bar-right { gap: 6px; }
+      .shop-sort-sel { font-size: 12px; padding: 5px 20px 5px 8px; }
+      /* Plan view: 1 column on mobile */
+      .shop-plan-view { padding: 14px 14px; }
+      .shop-plan-grid { grid-template-columns: 1fr; gap: 10px; }
+      /* Comparison table: narrower cells on mobile */
+      .cmp-label { width: 72px; min-width: 72px; font-size: 8px; }
+      .cmp-cell { min-width: 150px; width: 165px; }
+      .cmp-scroll-wrap { margin: 0 -14px; padding: 0 14px 8px 14px; }
 
       /* ── Travel ── */
       .trip-summary { grid-template-columns: 1fr 1fr; }

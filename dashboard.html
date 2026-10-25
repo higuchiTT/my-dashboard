@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="css/food-list.css?v=298cd1d7">
   <link rel="stylesheet" href="css/todo-list.css?v=cba4c8d7">
   <link rel="stylesheet" href="css/ledger.css?v=3ebd0bf3">
-  <link rel="stylesheet" href="css/wishlist.css?v=854835bf">
+  <link rel="stylesheet" href="css/wishlist.css?v=e4179203">
   <link rel="stylesheet" href="css/travel.css?v=a1fd001c">
   <link rel="stylesheet" href="css/ui.css?v=9b3587fd">
   <link rel="stylesheet" href="css/food.css?v=32ff1637">
@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="css/todo.css?v=d60ac8a2">
   <link rel="stylesheet" href="css/feedback.css?v=b8c1df10">
   <link rel="stylesheet" href="css/accounts.css?v=8517bda7">
-  <link rel="stylesheet" href="css/responsive.css?v=40401be0">
+  <link rel="stylesheet" href="css/responsive.css?v=39874c8d">
   <link rel="stylesheet" href="css/notes.css?v=598142bd">
   <link rel="stylesheet" href="css/food-tags.css?v=f6ab335f">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -434,16 +434,29 @@
   <div class="shop-summary">
     <div class="shop-stat"><div class="shop-stat-label">検討中</div><div class="shop-stat-value" id="shopStatKentou" style="color:var(--warn)">¥0（0件）</div></div>
     <div class="shop-stat"><div class="shop-stat-label">保留中</div><div class="shop-stat-value" id="shopStatHoryu" style="color:var(--ink3)">¥0（0件）</div></div>
+    <div class="shop-stat"><div class="shop-stat-label">今後3か月の購入予定</div><div class="shop-stat-value" id="shopStat3Mo" style="color:var(--ok)">¥0</div></div>
   </div>
 
   <div class="page-bar">
     <h2>ウィッシュリスト</h2>
-    <button class="btn btn-primary" onclick="startNewShopDraft()">＋ 追加</button>
+    <div class="shop-bar-right">
+      <div class="ui-seg" id="shopViewSeg">
+        <button class="ui-seg-btn active" data-view="list" onclick="setShopView('list')">一覧</button>
+        <button class="ui-seg-btn" data-view="plan" onclick="setShopView('plan')">月ごとの計画</button>
+      </div>
+      <select class="shop-sort-sel" id="shopSortSel" onchange="setShopSort(this.value)">
+        <option value="priority">優先度順</option>
+        <option value="month">予定月順</option>
+        <option value="order">追加順</option>
+      </select>
+      <button class="btn btn-primary btn-sm" onclick="startNewShopDraft()">＋ 追加</button>
+    </div>
   </div>
 
-  <div class="shop-content">
+  <div class="shop-content" id="shopListArea">
     <div class="shop-grid" id="shopGrid"></div>
   </div>
+  <div class="shop-plan-view" id="shopPlanView" style="display:none"></div>
 </div>
 
 <!-- ══ TRAVEL ══ -->
@@ -729,7 +742,7 @@
 <script src="js/ledger/budget.js?v=b726d671"></script>
 <script src="js/ledger/guide.js?v=48699094"></script>
 <script src="js/ledger/transactions.js?v=0eeb4f6c"></script>
-<script src="js/wishlist.js?v=e507efe2"></script>
+<script src="js/wishlist.js?v=c098317e"></script>
 <script src="js/ledger/subs.js?v=3e1d587d"></script>
 <script src="js/travel.js?v=36af4a4f"></script>
 <script src="js/food/list.js?v=b17da898"></script>
