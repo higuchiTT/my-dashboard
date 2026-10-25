@@ -44,11 +44,8 @@ function _allMealPhotoPaths(meal) {
 }
 
 function guessKindByHour() {
-  const h = new Date().getHours();
-  if (h < 10) return 'breakfast';
-  if (h < 15) return 'lunch';
-  if (h < 20) return 'dinner';
-  return 'snack';
+  // 新しく記録するときの食事の種類。いちばん多い夕食を既定にする（ユーザーの要望）
+  return 'dinner';
 }
 
 let foodFilter = 'all';
