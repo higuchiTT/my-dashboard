@@ -63,6 +63,14 @@ let _foodUploading = 0;
 let _foodPopupId = null;
 let _lightboxPhotos = [];
 let _lightboxIdx = 0;
+let _foodShowEmpty = false;
+try { _foodShowEmpty = localStorage.getItem('food_show_empty') === '1'; } catch(e) {}
+
+function _foodToggleShowEmpty() {
+  _foodShowEmpty = !_foodShowEmpty;
+  try { localStorage.setItem('food_show_empty', _foodShowEmpty ? '1' : '0'); } catch(e) {}
+  renderFoodList();
+}
 
 function saveMeals() { localStorage.setItem('food_meals', JSON.stringify(meals)); saveToSupabase(); renderHome(); }
 
@@ -264,7 +272,8 @@ function renderFoodList() {
     return `${prefix}${fmt(mD)}〜${fmt(sD)}`;
   }
 
-  let html = '<div class="food-day-list">';
+  const togglePill = `<div class="food-list-toggle-row"><button class="ui-pill${_foodShowEmpty?' active':''}" onclick="_foodToggleShowEmpty()">${_foodShowEmpty?'空いている日を隠す':'空いている日も表示'}</button></div>`;
+  let html = togglePill + '<div class="food-day-list">';
   let hasContent = false;
 
   for (const mon of weekOrder) {
@@ -274,6 +283,9 @@ function renderFoodList() {
 
     // Check if any day in this week is visible when filtering
     if (isFiltered && !daysAsc.some(d => getMatchedSittings(d) !== null)) continue;
+
+    // When hiding empty days, skip weeks with no meals and today not in week
+    if (!_foodShowEmpty && !isFiltered && !daysAsc.some(d => mealByDate[d] || d === todayStr)) continue;
 
     hasContent = true;
     html += `<div class="food-week-hdr">${esc(fmtWeekHdr(mon))}</div>`;
@@ -288,6 +300,9 @@ function renderFoodList() {
 
       // When filtering, hide empty-record days AND days with no matches
       if (isFiltered && !matched) continue;
+
+      // When hiding empty days, skip days without meals (except today)
+      if (!_foodShowEmpty && !isFiltered && !mealByDate[ds] && !isToday) continue;
 
       const mealRec = mealByDate[ds];
       const mealId = mealRec ? String(mealRec.id) : null;
@@ -360,8 +375,10 @@ function renderFoodList() {
         }
         mealsColHTML += `<div class="food-day-dishlist">${dishRows}</div>`;
       } else {
-        // No filter active, show "記録なし"
-        mealsColHTML = `<span class="food-day-empty">記録なし</span>`;
+        // No filter active, show "記録なし" (today shows "+ 記録する")
+        mealsColHTML = isToday
+          ? `<span class="food-day-empty food-day-today-add">＋ 記録する</span>`
+          : `<span class="food-day-empty">記録なし</span>`;
       }
 
       html += `<div class="food-day-row${dayClass}" ${rowOnclick}>

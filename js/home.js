@@ -272,8 +272,7 @@ function foodHomeCell(ds) {
   foodCalM = dt.getMonth();
   foodCalSelDay = ds;
   renderFood();
-  if(window.innerWidth<=640){
-    const meal = meals.find(m=>m.date===ds);
-    if(meal) setTimeout(()=>openFoodDetailPopup(String(meal.id)),60);
-  }
+  const meal = meals.find(m=>m.date===ds);
+  if(meal) setTimeout(()=>openFoodDetailPopup(String(meal.id)),60);
+  else setTimeout(()=>openFoodModalNew(ds),60);
 }

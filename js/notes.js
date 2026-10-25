@@ -125,6 +125,20 @@ function saveNewNote() {
   _renderNotesFilterPills();
   _renderNotesList();
   _renderNotesCalendar();
+  // Scroll to the newly saved note's date and highlight
+  const savedDate = note.date;
+  setTimeout(() => {
+    const dayEl = document.getElementById(`notesDay-${savedDate}`);
+    if (dayEl) {
+      dayEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const lbl = dayEl.querySelector('.notes-date-label');
+      if (lbl) {
+        lbl.classList.remove('notes-date-hl');
+        void lbl.offsetWidth;
+        lbl.classList.add('notes-date-hl');
+      }
+    }
+  }, 60);
 }
 
 function setNotesTagFilter(tag) {

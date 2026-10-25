@@ -213,70 +213,90 @@ function _checkAutoRule(row){
   }
 }
 
+// ── MULTI-FILE HELPERS ──
+function _importAllRows(){
+  if(!_importState)return[];
+  return _importState.files.flatMap(f=>f.rows);
+}
+
+function _importFindRow(id){
+  if(!_importState)return null;
+  for(const f of _importState.files){
+    const row=f.rows.find(r=>r._id===id);
+    if(row)return{row,file:f};
+  }
+  return null;
+}
+
 async function _importHandleFiles(files){
   if(!files||!files.length)return;
-  const file=files[0];
-  const buf=await file.arrayBuffer();
-  let text;
-  try{text=new TextDecoder('utf-8',{fatal:true}).decode(buf);}
-  catch(e){text=new TextDecoder('shift_jis').decode(buf);}
-  if(text.charCodeAt(0)===0xFEFF)text=text.slice(1);
-  const csvRows=_parseCSV(text);
-  if(!csvRows.length){uiAlert('CSVを読み込めませんでした');return;}
-  const headers=csvRows[0].map(h=>h.trim());
-  const detectedFormat=_detectImportFormat(headers);
-  const accountId=_defaultAccountForFormat(detectedFormat);
-  if(detectedFormat==='unknown'){
-    _importState={format:'unknown',formatName:'形式不明',accountId,rows:[],skipCount:0,totalCount:csvRows.length-1,csvRows,colAssign:{iDate:-1,iTitle:-1,iDebit:-1,iCredit:-1,iSigned:-1},pendingParse:true};
-    _importFilter='all';
-    renderLdrImport();
-    return;
+  const fileObjects=[];
+  for(let i=0;i<files.length;i++){
+    const file=files[i];
+    const buf=await file.arrayBuffer();
+    let text;
+    try{text=new TextDecoder('utf-8',{fatal:true}).decode(buf);}
+    catch(e){text=new TextDecoder('shift_jis').decode(buf);}
+    if(text.charCodeAt(0)===0xFEFF)text=text.slice(1);
+    const csvRows=_parseCSV(text);
+    if(!csvRows.length){uiAlert(`${file.name}: CSVを読み込めませんでした`);continue;}
+    const headers=csvRows[0].map(h=>h.trim());
+    const detectedFormat=_detectImportFormat(headers);
+    const accountId=_defaultAccountForFormat(detectedFormat);
+    if(detectedFormat==='unknown'){
+      fileObjects.push({fileIdx:i,fileName:file.name,format:'unknown',formatName:'形式不明',accountId,rows:[],skipCount:0,totalCount:csvRows.length-1,csvRows,colAssign:{iDate:-1,iTitle:-1,iDebit:-1,iCredit:-1,iSigned:-1},pendingParse:true,showColAssign:false});
+    } else {
+      let pr;
+      if(detectedFormat==='mufg')pr=_parseMUFGRows(csvRows);
+      else pr=_parseRakutenRows(csvRows);
+      const rows=_buildImportRows(pr.rows,accountId);
+      _applyAutoClassify(rows,accountId);
+      _initImportInitial(rows);
+      fileObjects.push({fileIdx:i,fileName:file.name,format:detectedFormat,formatName:detectedFormat==='mufg'?'三菱UFJ銀行':'楽天カード',accountId,rows,skipCount:pr.skipCount,totalCount:pr.rows.length+pr.skipCount,csvRows,colAssign:{iDate:-1,iTitle:-1,iDebit:-1,iCredit:-1,iSigned:-1},pendingParse:false,showColAssign:false});
+    }
   }
-  let pr;
-  if(detectedFormat==='mufg')pr=_parseMUFGRows(csvRows);
-  else pr=_parseRakutenRows(csvRows);
-  const rows=_buildImportRows(pr.rows,accountId);
-  _applyAutoClassify(rows,accountId);
-  _initImportInitial(rows);
-  _importState={format:detectedFormat,formatName:detectedFormat==='mufg'?'三菱UFJ銀行':'楽天カード',accountId,rows,skipCount:pr.skipCount,totalCount:pr.rows.length+pr.skipCount,csvRows,colAssign:{iDate:-1,iTitle:-1,iDebit:-1,iCredit:-1,iSigned:-1},pendingParse:false,showColAssign:false};
+  if(!fileObjects.length)return;
+  _importState={files:fileObjects};
   _importFilter='all';
   renderLdrImport();
 }
 
 function _importFromFileInput(files){_importHandleFiles(files);}
 
-function _importApplyColAssign(){
-  const st=_importState;if(!st||!st.csvRows)return;
-  const get=id=>{const el=document.getElementById(id);return el?parseInt(el.value):-1;};
+function _importApplyColAssign(fi){
+  if(!_importState)return;
+  const f=_importState.files[fi];if(!f||!f.csvRows)return;
+  const get=id=>{const el=document.getElementById(id+'_'+fi);return el?parseInt(el.value):-1;};
   const colAssign={iDate:get('impColDate'),iTitle:get('impColTitle'),iDebit:get('impColDebit'),iCredit:get('impColCredit'),iSigned:get('impColSigned')};
-  const pr=_parseUnknownRows(st.csvRows,colAssign);
-  const rows=_buildImportRows(pr.rows,st.accountId);
-  _applyAutoClassify(rows,st.accountId);
+  const pr=_parseUnknownRows(f.csvRows,colAssign);
+  const rows=_buildImportRows(pr.rows,f.accountId);
+  _applyAutoClassify(rows,f.accountId);
   _initImportInitial(rows);
-  st.rows=rows;st.skipCount=pr.skipCount;st.totalCount=pr.rows.length+pr.skipCount;st.colAssign=colAssign;st.pendingParse=false;st.showColAssign=false;
+  f.rows=rows;f.skipCount=pr.skipCount;f.totalCount=pr.rows.length+pr.skipCount;f.colAssign=colAssign;f.pendingParse=false;f.showColAssign=false;
   renderLdrImport();
 }
 
-function _importShowColAssign(){
-  if(_importState){_importState.showColAssign=true;renderLdrImport();}
+function _importShowColAssign(fi){
+  if(!_importState)return;
+  const f=_importState.files[fi];if(f){f.showColAssign=true;renderLdrImport();}
 }
 
-function _importSetAccount(accId){
+function _importSetAccount(fi,accId){
   if(!_importState)return;
-  _importState.accountId=accId;
-  // Re-apply classify with new accountId
-  if(_importState.rows.length){_applyAutoClassify(_importState.rows,accId);_initImportInitial(_importState.rows);}
+  const f=_importState.files[fi];if(!f)return;
+  f.accountId=accId;
+  if(f.rows.length){_applyAutoClassify(f.rows,accId);_initImportInitial(f.rows);}
   renderLdrImport();
 }
 
 function _importToggleCheck(id){
-  const row=_importState&&_importState.rows.find(r=>r._id===id);
-  if(row){row.checked=!row.checked;_refreshImportConfirmCount();}
+  const found=_importFindRow(id);
+  if(found){found.row.checked=!found.row.checked;_refreshImportConfirmCount();}
 }
 
 function _importToggleAll(val){
   if(!_importState)return;
-  _importState.rows.forEach(r=>{if(r.type!=='skip')r.checked=val;});
+  _importState.files.forEach(f=>f.rows.forEach(r=>{if(r.type!=='skip')r.checked=val;}));
   _refreshImportTbody();
 }
 
@@ -287,42 +307,52 @@ function _importSetFilter(f){
 
 function _importSetType(id,type){
   if(!_importState)return;
-  const row=_importState.rows.find(r=>r._id===id);if(!row)return;
+  const found=_importFindRow(id);if(!found)return;
+  const{row,file}=found;
   row.type=type;if(type==='skip')row.checked=false;
   _checkAutoRule(row);
   const srcKey=normTxName(row.title,true);
-  _importState.rows.forEach(r=>{if(r._id!==id&&normTxName(r.title,true)===srcKey&&srcKey!=''){r.type=type;if(type==='skip')r.checked=false;_checkAutoRule(r);}});
+  let otherCount=0;
+  file.rows.forEach(r=>{if(r._id!==id&&normTxName(r.title,true)===srcKey&&srcKey!=''){r.type=type;if(type==='skip')r.checked=false;_checkAutoRule(r);otherCount++;}});
+  if(otherCount>=1)_importShowToast(`同じお店の ${otherCount} 件も変更しました`);
   _refreshImportTbody();
 }
 
 function _importSetCat(id,cat){
   if(!_importState)return;
-  const row=_importState.rows.find(r=>r._id===id);if(!row)return;
+  const found=_importFindRow(id);if(!found)return;
+  const{row,file}=found;
   row.category=cat;
   _checkAutoRule(row);
   const srcKey=normTxName(row.title,true);
-  _importState.rows.forEach(r=>{if(r._id!==id&&normTxName(r.title,true)===srcKey&&srcKey!=''){r.category=cat;_checkAutoRule(r);}});
+  let otherCount=0;
+  file.rows.forEach(r=>{if(r._id!==id&&normTxName(r.title,true)===srcKey&&srcKey!=''){r.category=cat;_checkAutoRule(r);otherCount++;}});
+  if(otherCount>=1)_importShowToast(`同じお店の ${otherCount} 件も変更しました`);
   _refreshImportTbody();
 }
 
 function _importSetToAcc(id,accId){
   if(!_importState)return;
-  const row=_importState.rows.find(r=>r._id===id);if(!row)return;
+  const found=_importFindRow(id);if(!found)return;
+  const{row,file}=found;
   row.toAccountId=accId;
   _checkAutoRule(row);
   const srcKey=normTxName(row.title,true);
-  _importState.rows.forEach(r=>{if(r._id!==id&&normTxName(r.title,true)===srcKey&&srcKey!=''){r.toAccountId=accId;_checkAutoRule(r);}});
+  let otherCount=0;
+  file.rows.forEach(r=>{if(r._id!==id&&normTxName(r.title,true)===srcKey&&srcKey!=''){r.toAccountId=accId;_checkAutoRule(r);otherCount++;}});
+  if(otherCount>=1)_importShowToast(`同じお店の ${otherCount} 件も変更しました`);
   _refreshImportTbody();
 }
 
 function _importToggleAutoRule(id){
-  const row=_importState&&_importState.rows.find(r=>r._id===id);
-  if(row){row.autoRule=!row.autoRule;row._autoRuleSet=false;row._userToggledRule=true;}
+  const found=_importFindRow(id);
+  if(found){const row=found.row;row.autoRule=!row.autoRule;row._autoRuleSet=false;row._userToggledRule=true;}
 }
 
 function _importEditTitle(id,el){
   if(!_importState)return;
-  const row=_importState.rows.find(r=>r._id===id);if(!row)return;
+  const found=_importFindRow(id);if(!found)return;
+  const row=found.row;
   const inp=document.createElement('input');
   inp.className='ldr-imp-title-in';inp.type='text';inp.value=row.title;
   inp.style.width=Math.max(80,row.title.length*8)+'px';
@@ -339,20 +369,34 @@ function _importEditTitle(id,el){
 }
 
 function _refreshImportTbody(){
-  const tbody=document.getElementById('ldrImportTbody');
-  if(!tbody||!_importState)return;
-  let rows=_importState.rows;
-  if(_importFilter==='unclassified')rows=rows.filter(r=>r.basis==='none'&&r.type!=='skip');
-  else if(_importFilter==='dup')rows=rows.filter(r=>r.dupStatus);
-  tbody.innerHTML=rows.map(r=>_importRowHtml(r,_importState)).join('');
+  if(!_importState)return;
+  _importState.files.forEach((f,fi)=>{
+    const tbody=document.getElementById(`ldrImportTbody_${fi}`);
+    if(!tbody)return;
+    let rows=f.rows;
+    if(_importFilter==='unclassified')rows=rows.filter(r=>r.basis==='none'&&r.type!=='skip');
+    else if(_importFilter==='dup')rows=rows.filter(r=>r.dupStatus);
+    tbody.innerHTML=rows.map(r=>_importRowHtml(r,f)).join('');
+  });
   _refreshImportConfirmCount();
 }
 
 function _refreshImportConfirmCount(){
   const btn=document.getElementById('ldrImportConfirmBtn');
   if(!btn||!_importState)return;
-  const cnt=_importState.rows.filter(r=>r.checked&&r.type!=='skip').length;
+  const cnt=_importAllRows().filter(r=>r.checked&&r.type!=='skip').length;
   btn.textContent=`${cnt} 件を取り込む`;
+}
+
+let _importToastTimer=null;
+function _importShowToast(msg){
+  let toastEl=document.getElementById('ldrImportToast');
+  if(toastEl){
+    toastEl.textContent=msg;
+    toastEl.classList.add('visible');
+    if(_importToastTimer)clearTimeout(_importToastTimer);
+    _importToastTimer=setTimeout(()=>toastEl.classList.remove('visible'),3000);
+  }
 }
 
 function _importRowHtml(row,st){
@@ -393,10 +437,10 @@ function _importRowHtml(row,st){
   </tr>`;
 }
 
-function _renderColAssignUI(csvRows,colAssign){
+function _renderColAssignUI(csvRows,colAssign,fi){
   const headers=csvRows[0].map(h=>h.trim());
   const opts=`<option value="-1">—</option>`+headers.map((h,i)=>`<option value="${i}">${esc(h)}</option>`).join('');
-  const selFor=(id,def)=>`<select id="${id}" class="ldr-imp-sel" onclick="event.stopPropagation()" style="min-width:120px;">${opts.replace(`value="${def}"`,`value="${def}" selected`)}</select>`;
+  const selFor=(id,def)=>`<select id="${id}_${fi}" class="ldr-imp-sel" onclick="event.stopPropagation()" style="min-width:120px;">${opts.replace(`value="${def}"`,`value="${def}" selected`)}</select>`;
   const ca=colAssign||{iDate:-1,iTitle:-1,iDebit:-1,iCredit:-1,iSigned:-1};
   return`<div class="ldr-col-assign ui-card" style="padding:14px 16px;margin-bottom:16px;">
     <div style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px;">列の割り当て</div>
@@ -406,7 +450,7 @@ function _renderColAssignUI(csvRows,colAssign){
       <div class="ldr-col-assign-col"><span class="ldr-col-lbl">出金列</span>${selFor('impColDebit',ca.iDebit)}</div>
       <div class="ldr-col-assign-col"><span class="ldr-col-lbl">入金列</span>${selFor('impColCredit',ca.iCredit)}</div>
       <div class="ldr-col-assign-col"><span class="ldr-col-lbl">符号付き金額</span>${selFor('impColSigned',ca.iSigned)}</div>
-      <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();_importApplyColAssign()">取り込み開始</button>
+      <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();_importApplyColAssign(${fi})">取り込み開始</button>
     </div>
     <div style="font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--ink3);margin-top:8px;">先頭行: ${headers.map(h=>`<code style="background:var(--paper3);padding:1px 4px;border-radius:3px;">${esc(h)}</code>`).join(' ')}</div>
   </div>`;
@@ -502,11 +546,14 @@ function _ruleUpdateKw(id,val){
 
 function _importConfirm(){
   if(!_importState)return;
-  const st=_importState;
-  const toAdd=st.rows.filter(r=>r.checked&&r.type!=='skip');
+  const allRows=_importAllRows();
+  const toAdd=allRows.filter(r=>r.checked&&r.type!=='skip');
   if(!toAdd.length){uiAlert('取り込む取引がありません');return;}
-  const ruleRows=st.rows.filter(r=>r.autoRule);
-  const ruleKeys=new Set(); // 同じお店の行は1件として数える
+  // Build a map from row _id -> file accountId
+  const rowAccMap={};
+  _importState.files.forEach(f=>f.rows.forEach(r=>{rowAccMap[r._id]=f.accountId;}));
+  const ruleRows=allRows.filter(r=>r.autoRule);
+  const ruleKeys=new Set();
   ruleRows.forEach(r=>{
     const kw=normTxName(r.title,true);if(!kw)return;
     if(!txRules.rules)txRules.rules=[];
@@ -517,7 +564,6 @@ function _importConfirm(){
     ruleKeys.add(kw);
   });
   const ruleCount=ruleKeys.size;
-  // ルールの使用回数・最終使用日を更新
   const todayStr=today();
   toAdd.filter(r=>r.basis==='rule'&&r._ruleId).forEach(r=>{
     const rule=(txRules.rules||[]).find(x=>String(x.id)===String(r._ruleId));
@@ -526,25 +572,25 @@ function _importConfirm(){
   const needSaveRules=ruleRows.length||toAdd.some(r=>r.basis==='rule'&&r._ruleId);
   if(needSaveRules)saveTxRules();
   toAdd.forEach(r=>{
+    const accId=rowAccMap[r._id]||'';
     let tx;
     const _now=new Date().toISOString();
     if(r.type==='transfer'){
       tx={id:crypto.randomUUID(),type:'transfer',title:r.title,amount:r.amount,date:r.date,note:r.note,srcName:r.srcName,importKey:r.importKey,importedAt:_now};
-      if(r.kind==='expense'){if(st.accountId)tx.fromAccountId=st.accountId;if(r.toAccountId)tx.toAccountId=r.toAccountId;}
-      else{if(r.toAccountId)tx.fromAccountId=r.toAccountId;if(st.accountId)tx.toAccountId=st.accountId;}
+      if(r.kind==='expense'){if(accId)tx.fromAccountId=accId;if(r.toAccountId)tx.toAccountId=r.toAccountId;}
+      else{if(r.toAccountId)tx.fromAccountId=r.toAccountId;if(accId)tx.toAccountId=accId;}
     } else {
       tx={id:crypto.randomUUID(),type:r.type,title:r.title,amount:r.amount,category:r.category,date:r.date,note:r.note,srcName:r.srcName,importKey:r.importKey,importedAt:_now};
-      if(st.accountId)tx.accountId=st.accountId;
+      if(accId)tx.accountId=accId;
     }
     txs.push(tx);
   });
   saveTx();
   renderGuidePanel();renderLdrMobOnboard();
   const count=toAdd.length;
-  const savedRuleCount=ruleCount;
   _importState=null;_importFilter='all';
   const p=document.getElementById('ldrPanelImport');
-  const ruleMsg=savedRuleCount?`<div style="font-family:'Space Grotesk',sans-serif;font-size:14px;color:var(--ok);margin-top:8px;">${savedRuleCount} 件の分類を覚えました</div>`:'';
+  const ruleMsg=ruleCount?`<div style="font-family:'Space Grotesk',sans-serif;font-size:14px;color:var(--ok);margin-top:8px;">${ruleCount} 件の分類を覚えました</div>`:'';
   if(p)p.innerHTML=`<div style="padding:48px 20px;text-align:center;"><div style="font-family:'Newsreader',serif;font-size:24px;font-weight:800;margin-bottom:12px;">${count} 件を取り込みました</div>${ruleMsg}<div style="margin-top:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;"><button class="btn btn-primary" onclick="ldrTab('txlist',document.querySelector('#ldrSubtabs .ui-seg-btn:nth-child(2)'))">取引一覧を見る</button><button class="btn btn-ghost" onclick="renderLdrImport()">さらに取り込む</button></div></div>`;
 }
 
@@ -553,16 +599,81 @@ function _importCancel(){
   renderLdrImport();
 }
 
+function _renderImportFileSection(f,fi,activeAcc){
+  const accSel=`<select class="ldr-imp-sel" onchange="event.stopPropagation();_importSetAccount(${fi},this.value)" onclick="event.stopPropagation()" style="min-width:160px;"><option value="">口座未設定</option>${activeAcc.map(a=>`<option value="${esc(String(a.id))}"${String(a.id)===String(f.accountId)?' selected':''}>${esc(a.name)}</option>`).join('')}</select>`;
+  let filtRows=f.rows;
+  if(_importFilter==='unclassified')filtRows=f.rows.filter(r=>r.basis==='none'&&r.type!=='skip');
+  else if(_importFilter==='dup')filtRows=f.rows.filter(r=>r.dupStatus);
+  const colAssignHtml=(f.pendingParse||f.showColAssign)?_renderColAssignUI(f.csvRows,f.colAssign,fi):'';
+  const tableHtml=f.pendingParse?'':`<div class="ui-card" style="overflow-x:auto;margin-bottom:8px;">
+    <table class="ldr-imp-tbl">
+      <thead><tr>
+        <th style="width:32px;"></th>
+        <th style="min-width:80px;">日付</th>
+        <th style="min-width:120px;">内容</th>
+        <th class="r" style="min-width:90px;">金額</th>
+        <th style="min-width:100px;">種類</th>
+        <th style="min-width:100px;">カテゴリ・振替先</th>
+        <th style="min-width:80px;">根拠</th>
+        <th style="width:60px;">今後も<br><span style="font-weight:400;font-size:9px;letter-spacing:0;text-transform:none;color:var(--mute);">直した行は自動でオン</span></th>
+      </tr></thead>
+      <tbody id="ldrImportTbody_${fi}">${filtRows.map(r=>_importRowHtml(r,f)).join('')}</tbody>
+    </table>
+  </div>`;
+  const showColBtn=!f.pendingParse?`<button class="btn btn-ghost btn-sm" onclick="_importShowColAssign(${fi})">列の割り当てを変更</button>`:'';
+  return`<div class="ldr-import-file-section">
+    <div class="ldr-import-status">
+      <span class="ldr-import-format-badge">${esc(f.formatName)}</span>
+      ${accSel}
+      <span class="ldr-import-count" style="font-size:11px;color:var(--ink3);">${esc(f.fileName)}</span>
+      ${!f.pendingParse?`<span class="ldr-import-count">${f.rows.length} 件</span>`:''}
+      ${!f.pendingParse&&f.skipCount>0?`<span class="ldr-import-count">${f.skipCount} 件スキップ</span>`:''}
+      ${showColBtn}
+    </div>
+    ${colAssignHtml}
+    ${tableHtml}
+  </div>`;
+}
+
 function renderLdrImport(){
   const p=document.getElementById('ldrPanelImport');if(!p)return;
   const st=_importState;
   const activeAcc=accounts.filter(a=>!a.archived);
 
-  if(!st||st.pendingParse){
-    // Drop zone + optional column assignment UI
-    const accOpts=`<option value="">口座未設定</option>`+activeAcc.map(a=>`<option value="${esc(String(a.id))}">${esc(a.name)}</option>`).join('');
-    let colAssignHtml='';
-    if(st&&st.pendingParse&&st.csvRows){colAssignHtml=_renderColAssignUI(st.csvRows,st.colAssign);}
+  // Drop zone state: no files loaded yet
+  if(!st){
+    p.innerHTML=`<div style="padding:20px;max-width:900px;">
+      <div class="ldr-import-drop ui-card" id="ldrImportDrop" onclick="document.getElementById('ldrImportFileIn').click()">
+        <div class="ldr-import-drop-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        <div class="ldr-import-drop-title">CSV ファイルをドロップ、またはクリックして選択</div>
+        <div class="ldr-import-drop-sub">三菱UFJ銀行・楽天カードの CSV に対応（複数可）</div>
+        <input type="file" id="ldrImportFileIn" accept=".csv" multiple style="display:none" onchange="event.stopPropagation();_importFromFileInput(this.files)">
+      </div>
+      <div class="ldr-settings-rules-link">分類ルールは <a onclick="ldrTab('settings',document.querySelector('#ldrSubtabs .ui-seg-btn[onclick*=\'settings\']'))">設定 ›</a> で管理できます。</div>
+    </div>`;
+    const dz=document.getElementById('ldrImportDrop');
+    if(dz){
+      dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dragover');});
+      dz.addEventListener('dragleave',()=>dz.classList.remove('dragover'));
+      dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('dragover');if(e.dataTransfer.files.length)_importHandleFiles(e.dataTransfer.files);});
+    }
+    return;
+  }
+
+  // Review UI (single or multi-file)
+  const isSingle=st.files.length===1;
+  const f0=st.files[0];
+  const checkedCount=_importAllRows().filter(r=>r.checked&&r.type!=='skip').length;
+
+  // Rule explanation (change 7)
+  const ruleCount=(txRules.rules||[]).length;
+  const ruleColor=ruleCount===0?'color:var(--accent);font-weight:600;':'color:var(--ink3);';
+  const ruleLink=`<a style="cursor:pointer;text-decoration:underline;" onclick="ldrTab('settings',document.querySelector('#ldrSubtabs .ui-seg-btn[onclick*=\'settings\']'))">設定 › 分類ルール</a>`;
+  const ruleInfoHtml=`<div class="ldr-import-rule-info" style="${ruleColor}">分類を直した行は、次回から同じお店に自動で使われます（${ruleLink} で確認・削除できます）</div>`;
+
+  if(isSingle&&f0.pendingParse){
+    // Single unknown file: show drop zone with col-assign
+    const colAssignHtml=_renderColAssignUI(f0.csvRows,f0.colAssign,0);
     p.innerHTML=`<div style="padding:20px;max-width:900px;">
       <div class="ldr-import-drop ui-card" id="ldrImportDrop" onclick="document.getElementById('ldrImportFileIn').click()">
         <div class="ldr-import-drop-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
@@ -582,29 +693,24 @@ function renderLdrImport(){
     return;
   }
 
-  // Review UI
-  const accSel=`<select class="ldr-imp-sel" onchange="event.stopPropagation();_importSetAccount(this.value)" onclick="event.stopPropagation()" style="min-width:160px;"><option value="">口座未設定</option>${activeAcc.map(a=>`<option value="${esc(String(a.id))}"${String(a.id)===String(st.accountId)?' selected':''}>${esc(a.name)}</option>`).join('')}</select>`;
-  let filtRows=st.rows;
-  if(_importFilter==='unclassified')filtRows=st.rows.filter(r=>r.basis==='none'&&r.type!=='skip');
-  else if(_importFilter==='dup')filtRows=st.rows.filter(r=>r.dupStatus);
-  const checkedCount=st.rows.filter(r=>r.checked&&r.type!=='skip').length;
-  const colAssignHtml=(st.showColAssign&&st.csvRows)?_renderColAssignUI(st.csvRows,st.colAssign):'';
-  p.innerHTML=`<div style="padding:20px;max-width:1200px;">
-    <div class="ldr-import-status">
-      <span class="ldr-import-format-badge">${esc(st.formatName)}</span>
+  // Build file sections HTML
+  let fileSectionsHtml='';
+  if(isSingle){
+    // Single file: exact same layout as before (just use fi=0)
+    const f=f0;
+    let filtRows=f.rows;
+    if(_importFilter==='unclassified')filtRows=f.rows.filter(r=>r.basis==='none'&&r.type!=='skip');
+    else if(_importFilter==='dup')filtRows=f.rows.filter(r=>r.dupStatus);
+    const colAssignHtml=(f.showColAssign&&f.csvRows)?_renderColAssignUI(f.csvRows,f.colAssign,0):'';
+    const accSel=`<select class="ldr-imp-sel" onchange="event.stopPropagation();_importSetAccount(0,this.value)" onclick="event.stopPropagation()" style="min-width:160px;"><option value="">口座未設定</option>${activeAcc.map(a=>`<option value="${esc(String(a.id))}"${String(a.id)===String(f.accountId)?' selected':''}>${esc(a.name)}</option>`).join('')}</select>`;
+    fileSectionsHtml=`<div class="ldr-import-status">
+      <span class="ldr-import-format-badge">${esc(f.formatName)}</span>
       ${accSel}
-      <span class="ldr-import-count">${st.rows.length} 件</span>
-      ${st.skipCount>0?`<span class="ldr-import-count">${st.skipCount} 件スキップ</span>`:''}
-      <button class="btn btn-ghost btn-sm" onclick="_importShowColAssign()">列の割り当てを変更</button>
+      <span class="ldr-import-count">${f.rows.length} 件</span>
+      ${f.skipCount>0?`<span class="ldr-import-count">${f.skipCount} 件スキップ</span>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="_importShowColAssign(0)">列の割り当てを変更</button>
     </div>
     ${colAssignHtml}
-    <div class="ldr-import-bulk-bar">
-      <button class="btn btn-ghost btn-sm" onclick="_importToggleAll(true)">すべて選択</button>
-      <button class="btn btn-ghost btn-sm" onclick="_importToggleAll(false)">すべて解除</button>
-      <button class="ui-pill${_importFilter==='all'?' active':''}" onclick="_importSetFilter('all')">すべて</button>
-      <button class="ui-pill${_importFilter==='unclassified'?' active':''}" onclick="_importSetFilter('unclassified')">未分類のみ</button>
-      <button class="ui-pill${_importFilter==='dup'?' active':''}" onclick="_importSetFilter('dup')">重複のみ</button>
-    </div>
     <div class="ui-card" style="overflow-x:auto;">
       <table class="ldr-imp-tbl">
         <thead><tr>
@@ -617,9 +723,25 @@ function renderLdrImport(){
           <th style="min-width:80px;">根拠</th>
           <th style="width:60px;">今後も<br><span style="font-weight:400;font-size:9px;letter-spacing:0;text-transform:none;color:var(--mute);">直した行は自動でオン</span></th>
         </tr></thead>
-        <tbody id="ldrImportTbody">${filtRows.map(r=>_importRowHtml(r,st)).join('')}</tbody>
+        <tbody id="ldrImportTbody_0">${filtRows.map(r=>_importRowHtml(r,f)).join('')}</tbody>
       </table>
+    </div>`;
+  } else {
+    // Multiple files: per-file sections
+    fileSectionsHtml=st.files.map((f,fi)=>_renderImportFileSection(f,fi,activeAcc)).join('');
+  }
+
+  p.innerHTML=`<div style="padding:20px;max-width:1200px;">
+    ${ruleInfoHtml}
+    <div id="ldrImportToast" class="ldr-import-toast"></div>
+    <div class="ldr-import-bulk-bar">
+      <button class="btn btn-ghost btn-sm" onclick="_importToggleAll(true)">すべて選択</button>
+      <button class="btn btn-ghost btn-sm" onclick="_importToggleAll(false)">すべて解除</button>
+      <button class="ui-pill${_importFilter==='all'?' active':''}" onclick="_importSetFilter('all')">すべて</button>
+      <button class="ui-pill${_importFilter==='unclassified'?' active':''}" onclick="_importSetFilter('unclassified')">未分類のみ</button>
+      <button class="ui-pill${_importFilter==='dup'?' active':''}" onclick="_importSetFilter('dup')">重複のみ</button>
     </div>
+    ${fileSectionsHtml}
     <div class="ldr-imp-confirm-bar" id="ldrImportConfirmBar">
       <button class="btn btn-ghost" onclick="_importCancel()">キャンセル</button>
       <button class="btn btn-primary" id="ldrImportConfirmBtn" onclick="_importConfirm()">${checkedCount} 件を取り込む</button>

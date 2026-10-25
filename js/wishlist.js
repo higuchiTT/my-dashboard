@@ -6,6 +6,14 @@ let newShopDraft = null;
 let shopSortMode = 'priority'; // 'priority' | 'month' | 'order'
 let shopViewMode = 'list';     // 'list' | 'plan'
 let candEditIdx = null;
+let _shopShowBought = false;
+try { _shopShowBought = localStorage.getItem('wishlist_show_bought') === '1'; } catch(e) {}
+
+function _shopToggleBought() {
+  _shopShowBought = !_shopShowBought;
+  try { localStorage.setItem('wishlist_show_bought', _shopShowBought ? '1' : '0'); } catch(e) {}
+  renderShopping();
+}
 
 const shopCategories = ['家具・インテリア','家電','アウトドア','その他'];
 const STATUS_ORDER = ['検討中', '保留中', '購入済み'];
@@ -384,6 +392,18 @@ function renderShopping(){
     sortSel.style.display=shopViewMode==='plan'?'none':'';
     sortSel.value=shopSortMode;
   }
+  // Bought toggle
+  const boughtWrap=document.getElementById('shopBoughtToggleWrap');
+  if(boughtWrap&&shopViewMode==='list'){
+    const boughtCount=shopping.filter(s=>s.status==='購入済み').length;
+    if(_shopShowBought){
+      boughtWrap.innerHTML=`<button class="btn btn-ghost btn-sm" onclick="_shopToggleBought()">購入済みを隠す</button>`;
+    } else {
+      boughtWrap.innerHTML=boughtCount>0?`<button class="btn btn-ghost btn-sm" style="color:var(--ink3);" onclick="_shopToggleBought()">購入済み ${boughtCount} 件</button>`:'';
+    }
+  } else if(boughtWrap){
+    boughtWrap.innerHTML='';
+  }
 
   const listArea=document.getElementById('shopListArea');
   const planView=document.getElementById('shopPlanView');
@@ -399,12 +419,14 @@ function renderShopping(){
 
 function renderShopList(){
   const sorted=getSortedItems();
+  const displayItems=_shopShowBought?sorted:sorted.filter(s=>s.status!=='購入済み');
   const statuses=['検討中','保留中','購入済み'];
   const grid=document.getElementById('shopGrid');
   if(!grid)return;
 
-  if(!sorted.length&&!newShopDraft){
-    grid.innerHTML='<div style="grid-column:1/-1;padding:48px;text-align:center;color:var(--mute)">アイテムがありません</div>';
+  if(!displayItems.length&&!newShopDraft){
+    const hasHidden=!_shopShowBought&&sorted.some(s=>s.status==='購入済み');
+    grid.innerHTML=`<div style="grid-column:1/-1;padding:48px;text-align:center;color:var(--mute)">${hasHidden?'アイテムがありません（購入済みは非表示）':'アイテムがありません'}</div>`;
     return;
   }
 
@@ -428,7 +450,7 @@ function renderShopList(){
     </div>`;
   }
 
-  grid.innerHTML=HDR+sorted.map(s=>{
+  grid.innerHTML=HDR+displayItems.map(s=>{
     const isExp=String(s.id)===String(expandedShopId);
     const draft=isExp&&shopDraft?shopDraft:s;
     const chosenCand=(draft.candidates||[]).find(c=>c.chosen);
