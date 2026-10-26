@@ -1243,8 +1243,8 @@ function _renderTvCards(realTrips) {
 
   let html = '';
 
-  if (active.length) {
-    // First card (featured, large)
+  if (active.length === 1) {
+    // Single card: full width
     const feat = active[0];
     const ftid = esc(String(feat.id));
     const desc = feat.description || feat.note || '';
@@ -1256,23 +1256,22 @@ function _renderTvCards(realTrips) {
         <span class="tv-card-detail-arrow" onclick="openTripDetail('${ftid}');event.stopPropagation()">›</span>
       </div>
     </div>`;
-
-    // Remaining active cards (smaller, wrap)
-    if (active.length > 1) {
-      html += '<div class="tv-sub-cards">';
-      active.slice(1).forEach(t => {
-        const tid = esc(String(t.id));
-        const desc2 = t.description || t.note || '';
-        const descTrunc2 = desc2.length > 60 ? desc2.slice(0, 60) + '…' : desc2;
-        html += `<div class="tv-sub-card" onclick="openTripDetail('${tid}')">
-          ${_tripCoverHTML(t, 180)}
-          <div class="tv-sub-card-body">
-            ${descTrunc2 ? `<div class="tv-card-desc tv-card-desc-sm">${esc(descTrunc2)}</div>` : ''}
-          </div>
-        </div>`;
-      });
-      html += '</div>';
-    }
+  } else if (active.length >= 2) {
+    // 2+ cards: uniform 2-column grid, same cover height
+    html += '<div class="tv-cards-grid">';
+    active.forEach(t => {
+      const tid = esc(String(t.id));
+      const desc = t.description || t.note || '';
+      const descTrunc = desc.length > 80 ? desc.slice(0, 80) + '…' : desc;
+      html += `<div class="tv-feat-card tv-feat-card-grid" onclick="openTripDetail('${tid}')">
+        ${_tripCoverHTML(t, 200)}
+        <div class="tv-feat-card-body">
+          ${descTrunc ? `<div class="tv-card-desc">${esc(descTrunc)}</div>` : ''}
+          <span class="tv-card-detail-arrow" onclick="openTripDetail('${tid}');event.stopPropagation()">›</span>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
   }
 
   // Completed trips
@@ -1464,10 +1463,102 @@ function _renderTvIdeas() {
     <div class="tv-ideas-grid">
       ${thumbs.length ? thumbs : '<div class="tv-todos-empty">行きたい場所を追加してみましょう</div>'}
     </div>
-    ${ideas.length > 3 ? `<div style="text-align:right;margin-top:8px"><button class="tv-section-link" onclick="openIdeaModal(null);event.stopPropagation()">すべて見る（${ideas.length} 件）</button></div>` : ''}
+    ${ideas.length > 0 ? `<div style="text-align:right;margin-top:8px"><button class="tv-section-link" onclick="openIdeasListModal();event.stopPropagation()">すべて見る（${ideas.length} 件）</button></div>` : ''}
   `;
 
   fillSignedUrls(card);
+}
+
+// ── TRIP DAY MAP (for Food markers) ──
+function _buildTripDayMap() {
+  const map = {};
+  const realTrips = (typeof trips !== 'undefined' ? trips : []).filter(t => !t.isIdea && t.startDate && t.endDate);
+  for (const t of realTrips) {
+    let d = new Date(t.startDate + 'T00:00:00');
+    const end = new Date(t.endDate + 'T00:00:00');
+    while (d <= end) {
+      const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      if (!map[ds]) map[ds] = [];
+      map[ds].push(t);
+      d.setDate(d.getDate() + 1);
+    }
+  }
+  return map;
+}
+
+// ── IDEAS LIST MODAL ──
+function openIdeasListModal() {
+  _renderIdeasListModal();
+  document.getElementById('tripIdeasListModal').classList.add('open');
+}
+
+function closeIdeasListModal() {
+  document.getElementById('tripIdeasListModal').classList.remove('open');
+}
+
+function _renderIdeasListModal() {
+  const body = document.getElementById('ideasListModalBody');
+  if (!body) return;
+  const ideas = trips.filter(t => t.isIdea);
+
+  let html = `<div style="margin-bottom:14px"><button class="btn btn-primary btn-sm" onclick="closeIdeasListModal();openIdeaModal(null)">＋ アイデアを追加</button></div>`;
+
+  if (!ideas.length) {
+    html += `<div style="color:var(--ink3);font-family:'Space Grotesk',sans-serif;font-size:14px;padding:16px 0;text-align:center">アイデアはまだありません。<br>行きたい場所を追加してみましょう。</div>`;
+    body.innerHTML = html;
+    return;
+  }
+
+  html += '<div class="tv-ideas-list-modal">';
+  ideas.forEach(idea => {
+    const iid = esc(String(idea.id));
+    const hasCover = idea.coverPhoto && idea.coverPhoto.path;
+    const hasPhoto = (idea.photos || []).length > 0;
+    const bgStyle = hasCover || hasPhoto ? '' : `background:${_tripGradient(idea.dest)};`;
+    const noteFirst = (idea.note || '').split('\n')[0].slice(0, 80);
+    html += `<div class="tv-ideas-list-row">
+      <div class="tv-ideas-list-thumb" style="${bgStyle}">
+        ${hasCover ? `<img data-path="${esc(idea.coverPhoto.path)}" src="" alt="">` :
+          hasPhoto ? `<img data-path="${esc(idea.photos[0].path)}" src="" alt="">` :
+          `<svg viewBox="0 0 180 120" fill="none" style="width:100%;height:100%"><path d="M0 120L40 50L90 80L140 20L180 120Z" fill="rgba(255,255,255,0.12)"/></svg>`}
+      </div>
+      <div class="tv-ideas-list-info">
+        <div class="tv-ideas-list-name">${esc(idea.dest)}</div>
+        ${idea.place ? `<div class="tv-ideas-list-place">📍 ${esc(idea.place)}</div>` : ''}
+        ${noteFirst ? `<div class="tv-ideas-list-note">${esc(noteFirst)}</div>` : ''}
+      </div>
+      <div class="tv-ideas-list-acts">
+        <button class="btn btn-ghost btn-sm" onclick="closeIdeasListModal();openIdeaModal('${iid}');event.stopPropagation()">編集</button>
+        <button class="btn btn-ghost btn-sm" style="color:var(--accent);border-color:rgba(139,58,24,0.3);" onclick="deleteIdeaFromList('${iid}');event.stopPropagation()">削除</button>
+        <button class="btn btn-ghost btn-sm" onclick="convertIdeaToTripFromList('${iid}');event.stopPropagation()">旅を作る</button>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  body.innerHTML = html;
+  fillSignedUrls(body);
+}
+
+async function deleteIdeaFromList(id) {
+  if (!(await uiConfirm('このアイデアを削除しますか？', { title: '削除', danger: true }))) return;
+  trips = trips.filter(t => String(t.id) !== String(id));
+  saveTrips();
+  _renderIdeasListModal();
+  renderTravel();
+}
+
+function convertIdeaToTripFromList(id) {
+  const idea = trips.find(t => String(t.id) === String(id) && t.isIdea);
+  if (!idea) return;
+  idea.isIdea = false;
+  idea.status = '検討中';
+  idea.plan = [];
+  if (!idea.todos) idea.todos = [];
+  if (!idea.progress) idea.progress = {};
+  saveTrips();
+  closeIdeasListModal();
+  openTripDetail(idea.id);
+  renderTravel();
 }
 
 // ── RENDER MAIN ──

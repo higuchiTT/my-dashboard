@@ -272,6 +272,9 @@ function renderFoodList() {
     return `${prefix}${fmt(mD)}〜${fmt(sD)}`;
   }
 
+  // Build trip-day map once (date -> trip[])
+  const tripDayMap = (typeof _buildTripDayMap === 'function') ? _buildTripDayMap() : {};
+
   const togglePill = `<div class="food-list-toggle-row"><button class="ui-pill${_foodShowEmpty?' active':''}" onclick="_foodToggleShowEmpty()">${_foodShowEmpty?'空いている日を隠す':'空いている日も表示'}</button></div>`;
   let html = togglePill + '<div class="food-day-list">';
   let hasContent = false;
@@ -381,11 +384,19 @@ function renderFoodList() {
           : `<span class="food-day-empty">記録なし</span>`;
       }
 
+      // Trip badges for this day
+      const dayTrips = tripDayMap[ds] || [];
+      const tripBadgesHTML = dayTrips.map(t => {
+        const tid = esc(String(t.id));
+        return `<button class="food-trip-badge" onclick="event.stopPropagation();nav('travel');setTimeout(()=>openTripDetail('${tid}'),150)">✈ ${esc(t.dest)}</button>`;
+      }).join('');
+
       html += `<div class="food-day-row${dayClass}" ${rowOnclick}>
         <div class="food-day-date-col">
           <div class="food-day-date-num">${esc(dateLabel)}</div>
           <div class="food-day-dow-label">${esc(days7[dow])}</div>
           ${isToday?'<span class="food-day-today-badge">今日</span>':''}
+          ${tripBadgesHTML}
         </div>
         <div class="food-day-meals-col">${mealsColHTML}</div>
       </div>`;

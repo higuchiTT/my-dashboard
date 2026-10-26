@@ -9,18 +9,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,700;0,6..72,800;1,6..72,400;1,6..72,700;1,6..72,800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/base.css?v=c3274890">
   <link rel="stylesheet" href="css/home.css?v=a77f9cba">
-  <link rel="stylesheet" href="css/food-list.css?v=edd9bdef">
+  <link rel="stylesheet" href="css/food-list.css?v=cf75aeb8">
   <link rel="stylesheet" href="css/todo-list.css?v=cba4c8d7">
   <link rel="stylesheet" href="css/ledger.css?v=621633c1">
   <link rel="stylesheet" href="css/wishlist.css?v=e4179203">
-  <link rel="stylesheet" href="css/travel.css?v=88949081">
+  <link rel="stylesheet" href="css/travel.css?v=2f2a54c8">
   <link rel="stylesheet" href="css/ui.css?v=9b3587fd">
-  <link rel="stylesheet" href="css/food.css?v=32ff1637">
+  <link rel="stylesheet" href="css/food.css?v=54a05933">
   <link rel="stylesheet" href="css/misc.css?v=be82bcb4">
   <link rel="stylesheet" href="css/todo.css?v=d60ac8a2">
   <link rel="stylesheet" href="css/feedback.css?v=b8c1df10">
   <link rel="stylesheet" href="css/accounts.css?v=8517bda7">
-  <link rel="stylesheet" href="css/responsive.css?v=7469ada4">
+  <link rel="stylesheet" href="css/responsive.css?v=8d1f46ca">
   <link rel="stylesheet" href="css/notes.css?v=598142bd">
   <link rel="stylesheet" href="css/food-tags.css?v=f6ab335f">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.min.js" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
@@ -694,6 +694,22 @@
     </div>
   </div>
 
+  <!-- Ideas List Modal -->
+  <div class="ldr-modal-overlay" id="tripIdeasListModal" onclick="if(event.target===this)closeIdeasListModal()">
+    <div class="ldr-modal" style="max-width:560px" onclick="event.stopPropagation()">
+      <div class="ldr-modal-hdr">
+        <div class="ldr-modal-title">アイデア一覧</div>
+        <button class="ldr-modal-close" onclick="closeIdeasListModal()">✕</button>
+      </div>
+      <div class="ldr-modal-body" id="ideasListModalBody"></div>
+      <div class="ldr-modal-ftr">
+        <div class="ldr-modal-ftr-r">
+          <button class="btn btn-ghost btn-sm" onclick="closeIdeasListModal()">閉じる</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Cover Pick Modal (pick from existing review photos) -->
   <div class="ldr-modal-overlay" id="tripCoverPickModal" onclick="if(event.target===this)closeCoverPickModal()">
     <div class="ldr-modal" style="max-width:560px" onclick="event.stopPropagation()">
@@ -957,9 +973,9 @@
 <script src="js/ledger/transactions.js?v=0eeb4f6c"></script>
 <script src="js/wishlist.js?v=cf9f0b03"></script>
 <script src="js/ledger/subs.js?v=3e1d587d"></script>
-<script src="js/travel.js?v=a571284a"></script>
-<script src="js/food/list.js?v=85000268"></script>
-<script src="js/food/calendar.js?v=75b962a7"></script>
+<script src="js/travel.js?v=b6599f27"></script>
+<script src="js/food/list.js?v=ae74da69"></script>
+<script src="js/food/calendar.js?v=92516f16"></script>
 <script src="js/food/modal.js?v=61ac8228"></script>
 <script src="js/food/popup.js?v=37194fc9"></script>
 <script src="js/notes.js?v=173dee67"></script>

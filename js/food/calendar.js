@@ -101,6 +101,9 @@ function renderFoodCalendar() {
   const grid = document.getElementById('foodCalGrid');
   if (!grid) return;
 
+  // Build trip-day map once
+  const tripDayMap = (typeof _buildTripDayMap === 'function') ? _buildTripDayMap() : {};
+
   grid.innerHTML = cells.map(c => {
     const ds = `${c.y}-${String(c.m + 1).padStart(2, '0')}-${String(c.d).padStart(2, '0')}`;
     const isToday = ds === todayStr;
@@ -159,7 +162,18 @@ function renderFoodCalendar() {
       if (pills.length) typePillsHTML = `<div class="food-cal-type-pills">${pills.join('')}</div>`;
     }
 
-    return `<div class="${cls}" ${clickAttr}><div class="food-cal-num${dowClass}">${c.d}</div>${pcThumbsHTML}${mobHTML}${pcDishRowHTML}${typePillsHTML}</div>`;
+    // Trip badges for this cell
+    let calTripBadgesHTML = '';
+    if (!c.other) {
+      const cellTrips = tripDayMap[ds] || [];
+      if (cellTrips.length > 0) {
+        const label = '✈ ' + cellTrips[0].dest + (cellTrips.length > 1 ? ' 他' + (cellTrips.length - 1) : '');
+        const tid = esc(String(cellTrips[0].id));
+        calTripBadgesHTML = `<div class="food-cal-trip-badges"><button class="food-cal-trip-badge" onclick="event.stopPropagation();nav('travel');setTimeout(()=>openTripDetail('${tid}'),150)">${esc(label)}</button></div>`;
+      }
+    }
+
+    return `<div class="${cls}" ${clickAttr}><div class="food-cal-num${dowClass}">${c.d}</div>${pcThumbsHTML}${mobHTML}${pcDishRowHTML}${typePillsHTML}${calTripBadgesHTML}</div>`;
   }).join('');
 
   fillSignedUrls(grid);

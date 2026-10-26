@@ -295,6 +295,7 @@
       .tv-main-cols > *, .tv-lower-cols > * { min-width: 0; }
       .tv-right-col { position: static; }
       .tv-lower-cols { grid-template-columns: minmax(0,1fr); padding: 0 16px 24px; gap: 16px; }
+      .tv-cards-grid { grid-template-columns: minmax(0,1fr); }
       .tv-sub-cards { flex-direction: column; }
       .tv-sub-card { min-width: 0; max-width: 100%; }
       .tv-ideas-grid { display: flex; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 10px; }

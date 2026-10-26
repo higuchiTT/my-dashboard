@@ -30,7 +30,13 @@
     .tv-feat-card:hover { box-shadow:0 4px 20px rgba(26,24,20,0.1); }
     .tv-feat-card-body { padding:14px 18px 16px; display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
 
-    /* ── SUB CARDS ── */
+    /* ── CARDS GRID (2+ trips) ── */
+    .tv-cards-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+    .tv-feat-card-grid { min-width:0; }
+    .tv-feat-card-grid .tv-card-name { font-size:22px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .tv-feat-card-grid .tv-feat-card-body { min-height:0; }
+
+    /* ── SUB CARDS (kept for legacy, hidden via grid) ── */
     .tv-sub-cards { display:flex; flex-wrap:wrap; gap:16px; margin-top:16px; }
     .tv-sub-card { flex:1; min-width:240px; max-width:calc(50% - 8px); border:1px solid var(--rule); border-radius:8px; overflow:hidden; cursor:pointer; background:var(--paper); transition:box-shadow 0.15s; }
     .tv-sub-card:hover { box-shadow:0 4px 16px rgba(26,24,20,0.1); }
@@ -155,6 +161,18 @@
     .tv-cover-pick-thumb:hover { border-color:var(--accent); }
     .tv-cover-pick-thumb img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; }
     .tv-cover-pick-cap { font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--ink3); padding:4px 6px; background:var(--paper2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    /* ── IDEAS LIST MODAL ── */
+    .tv-ideas-list-modal { display:flex; flex-direction:column; }
+    .tv-ideas-list-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--rule); }
+    .tv-ideas-list-row:last-child { border-bottom:none; }
+    .tv-ideas-list-thumb { width:72px; height:54px; flex-shrink:0; border-radius:6px; overflow:hidden; background:var(--ink); position:relative; }
+    .tv-ideas-list-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .tv-ideas-list-info { flex:1; min-width:0; }
+    .tv-ideas-list-name { font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .tv-ideas-list-place { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+    .tv-ideas-list-note { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+    .tv-ideas-list-acts { display:flex; flex-wrap:wrap; gap:4px; flex-shrink:0; }
 
     /* ── IDEA MODAL FOOTER ── */
     #ideaModalActLeft { display:flex; align-items:center; gap:8px; }
