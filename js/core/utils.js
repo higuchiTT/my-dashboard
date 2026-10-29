@@ -4,6 +4,8 @@ function today(){return localDate();}
 function fmtS(d){return`${d.getMonth()+1}/${d.getDate()}`;}
 function fmtFull(d){const days='日月火水木金土'.split('');return`${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`;}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+// onclick の引数に文字列を埋め込む（引用符やバックスラッシュを含んでも壊れない）
+function jsq(s){return esc(JSON.stringify(String(s)));}
 
 // ── UI DIALOG ──
 function uiAlert(message, {title=''} = {}) {

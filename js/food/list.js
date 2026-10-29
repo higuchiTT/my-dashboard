@@ -123,7 +123,10 @@ function foodSearchInput(val) {
   foodSearch = val;
   _foodListWeeks = 0;
   if (val.trim()) {
-    foodView = 'list';
+    if (foodView === 'calendar') {
+      foodView = 'list';
+    }
+    // stay in list or tags view when search is active
   } else if (!_foodViewManual) {
     foodView = 'calendar';
   }
@@ -135,22 +138,35 @@ function renderFood() {
   _renderFoodStats();
   const calEl = document.getElementById('foodCalendar');
   const listEl = document.getElementById('foodListView');
-  // Sync view toggle buttons
-  document.querySelectorAll('#page-food .ui-seg-btn').forEach(b => {
-    const isCalBtn = b.textContent.trim().includes('カレンダー');
-    b.classList.toggle('active', (foodView === 'calendar') === isCalBtn);
+  const tagEl = document.getElementById('foodTagView');
+  // Sync view toggle buttons by data-food-view attribute
+  document.querySelectorAll('#page-food .ui-seg-btn[data-food-view]').forEach(b => {
+    b.classList.toggle('active', b.dataset.foodView === foodView);
   });
+  // Hide tag select dropdown when in tag view
+  const tagSel = document.getElementById('foodTagSel');
+  if (tagSel) tagSel.style.display = foodView === 'tags' ? 'none' : '';
   if (!calEl || !listEl) return;
   if (foodView === 'calendar') {
     const summaryEl = document.getElementById('foodSearchSummary');
     if (summaryEl) summaryEl.style.display = 'none';
     calEl.style.display = '';
     listEl.style.display = 'none';
+    if (tagEl) tagEl.style.display = 'none';
     renderFoodCalendar();
-  } else {
+  } else if (foodView === 'list') {
     calEl.style.display = 'none';
     listEl.style.display = '';
+    if (tagEl) tagEl.style.display = 'none';
     renderFoodList();
+  } else {
+    // tags view
+    const summaryEl = document.getElementById('foodSearchSummary');
+    if (summaryEl) summaryEl.style.display = 'none';
+    calEl.style.display = 'none';
+    listEl.style.display = 'none';
+    if (tagEl) tagEl.style.display = '';
+    renderFoodTagView();
   }
 }
 
@@ -328,7 +344,7 @@ function renderFoodList() {
             const tags = dish.tags||[];
             const tagsShown = tags.slice(0,2);
             const tagsExtra = tags.length > 2 ? tags.length - 2 : 0;
-            const tagHTML = tagsShown.length ? `<span class="food-chip-row-sm">${tagsShown.map(t=>`<button class="food-chip food-chip-sm food-chip-btn" onclick="event.stopPropagation();setFoodTagFilter('${esc(t)}')">${esc(t)}</button>`).join('')}${tagsExtra?`<span class="food-chip food-chip-sm">+${tagsExtra}</span>`:''}</span>` : '';
+            const tagHTML = tagsShown.length ? `<span class="food-chip-row-sm">${tagsShown.map(t=>`<button class="food-chip food-chip-sm food-chip-btn" onclick="event.stopPropagation();setFoodTagFilter(${jsq(t)})">${esc(t)}</button>`).join('')}${tagsExtra?`<span class="food-chip food-chip-sm">+${tagsExtra}</span>`:''}</span>` : '';
             return `<span class="food-day-dish-link" onclick="event.stopPropagation();openFoodDetailPopup('${esc(mealId)}','${esc(String(dish.id))}')">${esc(dish.name||'（名前なし）')}${placeHTML}</span>${tagHTML}`;
           }).join('<span style="color:var(--mute);margin:0 2px">・</span>');
           return `<div class="food-day-sitting-group"><span class="food-day-kind-tag">${esc(kShort)}</span>${dishParts}</div>`;
@@ -368,7 +384,7 @@ function renderFoodList() {
               ? `<div class="food-day-dishrow-photo"><img data-path="${esc(ph[0].path)}" alt="" loading="lazy">${ph.length>1?`<span class="food-day-dishrow-more">+${ph.length-1}</span>`:''}</div>`
               : '';
             const tags = dish.tags||[];
-            const mobTagHTML = tags.length ? `<div class="food-chip-row" style="margin-top:2px;flex-wrap:nowrap;overflow:hidden;">${tags.map(t=>`<button class="food-chip food-chip-sm food-chip-btn" onclick="event.stopPropagation();setFoodTagFilter('${esc(t)}')">${esc(t)}</button>`).join('')}</div>` : '';
+            const mobTagHTML = tags.length ? `<div class="food-chip-row" style="margin-top:2px;flex-wrap:nowrap;overflow:hidden;">${tags.map(t=>`<button class="food-chip food-chip-sm food-chip-btn" onclick="event.stopPropagation();setFoodTagFilter(${jsq(t)})">${esc(t)}</button>`).join('')}</div>` : '';
             dishRows += `<div class="food-day-dishrow" onclick="event.stopPropagation();openFoodDetailPopup('${esc(mealId)}','${esc(String(dish.id))}')">
               <span class="food-day-kind-tag${i===0?'':' is-blank'}">${esc(kShort)}</span>
               <div style="min-width:0;flex:1"><span class="food-day-dishrow-name">${esc(dish.name||'（名前なし）')}${placeHTML}</span>${mobTagHTML}</div>

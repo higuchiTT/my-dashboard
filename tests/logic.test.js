@@ -112,3 +112,12 @@ test('txCoreName: 短くなりすぎる場合は元の値（normTxName 結果）
   // 単語が1つのみで除去対象なし → そのまま返す
   assert.equal(A.txCoreName('マクドナルド'), 'マクドナルド');
 });
+
+test('jsq: 引用符やバックスラッシュを含むタグでも onclick の引数として元の文字列に戻る', () => {
+  const unesc = s => s.replace(/&quot;|&#39;|&lt;|&gt;|&amp;/g, m => ({ '&quot;': '"', '&#39;': "'", '&lt;': '<', '&gt;': '>', '&amp;': '&' }[m]));
+  for (const tag of ["母's", 'a"b', 'c\d', '<b>&']) {
+    const attr = A.jsq(tag);
+    assert.ok(!/["'<>]/.test(attr));         // 属性の中に生の記号が残らない
+    assert.equal(JSON.parse(unesc(attr)), tag); // ブラウザが属性を読んだ後の JS 文字列が元に戻る
+  }
+});

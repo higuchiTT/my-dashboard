@@ -20,9 +20,9 @@
   <link rel="stylesheet" href="css/todo.css?v=d60ac8a2">
   <link rel="stylesheet" href="css/feedback.css?v=b8c1df10">
   <link rel="stylesheet" href="css/accounts.css?v=8517bda7">
-  <link rel="stylesheet" href="css/responsive.css?v=8d1f46ca">
+  <link rel="stylesheet" href="css/responsive.css?v=09cc198c">
   <link rel="stylesheet" href="css/notes.css?v=598142bd">
-  <link rel="stylesheet" href="css/food-tags.css?v=f6ab335f">
+  <link rel="stylesheet" href="css/food-tags.css?v=9faefe79">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.min.js" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -818,13 +818,17 @@
         <input type="text" class="food-search-new" id="foodSearch" placeholder="料理名・店名・メモで検索" oninput="foodSearchInput(this.value)">
       </div>
       <div class="ui-seg">
-        <button class="ui-seg-btn active" onclick="setFoodView('calendar',this)">
+        <button class="ui-seg-btn active" data-food-view="calendar" onclick="setFoodView('calendar',this)">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
           カレンダー
         </button>
-        <button class="ui-seg-btn" onclick="setFoodView('list',this)">
+        <button class="ui-seg-btn" data-food-view="list" onclick="setFoodView('list',this)">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
           一覧
+        </button>
+        <button class="ui-seg-btn" data-food-view="tags" onclick="setFoodView('tags',this)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          タグ
         </button>
       </div>
       <div class="food-filter-pills">
@@ -863,6 +867,10 @@
     <!-- List view -->
     <div id="foodListView" style="display:none">
       <div id="foodGrid"></div>
+    </div>
+    <!-- Tag view -->
+    <div id="foodTagView" style="display:none">
+      <div id="foodTagGrid"></div>
     </div>
   </div>
   <button class="food-fab" id="foodFab" onclick="openFoodModalNew()">＋</button>
@@ -963,7 +971,7 @@
 <script src="js/core/init.js?v=9ccd7285"></script>
 <script src="js/core/nav.js?v=430dfaed"></script>
 <script src="js/home.js?v=9474bf64"></script>
-<script src="js/todo.js?v=02bbbefc"></script>
+<script src="js/todo.js?v=7b09dd4c"></script>
 <script src="js/ledger/core.js?v=c60c1f2c"></script>
 <script src="js/ledger/import.js?v=6ea1265b"></script>
 <script src="js/ledger/settings.js?v=9d565e3b"></script>
@@ -974,12 +982,13 @@
 <script src="js/wishlist.js?v=cf9f0b03"></script>
 <script src="js/ledger/subs.js?v=3e1d587d"></script>
 <script src="js/travel.js?v=b6599f27"></script>
-<script src="js/food/list.js?v=ae74da69"></script>
-<script src="js/food/calendar.js?v=92516f16"></script>
+<script src="js/food/list.js?v=0ae51e86"></script>
+<script src="js/food/calendar.js?v=e2a0d8d5"></script>
 <script src="js/food/modal.js?v=61ac8228"></script>
-<script src="js/food/popup.js?v=37194fc9"></script>
-<script src="js/notes.js?v=173dee67"></script>
-<script src="js/core/utils.js?v=cfa44c59"></script>
+<script src="js/food/popup.js?v=8812b968"></script>
+<script src="js/food/tags.js?v=af06bea9"></script>
+<script src="js/notes.js?v=46a4ed85"></script>
+<script src="js/core/utils.js?v=843f163e"></script>
 <script src="js/core/backup.js?v=79718970"></script>
 
 <div id="tvTagPop" class="tv-tag-pop" onclick="event.stopPropagation()">

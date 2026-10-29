@@ -26,6 +26,37 @@
     .food-detail-dish-tags { display:flex; gap:4px; flex-wrap:wrap; margin-top:4px; margin-bottom:4px; }
     .food-popup-dish-tags { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:8px; }
 
+    /* ── FOOD TAG VIEW ── */
+    #foodTagGrid { padding:4px 0; }
+    .food-tag-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; padding:12px 0; }
+    .food-tag-pill { display:flex; flex-direction:column; align-items:flex-start; gap:6px; padding:14px 16px; background:var(--paper); border:1.5px solid rgba(26,24,20,0.15); border-radius:10px; cursor:pointer; transition:all 0.15s; text-align:left; font-family:'Space Grotesk',sans-serif; min-width:0; width:100%; }
+    .food-tag-pill:hover { border-color:var(--accent); background:rgba(139,58,24,0.04); }
+    .food-tag-pill-name { font-size:15px; font-weight:700; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+    .food-tag-pill-stats { display:flex; align-items:center; gap:8px; }
+    .food-tag-pill-count { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent); font-weight:700; }
+    .food-tag-pill-last { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--mute); }
+    /* Tag detail header */
+    .food-tag-detail-hdr { display:flex; align-items:center; gap:12px; padding:8px 0 16px; border-bottom:1px solid rgba(26,24,20,0.1); margin-bottom:16px; flex-wrap:wrap; }
+    .food-tag-back-btn { padding:6px 14px; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.06em; border:1.5px solid rgba(26,24,20,0.25); border-radius:6px; background:transparent; color:var(--ink2); cursor:pointer; transition:all 0.15s; flex-shrink:0; }
+    .food-tag-back-btn:hover { border-color:var(--ink); color:var(--ink); }
+    .food-tag-detail-name { font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700; color:var(--ink); }
+    .food-tag-detail-count { font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--ink3); }
+    /* Dish cards in tag detail */
+    .food-tag-card-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .food-tag-card { display:flex; flex-direction:column; background:var(--paper); border:1.5px solid rgba(26,24,20,0.12); border-radius:10px; overflow:hidden; cursor:pointer; transition:all 0.15s; min-width:0; }
+    .food-tag-card:hover { border-color:var(--accent); box-shadow:0 2px 8px rgba(139,58,24,0.08); }
+    .food-tag-card-thumb { width:100%; aspect-ratio:4/3; overflow:hidden; background:var(--paper3); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--mute); }
+    .food-tag-card-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .food-tag-card-info { padding:10px 12px; min-width:0; }
+    .food-tag-card-name { font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:4px; min-width:0; }
+    .food-tag-card-meta { display:flex; align-items:center; gap:5px; flex-wrap:wrap; min-width:0; }
+    .food-tag-card-date { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); flex-shrink:0; }
+    .food-tag-card-kind { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; background:var(--paper2); padding:1px 6px; border-radius:4px; color:var(--ink2); flex-shrink:0; }
+    .food-tag-card-type { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600; padding:1px 6px; border-radius:10px; flex-shrink:0; }
+    .food-tag-card-type.home { background:rgba(90,107,58,0.12); color:var(--ok); }
+    .food-tag-card-type.out { background:rgba(107,69,160,0.1); color:#6b45a0; }
+    .food-tag-card-place { font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--ink3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+
     /* ── NOTES 2-COL ── */
     .notes-2col { display:flex; gap:24px; align-items:flex-start; }
     .notes-main { flex:1; min-width:0; max-width:860px; }

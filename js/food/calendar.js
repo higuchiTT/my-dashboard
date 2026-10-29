@@ -1,8 +1,9 @@
 // ── FOOD CALENDAR ──
 function setFoodView(v, el) {
   foodView = v;
-  _foodViewManual = (v === 'list');
+  _foodViewManual = (v !== 'calendar');
   if (v === 'list') _foodListWeeks = 0;
+  if (v !== 'tags') _foodTagsActiveTag = null;
   document.querySelectorAll('#page-food .ui-seg-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   renderFood();
@@ -220,7 +221,7 @@ function renderFoodDayDetail(dateStr) {
       const linkHTML = isValidUrl ? `<a class="food-detail-dish-link" href="${esc(dish.recipeUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${linkSVG} レシピ</a>` : '';
       const noteHTML = dish.note ? `<div class="food-detail-dish-note">${esc(dish.note)}</div>` : '';
       const dishTags = dish.tags||[];
-      const dishTagsHTML = dishTags.length ? `<div class="food-detail-dish-tags">${dishTags.map(t=>`<button class="food-chip food-chip-sm food-chip-btn" onclick="event.stopPropagation();closeFoodDetailPopupAndFilter('${esc(t)}')">${esc(t)}</button>`).join('')}</div>` : '';
+      const dishTagsHTML = dishTags.length ? `<div class="food-detail-dish-tags">${dishTags.map(t=>`<button class="food-chip food-chip-sm food-chip-btn" onclick="event.stopPropagation();closeFoodDetailPopupAndFilter(${jsq(t)})">${esc(t)}</button>`).join('')}</div>` : '';
       return `<div class="food-detail-dish-row" onclick="openFoodDetailPopup('${esc(String(meal.id))}','${esc(String(dish.id))}')">
         ${thumbHTML}
         <div class="food-detail-dish-info">
@@ -253,7 +254,7 @@ function renderFoodDayDetail(dateStr) {
     if (dayTags.length) {
       dayTagsHTML = `<div class="food-day-tags-section">
         <div class="food-day-tags-label">この日のタグ</div>
-        <div class="food-chip-row">${dayTags.map(([t,n])=>`<button class="food-chip food-chip-btn" onclick="event.stopPropagation();closeFoodDetailPopupAndFilter('${esc(t)}')">${esc(t)}${n>1?`<span class="food-chip-cnt">${n}</span>`:''}</button>`).join('')}</div>
+        <div class="food-chip-row">${dayTags.map(([t,n])=>`<button class="food-chip food-chip-btn" onclick="event.stopPropagation();closeFoodDetailPopupAndFilter(${jsq(t)})">${esc(t)}${n>1?`<span class="food-chip-cnt">${n}</span>`:''}</button>`).join('')}</div>
       </div>`;
     }
   }

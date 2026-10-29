@@ -91,7 +91,7 @@ function _notesShowAC(acId, q, existingTags, pickFn) {
     .sort((a,b) => b[1]-a[1]).slice(0, 6);
   if (!matches.length) { ac.classList.remove('open'); return; }
   ac.innerHTML = matches.map(([t]) =>
-    `<div class="notes-tag-ac-item" onmousedown="event.preventDefault();${pickFn.name}('${esc(t)}')">${esc(t)}</div>`
+    `<div class="notes-tag-ac-item" onmousedown="event.preventDefault();${pickFn.name}(${jsq(t)})">${esc(t)}</div>`
   ).join('');
   ac.classList.add('open');
 }
@@ -162,7 +162,7 @@ function _renderNotesFilterPills() {
   const el = document.getElementById('notesTagPills');
   if (!el) return;
   el.innerHTML = `<button class="ui-pill${!notesFilter.tag?' active':''}" onclick="setNotesTagFilter(null)">すべて</button>`
-    + topTags.map(t => `<button class="ui-pill${notesFilter.tag===t?' active':''}" onclick="setNotesTagFilter('${esc(t)}')">${esc(t)}</button>`).join('');
+    + topTags.map(t => `<button class="ui-pill${notesFilter.tag===t?' active':''}" onclick="setNotesTagFilter(${jsq(t)})">${esc(t)}</button>`).join('');
 }
 
 function _getFilteredReflections() {
@@ -270,7 +270,7 @@ function _notesRenderCard(r) {
   const time = r.createdAt ? new Date(r.createdAt).toLocaleTimeString('ja-JP', {hour:'2-digit',minute:'2-digit'}) : '';
   const edited = r.updatedAt && r.updatedAt !== r.createdAt ? '<span style="font-size:10px;color:var(--mute);margin-left:4px;">編集済</span>' : '';
   const tagsHtml = (r.tags||[]).length
-    ? `<div class="notes-card-tags">${(r.tags||[]).map(t=>`<button class="notes-card-tag${notesFilter.tag===t?' active':''}" onclick="event.stopPropagation();setNotesTagFilter('${esc(t)}')">${esc(t)}</button>`).join('')}</div>`
+    ? `<div class="notes-card-tags">${(r.tags||[]).map(t=>`<button class="notes-card-tag${notesFilter.tag===t?' active':''}" onclick="event.stopPropagation();setNotesTagFilter(${jsq(t)})">${esc(t)}</button>`).join('')}</div>`
     : '';
   return `<div class="notes-card notes-card-pos" id="notes-card-${esc(String(r.id))}">
     <div class="notes-card-header">
@@ -391,7 +391,7 @@ function notesEditTagOninput(e) {
     .sort((a,b) => b[1]-a[1]).slice(0, 6);
   if (!matches.length) { ac.classList.remove('open'); return; }
   ac.innerHTML = matches.map(([t]) =>
-    `<div class="notes-tag-ac-item" onmousedown="event.preventDefault();notesEditPickAcTag('${esc(t)}')">${esc(t)}</div>`
+    `<div class="notes-tag-ac-item" onmousedown="event.preventDefault();notesEditPickAcTag(${jsq(t)})">${esc(t)}</div>`
   ).join('');
   ac.classList.add('open');
 }

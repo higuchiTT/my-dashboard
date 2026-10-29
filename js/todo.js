@@ -277,7 +277,7 @@ function renderTodayView() {
   if (tagNav) {
     tagNav.innerHTML = sortedTags.slice(0, 8).map(([tag]) => {
       const isAct = todoState.tagFilter === tag;
-      return `<button class="tv-sidebar-tag tv-tag-chip tag-${esc(tag)}${isAct ? ' active' : ''}" onclick="setTagFilter('${esc(tag)}')">${esc(tag)}</button>`;
+      return `<button class="tv-sidebar-tag tv-tag-chip tag-${esc(tag)}${isAct ? ' active' : ''}" onclick="setTagFilter(${jsq(tag)})">${esc(tag)}</button>`;
     }).join('');
   }
 
@@ -393,7 +393,7 @@ function renderTodayView() {
   if (topTagsEl) {
     topTagsEl.innerHTML = sortedTags.slice(0, 6).map(([tag]) => {
       const isAct = todoState.tagFilter === tag;
-      return `<button class="trs-tag-btn tv-tag-chip tag-${esc(tag)}${isAct ? ' active' : ''}" onclick="setTagFilter('${esc(tag)}')">${esc(tag)}</button>`;
+      return `<button class="trs-tag-btn tv-tag-chip tag-${esc(tag)}${isAct ? ' active' : ''}" onclick="setTagFilter(${jsq(tag)})">${esc(tag)}</button>`;
     }).join('');
   }
 
@@ -442,7 +442,7 @@ function openTvTagEditor(id, e) {
   const allTags = [...new Set([...TV_ALL_TAGS, ...tasks.flatMap(tt => tt.tags||[]), ...tags])];
   const pop = document.getElementById('tvTagPop');
   document.getElementById('tvTagPopGrid').innerHTML = allTags.map(tag =>
-    `<span class="tv-tag-pop-chip tag-${esc(tag)}${tags.includes(tag)?' sel':''}" onclick="tvToggleTag('${esc(tag)}')">${esc(tag)}</span>`
+    `<span class="tv-tag-pop-chip tag-${esc(tag)}${tags.includes(tag)?' sel':''}" onclick="tvToggleTag(${jsq(tag)})">${esc(tag)}</span>`
   ).join('');
   document.getElementById('tvTagPopInput').value = '';
   // 位置計算

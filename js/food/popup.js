@@ -64,7 +64,7 @@ function renderFoodDetailPopup() {
       const linkHtml = isValidUrl ? `<a class="food-popup-dish-link" href="${esc(dish.recipeUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${linkSVG} レシピ</a>` : '';
       const noteHtml = dish.note ? `<div class="food-popup-dish-note">${esc(dish.note)}</div>` : '';
       const dishTags2 = dish.tags||[];
-      const dishTagsHtml2 = dishTags2.length ? `<div class="food-popup-dish-tags">${dishTags2.map(t=>`<button class="food-chip food-chip-btn" onclick="event.stopPropagation();closeFoodDetailPopupAndFilter('${esc(t)}')">${esc(t)}</button>`).join('')}</div>` : '';
+      const dishTagsHtml2 = dishTags2.length ? `<div class="food-popup-dish-tags">${dishTags2.map(t=>`<button class="food-chip food-chip-btn" onclick="event.stopPropagation();closeFoodDetailPopupAndFilter(${jsq(t)})">${esc(t)}</button>`).join('')}</div>` : '';
       // Gallery
       const galleryHTML = photos.length ? `<div class="food-popup-gallery">${photos.map((p,pi) =>
         `<div class="food-popup-gallery-img" onclick="event.stopPropagation();openFoodLightboxForDish('${esc(String(dish.id))}',${pi})">
@@ -96,7 +96,7 @@ function renderFoodDetailPopup() {
   if (popupDayTags.length) {
     bodyHTML += `<div class="food-day-tags-section">
       <div class="food-day-tags-label">この日のタグ</div>
-      <div class="food-chip-row">${popupDayTags.map(([t,n])=>`<button class="food-chip food-chip-btn" onclick="event.stopPropagation();closeFoodDetailPopupAndFilter('${esc(t)}')">${esc(t)}${n>1?`<span class="food-chip-cnt">${n}</span>`:''}</button>`).join('')}</div>
+      <div class="food-chip-row">${popupDayTags.map(([t,n])=>`<button class="food-chip food-chip-btn" onclick="event.stopPropagation();closeFoodDetailPopupAndFilter(${jsq(t)})">${esc(t)}${n>1?`<span class="food-chip-cnt">${n}</span>`:''}</button>`).join('')}</div>
     </div>`;
   }
   if (meal.memo) {

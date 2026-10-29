@@ -330,7 +330,9 @@
       .food-add-btn-desktop { display:none; }
       .food-fab { display:flex !important; }
       .food-toolbar-row { gap:8px; margin-bottom:14px; }
-      .food-search-wrap { flex:1; }
+      .food-search-wrap { flex:1 1 100%; }
+      .food-toolbar-row .ui-seg { flex:1 1 100%; }
+      .food-toolbar-row .ui-seg .ui-seg-btn { flex:1; justify-content:center; }
       .food-search-new { width:100%; height:40px; }
       .food-summary-bar { padding:0 0 10px; }
       .food-modal-overlay { padding:0; align-items:flex-end; }
@@ -356,5 +358,10 @@
       .food-cal-dot-mob.out  { background:var(--accent); }
       #page-food .ui-seg-btn { height:36px; font-size:13px; }
       #page-food .ui-pill { height:36px; font-size:13px; }
+      /* Food tag view (mobile) */
+      #page-food .food-tag-grid { grid-template-columns:minmax(0,1fr); }
+      #page-food .food-tag-card-grid { grid-template-columns:minmax(0,1fr); }
+      .food-tag-detail-hdr { gap:8px; }
+      .food-tag-detail-name { font-size:15px; }
 
     }
