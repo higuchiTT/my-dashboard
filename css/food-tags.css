@@ -57,6 +57,30 @@
     .food-tag-card-type.out { background:rgba(107,69,160,0.1); color:#6b45a0; }
     .food-tag-card-place { font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--ink3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
 
+    /* ── FOOD TAG CATEGORY FILTER PILLS ── */
+    .food-tag-cat-pills { display:flex; gap:6px; flex-wrap:wrap; padding:4px 0 14px; }
+    #page-food .food-tag-cat-pills .ui-pill { height:auto; font-size:12px; padding:5px 12px; }
+    .food-cat-pill-cnt { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; margin-left:4px; opacity:0.75; }
+
+    /* ── FOOD TAG CATEGORY SECTIONS ── */
+    .food-tag-cat-section { margin-bottom:24px; }
+    .food-tag-cat-hdr { display:flex; align-items:center; gap:8px; margin-bottom:8px; padding-bottom:5px; border-bottom:1.5px solid rgba(26,24,20,0.1); }
+    .food-tag-cat-label { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink2); }
+    .food-tag-cat-cnt { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--mute); }
+
+    /* ── FOOD TAG SUGGESTION PANEL (MODAL) ── */
+    .food-dish-tag-suggest { margin-top:4px; min-width:0; }
+    .food-dish-tag-suggest-hdr { display:inline-flex; align-items:center; gap:5px; cursor:pointer; padding:2px 0; user-select:none; }
+    .food-dish-tag-suggest-hdr-label { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink3); }
+    .food-dish-tag-suggest-toggle-icon { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink3); }
+    .food-dish-tag-suggest-body { display:none; padding:4px 0 2px; }
+    .food-dish-tag-suggest-body.open { display:block; }
+    .food-dish-tag-suggest-row { display:flex; align-items:flex-start; gap:6px; padding:2px 0; min-width:0; flex-wrap:wrap; }
+    .food-dish-tag-suggest-cat { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; color:var(--ink3); white-space:nowrap; padding-top:3px; flex-shrink:0; min-width:3em; }
+    .food-dish-tag-suggest-pills { display:flex; gap:4px; flex-wrap:wrap; min-width:0; }
+    .food-dish-tag-suggest-pill { font-family:'Space Grotesk',sans-serif; font-size:11px; padding:2px 8px; border:1px solid rgba(26,24,20,0.18); border-radius:10px; background:var(--paper); color:var(--ink2); cursor:pointer; transition:all 0.12s; white-space:nowrap; }
+    .food-dish-tag-suggest-pill:hover { background:rgba(139,58,24,0.08); border-color:var(--accent); color:var(--accent); }
+
     /* ── NOTES 2-COL ── */
     .notes-2col { display:flex; gap:24px; align-items:flex-start; }
     .notes-main { flex:1; min-width:0; max-width:860px; }

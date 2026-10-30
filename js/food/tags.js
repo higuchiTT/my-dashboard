@@ -1,5 +1,37 @@
+// ── FOOD TAG CATEGORIES ──
+const FOOD_TAG_CATS = [
+  { key: 'ingredient', label: '食材' },
+  { key: 'role',       label: '役割' },
+  { key: 'genre',      label: 'ジャンル' },
+  { key: 'method',     label: '調理法' },
+  { key: 'other',      label: 'その他' },
+];
+
+// キー → タグ名のセット（ingredient はその他すべて）
+const _FOOD_TAG_DICT = {
+  role:   new Set(['主菜','副菜','汁物','主食','デザート']),
+  genre:  new Set(['和食','洋食','中華','韓国','エスニック','イタリアン','フレンチ']),
+  method: new Set(['生','焼き','煮物','炒め物','揚げ物','和え物','サラダ','漬け','蒸し']),
+  other:  new Set(['作り置き','市販','コース','丼','麺','粉もの','時短']),
+};
+
+// タグ名 → 分類キー ('ingredient' | 'role' | 'genre' | 'method' | 'other')
+function foodTagCategory(tag) {
+  for (const { key } of FOOD_TAG_CATS) {
+    if (key === 'ingredient') continue;
+    if (_FOOD_TAG_DICT[key] && _FOOD_TAG_DICT[key].has(tag)) return key;
+  }
+  return 'ingredient';
+}
+
 // ── FOOD TAG VIEW ──
 let _foodTagsActiveTag = null;
+let _foodTagsCatFilter = null; // null = すべて
+
+function setFoodTagCatFilter(key) {
+  _foodTagsCatFilter = (key === undefined || key === null) ? null : key;
+  renderFoodTagView();
+}
 
 function renderFoodTagView() {
   const container = document.getElementById('foodTagGrid');
@@ -44,21 +76,64 @@ function _renderFoodTagList(container) {
     return;
   }
 
-  const pills = tags.map(([t, info]) => {
-    const lastDate = info.lastDate;
-    const lastLabel = lastDate
-      ? `${parseInt(lastDate.slice(5, 7))}/${parseInt(lastDate.slice(8, 10))}`
-      : '';
-    return `<button class="food-tag-pill" onclick="showFoodTagDetail(${jsq(t)})">
-      <span class="food-tag-pill-name">${esc(t)}</span>
-      <span class="food-tag-pill-stats">
-        <span class="food-tag-pill-count">${info.count}回</span>
-        ${lastLabel ? `<span class="food-tag-pill-last">最後: ${esc(lastLabel)}</span>` : ''}
-      </span>
-    </button>`;
-  }).join('');
+  // Count tags per category (from full result before cat filter)
+  const catCounts = {};
+  for (const [t] of tags) {
+    const k = foodTagCategory(t);
+    catCounts[k] = (catCounts[k] || 0) + 1;
+  }
 
-  container.innerHTML = `<div class="food-tag-grid">${pills}</div>`;
+  // Category filter pills
+  const allCatsWithTags = FOOD_TAG_CATS.filter(c => catCounts[c.key]);
+  const filterPills = [{ key: null, label: 'すべて' }, ...allCatsWithTags].map(c => {
+    const isActive = _foodTagsCatFilter === c.key;
+    const cnt = c.key !== null && catCounts[c.key]
+      ? `<span class="food-cat-pill-cnt">${catCounts[c.key]}</span>` : '';
+    const onclickArg = c.key === null ? 'null' : jsq(c.key);
+    return `<button class="ui-pill${isActive ? ' active' : ''}" onclick="setFoodTagCatFilter(${onclickArg})">${esc(c.label)}${cnt}</button>`;
+  }).join('');
+  const filterPillsHTML = `<div class="food-tag-cat-pills">${filterPills}</div>`;
+
+  // Apply category filter
+  const filteredTags = _foodTagsCatFilter !== null
+    ? tags.filter(([t]) => foodTagCategory(t) === _foodTagsCatFilter)
+    : tags;
+
+  // Categories to show
+  const activeCats = _foodTagsCatFilter !== null
+    ? FOOD_TAG_CATS.filter(c => c.key === _foodTagsCatFilter)
+    : FOOD_TAG_CATS;
+
+  // Group by category
+  let sections = '';
+  for (const { key, label } of activeCats) {
+    const catTags = filteredTags.filter(([t]) => foodTagCategory(t) === key);
+    if (!catTags.length) continue;
+    const pills = catTags.map(([t, info]) => {
+      const lastDate = info.lastDate;
+      const lastLabel = lastDate
+        ? `${parseInt(lastDate.slice(5, 7))}/${parseInt(lastDate.slice(8, 10))}`
+        : '';
+      return `<button class="food-tag-pill" onclick="showFoodTagDetail(${jsq(t)})">
+        <span class="food-tag-pill-name">${esc(t)}</span>
+        <span class="food-tag-pill-stats">
+          <span class="food-tag-pill-count">${info.count}回</span>
+          ${lastLabel ? `<span class="food-tag-pill-last">最後: ${esc(lastLabel)}</span>` : ''}
+        </span>
+      </button>`;
+    }).join('');
+    sections += `<div class="food-tag-cat-section">
+      <div class="food-tag-cat-hdr">
+        <span class="food-tag-cat-label">${esc(label)}</span>
+        <span class="food-tag-cat-cnt">${catTags.length}</span>
+      </div>
+      <div class="food-tag-grid">${pills}</div>
+    </div>`;
+  }
+
+  container.innerHTML = filterPillsHTML + (sections
+    ? sections
+    : `<div class="food-empty"><div>${q ? '検索結果なし' : '該当なし'}</div></div>`);
 }
 
 function _renderFoodTagDetail(container) {

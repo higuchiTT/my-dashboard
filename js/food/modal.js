@@ -96,6 +96,7 @@ function foodDishRowHTML(sittingId, d, i) {
   const sid = esc(String(sittingId));
   const did = esc(String(d.id));
   const photosHTML = foodDishPhotoThumbsHTML(sittingId, d);
+  const suggestBodyHTML = _foodDishTagSuggestBodyHTML(String(d.id));
   return `<div class="food-dish-row" id="foodDish-${sid}-${i}"
     onclick="_setFocusDishId('${did}')"
     onfocus="_setFocusDishId('${did}')" tabindex="-1">
@@ -126,6 +127,13 @@ function foodDishRowHTML(sittingId, d, i) {
             onblur="setTimeout(()=>{const a=document.getElementById('foodDishTagAC-${did}');if(a)a.classList.remove('open');},150)">
           <div class="food-dish-tag-ac" id="foodDishTagAC-${did}"></div>
         </div>
+      </div>
+      <div class="food-dish-tag-suggest" id="foodDishTagSuggestWrap-${did}" style="${suggestBodyHTML ? '' : 'display:none'}" onclick="event.stopPropagation()">
+        <div class="food-dish-tag-suggest-hdr" onclick="event.stopPropagation();toggleFoodTagSuggestions('${did}')">
+          <span class="food-dish-tag-suggest-hdr-label">候補</span>
+          <span class="food-dish-tag-suggest-toggle-icon" id="foodDishTagSuggestIcon-${did}">▾</span>
+        </div>
+        <div class="food-dish-tag-suggest-body open" id="foodDishTagSuggestBody-${did}">${suggestBodyHTML}</div>
       </div>
       <div class="food-dish-photo-area" id="foodDishPhotoArea-${did}"
         ondragover="foodDishDragOver(event,'${did}')" ondragleave="foodDragLeave(event)" ondrop="foodDishDrop(event,'${did}')">
@@ -202,6 +210,7 @@ function foodDishTagAdd(dishId, tag) {
   if (!d.tags) d.tags = [];
   if (!d.tags.includes(tag)) d.tags.push(tag);
   _renderFoodDishTagChips(dishId, d.tags);
+  _renderFoodTagSuggestions(dishId);
 }
 
 function foodDishTagRemove(dishId, idx) {
@@ -209,6 +218,7 @@ function foodDishTagRemove(dishId, idx) {
   if (!d || !d.tags) return;
   d.tags.splice(idx, 1);
   _renderFoodDishTagChips(dishId, d.tags);
+  _renderFoodTagSuggestions(dishId);
   document.getElementById(`foodDishTagIn-${dishId}`)?.focus();
 }
 
@@ -249,7 +259,7 @@ function foodDishTagOninput(e, dishId) {
   if (!matches.length) { ac.classList.remove('open'); return; }
   const did = esc(String(dishId));
   ac.innerHTML = matches.map(([t]) =>
-    `<div class="food-dish-tag-ac-item" onmousedown="event.preventDefault();foodDishTagPickAC('${did}','${esc(t)}')">${esc(t)}</div>`
+    `<div class="food-dish-tag-ac-item" onmousedown="event.preventDefault();foodDishTagPickAC('${did}',${jsq(t)})">${esc(t)}</div>`
   ).join('');
   ac.classList.add('open');
 }
@@ -260,6 +270,49 @@ function foodDishTagPickAC(dishId, tag) {
   if (inp) inp.value = '';
   document.getElementById(`foodDishTagAC-${dishId}`)?.classList.remove('open');
   inp?.focus();
+}
+
+function toggleFoodTagSuggestions(dishId) {
+  const body = document.getElementById(`foodDishTagSuggestBody-${dishId}`);
+  const icon = document.getElementById(`foodDishTagSuggestIcon-${dishId}`);
+  if (!body) return;
+  const isOpen = body.classList.toggle('open');
+  if (icon) icon.textContent = isOpen ? '▾' : '▸';
+}
+
+function _foodDishTagSuggestBodyHTML(dishId) {
+  const d = _findDishById(dishId);
+  const curTags = d ? (d.tags || []) : [];
+  const usage = _getFoodTagUsage();
+  const rows = [];
+  for (const { key, label } of FOOD_TAG_CATS) {
+    const catTags = Object.entries(usage)
+      .filter(([t]) => foodTagCategory(t) === key && !curTags.includes(t))
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8)
+      .map(([t]) => t);
+    if (!catTags.length) continue;
+    const did = esc(String(dishId));
+    const pills = catTags.map(t =>
+      `<button type="button" class="food-dish-tag-suggest-pill" onmousedown="event.preventDefault();event.stopPropagation();foodDishTagPickSuggest('${did}',${jsq(t)})">${esc(t)}</button>`
+    ).join('');
+    rows.push(`<div class="food-dish-tag-suggest-row"><span class="food-dish-tag-suggest-cat">${esc(label)}</span><span class="food-dish-tag-suggest-pills">${pills}</span></div>`);
+  }
+  return rows.join('');
+}
+
+function _renderFoodTagSuggestions(dishId) {
+  const body = document.getElementById(`foodDishTagSuggestBody-${dishId}`);
+  const wrap = document.getElementById(`foodDishTagSuggestWrap-${dishId}`);
+  if (!body) return;
+  const html = _foodDishTagSuggestBodyHTML(dishId);
+  body.innerHTML = html;
+  if (wrap) wrap.style.display = html ? '' : 'none';
+}
+
+function foodDishTagPickSuggest(dishId, tag) {
+  foodDishTagAdd(dishId, tag);
+  // foodDishTagAdd already calls _renderFoodTagSuggestions
 }
 
 function setFoodDishType(sittingId, dishId, type) {

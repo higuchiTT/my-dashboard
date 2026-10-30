@@ -113,6 +113,15 @@ test('txCoreName: 短くなりすぎる場合は元の値（normTxName 結果）
   assert.equal(A.txCoreName('マクドナルド'), 'マクドナルド');
 });
 
+test('foodTagCategory: 既知のタグは正しい分類を返し、未知は ingredient', () => {
+  assert.equal(A.foodTagCategory('主菜'),    'role');
+  assert.equal(A.foodTagCategory('和食'),    'genre');
+  assert.equal(A.foodTagCategory('焼き'),    'method');
+  assert.equal(A.foodTagCategory('作り置き'), 'other');
+  assert.equal(A.foodTagCategory('鯖'),      'ingredient');
+  assert.equal(A.foodTagCategory('未知の語'), 'ingredient');
+});
+
 test('jsq: 引用符やバックスラッシュを含むタグでも onclick の引数として元の文字列に戻る', () => {
   const unesc = s => s.replace(/&quot;|&#39;|&lt;|&gt;|&amp;/g, m => ({ '&quot;': '"', '&#39;': "'", '&lt;': '<', '&gt;': '>', '&amp;': '&' }[m]));
   for (const tag of ["母's", 'a"b', 'c\d', '<b>&']) {
