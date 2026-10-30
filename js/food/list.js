@@ -372,27 +372,37 @@ function renderFoodList() {
         }
         if (thumbs) mealsColHTML += `<div class="food-day-thumbs">${thumbs}</div>`;
 
-        // スマホ用: 1品ごとに1行（左に料理名、右にその料理の写真）
-        let dishRows = '';
-        for (const s of sorted) {
-          const kShort = KIND_SHORT[s.kind]||s.kind;
-          s.dishes.forEach((dish, i) => {
-            const isOut = dish.type==='out';
-            const placeHTML = isOut&&dish.place ? `<span class="food-day-place">@${esc(dish.place)}</span>` : '';
-            const ph = dish.photos||[];
-            const photoHTML = ph.length
-              ? `<div class="food-day-dishrow-photo"><img data-path="${esc(ph[0].path)}" alt="" loading="lazy">${ph.length>1?`<span class="food-day-dishrow-more">+${ph.length-1}</span>`:''}</div>`
-              : '';
-            const tags = dish.tags||[];
-            const mobTagHTML = tags.length ? `<div class="food-chip-row" style="margin-top:2px;flex-wrap:nowrap;overflow:hidden;">${tags.map(t=>`<button class="food-chip food-chip-sm food-chip-btn" onclick="event.stopPropagation();setFoodTagFilter(${jsq(t)})">${esc(t)}</button>`).join('')}</div>` : '';
-            dishRows += `<div class="food-day-dishrow" onclick="event.stopPropagation();openFoodDetailPopup('${esc(mealId)}','${esc(String(dish.id))}')">
-              <span class="food-day-kind-tag${i===0?'':' is-blank'}">${esc(kShort)}</span>
-              <div style="min-width:0;flex:1"><span class="food-day-dishrow-name">${esc(dish.name||'（名前なし）')}${placeHTML}</span>${mobTagHTML}</div>
-              ${photoHTML}
-            </div>`;
-          });
+        // スマホ用: 新レイアウト（左：料理名列、右：写真帯）
+        const allMobPhotoPaths = [];
+        for (const s of sorted) for (const dish of s.dishes) for (const p of (dish.photos||[])) allMobPhotoPaths.push(p.path);
+        const hasMobPhotos = allMobPhotoPaths.length > 0;
+        const MAX_MOB_LINES = hasMobPhotos ? 3 : 5;
+
+        const allMobDishLines = [];
+        for (const s of sorted) { const kShort = KIND_SHORT[s.kind]||s.kind; s.dishes.forEach((dish, i) => allMobDishLines.push({kShort, dish, isFirst: i===0})); }
+        const visibleMobLines = allMobDishLines.length > MAX_MOB_LINES ? allMobDishLines.slice(0, MAX_MOB_LINES - 1) : allMobDishLines;
+        const hiddenMobCount = allMobDishLines.length - visibleMobLines.length;
+
+        let mobNamesHTML = visibleMobLines.map(({kShort, dish, isFirst}) => {
+          const isOut = dish.type==='out';
+          const placeHTML = isOut&&dish.place ? `<span class="food-day-mob-place">${esc(dish.place)}</span>` : '';
+          return `<div class="food-day-mob-line"><span class="food-day-mob-kind${isFirst?'':' is-dim'}">${esc(kShort)}</span><span class="food-day-mob-name">${esc(dish.name||'（名前なし）')}${placeHTML}</span></div>`;
+        }).join('');
+        if (hiddenMobCount > 0) mobNamesHTML += `<div class="food-day-mob-more">他${hiddenMobCount}品</div>`;
+
+        let mobStripHTML = '';
+        if (hasMobPhotos) {
+          const pathsJSON = esc(JSON.stringify(allMobPhotoPaths));
+          let mobPhotoItems = '';
+          let mobPhotoIdx = 0;
+          for (const s of sorted) for (const dish of s.dishes) for (const p of (dish.photos||[])) {
+            mobPhotoItems += `<div class="food-day-mob-photo" onclick="event.stopPropagation();openFoodLightbox(${pathsJSON},${mobPhotoIdx})"><img data-path="${esc(p.path)}" alt="" loading="lazy"></div>`;
+            mobPhotoIdx++;
+          }
+          const countBadge = allMobPhotoPaths.length > 1 ? `<span class="food-day-mob-count" data-total="${allMobPhotoPaths.length}">1/${allMobPhotoPaths.length}</span>` : '';
+          mobStripHTML = `<div class="food-day-mob-strip" onclick="event.stopPropagation()"><div class="food-day-mob-scroll-outer"><div class="food-day-mob-scroll">${mobPhotoItems}</div>${countBadge}</div></div>`;
         }
-        mealsColHTML += `<div class="food-day-dishlist">${dishRows}</div>`;
+        mealsColHTML += `<div class="food-day-mob${hasMobPhotos?' has-photos':' no-photos'}"><div class="food-day-mob-names">${mobNamesHTML}</div>${mobStripHTML}</div>`;
       } else {
         // No filter active, show "記録なし" (today shows "+ 記録する")
         mealsColHTML = isToday
@@ -430,4 +440,20 @@ function renderFoodList() {
 
   container.innerHTML = html;
   fillSignedUrls(container);
+  _attachFoodMobStripCounters(container);
+}
+
+function _attachFoodMobStripCounters(container) {
+  container.querySelectorAll('.food-day-mob-scroll').forEach(scrollEl => {
+    const outer = scrollEl.closest('.food-day-mob-scroll-outer');
+    if (!outer) return;
+    const counter = outer.querySelector('.food-day-mob-count');
+    if (!counter) return;
+    const total = parseInt(counter.dataset.total || '1', 10);
+    if (total <= 1) return;
+    scrollEl.addEventListener('scroll', () => {
+      const idx = Math.round(scrollEl.scrollLeft / Math.max(scrollEl.offsetWidth, 1)) + 1;
+      counter.textContent = `${Math.min(Math.max(idx, 1), total)}/${total}`;
+    }, { passive: true });
+  });
 }

@@ -25,6 +25,7 @@
     .food-day-thumb:hover { opacity:0.85; }
     .food-day-thumb.is-extra { display:none; }
     .food-day-dishlist { display:none; }
+    .food-day-mob { display:none; }
     .food-day-thumb-more { width:56px; height:56px; border-radius:6px; background:var(--paper3); color:var(--ink3); font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer; }
     .food-day-empty { color:var(--mute); font-family:'Space Grotesk',sans-serif; font-size:12px; font-style:italic; padding:2px 0; }
     .food-day-today-add { color:var(--accent); font-style:normal; font-weight:600; }
