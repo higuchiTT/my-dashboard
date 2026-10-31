@@ -63,6 +63,9 @@ let _foodUploading = 0;
 let _foodPopupId = null;
 let _lightboxPhotos = [];
 let _lightboxIdx = 0;
+let _foodMobAutoplayObserver = null;
+let _foodMobAutoplayTimeouts = [];
+let _foodMobAutoplayIntervals = [];
 let _foodShowEmpty = false;
 try { _foodShowEmpty = localStorage.getItem('food_show_empty') === '1'; } catch(e) {}
 
@@ -438,9 +441,121 @@ function renderFoodList() {
     html += '</div>';
   }
 
+  _cleanFoodMobAutoplay();
   container.innerHTML = html;
   fillSignedUrls(container);
   _attachFoodMobStripCounters(container);
+  _attachFoodMobStripAutoplay(container);
+}
+
+function _cleanFoodMobAutoplay() {
+  if (_foodMobAutoplayObserver) {
+    _foodMobAutoplayObserver.disconnect();
+    _foodMobAutoplayObserver = null;
+  }
+  _foodMobAutoplayTimeouts.forEach(id => clearTimeout(id));
+  _foodMobAutoplayTimeouts = [];
+  _foodMobAutoplayIntervals.forEach(id => clearInterval(id));
+  _foodMobAutoplayIntervals = [];
+}
+
+function _attachFoodMobStripAutoplay(container) {
+  // prefers-reduced-motion が真なら何もしない
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  // PC幅（640px超）では帯が表示されないので動かさない
+  if (!window.matchMedia('(max-width: 640px)').matches) return;
+
+  // 写真が2枚以上の帯だけ対象
+  const strips = Array.from(container.querySelectorAll('.food-day-mob-scroll')).filter(el => {
+    const outer = el.closest('.food-day-mob-scroll-outer');
+    if (!outer) return false;
+    const counter = outer.querySelector('.food-day-mob-count');
+    if (!counter) return false;
+    return parseInt(counter.dataset.total || '1', 10) >= 2;
+  });
+  if (!strips.length) return;
+
+  function advanceStrip(el) {
+    if (document.hidden) return;
+    if (!window.matchMedia('(max-width: 640px)').matches) return;
+    const listEl = document.getElementById('foodListView');
+    if (!listEl || listEl.style.display === 'none') return;
+    const w = el.offsetWidth;
+    if (!w) return;
+    const total = el.querySelectorAll('.food-day-mob-photo').length;
+    if (total < 2) return;
+    const cur = Math.round(el.scrollLeft / w);
+    const next = (cur + 1) % total;
+    el._mobAutoScrolling = true;
+    el.scrollTo({ left: next * w, behavior: 'smooth' });
+    // smooth scroll は最大700ms程度なのでフラグをその後に解除する
+    const clearId = setTimeout(() => {
+      el._mobAutoScrolling = false;
+      _foodMobAutoplayTimeouts = _foodMobAutoplayTimeouts.filter(id => id !== clearId);
+    }, 700);
+    _foodMobAutoplayTimeouts.push(clearId);
+  }
+
+  function stopStrip(el) {
+    if (el._mobAutoplayInterval != null) {
+      clearInterval(el._mobAutoplayInterval);
+      _foodMobAutoplayIntervals = _foodMobAutoplayIntervals.filter(id => id !== el._mobAutoplayInterval);
+      el._mobAutoplayInterval = null;
+    }
+    if (el._mobAutoplayTimeout != null) {
+      clearTimeout(el._mobAutoplayTimeout);
+      _foodMobAutoplayTimeouts = _foodMobAutoplayTimeouts.filter(id => id !== el._mobAutoplayTimeout);
+      el._mobAutoplayTimeout = null;
+    }
+  }
+
+  function startStrip(el) {
+    if (el._mobAutoplayStopped) return;
+    if (el._mobAutoplayInterval != null || el._mobAutoplayTimeout != null) return; // 既に動いている
+    // 見え始めてから 2.5秒 + 0〜1秒のランダムずらし
+    const delay = 2500 + Math.random() * 1000;
+    const tid = setTimeout(() => {
+      _foodMobAutoplayTimeouts = _foodMobAutoplayTimeouts.filter(id => id !== tid);
+      el._mobAutoplayTimeout = null;
+      if (el._mobAutoplayStopped) return;
+      advanceStrip(el);
+      const iid = setInterval(() => {
+        if (el._mobAutoplayStopped) { stopStrip(el); return; }
+        advanceStrip(el);
+      }, 2500);
+      el._mobAutoplayInterval = iid;
+      _foodMobAutoplayIntervals.push(iid);
+    }, delay);
+    el._mobAutoplayTimeout = tid;
+    _foodMobAutoplayTimeouts.push(tid);
+  }
+
+  _foodMobAutoplayObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        startStrip(entry.target);
+      } else {
+        stopStrip(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  strips.forEach(el => {
+    el._mobAutoplayStopped = false;
+    el._mobAutoScrolling = false;
+    el._mobAutoplayInterval = null;
+    el._mobAutoplayTimeout = null;
+
+    // 手で触ったら自動切り替えを止める（自動スクロール中は誤検知しない）
+    el.addEventListener('touchstart', () => {
+      if (!el._mobAutoScrolling) { el._mobAutoplayStopped = true; stopStrip(el); }
+    }, { passive: true });
+    el.addEventListener('pointerdown', () => {
+      if (!el._mobAutoScrolling) { el._mobAutoplayStopped = true; stopStrip(el); }
+    }, { passive: true });
+
+    _foodMobAutoplayObserver.observe(el);
+  });
 }
 
 function _attachFoodMobStripCounters(container) {
