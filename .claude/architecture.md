@@ -91,7 +91,7 @@ c:\work\private\
 - checker 通過と checklist.md 明示の両方が必要な設計
 
 ### MCP の登録場所
-- `.mcp.json`（プロジェクトルート）に定義
+- `.mcp.json`（プロジェクトルート）に定義。版を固定し `--prefer-offline` を付ける（`@latest` だと起動のたびに npm に問い合わせ、ネットが遅いときやスリープ復帰の直後に30秒の接続制限を超えて失敗するため）。更新するときは版の番号を書き換える
 - `.claude/settings.json` の `enabledMcpjsonServers` で承認
 - グローバル（`~/.claude/`）には書かない方針
 

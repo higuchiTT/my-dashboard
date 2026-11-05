@@ -8,10 +8,13 @@ tools:
   - Read
   - Grep
   - mcp__playwright__browser_navigate
-  - mcp__playwright__browser_screenshot
+  - mcp__playwright__browser_take_screenshot
   - mcp__playwright__browser_click
   - mcp__playwright__browser_evaluate
-  - mcp__playwright__browser_wait_for_selector
+  - mcp__playwright__browser_wait_for
+  - mcp__playwright__browser_resize
+  - mcp__playwright__browser_snapshot
+  - mcp__playwright__browser_close
 model: claude-sonnet-4-6
 ---
 
