@@ -54,7 +54,8 @@
     .food-tag-card-kind { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; background:var(--paper2); padding:1px 6px; border-radius:4px; color:var(--ink2); flex-shrink:0; }
     .food-tag-card-type { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:600; padding:1px 6px; border-radius:10px; flex-shrink:0; }
     .food-tag-card-type.home { background:rgba(90,107,58,0.12); color:var(--ok); }
-    .food-tag-card-type.out { background:rgba(107,69,160,0.1); color:#6b45a0; }
+    .food-tag-card-type.deli { background:rgba(163,106,24,0.1); color:var(--warn); }
+    .food-tag-card-type.out  { background:rgba(107,69,160,0.1); color:#6b45a0; }
     .food-tag-card-place { font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--ink3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
 
     /* ── FOOD TAG CATEGORY FILTER PILLS ── */
@@ -67,6 +68,9 @@
     .food-tag-cat-hdr { display:flex; align-items:center; gap:8px; margin-bottom:8px; padding-bottom:5px; border-bottom:1.5px solid rgba(26,24,20,0.1); }
     .food-tag-cat-label { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink2); }
     .food-tag-cat-cnt { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--mute); }
+
+    /* ── AUTO PRESET TAG NOTICE ── */
+    .food-dish-tag-preset-notice { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ok); letter-spacing:0.03em; padding:2px 0 0; }
 
     /* ── FOOD TAG SUGGESTION PANEL (MODAL) ── */
     .food-dish-tag-suggest { margin-top:4px; min-width:0; }

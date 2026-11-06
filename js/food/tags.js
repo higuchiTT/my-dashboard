@@ -177,9 +177,9 @@ function _renderFoodTagDetail(container) {
     const d = new Date(meal.date + 'T00:00:00');
     const dateLabel = `${d.getMonth() + 1}/${d.getDate()}`;
     const kindShort = KIND_SHORT[sitting.kind] || sitting.kind;
-    const isOut = dish.type === 'out';
-    const typeLabel = isOut ? '外食' : '自炊';
-    const placeLabel = isOut && dish.place ? `@${dish.place}` : '';
+    const typeLabel = dish.type==='out' ? '外食' : dish.type==='deli' ? '総菜' : '自炊';
+    const typeCls   = dish.type==='out' ? 'out'  : dish.type==='deli' ? 'deli'  : 'home';
+    const placeLabel = (dish.type==='out'||dish.type==='deli') && dish.place ? `@${dish.place}` : '';
     const mealId = esc(String(meal.id));
     const dishId = esc(String(dish.id));
     const firstPhoto = (dish.photos || [])[0];
@@ -193,7 +193,7 @@ function _renderFoodTagDetail(container) {
         <div class="food-tag-card-meta">
           <span class="food-tag-card-date">${esc(dateLabel)}</span>
           <span class="food-tag-card-kind">${esc(kindShort)}</span>
-          <span class="food-tag-card-type ${isOut ? 'out' : 'home'}">${esc(typeLabel)}</span>
+          <span class="food-tag-card-type ${typeCls}">${esc(typeLabel)}</span>
           ${placeLabel ? `<span class="food-tag-card-place">${esc(placeLabel)}</span>` : ''}
         </div>
       </div>
@@ -213,4 +213,147 @@ function showFoodTagDetail(tag) {
 function showFoodTagList() {
   _foodTagsActiveTag = null;
   renderFoodTagView();
+}
+
+// ── PRESET TAGS ──
+
+// Groups of equivalent ingredient name forms (canonical first, then aliases).
+// Add entries freely; the array key is not significant.
+const _FOOD_INGR_ALIAS_GROUPS = [
+  ['ナス', '茄子', 'なす'],
+  ['にんじん', '人参', 'ニンジン', '人蔘'],
+  ['玉ねぎ', 'タマネギ', '玉葱', 'たまねぎ'],
+  ['豚肉', '豚'],
+  ['鶏肉', '鶏', '鳥肉'],
+  ['じゃがいも', 'ジャガイモ', 'じゃが芋', 'ジャガ芋', 'じゃがイモ'],
+  ['キャベツ', 'きゃべつ'],
+  ['大根', 'だいこん', 'ダイコン'],
+  ['豆腐', 'とうふ', 'トウフ'],
+  ['卵', 'たまご', '玉子', '鶏卵'],
+  ['牛肉', '牛', 'ビーフ'],
+  ['白菜', 'はくさい', 'ハクサイ'],
+  ['ほうれん草', 'ほうれんそう', 'ホウレンソウ'],
+  ['えのき', 'エノキ', '榎茸'],
+  ['しいたけ', 'シイタケ', '椎茸'],
+  ['サーモン', '鮭', 'さけ', 'シャケ', 'しゃけ'],
+  ['鯖', 'サバ', 'さば'],
+  ['マグロ', '鮪', 'まぐろ'],
+  ['カツオ', '鰹', 'かつお'],
+  ['ひき肉', '挽肉', '挽き肉', 'ミンチ'],
+  ['きのこ', 'キノコ', '茸'],
+  ['長芋', '長いも', 'ながいも', 'とろろ'],
+];
+
+// Word rules: if any word in `words` appears as substring in dish name, add `tags`.
+// Processed in order; tags accumulate.
+const _FOOD_NAME_RULES = [
+  { words: ['刺身', 'さしみ', 'たたき', 'タタキ'],           tags: ['生', '魚', '主菜', '和食'] },
+  { words: ['寿司', '鮨', 'すし', 'スシ', '握り'],           tags: ['生', '米', '主食', '和食'] },
+  { words: ['丼'],                                            tags: ['丼', '米', '主食'] },
+  { words: ['サラダ'],                                        tags: ['サラダ', '副菜'] },
+  { words: ['スープ', '汁', 'みそしる', 'ポタージュ', 'コンソメ', 'ミネストローネ'], tags: ['汁物'] },
+  // よく作る料理（名前に食材が出てこないもの）
+  { words: ['ハンバーグ'],                                   tags: ['ひき肉', '肉', '主菜', '洋食', '焼き'] },
+  { words: ['冷奴', '冷やっこ', '湯豆腐'],                   tags: ['豆腐', '副菜', '和食'] },
+  { words: ['肉じゃが'],                                     tags: ['じゃがいも', '主菜', '和食', '煮物'] },
+  { words: ['親子丼'],                                       tags: ['鶏肉', '卵'] },
+  { words: ['ムニエル'],                                     tags: ['魚', '主菜', '洋食', '焼き'] },
+  { words: ['唐揚げ', 'からあげ', '生姜焼き', 'しょうが焼き', '南蛮'], tags: ['主菜', '和食'] },
+  { words: ['味噌煮', 'おひたし', 'お浸し', '煮びたし', '照り焼き'], tags: ['和食'] },
+  { words: ['炒め', '炒飯', 'いため'],                       tags: ['炒め物'] },
+  { words: ['焼き', '焼'],                                   tags: ['焼き'] },
+  { words: ['煮物', '煮込み', '煮びたし', '煮'],             tags: ['煮物'] },
+  { words: ['揚げ', 'フライ', '唐揚げ', '天ぷら', 'てんぷら', '天麩羅', 'カツ'], tags: ['揚げ物'] },
+  { words: ['和え', 'あえ'],                                 tags: ['和え物'] },
+  { words: ['漬け', 'マリネ', 'ピクルス'],                   tags: ['漬け'] },
+  { words: ['蒸し', '蒸'],                                   tags: ['蒸し'] },
+  { words: ['うどん', 'そば', 'ラーメン', 'パスタ', 'スパゲッティ', 'そうめん', '素麺', '冷麺', 'フォー', 'ビーフン', '焼きそば'], tags: ['麺', '主食'] },
+  { words: ['ごはん', 'ライス', 'おにぎり', 'おにぎらず', 'チャーハン', 'ピラフ', 'リゾット'], tags: ['米', '主食'] },
+  { words: ['カレー'],                                       tags: ['主菜'] },
+  { words: ['餃子', 'ぎょうざ', 'ギョウザ', '麻婆', 'マーボー', '回鍋肉', '八宝菜', '酢豚', 'チャーハン', '春巻き', 'バンバンジー'], tags: ['中華'] },
+  { words: ['キムチ', 'ビビンバ', 'チゲ', 'プルコギ', 'ナムル', 'チャプチェ'],                      tags: ['韓国'] },
+  { words: ['ピザ', 'リゾット', 'ラザニア', 'ニョッキ', 'ジェノベーゼ', 'アマトリチャーナ'],          tags: ['イタリアン'] },
+  { words: ['サンドイッチ', 'サンド', 'バーガー', 'トースト', 'ホットサンド'],                       tags: ['洋食'] },
+];
+
+// Return true if `name` contains `tag` or any alias form in the same group.
+function _foodIngrMatchesName(tag, name) {
+  if (name.includes(tag)) return true;
+  for (const group of _FOOD_INGR_ALIAS_GROUPS) {
+    if (group.includes(tag)) {
+      return group.some(alias => name.includes(alias));
+    }
+  }
+  return false;
+}
+
+// Return tags inferred from word rules applied to dish name.
+function _foodNameRuleTags(name) {
+  const result = [];
+  const seen = new Set();
+  for (const rule of _FOOD_NAME_RULES) {
+    if (rule.words.some(w => name.includes(w))) {
+      for (const t of rule.tags) {
+        if (!seen.has(t)) { result.push(t); seen.add(t); }
+      }
+    }
+  }
+  return result;
+}
+
+/**
+ * Pure function. Suggests tags for a dish name based on past meal records.
+ * 1. If a past dish with the exact same name exists, return its most-recent tags.
+ * 2. Otherwise infer: ingredient tags from past meals that match the name, then word-rule tags.
+ * @param {string} name  Dish name (trimmed internally)
+ * @param {Array}  meals All meal records
+ * @returns {string[]} Deduped tag array
+ */
+function presetFoodTags(name, meals) {
+  const trimmed = (name || '').trim();
+  if (!trimmed) return [];
+
+  // Step 1: exact name match — most recent with non-empty tags
+  const matches = [];
+  for (const m of (meals || [])) {
+    for (const s of (m.sittings || [])) {
+      for (const d of (s.dishes || [])) {
+        if ((d.name || '').trim() === trimmed && (d.tags || []).length > 0) {
+          matches.push({ date: m.date || '', tags: d.tags.slice() });
+        }
+      }
+    }
+  }
+  if (matches.length > 0) {
+    matches.sort((a, b) => b.date.localeCompare(a.date));
+    return [...matches[0].tags];
+  }
+
+  // Step 2: inference
+  const result = [];
+  const seen = new Set();
+
+  // Collect all ingredient tags ever used
+  const ingrTags = new Set();
+  for (const m of (meals || [])) {
+    for (const s of (m.sittings || [])) {
+      for (const d of (s.dishes || [])) {
+        for (const t of (d.tags || [])) {
+          if (foodTagCategory(t) === 'ingredient') ingrTags.add(t);
+        }
+      }
+    }
+  }
+  for (const tag of ingrTags) {
+    if (_foodIngrMatchesName(tag, trimmed) && !seen.has(tag)) {
+      result.push(tag); seen.add(tag);
+    }
+  }
+
+  // Word-rule tags
+  for (const ruleTag of _foodNameRuleTags(trimmed)) {
+    if (!seen.has(ruleTag)) { result.push(ruleTag); seen.add(ruleTag); }
+  }
+
+  return result;
 }

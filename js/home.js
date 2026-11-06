@@ -244,10 +244,11 @@ function renderHome() {
       <div class="hm-food-dots">${dotsHTML}</div>
     </div>`;
   }).join('');
-  let eatCount=0,homeCook=0,outEat=0;
-  foodDates.forEach(ds=>{const m=mealMap[ds];if(!m)return;(m.sittings||[]).forEach(s=>{eatCount++;const hasOut=(s.dishes||[]).some(d=>d.type==='out');if(hasOut)outEat++;else homeCook++;});});
+  let eatCount=0,homeCook=0,deliEat=0,outEat=0;
+  foodDates.forEach(ds=>{const m=mealMap[ds];if(!m)return;(m.sittings||[]).forEach(s=>{eatCount++;const hasOut=(s.dishes||[]).some(d=>d.type==='out');const hasDeli=(s.dishes||[]).some(d=>d.type==='deli');if(hasOut)outEat++;else if(hasDeli)deliEat++;else homeCook++;});});
   const foodEl = document.getElementById('homeFoodCard');
   if(foodEl){
+    const deliPart = deliEat > 0 ? ` / 総菜 ${deliEat}` : '';
     foodEl.innerHTML = `<div class="hm-card">
       <div class="hm-card-hdr" onclick="nav('food')">
         <div class="hm-card-hdr-left">
@@ -258,7 +259,7 @@ function renderHome() {
       </div>
       <div class="hm-card-body">
         <div class="hm-food-grid" id="homeFoodGrid">${cellsHTML}</div>
-        <div class="hm-food-summary">2週間で食事 ${eatCount} 回（自炊 ${homeCook} / 外食 ${outEat}）</div>
+        <div class="hm-food-summary">2週間で食事 ${eatCount} 回（自炊 ${homeCook}${deliPart} / 外食 ${outEat}）</div>
       </div>
     </div>`;
     fillSignedUrls(document.getElementById('homeFoodGrid'));

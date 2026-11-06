@@ -336,10 +336,10 @@
       .food-cal-today-btn { height:34px; padding:0 10px; }
       .food-header-row { flex-direction:column; align-items:flex-start; gap:10px; margin-bottom:14px; }
       .food-header-title { font-size:22px; }
-      .food-stats-row { flex:none; width:100%; gap:6px; }
-      .food-stat-card { flex:1; min-width:0; min-height:unset; padding:8px 10px; gap:8px; }
-      .food-stat-num { font-size:18px; }
-      .food-stat-label { font-size:9px; }
+      .food-stats-row { flex:none; width:100%; gap:4px; }
+      .food-stat-card { flex:1; min-width:0; min-height:unset; padding:6px 6px; gap:4px; overflow:hidden; }
+      .food-stat-num { font-size:16px; }
+      .food-stat-label { font-size:10px; white-space:normal; line-height:1.2; }
       .food-stat-icon { display:none; }
       .food-add-btn-desktop { display:none; }
       .food-fab { display:flex !important; }
@@ -369,6 +369,7 @@
       .food-cal-more-sm { position:absolute; bottom:2px; right:2px; background:rgba(26,24,20,0.65); color:#fff; font-family:'JetBrains Mono',monospace; font-size:8px; font-weight:700; padding:1px 3px; }
       .food-cal-dot-mob { display:block; width:6px; height:6px; border-radius:50%; position:absolute; bottom:4px; left:50%; transform:translateX(-50%); }
       .food-cal-dot-mob.home { background:var(--ok); }
+      .food-cal-dot-mob.deli { background:var(--warn); }
       .food-cal-dot-mob.out  { background:var(--accent); }
       #page-food .ui-seg-btn { height:36px; font-size:13px; }
       #page-food .ui-pill { height:36px; font-size:13px; }

@@ -93,10 +93,16 @@ function foodSittingSectionHTML(sit) {
 
 function foodDishRowHTML(sittingId, d, i) {
   const isOut = d.type === 'out';
+  const isDeli = d.type === 'deli';
+  const showPlace = isOut || isDeli;
   const sid = esc(String(sittingId));
   const did = esc(String(d.id));
   const photosHTML = foodDishPhotoThumbsHTML(sittingId, d);
   const suggestBodyHTML = _foodDishTagSuggestBodyHTML(String(d.id));
+  const typeHome = (d.type === 'home' || !d.type) ? ' active-home' : '';
+  const typeDeli = isDeli ? ' active-deli' : '';
+  const typeOut  = isOut  ? ' active-out'  : '';
+  const placePlaceholder = isOut ? '店名' : '買った店（任意）';
   return `<div class="food-dish-row" id="foodDish-${sid}-${i}"
     onclick="_setFocusDishId('${did}')"
     onfocus="_setFocusDishId('${did}')" tabindex="-1">
@@ -104,14 +110,16 @@ function foodDishRowHTML(sittingId, d, i) {
       <div class="food-dish-row-top">
         <input class="food-dish-name" type="text" value="${esc(d.name)}" placeholder="料理名（必須）"
           oninput="foodDishFieldInput('${sid}','${did}','name',this.value)"
+          onblur="onFoodDishNameBlur('${sid}','${did}')"
           onfocus="event.stopPropagation();_setFocusDishId('${did}')">
         <div class="food-type-toggle">
-          <button class="food-type-btn${!isOut ? ' active-home' : ''}" onclick="event.stopPropagation();setFoodDishType('${sid}','${did}','home')">自炊</button>
-          <button class="food-type-btn${isOut ? ' active-out' : ''}" onclick="event.stopPropagation();setFoodDishType('${sid}','${did}','out')">外食</button>
+          <button class="food-type-btn${typeHome}" onclick="event.stopPropagation();setFoodDishType('${sid}','${did}','home')">自炊</button>
+          <button class="food-type-btn${typeDeli}" onclick="event.stopPropagation();setFoodDishType('${sid}','${did}','deli')">総菜</button>
+          <button class="food-type-btn${typeOut}"  onclick="event.stopPropagation();setFoodDishType('${sid}','${did}','out')">外食</button>
         </div>
       </div>
       <div class="food-dish-extra">
-        ${isOut ? `<input class="food-dish-place" type="text" value="${esc(d.place || '')}" placeholder="店名" oninput="foodDishFieldInput('${sid}','${did}','place',this.value)" onfocus="event.stopPropagation();_setFocusDishId('${did}')">` : ''}
+        ${showPlace ? `<input class="food-dish-place" type="text" value="${esc(d.place || '')}" placeholder="${esc(placePlaceholder)}" oninput="foodDishFieldInput('${sid}','${did}','place',this.value)" onfocus="event.stopPropagation();_setFocusDishId('${did}')">` : ''}
         <input class="food-dish-url" type="text" value="${esc(d.recipeUrl || '')}" placeholder="レシピURL（任意）" oninput="foodDishFieldInput('${sid}','${did}','recipeUrl',this.value)" onfocus="event.stopPropagation();_setFocusDishId('${did}')">
       </div>
       <textarea class="food-dish-note-ta" placeholder="料理の感想（任意）"
@@ -128,6 +136,7 @@ function foodDishRowHTML(sittingId, d, i) {
           <div class="food-dish-tag-ac" id="foodDishTagAC-${did}"></div>
         </div>
       </div>
+      <div class="food-dish-tag-preset-notice" id="foodDishTagPresetNotice-${did}" style="display:none">料理名から自動で入れました</div>
       <div class="food-dish-tag-suggest" id="foodDishTagSuggestWrap-${did}" style="${suggestBodyHTML ? '' : 'display:none'}" onclick="event.stopPropagation()">
         <div class="food-dish-tag-suggest-hdr" onclick="event.stopPropagation();toggleFoodTagSuggestions('${did}')">
           <span class="food-dish-tag-suggest-hdr-label">候補</span>
@@ -661,6 +670,29 @@ document.addEventListener('paste', e => {
   e.preventDefault();
   handleFoodPhotoUpload(files); // uses _focusDishId internally
 });
+
+// ── AUTO PRESET TAGS ──
+function onFoodDishNameBlur(sittingId, dishId) {
+  if (!_foodModalState) return;
+  const sitting = (_foodModalState.sittings||[]).find(s=>String(s.id)===String(sittingId));
+  if (!sitting) return;
+  const dish = (sitting.dishes||[]).find(d=>String(d.id)===String(dishId));
+  if (!dish) return;
+  const name = dish.name || '';
+  if (!name.trim() || (dish.tags||[]).length > 0) return;
+  const tags = presetFoodTags(name, meals);
+  if (!tags.length) return;
+  tags.forEach(t => foodDishTagAdd(dishId, t));
+  _showFoodTagPresetNotice(dishId);
+}
+
+function _showFoodTagPresetNotice(dishId) {
+  const el = document.getElementById('foodDishTagPresetNotice-' + dishId);
+  if (!el) return;
+  el.style.display = '';
+  if (el._presetTimer) clearTimeout(el._presetTimer);
+  el._presetTimer = setTimeout(() => { el.style.display = 'none'; el._presetTimer = null; }, 5000);
+}
 
 // モーダル外にファイルを落としたとき、ブラウザが画像を開いてページ遷移するのを防ぐ
 ['dragover', 'drop'].forEach(type => window.addEventListener(type, e => {

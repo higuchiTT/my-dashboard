@@ -15,14 +15,14 @@
   <link rel="stylesheet" href="css/wishlist.css?v=e4179203">
   <link rel="stylesheet" href="css/travel.css?v=2f2a54c8">
   <link rel="stylesheet" href="css/ui.css?v=9b3587fd">
-  <link rel="stylesheet" href="css/food.css?v=54a05933">
+  <link rel="stylesheet" href="css/food.css?v=b5c1d3c9">
   <link rel="stylesheet" href="css/misc.css?v=be82bcb4">
   <link rel="stylesheet" href="css/todo.css?v=d60ac8a2">
   <link rel="stylesheet" href="css/feedback.css?v=b8c1df10">
   <link rel="stylesheet" href="css/accounts.css?v=8517bda7">
-  <link rel="stylesheet" href="css/responsive.css?v=e241c7ce">
+  <link rel="stylesheet" href="css/responsive.css?v=30dde7b8">
   <link rel="stylesheet" href="css/notes.css?v=598142bd">
-  <link rel="stylesheet" href="css/food-tags.css?v=575b23f6">
+  <link rel="stylesheet" href="css/food-tags.css?v=72030baa">
   <link rel="stylesheet" href="css/food-suggest.css?v=a6959dce">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.min.js" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
 </head>
@@ -836,6 +836,7 @@
       <div class="food-filter-pills">
         <button class="ui-pill active" onclick="setFoodFilter('all',this)">すべて</button>
         <button class="ui-pill" onclick="setFoodFilter('home',this)">自炊</button>
+        <button class="ui-pill" onclick="setFoodFilter('deli',this)">総菜</button>
         <button class="ui-pill" onclick="setFoodFilter('out',this)">外食</button>
       </div>
       <select id="foodTagSel" class="food-tag-sel" onchange="setFoodTagFilter(this.value)">
@@ -983,7 +984,7 @@
 <script src="js/core/sync.js?v=d49064ec"></script>
 <script src="js/core/init.js?v=9ccd7285"></script>
 <script src="js/core/nav.js?v=430dfaed"></script>
-<script src="js/home.js?v=9474bf64"></script>
+<script src="js/home.js?v=df8a7de0"></script>
 <script src="js/todo.js?v=7b09dd4c"></script>
 <script src="js/ledger/core.js?v=c60c1f2c"></script>
 <script src="js/ledger/import.js?v=6ea1265b"></script>
@@ -995,11 +996,11 @@
 <script src="js/wishlist.js?v=cf9f0b03"></script>
 <script src="js/ledger/subs.js?v=3e1d587d"></script>
 <script src="js/travel.js?v=b6599f27"></script>
-<script src="js/food/list.js?v=b5d22e82"></script>
-<script src="js/food/calendar.js?v=e2a0d8d5"></script>
-<script src="js/food/modal.js?v=24879a35"></script>
-<script src="js/food/popup.js?v=8812b968"></script>
-<script src="js/food/tags.js?v=bb373044"></script>
+<script src="js/food/list.js?v=cd75a047"></script>
+<script src="js/food/calendar.js?v=7b5233a3"></script>
+<script src="js/food/modal.js?v=0a2a215a"></script>
+<script src="js/food/popup.js?v=4df3b4fa"></script>
+<script src="js/food/tags.js?v=f7a20884"></script>
 <script src="js/food/suggest.js?v=3bdd8648"></script>
 <script src="js/notes.js?v=46a4ed85"></script>
 <script src="js/core/utils.js?v=843f163e"></script>

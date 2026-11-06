@@ -162,6 +162,32 @@ test('suggestFoodDishes: 7日以内に食べた料理は、score が高くても
   assert.equal(result[1].recent, true);
 });
 
+test('presetFoodTags: 同じ名前の過去の料理があれば最新のタグを返す', () => {
+  const ms = [
+    { id: 'm1', date: '2026-10-01', memo: '', v: 2, sittings: [{ id: 's1', kind: 'dinner', dishes: [
+      { id: 'd1', name: 'カレーライス', type: 'home', tags: ['豚肉', 'じゃがいも'], photos: [] }
+    ]}]},
+    { id: 'm2', date: '2026-11-01', memo: '', v: 2, sittings: [{ id: 's2', kind: 'dinner', dishes: [
+      { id: 'd2', name: 'カレーライス', type: 'home', tags: ['鶏肉', 'にんじん'], photos: [] }
+    ]}]}
+  ];
+  const result = plain(A.presetFoodTags('カレーライス', ms));
+  // m2 が最新 → ['鶏肉','にんじん']
+  assert.deepEqual(result, ['鶏肉', 'にんじん']);
+});
+
+test('presetFoodTags: 過去にない名前でも食材エイリアスと語句ルールからタグを推測する', () => {
+  const ms = [
+    { id: 'm3', date: '2026-10-01', memo: '', v: 2, sittings: [{ id: 's3', kind: 'dinner', dishes: [
+      { id: 'd3', name: 'ナスの炒め物', type: 'home', tags: ['ナス'], photos: [] }
+    ]}]}
+  ];
+  // '茄子の煮びたし' は過去に存在しない。ただし past に 'ナス' (ingredient) があり、茄子はエイリアス
+  const result = plain(A.presetFoodTags('茄子の煮びたし', ms));
+  assert.ok(result.includes('ナス'),  'alias 茄子 → tag ナス');
+  assert.ok(result.includes('煮物'), 'word rule 煮びたし → 煮物');
+});
+
 test('jsq: 引用符やバックスラッシュを含むタグでも onclick の引数として元の文字列に戻る', () => {
   const unesc = s => s.replace(/&quot;|&#39;|&lt;|&gt;|&amp;/g, m => ({ '&quot;': '"', '&#39;': "'", '&lt;': '<', '&gt;': '>', '&amp;': '&' }[m]));
   for (const tag of ["母's", 'a"b', 'c\d', '<b>&']) {

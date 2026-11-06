@@ -35,6 +35,15 @@ function _sittingIsOut(sitting) {
   return (sitting.dishes || []).some(d => d.type === 'out');
 }
 
+function _sittingIsDeli(sitting) {
+  return (sitting.dishes || []).some(d => d.type === 'deli') &&
+         !(sitting.dishes || []).some(d => d.type === 'out');
+}
+
+function _sittingIsHome(sitting) {
+  return !_sittingIsOut(sitting) && !_sittingIsDeli(sitting);
+}
+
 function _allMealPhotos(meal) {
   return (meal.sittings || []).flatMap(s => (s.dishes || []).flatMap(d => d.photos || []));
 }
@@ -343,7 +352,8 @@ function renderFoodList() {
           const kShort = KIND_SHORT[s.kind]||s.kind;
           const dishParts = s.dishes.map(dish => {
             const isOut = dish.type==='out';
-            const placeHTML = isOut&&dish.place ? ` <span class="food-day-place">@${esc(dish.place)}</span>` : '';
+            const showPlace = (isOut || dish.type==='deli') && dish.place;
+            const placeHTML = showPlace ? ` <span class="food-day-place">@${esc(dish.place)}</span>` : '';
             const tags = dish.tags||[];
             const tagsShown = tags.slice(0,2);
             const tagsExtra = tags.length > 2 ? tags.length - 2 : 0;
@@ -387,8 +397,8 @@ function renderFoodList() {
         const hiddenMobCount = allMobDishLines.length - visibleMobLines.length;
 
         let mobNamesHTML = visibleMobLines.map(({kShort, dish, isFirst}) => {
-          const isOut = dish.type==='out';
-          const placeHTML = isOut&&dish.place ? `<span class="food-day-mob-place">${esc(dish.place)}</span>` : '';
+          const showPlace = (dish.type==='out' || dish.type==='deli') && dish.place;
+          const placeHTML = showPlace ? `<span class="food-day-mob-place">${esc(dish.place)}</span>` : '';
           return `<div class="food-day-mob-line"><span class="food-day-mob-kind${isFirst?'':' is-dim'}">${esc(kShort)}</span><span class="food-day-mob-name">${esc(dish.name||'（名前なし）')}${placeHTML}</span></div>`;
         }).join('');
         if (hiddenMobCount > 0) mobNamesHTML += `<div class="food-day-mob-more">他${hiddenMobCount}品</div>`;

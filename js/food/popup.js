@@ -50,16 +50,15 @@ function renderFoodDetailPopup() {
   const sittings = (meal.sittings||[]).slice().sort((a,b)=>KIND_ORDER.indexOf(a.kind)-KIND_ORDER.indexOf(b.kind));
   let bodyHTML = '';
   for (const s of sittings) {
-    const isOut = _sittingIsOut(s);
-    const outPlaces = (s.dishes||[]).filter(d=>d.type==='out'&&d.place).map(d=>d.place);
-    const placeText = isOut && outPlaces.length ? outPlaces[0] : '';
+    const outPlaces = (s.dishes||[]).filter(d=>(d.type==='out'||d.type==='deli')&&d.place).map(d=>d.place);
+    const placeText = outPlaces.length ? outPlaces[0] : '';
     const placeHTML = placeText ? `<span class="food-popup-sitting-place">${esc(placeText)}</span>` : '';
     let dishesHTML = '';
     for (const dish of (s.dishes||[])) {
       const photos = dish.photos || [];
-      const pillCls = dish.type==='out' ? 'out' : 'home';
-      const pillLabel = dish.type==='out' ? '外食' : '自炊';
-      const placeHtml = dish.type==='out' && dish.place ? `<span class="food-popup-dish-place">@${esc(dish.place)}</span>` : '';
+      const pillCls = dish.type==='out' ? 'out' : dish.type==='deli' ? 'deli' : 'home';
+      const pillLabel = dish.type==='out' ? '外食' : dish.type==='deli' ? '総菜' : '自炊';
+      const placeHtml = (dish.type==='out'||dish.type==='deli') && dish.place ? `<span class="food-popup-dish-place">@${esc(dish.place)}</span>` : '';
       const isValidUrl = /^https?:\/\//.test(dish.recipeUrl||'');
       const linkHtml = isValidUrl ? `<a class="food-popup-dish-link" href="${esc(dish.recipeUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${linkSVG} レシピ</a>` : '';
       const noteHtml = dish.note ? `<div class="food-popup-dish-note">${esc(dish.note)}</div>` : '';

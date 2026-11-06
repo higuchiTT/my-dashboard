@@ -46,16 +46,19 @@ function _renderFoodStats() {
   const allSittings = monthMeals.flatMap(m => m.sittings || [])
     .filter(s => !foodTagFilter || (s.dishes||[]).some(d => (d.tags||[]).includes(foodTagFilter)));
   const totalDishes = allSittings.length; // sitting count = 食事回数
-  const homeDishes = allSittings.filter(s => !_sittingIsOut(s)).length;
+  const homeDishes = allSittings.filter(s => _sittingIsHome(s)).length;
+  const deliDishes = allSittings.filter(s => _sittingIsDeli(s)).length;
   const outDishes  = allSittings.filter(s => _sittingIsOut(s)).length;
   const statsEl = document.getElementById('foodStatsRow');
   if (statsEl) {
     const knifeIcon = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 .55.45 1 1 1h3c.55 0 1 .45 1 1v4"/><path d="M21 22v-2"/></svg>`;
     const homeIcon  = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`;
+    const deliIcon  = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`;
     const storeIcon = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="M3 9 5.45 4.1A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/><line x1="12" y1="3" x2="12" y2="9"/></svg>`;
     statsEl.innerHTML = `
       <div class="food-stat-card"><span class="food-stat-icon">${knifeIcon}</span><div class="food-stat-body"><div class="food-stat-label">今月の食事数</div><div class="food-stat-num-row"><span class="food-stat-num">${totalDishes}</span><span class="food-stat-unit">回</span></div></div></div>
       <div class="food-stat-card"><span class="food-stat-icon">${homeIcon}</span><div class="food-stat-body"><div class="food-stat-label">自炊</div><div class="food-stat-num-row"><span class="food-stat-num">${homeDishes}</span><span class="food-stat-unit">回</span></div></div></div>
+      <div class="food-stat-card"><span class="food-stat-icon">${deliIcon}</span><div class="food-stat-body"><div class="food-stat-label">総菜</div><div class="food-stat-num-row"><span class="food-stat-num">${deliDishes}</span><span class="food-stat-unit">回</span></div></div></div>
       <div class="food-stat-card"><span class="food-stat-icon">${storeIcon}</span><div class="food-stat-body"><div class="food-stat-label">外食</div><div class="food-stat-num-row"><span class="food-stat-num">${outDishes}</span><span class="food-stat-unit">回</span></div></div></div>
     `;
   }
@@ -142,8 +145,10 @@ function renderFoodCalendar() {
         const mobBadge = allCellPhotos.length > 1 ? `<div class="food-cal-more-sm">+${allCellPhotos.length - 1}</div>` : '';
         mobHTML = `<div class="food-cal-photo-mob"><img data-path="${esc(allCellPhotos[0].path)}" src="" alt="">${mobBadge}</div>`;
       } else if (allCellDishes.length) {
-        const hasOut = allCellDishes.some(d => d.type === 'out');
-        mobHTML = `<div class="food-cal-dot-mob ${hasOut ? 'out' : 'home'}"></div>`;
+        const hasOut  = allCellDishes.some(d => d.type === 'out');
+        const hasDeli = allCellDishes.some(d => d.type === 'deli');
+        const dotCls  = hasOut ? 'out' : hasDeli ? 'deli' : 'home';
+        mobHTML = `<div class="food-cal-dot-mob ${dotCls}"></div>`;
       }
     }
 
@@ -155,10 +160,12 @@ function renderFoodCalendar() {
       const totalDishCount = allCellDishes.length;
       const extra = totalDishCount > 1 ? `<span class="food-cal-dish-extra">+${totalDishCount - 1}品</span>` : '';
       pcDishRowHTML = `<div class="food-cal-dish-row"><span class="food-cal-dish-name">${firstName}</span>${extra}</div>`;
-      const hasHome = allCellDishes.some(d => d.type !== 'out');
+      const hasHome = allCellDishes.some(d => d.type === 'home' || (!d.type));
+      const hasDeli = allCellDishes.some(d => d.type === 'deli');
       const hasOut  = allCellDishes.some(d => d.type === 'out');
       const pills = [];
       if (hasHome) pills.push(`<span class="food-cal-type-pill home">自炊</span>`);
+      if (hasDeli) pills.push(`<span class="food-cal-type-pill deli">総菜</span>`);
       if (hasOut)  pills.push(`<span class="food-cal-type-pill out">外食</span>`);
       if (pills.length) typePillsHTML = `<div class="food-cal-type-pills">${pills.join('')}</div>`;
     }
@@ -206,7 +213,8 @@ function renderFoodDayDetail(dateStr) {
   let sittingsHTML = '';
   for (const s of sittings) {
     const isOut = _sittingIsOut(s);
-    const outPlace = isOut ? (s.dishes||[]).map(d=>d.place).filter(Boolean)[0] || '' : '';
+    const isDeli = _sittingIsDeli(s);
+    const outPlace = (isOut||isDeli) ? (s.dishes||[]).map(d=>d.place).filter(Boolean)[0] || '' : '';
     const placeLabel = outPlace ? `<span class="food-detail-sitting-place"> — ${esc(outPlace)}</span>` : '';
     const dishRowsHTML = (s.dishes||[]).map(dish => {
       const photos = dish.photos || [];
@@ -214,9 +222,9 @@ function renderFoodDayDetail(dateStr) {
       const thumbHTML = firstPhoto
         ? `<div class="food-detail-thumb"><img data-path="${esc(firstPhoto.path)}" src="" alt="">${photos.length>1?`<div class="food-detail-thumb-badge">+${photos.length-1}</div>`:''}</div>`
         : `<div class="food-detail-thumb">${placeholderSVG}</div>`;
-      const pillCls = dish.type === 'out' ? 'out' : 'home';
-      const pillLabel = dish.type === 'out' ? '外食' : '自炊';
-      const placeHTML = dish.type === 'out' && dish.place ? `<span class="food-detail-dish-place">@${esc(dish.place)}</span>` : '';
+      const pillCls = dish.type==='out' ? 'out' : dish.type==='deli' ? 'deli' : 'home';
+      const pillLabel = dish.type==='out' ? '外食' : dish.type==='deli' ? '総菜' : '自炊';
+      const placeHTML = (dish.type==='out'||dish.type==='deli') && dish.place ? `<span class="food-detail-dish-place">@${esc(dish.place)}</span>` : '';
       const isValidUrl = /^https?:\/\//.test(dish.recipeUrl || '');
       const linkHTML = isValidUrl ? `<a class="food-detail-dish-link" href="${esc(dish.recipeUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${linkSVG} レシピ</a>` : '';
       const noteHTML = dish.note ? `<div class="food-detail-dish-note">${esc(dish.note)}</div>` : '';
