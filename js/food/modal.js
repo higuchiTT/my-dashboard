@@ -51,7 +51,7 @@ function renderFoodModalBody() {
         onchange="onFoodModalDateChange(this.value)">
     </div>
     <div class="food-modal-section">
-      <div class="food-modal-label">食事<span class="food-photo-hint">感想・写真は料理ごとに追加できます（Ctrl+V 貼り付けは最後に選択した料理に追加）</span></div>
+      <div class="food-modal-label">食事<span class="food-photo-hint">感想・写真は料理ごとに追加できます<span class="food-ctrlv-hint">（Ctrl+V 貼り付けは最後に選択した料理に追加）</span></span></div>
       <div id="foodSittingList">${sittingsHTML}</div>
       ${missedKinds.length ? `<div class="food-sitting-add-btns">${addKindBtns}</div>` : ''}
     </div>

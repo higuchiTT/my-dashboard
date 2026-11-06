@@ -181,7 +181,7 @@ function tvRowHTML(t) {
   const timeHTML = t.dueTime ? `<span class="tv-time">${esc(t.dueTime)}</span>` : '';
   const dueInfo = fmtTaskDueLabel(t.due);
   const dueHTML = `<div class="tv-due-wrap"><span class="tv-due ${dueInfo.cls}" onclick="event.stopPropagation();openDuePicker('${esc(String(t.id))}',this)">${dueInfo.label}</span><input type="date" class="tv-due-input" tabindex="-1"></div>`;
-  return `<div class="tv-row" data-task-id="${esc(t.id)}">
+  return `<div class="tv-row" data-task-id="${esc(t.id)}" onclick="openTaskEditSheet('${esc(String(t.id))}')" style="cursor:pointer">
     <span class="tv-dot" style="background:${color}"></span>
     <div class="tv-title">${esc(t.title)}</div>
     ${dueHTML}
@@ -485,4 +485,164 @@ function closeTvTagPop() {
 function undoCompleteById(id) {
   const t = tasks.find(t => String(t.id) === String(id));
   if (t) { t.done = false; t.completedAt = null; saveTasks(); renderTodayView(); renderHome(); updateBadge(); }
+}
+
+// ── TASK EDIT SHEET ──
+let _taskEditId = null;
+let _taskEditTags = null;
+const TV_CATEGORIES = ['仕事','手続き','家事','買い物','修理','ダッシュボード改善案','その他'];
+
+function openTaskEditSheet(id) {
+  const t = tasks.find(t => String(t.id) === String(id));
+  if (!t) return;
+  _taskEditId = String(id);
+  _taskEditTags = [...(t.tags || [])];
+  _renderTaskEditBody();
+  document.getElementById('taskEditOverlay').classList.add('open');
+  document.addEventListener('keydown', _taskEditKeydown);
+  setTimeout(() => { const el = document.getElementById('teTitle'); if (el) el.focus(); }, 50);
+}
+
+function closeTaskEditSheet() {
+  document.getElementById('taskEditOverlay').classList.remove('open');
+  document.removeEventListener('keydown', _taskEditKeydown);
+  _taskEditId = null;
+  _taskEditTags = null;
+}
+
+function _taskEditKeydown(e) {
+  if (e.key === 'Escape') closeTaskEditSheet();
+}
+
+function _renderTaskEditBody() {
+  const t = tasks.find(t => String(t.id) === _taskEditId);
+  if (!t) return;
+  const tags = _taskEditTags || [];
+  const allTags = [...new Set([...TV_ALL_TAGS, ...tasks.flatMap(tt => tt.tags||[]), ...tags])];
+  const noteVal = typeof t.note === 'string' ? t.note : (taskNotes[_taskEditId] || '');
+
+  document.getElementById('taskEditBody').innerHTML = `
+    <div>
+      <label class="ldr-modal-lbl">タイトル</label>
+      <input class="ldr-modal-in" id="teTitle" type="text" value="${esc(t.title)}" placeholder="タスク名" oninput="document.getElementById('teSaveBtn').disabled=!this.value.trim()">
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:140px;">
+        <label class="ldr-modal-lbl">期限</label>
+        <input class="ldr-modal-in" id="teDue" type="date" value="${esc(t.due||'')}">
+      </div>
+      <div style="flex:1;min-width:120px;">
+        <label class="ldr-modal-lbl">時刻</label>
+        <input class="ldr-modal-in" id="teTime" type="time" value="${esc(t.dueTime||'')}">
+      </div>
+    </div>
+    <div>
+      <label class="ldr-modal-lbl">カテゴリ</label>
+      <select class="ldr-modal-in" id="teCat">
+        ${TV_CATEGORIES.map(c => `<option value="${esc(c)}"${t.category===c?' selected':''}>${esc(c)}</option>`).join('')}
+      </select>
+    </div>
+    <div>
+      <label class="ldr-modal-lbl">タグ</label>
+      <div id="teTagChips" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;min-height:24px;">
+        ${tags.map(tag => `<span class="tv-tag-chip tag-${esc(tag)}" style="display:inline-flex;align-items:center;gap:3px;">${esc(tag)}<button onclick="teRemoveTag(${jsq(tag)})" style="background:none;border:none;cursor:pointer;color:inherit;font-size:12px;padding:0 2px;line-height:1;" title="外す">×</button></span>`).join('')}
+      </div>
+      <div id="teTagCandidates" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;">
+        ${allTags.filter(tag => !tags.includes(tag)).map(tag => `<span class="tv-tag-pop-chip tag-${esc(tag)}" onclick="teAddTag(${jsq(tag)})" style="cursor:pointer;">${esc(tag)}</span>`).join('')}
+      </div>
+      <input type="text" id="teTagInput" class="ldr-modal-in" placeholder="新規タグ（Enter で追加）" style="margin-top:4px;" onkeydown="teTagKeydown(event)">
+    </div>
+    <div>
+      <label class="ldr-modal-lbl">メモ</label>
+      <textarea class="ldr-modal-in" id="teNote" rows="3" style="resize:vertical;line-height:1.5;height:auto;" placeholder="メモ">${esc(noteVal)}</textarea>
+    </div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;padding:4px 0;">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:13px;">
+        <input type="checkbox" id="tePinned"${t.isPinned?' checked':''}> ピン留め
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:13px;">
+        <input type="checkbox" id="teDone"${t.done?' checked':''}> 完了済み
+      </label>
+    </div>
+  `;
+
+  document.getElementById('taskEditFtr').innerHTML = `
+    <button class="btn btn-ghost btn-sm" style="border-color:var(--accent);color:var(--accent)" onclick="deleteTaskFromSheet()">削除</button>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-ghost" onclick="closeTaskEditSheet()">キャンセル</button>
+      <button class="btn btn-primary" id="teSaveBtn" onclick="saveTaskEditSheet()"${!t.title.trim()?' disabled':''}>保存</button>
+    </div>
+  `;
+}
+
+function _teRefreshTags() {
+  const tags = _taskEditTags || [];
+  const allTags = [...new Set([...TV_ALL_TAGS, ...tasks.flatMap(tt => tt.tags||[]), ...tags])];
+  const chipsEl = document.getElementById('teTagChips');
+  if (chipsEl) chipsEl.innerHTML = tags.map(tag =>
+    `<span class="tv-tag-chip tag-${esc(tag)}" style="display:inline-flex;align-items:center;gap:3px;">${esc(tag)}<button onclick="teRemoveTag(${jsq(tag)})" style="background:none;border:none;cursor:pointer;color:inherit;font-size:12px;padding:0 2px;line-height:1;" title="外す">×</button></span>`
+  ).join('');
+  const candidatesEl = document.getElementById('teTagCandidates');
+  if (candidatesEl) candidatesEl.innerHTML = allTags.filter(tag => !tags.includes(tag)).map(tag =>
+    `<span class="tv-tag-pop-chip tag-${esc(tag)}" onclick="teAddTag(${jsq(tag)})" style="cursor:pointer;">${esc(tag)}</span>`
+  ).join('');
+}
+
+function teAddTag(tag) {
+  if (!_taskEditTags) return;
+  if (!_taskEditTags.includes(tag)) _taskEditTags.push(tag);
+  _teRefreshTags();
+}
+
+function teRemoveTag(tag) {
+  if (!_taskEditTags) return;
+  _taskEditTags = _taskEditTags.filter(x => x !== tag);
+  _teRefreshTags();
+}
+
+function teTagKeydown(e) {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const val = e.target.value.trim();
+  if (!val) return;
+  teAddTag(val);
+  e.target.value = '';
+}
+
+function saveTaskEditSheet() {
+  if (!_taskEditId) return;
+  const title = (document.getElementById('teTitle').value || '').trim();
+  if (!title) return;
+  const t = tasks.find(t => String(t.id) === _taskEditId);
+  if (!t) return;
+  t.title = title;
+  t.due = document.getElementById('teDue').value || null;
+  t.dueTime = document.getElementById('teTime').value || null;
+  t.category = document.getElementById('teCat').value;
+  t.isPinned = document.getElementById('tePinned').checked;
+  t.tags = [...(_taskEditTags || [])];
+  const wasDone = t.done;
+  t.done = document.getElementById('teDone').checked;
+  if (!wasDone && t.done) t.completedAt = new Date().toISOString();
+  if (wasDone && !t.done) t.completedAt = null;
+  const noteVal = document.getElementById('teNote').value;
+  setTaskNote(t.id, noteVal); // setTaskNote は id を === で比べるので、元の型（数値など）のまま渡す
+  saveTasks();
+  renderTodayView();
+  renderHome();
+  updateBadge();
+  closeTaskEditSheet();
+}
+
+async function deleteTaskFromSheet() {
+  if (!_taskEditId) return;
+  const id = _taskEditId;
+  const t = tasks.find(t => String(t.id) === id);
+  if (!t) return;
+  const ok = await uiConfirm(`「${t.title}」を削除しますか？`, {title:'タスクを削除', okLabel:'削除', danger:true});
+  if (!ok) return;
+  closeTaskEditSheet();
+  delete taskNotes[id];
+  saveTaskNotes();
+  delTask(id);
 }

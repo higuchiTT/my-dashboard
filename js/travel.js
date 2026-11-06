@@ -13,20 +13,27 @@ let _todoEditId = null;      // todo id being edited (null = new)
 let _coverPickTripId = null; // trip for cover pick modal
 let _coverUploadFor = null;  // 'trip' | 'idea'
 let _statusMenuTripId = null; // open status menu
+let _progressDetailTripId = null; // step key shown in progress detail modal
+let _progressDetailKey = null;
+let _transportEditId = null;  // null = new
+let _stayEditId = null;       // null = new
 
 const PLAN_KIND_LABELS = { move:'移動', stay:'宿', see:'観光', eat:'食事', memo:'メモ' };
 const PLAN_KIND_COLORS = { move:'#3b82f6', stay:'#7c3aed', see:'#10b981', eat:'#f59e0b', memo:'#9ca3af' };
 
 const PROGRESS_STEPS = [
-  { key:'theme',     label:'目的・テーマ',  autoKey:null,        action:'toggle' },
-  { key:'schedule',  label:'日程',          autoKey:'schedule',  action:'modal'  },
-  { key:'route',     label:'行き先・ルート', autoKey:null,        action:'toggle' },
+  { key:'theme',     label:'目的・テーマ',  autoKey:null,        action:'detail' },
+  { key:'schedule',  label:'日程',          autoKey:'schedule',  action:'detail' },
+  { key:'route',     label:'行き先・ルート', autoKey:null,        action:'detail' },
   { key:'transport', label:'交通手段',       autoKey:'transport', action:'detail' },
   { key:'stay',      label:'宿泊',           autoKey:'stay',      action:'detail' },
-  { key:'budget',    label:'予算',           autoKey:'budget',    action:'modal'  },
+  { key:'budget',    label:'予算',           autoKey:'budget',    action:'detail' },
   { key:'food',      label:'食事・体験',     autoKey:'food',      action:'detail' },
-  { key:'prep',      label:'予約・持ち物',   autoKey:null,        action:'toggle' },
+  { key:'prep',      label:'予約・持ち物',   autoKey:null,        action:'detail' },
 ];
+
+const TRANSPORT_KIND_ICONS  = { flight:'✈', train:'🚄', bus:'🚌', car:'🚗', ship:'⛴', other:'🚆' };
+const TRANSPORT_KIND_LABELS = { flight:'飛行機', train:'電車・新幹線', bus:'バス', car:'車', ship:'船', other:'その他' };
 
 const TRIP_GRADIENTS = [
   'linear-gradient(150deg,#1e3a5f 0%,#2d6a9f 100%)',
@@ -81,15 +88,77 @@ function _fmtDetailDateRange(t) {
   return `${sPfx}${sd.getMonth()+1}/${sd.getDate()}（${DN[sd.getDay()]}）〜${ePfx}${ed.getMonth()+1}/${ed.getDate()}（${DN[ed.getDay()]}）・${days}日間`;
 }
 
+// ── DETAILS HELPERS ──
+function _getTripDetails(t) {
+  const det = t.details || {};
+  return { transport: det.transport || [], stay: det.stay || [], notes: det.notes || {} };
+}
+function _ensureTripDetails(t) {
+  if (!t.details) t.details = {};
+  if (!t.details.transport) t.details.transport = [];
+  if (!t.details.stay) t.details.stay = [];
+  if (!t.details.notes) t.details.notes = {};
+  return t.details;
+}
+function _linkify(text) {
+  const parts = String(text).split(/(https?:\/\/[^\s<>"']+)/g);
+  return parts.map((part, i) => {
+    if (i % 2 === 1) {
+      const safeUrl = esc(part);
+      return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">${safeUrl}</a>`;
+    }
+    return esc(part).replace(/\n/g, '<br>');
+  }).join('');
+}
+
+function _tripProgressSummary(t, key) {
+  const det = _getTripDetails(t);
+  if (key === 'transport') {
+    const items = [...det.transport].sort((a, b) =>
+      ((a.depDate||'9999')+(a.depTime||'99:99')).localeCompare((b.depDate||'9999')+(b.depTime||'99:99')));
+    if (!items.length) return '';
+    const f = items[0];
+    const icon = TRANSPORT_KIND_ICONS[f.kind] || '🚆';
+    let s = icon;
+    if (f.name) s += ' ' + f.name;
+    if (f.from || f.to) s += ' ' + [f.from, f.to].filter(Boolean).join('→');
+    if (f.depDate) { const d = new Date(f.depDate+'T00:00:00'); s += ' '+(d.getMonth()+1)+'/'+d.getDate(); }
+    if (f.depTime) s += ' '+f.depTime;
+    if (items.length > 1) s += `（ほか${items.length-1}件）`;
+    return s;
+  }
+  if (key === 'stay') {
+    const items = [...det.stay].sort((a, b) => (a.checkIn||'9999').localeCompare(b.checkIn||'9999'));
+    if (!items.length) return '';
+    const f = items[0];
+    let s = '🏨';
+    if (f.name) s += ' '+f.name;
+    if (f.checkIn) {
+      const ci = new Date(f.checkIn+'T00:00:00');
+      s += ' '+(ci.getMonth()+1)+'/'+ci.getDate();
+      if (f.checkOut) { const co = new Date(f.checkOut+'T00:00:00'); s += '〜'+(co.getMonth()+1)+'/'+co.getDate(); }
+    }
+    return s;
+  }
+  const noteText = (det.notes[key] || '').trim();
+  if (!noteText) return '';
+  const line = noteText.split('\n')[0];
+  return line.length > 40 ? line.slice(0,40)+'…' : line;
+}
+
 // ── PROGRESS HELPERS ──
 function _tripAutoProgress(t) {
   const plan = t.plan || [];
+  const det = _getTripDetails(t);
   return {
-    schedule:  !!(t.startDate && t.endDate),
-    transport: plan.some(p => p.kind === 'move'),
-    stay:      plan.some(p => p.kind === 'stay'),
-    budget:    t.budget != null,
-    food:      plan.some(p => p.kind === 'eat' || p.kind === 'see'),
+    schedule:  !!(t.startDate && t.endDate) || !!(det.notes.schedule && det.notes.schedule.trim()),
+    transport: plan.some(p => p.kind === 'move') || det.transport.length > 0,
+    stay:      plan.some(p => p.kind === 'stay') || det.stay.length > 0,
+    budget:    t.budget != null || !!(det.notes.budget && det.notes.budget.trim()),
+    food:      plan.some(p => p.kind === 'eat' || p.kind === 'see') || !!(det.notes.food && det.notes.food.trim()),
+    theme:     !!(det.notes.theme && det.notes.theme.trim()),
+    route:     !!(det.notes.route && det.notes.route.trim()),
+    prep:      !!(det.notes.prep && det.notes.prep.trim()),
   };
 }
 
@@ -676,12 +745,15 @@ function setTravelSubView(view, el) {
   document.querySelectorAll('#tripDetailSeg .ui-seg-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   const pv = document.getElementById('tripPlanView');
+  const bv = document.getElementById('tripBookingView');
   const rv = document.getElementById('tripReviewView');
   if (pv) pv.style.display = view === 'plan' ? '' : 'none';
+  if (bv) bv.style.display = view === 'booking' ? '' : 'none';
   if (rv) rv.style.display = view === 'review' ? '' : 'none';
   const t = trips.find(t => String(t.id) === _currentTripId);
   if (!t) return;
   if (view === 'plan') _renderTripPlan(t);
+  else if (view === 'booking') _renderTripBooking(t);
   else _renderTripReview(t);
 }
 
@@ -1032,11 +1104,53 @@ function _renderPeriodContent(t) {
   return html;
 }
 
+function _buildAutoItems(t) {
+  const det = _getTripDetails(t);
+  const result = {}; // dateStr -> [{time, label, icon, sourceId, source}]
+  const add = (dateStr, time, label, icon, sourceId, source) => {
+    if (!result[dateStr]) result[dateStr] = [];
+    result[dateStr].push({ time: time || '', label, icon, sourceId, source });
+  };
+  for (const tr of det.transport) {
+    const icon = TRANSPORT_KIND_ICONS[tr.kind] || '🚆';
+    const name = tr.name || (tr.from && tr.to ? `${tr.from}→${tr.to}` : TRANSPORT_KIND_LABELS[tr.kind] || '');
+    if (tr.depDate) {
+      add(tr.depDate, tr.depTime, `${name}${tr.from ? ' ('+tr.from+' 出発)' : ' 出発'}`, icon, tr.id, 'transport');
+    }
+    if (tr.arrDate && tr.arrDate !== tr.depDate) {
+      add(tr.arrDate, tr.arrTime, `${name}${tr.to ? ' ('+tr.to+' 到着)' : ' 到着'}`, icon, tr.id, 'transport');
+    }
+  }
+  for (const st of det.stay) {
+    if (st.checkIn)  add(st.checkIn,  st.checkInTime,  `${st.name||'宿泊先'} チェックイン`,    '🏨', st.id, 'stay');
+    if (st.checkOut) add(st.checkOut, st.checkOutTime, `${st.name||'宿泊先'} チェックアウト`, '🏨', st.id, 'stay');
+  }
+  return result;
+}
+
+function _autoItemHTML(t, autoItem) {
+  const tid = esc(String(t.id));
+  const sourceId = esc(String(autoItem.sourceId));
+  const fn = autoItem.source === 'transport'
+    ? `openTransportEditModal('${tid}','${sourceId}')`
+    : `openStayEditModal('${tid}','${sourceId}')`;
+  return `<div class="trip-plan-item trip-plan-auto-item" onclick="${fn};event.stopPropagation()">
+    <span class="trip-plan-auto-icon">${esc(autoItem.icon)}</span>
+    <span class="trip-plan-time">${autoItem.time ? esc(autoItem.time) : ''}</span>
+    <div class="trip-plan-item-body">
+      <div class="trip-plan-item-title trip-plan-auto-title">${esc(autoItem.label)}</div>
+    </div>
+  </div>`;
+}
+
 function _renderTripPlan(t) {
   const container = document.getElementById('tripPlanView'); if (!container) return;
   const DN = '日月火水木金土'.split('');
   const plan = t.plan || [];
   const tid = esc(String(t.id));
+  const autoByDate = _buildAutoItems(t);
+  const inPeriod = new Set();
+
   let html = '<div class="trip-plan">';
   if (t.startDate && t.endDate) {
     const sdObj = new Date(t.startDate + 'T00:00:00');
@@ -1045,17 +1159,35 @@ function _renderTripPlan(t) {
     for (let d = new Date(sdObj); d <= edObj; d.setDate(d.getDate() + 1)) {
       dayNum++;
       const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-      const dayItems = plan.filter(p => p.date === ds).sort((a, b) => (a.time||'99:99').localeCompare(b.time||'99:99'));
+      inPeriod.add(ds);
+      const manualItems = plan.filter(p => p.date === ds);
+      const autoDay = autoByDate[ds] || [];
+      // Merge: sort by time; no-time items go last
+      const all = [
+        ...manualItems.map(item => ({ ...item, _auto: false })),
+        ...autoDay.map(item => ({ ...item, _auto: true }))
+      ].sort((a, b) => {
+        const at = a.time || '', bt = b.time || '';
+        if (at && bt) return at.localeCompare(bt);
+        if (at) return -1; if (bt) return 1;
+        return 0;
+      });
       const dayLabel = `${dayNum}日目 ${d.getMonth()+1}/${d.getDate()}（${DN[d.getDay()]}）`;
       html += `<div class="trip-day-group">
         <div class="trip-day-hdr">
           <span class="trip-day-label">${esc(dayLabel)}</span>
           <button class="trip-plan-add-btn" onclick="openPlanItemModal('${tid}',null,'${esc(ds)}');event.stopPropagation()">＋ 予定</button>
         </div>
-        <div class="trip-day-items">${dayItems.length ? dayItems.map(item => _planItemHTML(t, item)).join('') : '<div class="trip-day-empty">予定なし</div>'}</div>
+        <div class="trip-day-items">${
+          all.length
+            ? all.map(item => item._auto ? _autoItemHTML(t, item) : _planItemHTML(t, item)).join('')
+            : '<div class="trip-day-empty">予定なし</div>'
+        }</div>
       </div>`;
     }
   }
+
+  // Undated manual items
   const undated = plan.filter(p => !p.date).sort((a, b) => (a.time||'99:99').localeCompare(b.time||'99:99'));
   html += `<div class="trip-day-group trip-undated-group">
     <div class="trip-day-hdr">
@@ -1064,6 +1196,22 @@ function _renderTripPlan(t) {
     </div>
     <div class="trip-day-items">${undated.length ? undated.map(item => _planItemHTML(t, item)).join('') : '<div class="trip-day-empty">アイデアなし</div>'}</div>
   </div>`;
+
+  // Out-of-period auto items (only if trip has defined period)
+  if (t.startDate && t.endDate) {
+    const oop = [];
+    Object.entries(autoByDate).forEach(([ds, dayItems]) => {
+      if (!inPeriod.has(ds)) dayItems.forEach(item => oop.push({ ...item, _ds: ds }));
+    });
+    if (oop.length) {
+      oop.sort((a, b) => (a._ds+a.time).localeCompare(b._ds+b.time));
+      html += `<div class="trip-day-group trip-undated-group">
+        <div class="trip-day-hdr"><span class="trip-day-label">期間外の移動・宿泊</span></div>
+        <div class="trip-day-items">${oop.map(item => _autoItemHTML(t, item)).join('')}</div>
+      </div>`;
+    }
+  }
+
   html += '</div>';
   container.innerHTML = html;
 }
@@ -1116,7 +1264,9 @@ function _renderTripDetail(tripId) {
   const dateRange = _fmtDetailDateRange(t);
   const budgetStr = t.budget != null ? `¥${fmt(t.budget)}` : '';
   const tid = esc(String(t.id));
-  const planActive = _travelSubView === 'plan';
+  const planActive     = _travelSubView === 'plan';
+  const bookingActive  = _travelSubView === 'booking';
+  const reviewActive   = _travelSubView === 'review';
   const detailView = document.getElementById('tripDetailView');
   detailView.innerHTML = `
     <div class="trip-detail-hdr">
@@ -1137,13 +1287,16 @@ function _renderTripDetail(tripId) {
     <div class="trip-detail-seg-wrap">
       <div class="ui-seg" id="tripDetailSeg">
         <button class="ui-seg-btn${planActive ? ' active' : ''}" onclick="setTravelSubView('plan',this)">日程表</button>
-        <button class="ui-seg-btn${!planActive ? ' active' : ''}" onclick="setTravelSubView('review',this)">記録</button>
+        <button class="ui-seg-btn${bookingActive ? ' active' : ''}" onclick="setTravelSubView('booking',this)">予約・手配</button>
+        <button class="ui-seg-btn${reviewActive ? ' active' : ''}" onclick="setTravelSubView('review',this)">記録</button>
       </div>
     </div>
     <div id="tripPlanView" style="display:${planActive ? '' : 'none'}"></div>
-    <div id="tripReviewView" style="display:${!planActive ? '' : 'none'}"></div>
+    <div id="tripBookingView" style="display:${bookingActive ? '' : 'none'}"></div>
+    <div id="tripReviewView" style="display:${reviewActive ? '' : 'none'}"></div>
   `;
   if (planActive) _renderTripPlan(t);
+  else if (bookingActive) _renderTripBooking(t);
   else _renderTripReview(t);
 }
 
@@ -1334,15 +1487,17 @@ function _renderTvProgress(realTrips) {
 
   const stepsHTML = PROGRESS_STEPS.map((step, idx) => {
     const done = _tripIsDone(t, step.key);
-    const manual = t.progress && t.progress[step.key];
-    return `<div class="tv-progress-step" onclick="_progressStepClick('${tid}','${idx}');event.stopPropagation()">
+    const summary = _tripProgressSummary(t, step.key);
+    return `<div class="tv-progress-step" onclick="openProgressDetailModal('${tid}',${jsq(step.key)});event.stopPropagation()">
       <div class="tv-progress-step-num${done ? ' done' : ''}">${idx + 1}</div>
-      <div class="tv-progress-step-name">${esc(step.label)}</div>
-      <button class="tv-progress-toggle${done ? ' done' : ''}" onclick="toggleProgressStep('${tid}','${esc(step.key)}');event.stopPropagation()" title="${done ? '完了を取り消す' : '完了にする'}">
+      <div class="tv-progress-step-name-wrap">
+        <div class="tv-progress-step-name">${esc(step.label)}</div>
+        ${summary ? `<div class="tv-progress-step-summary">${esc(summary)}</div>` : ''}
+      </div>
+      <button class="tv-progress-toggle${done ? ' done' : ''}" onclick="toggleProgressStep('${tid}',${jsq(step.key)});event.stopPropagation()" title="${done ? '完了を取り消す' : '完了にする'}">
         ${done ? '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="var(--accent)" stroke="none"/><path d="M3.5 7l2.5 2.5L10.5 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
                : '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="var(--rule)" stroke-width="1.5"/></svg>'}
       </button>
-      <button class="tv-progress-arrow" onclick="_progressStepClick('${tid}','${idx}');event.stopPropagation()">›</button>
     </div>`;
   }).join('');
 
@@ -1363,13 +1518,423 @@ function _renderTvProgress(realTrips) {
 function _progressStepClick(tripId, idx) {
   const step = PROGRESS_STEPS[idx];
   if (!step) return;
-  if (step.action === 'toggle') {
-    toggleProgressStep(tripId, step.key);
-  } else if (step.action === 'modal') {
-    openTripModal(tripId);
-  } else if (step.action === 'detail') {
-    openTripDetail(tripId);
+  openProgressDetailModal(tripId, step.key);
+}
+
+// ── PROGRESS DETAIL MODAL ──
+function openProgressDetailModal(tripId, key) {
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  _progressDetailTripId = String(tripId);
+  _progressDetailKey = String(key);
+  const step = PROGRESS_STEPS.find(s => s.key === key);
+  document.getElementById('progressDetailModalTitle').textContent = step ? step.label : key;
+  _renderProgressDetailContent(t, key);
+  document.getElementById('tripProgressDetailModal').classList.add('open');
+}
+
+function closeProgressDetailModal() {
+  document.getElementById('tripProgressDetailModal').classList.remove('open');
+  _progressDetailTripId = null;
+  _progressDetailKey = null;
+}
+
+function _renderProgressDetailContent(t, key) {
+  const body = document.getElementById('progressDetailModalBody'); if (!body) return;
+  const tid = esc(String(t.id));
+  const det = _getTripDetails(t);
+
+  if (key === 'transport') {
+    const items = [...det.transport].sort((a, b) =>
+      ((a.depDate||'9999')+(a.depTime||'99:99')).localeCompare((b.depDate||'9999')+(b.depTime||'99:99')));
+    let html = `<div class="tv-detail-list">`;
+    if (!items.length) {
+      html += `<div class="tv-detail-empty">登録されている交通手段はありません。</div>`;
+    } else {
+      items.forEach(tr => {
+        const icon = TRANSPORT_KIND_ICONS[tr.kind] || '🚆';
+        const iid = esc(String(tr.id));
+        const fromTo = [tr.from, tr.to].filter(Boolean).join(' → ');
+        const depFmt = tr.depDate ? (() => { const d = new Date(tr.depDate+'T00:00:00'); return (d.getMonth()+1)+'/'+d.getDate()+(tr.depTime?' '+tr.depTime:''); })() : '';
+        const arrFmt = tr.arrDate && tr.arrDate !== tr.depDate ? (() => { const d = new Date(tr.arrDate+'T00:00:00'); return ' → '+(d.getMonth()+1)+'/'+d.getDate()+(tr.arrTime?' '+tr.arrTime:''); })() : (tr.arrTime?' → '+tr.arrTime:'');
+        html += `<div class="tv-detail-item">
+          <div class="tv-detail-item-icon">${icon}</div>
+          <div class="tv-detail-item-body">
+            <div class="tv-detail-item-name">${esc(tr.name || TRANSPORT_KIND_LABELS[tr.kind] || '')}</div>
+            ${fromTo ? `<div class="tv-detail-item-sub">${esc(fromTo)}</div>` : ''}
+            ${depFmt ? `<div class="tv-detail-item-sub">${esc(depFmt+arrFmt)}</div>` : ''}
+            ${tr.confNo ? `<div class="tv-detail-item-sub">予約番号: <strong>${esc(tr.confNo)}</strong></div>` : ''}
+            ${tr.price != null ? `<div class="tv-detail-item-sub">¥${fmt(tr.price)}</div>` : ''}
+          </div>
+          <button class="tv-detail-item-edit" onclick="openTransportEditModal('${tid}','${iid}');event.stopPropagation()">編集</button>
+        </div>`;
+      });
+    }
+    html += `</div><div style="margin-top:12px"><button class="btn btn-ghost btn-sm" onclick="openTransportEditModal('${tid}',null);event.stopPropagation()">＋ 交通を追加</button></div>`;
+    body.innerHTML = html;
+    return;
   }
+
+  if (key === 'stay') {
+    const items = [...det.stay].sort((a, b) => (a.checkIn||'9999').localeCompare(b.checkIn||'9999'));
+    let html = `<div class="tv-detail-list">`;
+    if (!items.length) {
+      html += `<div class="tv-detail-empty">登録されている宿泊先はありません。</div>`;
+    } else {
+      items.forEach(st => {
+        const sid = esc(String(st.id));
+        const dateRange = st.checkIn ? (() => {
+          const ci = new Date(st.checkIn+'T00:00:00');
+          let s = (ci.getMonth()+1)+'/'+ci.getDate()+(st.checkInTime?' '+st.checkInTime:'');
+          if (st.checkOut) { const co = new Date(st.checkOut+'T00:00:00'); s += ' 〜 '+(co.getMonth()+1)+'/'+co.getDate()+(st.checkOutTime?' '+st.checkOutTime:''); }
+          return s;
+        })() : '';
+        html += `<div class="tv-detail-item">
+          <div class="tv-detail-item-icon">🏨</div>
+          <div class="tv-detail-item-body">
+            <div class="tv-detail-item-name">${esc(st.name || '宿泊先')}</div>
+            ${dateRange ? `<div class="tv-detail-item-sub">${esc(dateRange)}</div>` : ''}
+            ${st.confNo ? `<div class="tv-detail-item-sub">予約番号: <strong>${esc(st.confNo)}</strong></div>` : ''}
+            ${st.price != null ? `<div class="tv-detail-item-sub">¥${fmt(st.price)}</div>` : ''}
+          </div>
+          <button class="tv-detail-item-edit" onclick="openStayEditModal('${tid}','${sid}');event.stopPropagation()">編集</button>
+        </div>`;
+      });
+    }
+    html += `</div><div style="margin-top:12px"><button class="btn btn-ghost btn-sm" onclick="openStayEditModal('${tid}',null);event.stopPropagation()">＋ 宿泊を追加</button></div>`;
+    body.innerHTML = html;
+    return;
+  }
+
+  // Notes-based steps
+  const noteVal = det.notes[key] || '';
+  body.innerHTML = `<div>
+    <textarea class="ldr-modal-in tv-notes-ta" id="progressNoteTA-${esc(key)}"
+      rows="6" placeholder="メモを入力してください…" style="resize:vertical;width:100%;box-sizing:border-box"
+    >${esc(noteVal)}</textarea>
+    <div style="text-align:right;margin-top:8px">
+      <button class="btn btn-primary btn-sm" onclick="saveProgressNote('${tid}',${jsq(key)});event.stopPropagation()">保存</button>
+    </div>
+    ${noteVal.trim() ? `<div class="tv-notes-display-wrap"><div class="tv-notes-display">${_linkify(noteVal)}</div></div>` : ''}
+  </div>`;
+}
+
+function saveProgressNote(tripId, key) {
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  const ta = document.getElementById(`progressNoteTA-${key}`); if (!ta) return;
+  _ensureTripDetails(t);
+  t.details.notes[key] = ta.value;
+  saveTrips();
+  _renderProgressDetailContent(t, key);
+  _renderTvProgress(trips.filter(tv => !tv.isIdea));
+}
+
+// ── TRANSPORT EDIT ──
+function openTransportEditModal(tripId, itemId) {
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  document.getElementById('tripTransportEditModal').dataset.tripId = String(tripId);
+  _transportEditId = itemId ? String(itemId) : null;
+  if (_transportEditId) {
+    const item = (_getTripDetails(t).transport || []).find(tr => String(tr.id) === _transportEditId);
+    document.getElementById('transportEditTitle').textContent = '交通を編集';
+    if (item) {
+      setTransportKind(item.kind || 'flight');
+      document.getElementById('transportName').value = item.name || '';
+      document.getElementById('transportFrom').value = item.from || '';
+      document.getElementById('transportTo').value = item.to || '';
+      document.getElementById('transportDepDate').value = item.depDate || '';
+      document.getElementById('transportDepTime').value = item.depTime || '';
+      document.getElementById('transportArrDate').value = item.arrDate || '';
+      document.getElementById('transportArrTime').value = item.arrTime || '';
+      document.getElementById('transportConfNo').value = item.confNo || '';
+      document.getElementById('transportPrice').value = item.price != null ? item.price : '';
+      document.getElementById('transportUrl').value = item.url || '';
+      document.getElementById('transportNote').value = item.note || '';
+    }
+    document.getElementById('transportEditDelWrap').innerHTML =
+      `<button class="btn btn-ghost btn-sm" style="color:var(--accent);border-color:rgba(139,58,24,0.3);" onclick="confirmDeleteTransport(${jsq(String(tripId))},${jsq(String(itemId))});event.stopPropagation()">削除</button>`;
+  } else {
+    document.getElementById('transportEditTitle').textContent = '交通を追加';
+    setTransportKind('flight');
+    ['transportName','transportFrom','transportTo','transportDepDate','transportDepTime',
+     'transportArrDate','transportArrTime','transportConfNo','transportPrice','transportUrl','transportNote']
+      .forEach(id => { document.getElementById(id).value = ''; });
+    document.getElementById('transportEditDelWrap').innerHTML = '';
+  }
+  document.getElementById('tripTransportEditModal').classList.add('open');
+  setTimeout(() => document.getElementById('transportName').focus(), 50);
+}
+
+function setTransportKind(kind) {
+  document.getElementById('transportKind').value = kind;
+  document.querySelectorAll('#transportKindSeg .ui-seg-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.kind === kind);
+  });
+}
+
+function closeTransportEditModal() {
+  document.getElementById('tripTransportEditModal').classList.remove('open');
+  const tripId = document.getElementById('tripTransportEditModal').dataset.tripId;
+  _transportEditId = null;
+  _afterDetailsEdit(tripId);
+}
+
+function saveTransportEdit() {
+  const modal = document.getElementById('tripTransportEditModal');
+  const tripId = modal.dataset.tripId;
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  _ensureTripDetails(t);
+  const pv = document.getElementById('transportPrice').value;
+  const item = {
+    id: _transportEditId || crypto.randomUUID(),
+    kind: document.getElementById('transportKind').value || 'other',
+    name: document.getElementById('transportName').value.trim(),
+    from: document.getElementById('transportFrom').value.trim(),
+    to: document.getElementById('transportTo').value.trim(),
+    depDate: document.getElementById('transportDepDate').value || null,
+    depTime: document.getElementById('transportDepTime').value || '',
+    arrDate: document.getElementById('transportArrDate').value || null,
+    arrTime: document.getElementById('transportArrTime').value || '',
+    confNo: document.getElementById('transportConfNo').value.trim(),
+    price: pv !== '' ? parseFloat(pv) : null,
+    url: document.getElementById('transportUrl').value.trim(),
+    note: document.getElementById('transportNote').value.trim()
+  };
+  if (_transportEditId) {
+    const idx = t.details.transport.findIndex(tr => String(tr.id) === _transportEditId);
+    if (idx >= 0) t.details.transport[idx] = item; else t.details.transport.push(item);
+  } else {
+    t.details.transport.push(item);
+  }
+  saveTrips();
+  modal.classList.remove('open');
+  _transportEditId = null;
+  _afterDetailsEdit(tripId);
+}
+
+async function confirmDeleteTransport(tripId, itemId) {
+  if (!(await uiConfirm('この交通情報を削除しますか？', { title: '削除', danger: true }))) return;
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  _ensureTripDetails(t);
+  t.details.transport = t.details.transport.filter(tr => String(tr.id) !== String(itemId));
+  saveTrips();
+  document.getElementById('tripTransportEditModal').classList.remove('open');
+  _transportEditId = null;
+  _afterDetailsEdit(tripId);
+}
+
+// ── STAY EDIT ──
+function openStayEditModal(tripId, itemId) {
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  document.getElementById('tripStayEditModal').dataset.tripId = String(tripId);
+  _stayEditId = itemId ? String(itemId) : null;
+  if (_stayEditId) {
+    const item = (_getTripDetails(t).stay || []).find(st => String(st.id) === _stayEditId);
+    document.getElementById('stayEditTitle').textContent = '宿泊を編集';
+    if (item) {
+      document.getElementById('stayName').value = item.name || '';
+      document.getElementById('stayAddress').value = item.address || '';
+      document.getElementById('stayCheckIn').value = item.checkIn || '';
+      document.getElementById('stayCheckInTime').value = item.checkInTime || '';
+      document.getElementById('stayCheckOut').value = item.checkOut || '';
+      document.getElementById('stayCheckOutTime').value = item.checkOutTime || '';
+      document.getElementById('stayConfNo').value = item.confNo || '';
+      document.getElementById('stayPrice').value = item.price != null ? item.price : '';
+      document.getElementById('stayUrl').value = item.url || '';
+      document.getElementById('stayNote').value = item.note || '';
+    }
+    document.getElementById('stayEditDelWrap').innerHTML =
+      `<button class="btn btn-ghost btn-sm" style="color:var(--accent);border-color:rgba(139,58,24,0.3);" onclick="confirmDeleteStay(${jsq(String(tripId))},${jsq(String(itemId))});event.stopPropagation()">削除</button>`;
+  } else {
+    document.getElementById('stayEditTitle').textContent = '宿泊を追加';
+    ['stayName','stayAddress','stayCheckIn','stayCheckInTime','stayCheckOut','stayCheckOutTime',
+     'stayConfNo','stayPrice','stayUrl','stayNote']
+      .forEach(id => { document.getElementById(id).value = ''; });
+    document.getElementById('stayEditDelWrap').innerHTML = '';
+  }
+  document.getElementById('tripStayEditModal').classList.add('open');
+  setTimeout(() => document.getElementById('stayName').focus(), 50);
+}
+
+function closeStayEditModal() {
+  document.getElementById('tripStayEditModal').classList.remove('open');
+  const tripId = document.getElementById('tripStayEditModal').dataset.tripId;
+  _stayEditId = null;
+  _afterDetailsEdit(tripId);
+}
+
+function saveStayEdit() {
+  const modal = document.getElementById('tripStayEditModal');
+  const tripId = modal.dataset.tripId;
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  const name = document.getElementById('stayName').value.trim();
+  if (!name) { document.getElementById('stayName').focus(); return; }
+  _ensureTripDetails(t);
+  const pv = document.getElementById('stayPrice').value;
+  const item = {
+    id: _stayEditId || crypto.randomUUID(),
+    name,
+    address: document.getElementById('stayAddress').value.trim(),
+    checkIn: document.getElementById('stayCheckIn').value || null,
+    checkInTime: document.getElementById('stayCheckInTime').value || '',
+    checkOut: document.getElementById('stayCheckOut').value || null,
+    checkOutTime: document.getElementById('stayCheckOutTime').value || '',
+    confNo: document.getElementById('stayConfNo').value.trim(),
+    price: pv !== '' ? parseFloat(pv) : null,
+    url: document.getElementById('stayUrl').value.trim(),
+    note: document.getElementById('stayNote').value.trim()
+  };
+  if (_stayEditId) {
+    const idx = t.details.stay.findIndex(st => String(st.id) === _stayEditId);
+    if (idx >= 0) t.details.stay[idx] = item; else t.details.stay.push(item);
+  } else {
+    t.details.stay.push(item);
+  }
+  saveTrips();
+  modal.classList.remove('open');
+  _stayEditId = null;
+  _afterDetailsEdit(tripId);
+}
+
+async function confirmDeleteStay(tripId, itemId) {
+  if (!(await uiConfirm('この宿泊情報を削除しますか？', { title: '削除', danger: true }))) return;
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  _ensureTripDetails(t);
+  t.details.stay = t.details.stay.filter(st => String(st.id) !== String(itemId));
+  saveTrips();
+  document.getElementById('tripStayEditModal').classList.remove('open');
+  _stayEditId = null;
+  _afterDetailsEdit(tripId);
+}
+
+function _afterDetailsEdit(tripId) {
+  if (!tripId) return;
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  if (_progressDetailTripId === String(tripId) && _progressDetailKey) {
+    _renderProgressDetailContent(t, _progressDetailKey);
+  }
+  if (_currentTripId === String(tripId) && _travelSubView === 'booking') _renderTripBooking(t);
+  if (_currentTripId === String(tripId) && _travelSubView === 'plan') _renderTripPlan(t);
+  _renderTvProgress(trips.filter(tv => !tv.isIdea));
+}
+
+// ── BOOKING TAB ──
+function _renderTripBooking(t) {
+  const container = document.getElementById('tripBookingView'); if (!container) return;
+  const det = _getTripDetails(t);
+  const tid = esc(String(t.id));
+  const hasTransport = det.transport.length > 0;
+  const hasStay = det.stay.length > 0;
+  const noteSteps = PROGRESS_STEPS.filter(s => s.key !== 'transport' && s.key !== 'stay' && (det.notes[s.key]||'').trim());
+
+  if (!hasTransport && !hasStay && !noteSteps.length) {
+    container.innerHTML = `<div class="trip-booking">
+      <div class="trip-booking-empty">
+        <div style="color:var(--ink3);font-size:14px;margin-bottom:16px">進捗の項目から、フライトやホテルを登録できます。</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" onclick="openTransportEditModal('${tid}',null);event.stopPropagation()">＋ 交通を追加</button>
+          <button class="btn btn-ghost btn-sm" onclick="openStayEditModal('${tid}',null);event.stopPropagation()">＋ 宿泊を追加</button>
+        </div>
+      </div>
+    </div>`;
+    return;
+  }
+
+  let html = '<div class="trip-booking">';
+
+  if (hasTransport) {
+    const items = [...det.transport].sort((a, b) =>
+      ((a.depDate||'9999')+(a.depTime||'99:99')).localeCompare((b.depDate||'9999')+(b.depTime||'99:99')));
+    html += `<div class="trip-booking-section">
+      <div class="trip-booking-section-hdr">
+        <div class="trip-review-lbl">交通手段</div>
+        <button class="btn btn-ghost btn-sm" onclick="openTransportEditModal('${tid}',null);event.stopPropagation()">＋ 追加</button>
+      </div>`;
+    items.forEach(tr => {
+      const icon = TRANSPORT_KIND_ICONS[tr.kind] || '🚆';
+      const iid = esc(String(tr.id));
+      const fromTo = [tr.from, tr.to].filter(Boolean).join(' → ');
+      const depFmt = tr.depDate ? (() => { const d = new Date(tr.depDate+'T00:00:00'); return (d.getMonth()+1)+'/'+d.getDate()+(tr.depTime?' '+tr.depTime:''); })() : '';
+      const arrFmt = (() => {
+        if (tr.arrDate && tr.arrDate !== tr.depDate) { const d = new Date(tr.arrDate+'T00:00:00'); return (d.getMonth()+1)+'/'+d.getDate()+(tr.arrTime?' '+tr.arrTime:''); }
+        return tr.arrTime || '';
+      })();
+      html += `<div class="trip-booking-card">
+        <div class="trip-booking-card-top">
+          <span class="trip-booking-kind-icon">${icon}</span>
+          <div class="trip-booking-card-info">
+            <div class="trip-booking-card-name">${esc(tr.name || TRANSPORT_KIND_LABELS[tr.kind] || '')}</div>
+            ${fromTo ? `<div class="trip-booking-card-sub">${esc(fromTo)}</div>` : ''}
+            ${depFmt ? `<div class="trip-booking-card-sub">${esc(depFmt)}${arrFmt ? ' → '+esc(arrFmt) : ''}</div>` : ''}
+            ${tr.price != null ? `<div class="trip-booking-card-price">¥${fmt(tr.price)}</div>` : ''}
+          </div>
+          <button class="trip-booking-edit-btn" onclick="openTransportEditModal('${tid}','${iid}');event.stopPropagation()">編集</button>
+        </div>
+        ${tr.confNo ? `<div class="trip-booking-confno-row">
+          <span class="trip-booking-confno-lbl">予約番号</span>
+          <span class="trip-booking-confno" onclick="copyBookingConfNo(${jsq(tr.confNo)},this);event.stopPropagation()" title="クリックでコピー">${esc(tr.confNo)}</span>
+        </div>` : ''}
+        ${tr.url ? `<div class="trip-booking-url-row"><a href="${esc(tr.url)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="trip-booking-link">予約ページ ↗</a></div>` : ''}
+        ${tr.note ? `<div class="trip-booking-note">${esc(tr.note)}</div>` : ''}
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  if (hasStay) {
+    const items = [...det.stay].sort((a, b) => (a.checkIn||'9999').localeCompare(b.checkIn||'9999'));
+    html += `<div class="trip-booking-section">
+      <div class="trip-booking-section-hdr">
+        <div class="trip-review-lbl">宿泊</div>
+        <button class="btn btn-ghost btn-sm" onclick="openStayEditModal('${tid}',null);event.stopPropagation()">＋ 追加</button>
+      </div>`;
+    items.forEach(st => {
+      const sid = esc(String(st.id));
+      const ciStr = st.checkIn ? (() => { const d = new Date(st.checkIn+'T00:00:00'); return (d.getMonth()+1)+'/'+d.getDate()+(st.checkInTime?' '+st.checkInTime:''); })() : '';
+      const coStr = st.checkOut ? (() => { const d = new Date(st.checkOut+'T00:00:00'); return (d.getMonth()+1)+'/'+d.getDate()+(st.checkOutTime?' '+st.checkOutTime:''); })() : '';
+      html += `<div class="trip-booking-card">
+        <div class="trip-booking-card-top">
+          <span class="trip-booking-kind-icon">🏨</span>
+          <div class="trip-booking-card-info">
+            <div class="trip-booking-card-name">${esc(st.name)}</div>
+            ${st.address ? `<div class="trip-booking-card-sub">${esc(st.address)}</div>` : ''}
+            ${ciStr || coStr ? `<div class="trip-booking-card-sub">${ciStr?'IN: '+esc(ciStr):''}${coStr?'　OUT: '+esc(coStr):''}</div>` : ''}
+            ${st.price != null ? `<div class="trip-booking-card-price">¥${fmt(st.price)}</div>` : ''}
+          </div>
+          <button class="trip-booking-edit-btn" onclick="openStayEditModal('${tid}','${sid}');event.stopPropagation()">編集</button>
+        </div>
+        ${st.confNo ? `<div class="trip-booking-confno-row">
+          <span class="trip-booking-confno-lbl">予約番号</span>
+          <span class="trip-booking-confno" onclick="copyBookingConfNo(${jsq(st.confNo)},this);event.stopPropagation()" title="クリックでコピー">${esc(st.confNo)}</span>
+        </div>` : ''}
+        ${st.url ? `<div class="trip-booking-url-row"><a href="${esc(st.url)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="trip-booking-link">予約ページ ↗</a></div>` : ''}
+        ${st.note ? `<div class="trip-booking-note">${esc(st.note)}</div>` : ''}
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  if (noteSteps.length) {
+    html += `<div class="trip-booking-section"><div class="trip-review-lbl">メモ</div>`;
+    noteSteps.forEach(s => {
+      html += `<div class="trip-booking-note-block">
+        <div class="trip-booking-note-lbl">${esc(s.label)}</div>
+        <div class="tv-notes-display">${_linkify(det.notes[s.key] || '')}</div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+async function copyBookingConfNo(text, el) {
+  try {
+    await navigator.clipboard.writeText(text);
+    const orig = el.textContent;
+    el.textContent = 'コピー完了!';
+    setTimeout(() => { el.textContent = orig; }, 1500);
+  } catch (e) { /* silent */ }
 }
 
 // ── RENDER LIST: TODOS CARD ──

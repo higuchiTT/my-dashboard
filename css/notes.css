@@ -42,7 +42,7 @@
     .notes-card-pos { position:relative; }
     .notes-card-header { display:flex; align-items:center; justify-content:flex-end; gap:8px; padding:10px 14px 4px; }
     .notes-card-time { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--mute); margin-right:auto; }
-    .notes-card-more-btn { background:transparent; border:none; font-size:16px; color:var(--mute); cursor:pointer; padding:2px 5px; border-radius:4px; line-height:1; transition:color 0.12s; }
+    .notes-card-more-btn { background:transparent; border:none; font-size:16px; color:var(--mute); cursor:pointer; padding:14px 15px; margin:-12px -10px; border-radius:4px; line-height:1; transition:color 0.12s; }
     .notes-card-more-btn:hover { color:var(--ink); background:var(--paper2); }
     .notes-card-menu { display:none; position:absolute; right:14px; top:36px; background:var(--paper); border:1px solid rgba(26,24,20,0.18); border-radius:8px; box-shadow:0 4px 16px rgba(26,24,20,0.12); z-index:400; min-width:120px; overflow:hidden; }
     .notes-card-menu.open { display:block; }

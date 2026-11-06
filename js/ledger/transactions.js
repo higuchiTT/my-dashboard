@@ -508,7 +508,7 @@ function renderFinance(){
         <button class="ui-pill ${ldrTxFilter==='income'?'active':''}" onclick="setLdrTxFilter('income',this)">収入</button>
         <button class="ui-pill ${ldrTxFilter==='expense'?'active':''}" onclick="setLdrTxFilter('expense',this)">支出</button>
         <button class="ui-pill ${ldrTxFilter==='transfer'?'active':''}" onclick="setLdrTxFilter('transfer',this)">振替</button>
-        ${(()=>{const n=mt.filter(t=>(t.type==='income'||t.type==='expense')&&!t.accountId).length;return`<button class="ui-pill ${ldrTxFilter==='unset_account'?'active':''}" onclick="setLdrTxFilter('unset_account',this)" style="${n===0?'opacity:0.55':''}">口座未設定 <span style="font-family:'JetBrains Mono',monospace;font-size:9px;background:rgba(26,24,20,0.12);padding:0 4px;border-radius:3px;${n===0?'opacity:0.5':''}">${n}</span></button>`;})()}
+        ${(()=>{const n=mt.filter(t=>(t.type==='income'||t.type==='expense')&&!t.accountId).length;if(n===0&&ldrTxFilter==='unset_account')ldrTxFilter='all';return n===0?'':(`<button class="ui-pill ${ldrTxFilter==='unset_account'?'active':''}" onclick="setLdrTxFilter('unset_account',this)">口座未設定 <span style="font-family:'JetBrains Mono',monospace;font-size:9px;background:rgba(26,24,20,0.12);padding:0 4px;border-radius:3px;">${n}</span></button>`);})()}
       </div>
       ${recent.length?`<table class="ldr-tx-table"><thead class="ldr-tx-thead"><tr><th>日付</th><th>内容</th><th class="hide-mob">カテゴリ</th><th class="hide-mob">口座</th><th class="r">金額</th><th class="hide-mob">メモ</th><th></th></tr></thead><tbody>${recent.map(t=>_txRowHtml(t,true)).join('')}</tbody></table>`:'<div style="text-align:center;padding:24px;color:var(--mute);font-family:\'JetBrains Mono\',monospace;font-size:12px;">取引がありません</div>'}
     </div>
@@ -690,7 +690,7 @@ function renderLdrTxList(){
         <button class="ui-pill ${ldrListFilter==='income'?'active':''}" onclick="setLdrListFilter('income',this)">収入</button>
         <button class="ui-pill ${ldrListFilter==='expense'?'active':''}" onclick="setLdrListFilter('expense',this)">支出</button>
         <button class="ui-pill ${ldrListFilter==='transfer'?'active':''}" onclick="setLdrListFilter('transfer',this)">振替</button>
-        <button class="ui-pill ${ldrListAccFilter==='__unset__'?'active':''}" id="ldrListUnsetPill" onclick="ldrListSetUnset()" style="${_unsetN===0?'opacity:0.55':''}">口座未設定 <span id="ldrListUnsetBadge" style="font-family:'JetBrains Mono',monospace;font-size:9px;background:rgba(26,24,20,0.12);padding:0 4px;border-radius:3px;">${_unsetN}</span></button>
+        <button class="ui-pill ${ldrListAccFilter==='__unset__'?'active':''}" id="ldrListUnsetPill" onclick="ldrListSetUnset()" style="${_unsetN===0?'display:none':''}">口座未設定 <span id="ldrListUnsetBadge" style="font-family:'JetBrains Mono',monospace;font-size:9px;background:rgba(26,24,20,0.12);padding:0 4px;border-radius:3px;">${_unsetN}</span></button>
       </div>
       <select class="ldr-txlist-cat-sel" id="ldrListCatSel" onchange="ldrListCat=this.value;renderLdrTxList()" onclick="event.stopPropagation()">
         <option value="all">すべてのカテゴリ</option>
@@ -702,9 +702,10 @@ function renderLdrTxList(){
     <div class="ui-card" style="overflow:auto;"><table class="ldr-tx-table" id="ldrListTable"><thead><tr><th>日付</th><th>内容</th><th class="hide-mob">カテゴリ</th><th class="hide-mob">口座</th><th class="r">金額</th><th class="hide-mob">メモ</th><th></th></tr></thead><tbody id="ldrListTbody"></tbody></table></div>`;
   }
   // Update unset badge count (when month changes without full reinit)
+  if(_unsetN===0&&ldrListAccFilter==='__unset__')ldrListAccFilter='all';
   const _unsetBadge=document.getElementById('ldrListUnsetBadge');const _unsetPill=document.getElementById('ldrListUnsetPill');
   if(_unsetBadge)_unsetBadge.textContent=_unsetN;
-  if(_unsetPill){_unsetPill.classList.toggle('active',ldrListAccFilter==='__unset__');_unsetPill.style.opacity=_unsetN===0?'0.55':'';}
+  if(_unsetPill){_unsetPill.classList.toggle('active',ldrListAccFilter==='__unset__');_unsetPill.style.display=_unsetN===0?'none':'';}
   // filter
   let filtered=_moBase;
   if(ldrListFilter!=='all')filtered=filtered.filter(t=>t.type===ldrListFilter);

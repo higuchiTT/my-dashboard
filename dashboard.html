@@ -13,15 +13,15 @@
   <link rel="stylesheet" href="css/todo-list.css?v=cba4c8d7">
   <link rel="stylesheet" href="css/ledger.css?v=621633c1">
   <link rel="stylesheet" href="css/wishlist.css?v=e4179203">
-  <link rel="stylesheet" href="css/travel.css?v=2f2a54c8">
+  <link rel="stylesheet" href="css/travel.css?v=a8d8492c">
   <link rel="stylesheet" href="css/ui.css?v=9b3587fd">
   <link rel="stylesheet" href="css/food.css?v=b5c1d3c9">
   <link rel="stylesheet" href="css/misc.css?v=be82bcb4">
   <link rel="stylesheet" href="css/todo.css?v=d60ac8a2">
   <link rel="stylesheet" href="css/feedback.css?v=b8c1df10">
   <link rel="stylesheet" href="css/accounts.css?v=8517bda7">
-  <link rel="stylesheet" href="css/responsive.css?v=30dde7b8">
-  <link rel="stylesheet" href="css/notes.css?v=598142bd">
+  <link rel="stylesheet" href="css/responsive.css?v=9f03b4fc">
+  <link rel="stylesheet" href="css/notes.css?v=4705c419">
   <link rel="stylesheet" href="css/food-tags.css?v=72030baa">
   <link rel="stylesheet" href="css/food-suggest.css?v=a6959dce">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.min.js" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
@@ -789,6 +789,170 @@
     onchange="handleTripCoverUpload(this.files,'trip');this.value=''">
   <input type="file" id="ideaCoverInput" accept="image/*" style="display:none"
     onchange="handleTripCoverUpload(this.files,'idea');this.value=''">
+
+  <!-- Progress Detail Modal -->
+  <div class="ldr-modal-overlay" id="tripProgressDetailModal" onclick="if(event.target===this)closeProgressDetailModal()">
+    <div class="ldr-modal" style="max-width:560px" onclick="event.stopPropagation()">
+      <div class="ldr-modal-hdr">
+        <div class="ldr-modal-title" id="progressDetailModalTitle"></div>
+        <button class="ldr-modal-close" onclick="closeProgressDetailModal()">✕</button>
+      </div>
+      <div class="ldr-modal-body" id="progressDetailModalBody"></div>
+      <div class="ldr-modal-ftr">
+        <div class="ldr-modal-ftr-r">
+          <button class="btn btn-ghost btn-sm" onclick="closeProgressDetailModal()">閉じる</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transport Edit Modal -->
+  <div class="ldr-modal-overlay" id="tripTransportEditModal" onclick="if(event.target===this)closeTransportEditModal()">
+    <div class="ldr-modal" style="max-width:520px" onclick="event.stopPropagation()">
+      <div class="ldr-modal-hdr">
+        <div class="ldr-modal-title" id="transportEditTitle">交通を追加</div>
+        <button class="ldr-modal-close" onclick="closeTransportEditModal()">✕</button>
+      </div>
+      <div class="ldr-modal-body">
+        <div>
+          <label class="ldr-modal-lbl">種類</label>
+          <div class="ui-seg tv-kind-seg" id="transportKindSeg">
+            <button class="ui-seg-btn" data-kind="flight" onclick="setTransportKind('flight');event.stopPropagation()">✈ 飛行機</button>
+            <button class="ui-seg-btn" data-kind="train" onclick="setTransportKind('train');event.stopPropagation()">🚄 電車</button>
+            <button class="ui-seg-btn" data-kind="bus" onclick="setTransportKind('bus');event.stopPropagation()">🚌 バス</button>
+            <button class="ui-seg-btn" data-kind="car" onclick="setTransportKind('car');event.stopPropagation()">🚗 車</button>
+            <button class="ui-seg-btn" data-kind="ship" onclick="setTransportKind('ship');event.stopPropagation()">⛴ 船</button>
+            <button class="ui-seg-btn" data-kind="other" onclick="setTransportKind('other');event.stopPropagation()">その他</button>
+          </div>
+          <input type="hidden" id="transportKind" value="flight">
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">便名・列車名など</label>
+          <input class="ldr-modal-in" id="transportName" type="text" placeholder="例: JL123、のぞみ15号" />
+        </div>
+        <div class="ldr-modal-2col">
+          <div>
+            <label class="ldr-modal-lbl">出発地</label>
+            <input class="ldr-modal-in" id="transportFrom" type="text" placeholder="例: 羽田空港" />
+          </div>
+          <div>
+            <label class="ldr-modal-lbl">到着地</label>
+            <input class="ldr-modal-in" id="transportTo" type="text" placeholder="例: 函館空港" />
+          </div>
+        </div>
+        <div class="ldr-modal-2col">
+          <div>
+            <label class="ldr-modal-lbl">出発日</label>
+            <input class="ldr-modal-in" id="transportDepDate" type="date" />
+          </div>
+          <div>
+            <label class="ldr-modal-lbl">出発時刻</label>
+            <input class="ldr-modal-in" id="transportDepTime" type="time" />
+          </div>
+        </div>
+        <div class="ldr-modal-2col">
+          <div>
+            <label class="ldr-modal-lbl">到着日</label>
+            <input class="ldr-modal-in" id="transportArrDate" type="date" />
+          </div>
+          <div>
+            <label class="ldr-modal-lbl">到着時刻</label>
+            <input class="ldr-modal-in" id="transportArrTime" type="time" />
+          </div>
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">予約番号</label>
+          <input class="ldr-modal-in" id="transportConfNo" type="text" placeholder="予約確認番号" />
+        </div>
+        <div class="ldr-modal-2col">
+          <div>
+            <label class="ldr-modal-lbl">金額 (¥)</label>
+            <input class="ldr-modal-in" id="transportPrice" type="number" min="0" placeholder="0" />
+          </div>
+          <div>
+            <label class="ldr-modal-lbl">URL</label>
+            <input class="ldr-modal-in" id="transportUrl" type="url" placeholder="https://..." />
+          </div>
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">メモ</label>
+          <input class="ldr-modal-in" id="transportNote" type="text" />
+        </div>
+      </div>
+      <div class="ldr-modal-ftr">
+        <div id="transportEditDelWrap"></div>
+        <div class="ldr-modal-ftr-r">
+          <button class="btn btn-ghost btn-sm" onclick="closeTransportEditModal()">キャンセル</button>
+          <button class="btn btn-primary btn-sm" onclick="saveTransportEdit()">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stay Edit Modal -->
+  <div class="ldr-modal-overlay" id="tripStayEditModal" onclick="if(event.target===this)closeStayEditModal()">
+    <div class="ldr-modal" style="max-width:520px" onclick="event.stopPropagation()">
+      <div class="ldr-modal-hdr">
+        <div class="ldr-modal-title" id="stayEditTitle">宿泊を追加</div>
+        <button class="ldr-modal-close" onclick="closeStayEditModal()">✕</button>
+      </div>
+      <div class="ldr-modal-body">
+        <div>
+          <label class="ldr-modal-lbl">宿泊先の名前 <span style="color:var(--accent)">*</span></label>
+          <input class="ldr-modal-in" id="stayName" type="text" placeholder="例: 湯の川温泉 ○○旅館" />
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">住所</label>
+          <input class="ldr-modal-in" id="stayAddress" type="text" />
+        </div>
+        <div class="ldr-modal-2col">
+          <div>
+            <label class="ldr-modal-lbl">チェックイン日</label>
+            <input class="ldr-modal-in" id="stayCheckIn" type="date" />
+          </div>
+          <div>
+            <label class="ldr-modal-lbl">チェックイン時刻</label>
+            <input class="ldr-modal-in" id="stayCheckInTime" type="time" />
+          </div>
+        </div>
+        <div class="ldr-modal-2col">
+          <div>
+            <label class="ldr-modal-lbl">チェックアウト日</label>
+            <input class="ldr-modal-in" id="stayCheckOut" type="date" />
+          </div>
+          <div>
+            <label class="ldr-modal-lbl">チェックアウト時刻</label>
+            <input class="ldr-modal-in" id="stayCheckOutTime" type="time" />
+          </div>
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">予約番号</label>
+          <input class="ldr-modal-in" id="stayConfNo" type="text" placeholder="予約確認番号" />
+        </div>
+        <div class="ldr-modal-2col">
+          <div>
+            <label class="ldr-modal-lbl">金額 (¥)</label>
+            <input class="ldr-modal-in" id="stayPrice" type="number" min="0" placeholder="0" />
+          </div>
+          <div>
+            <label class="ldr-modal-lbl">URL</label>
+            <input class="ldr-modal-in" id="stayUrl" type="url" placeholder="https://..." />
+          </div>
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">メモ</label>
+          <input class="ldr-modal-in" id="stayNote" type="text" />
+        </div>
+      </div>
+      <div class="ldr-modal-ftr">
+        <div id="stayEditDelWrap"></div>
+        <div class="ldr-modal-ftr-r">
+          <button class="btn btn-ghost btn-sm" onclick="closeStayEditModal()">キャンセル</button>
+          <button class="btn btn-primary btn-sm" onclick="saveStayEdit()">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ══ FOOD ══ -->
@@ -985,20 +1149,20 @@
 <script src="js/core/init.js?v=9ccd7285"></script>
 <script src="js/core/nav.js?v=430dfaed"></script>
 <script src="js/home.js?v=df8a7de0"></script>
-<script src="js/todo.js?v=7b09dd4c"></script>
+<script src="js/todo.js?v=7ab6bbf7"></script>
 <script src="js/ledger/core.js?v=c60c1f2c"></script>
 <script src="js/ledger/import.js?v=6ea1265b"></script>
 <script src="js/ledger/settings.js?v=9d565e3b"></script>
 <script src="js/ledger/accounts.js?v=2e171497"></script>
 <script src="js/ledger/budget.js?v=b726d671"></script>
 <script src="js/ledger/guide.js?v=48699094"></script>
-<script src="js/ledger/transactions.js?v=0eeb4f6c"></script>
+<script src="js/ledger/transactions.js?v=7c1772f4"></script>
 <script src="js/wishlist.js?v=cf9f0b03"></script>
 <script src="js/ledger/subs.js?v=3e1d587d"></script>
-<script src="js/travel.js?v=b6599f27"></script>
+<script src="js/travel.js?v=26b6955b"></script>
 <script src="js/food/list.js?v=cd75a047"></script>
 <script src="js/food/calendar.js?v=7b5233a3"></script>
-<script src="js/food/modal.js?v=0a2a215a"></script>
+<script src="js/food/modal.js?v=342b3896"></script>
 <script src="js/food/popup.js?v=4df3b4fa"></script>
 <script src="js/food/tags.js?v=f7a20884"></script>
 <script src="js/food/suggest.js?v=3bdd8648"></script>
@@ -1010,6 +1174,18 @@
   <div class="tv-tag-pop-grid" id="tvTagPopGrid"></div>
   <div class="tv-tag-pop-input-wrap">
     <input type="text" id="tvTagPopInput" class="tv-tag-pop-input" placeholder="新規タグ（Enter）" onkeydown="tvTagPopKeydown(event)">
+  </div>
+</div>
+
+<!-- ── TASK EDIT SHEET ── -->
+<div id="taskEditOverlay" class="ldr-modal-overlay" onclick="if(event.target===this)closeTaskEditSheet()">
+  <div id="taskEditModal" class="ldr-modal" onclick="event.stopPropagation()" style="max-width:540px;">
+    <div class="ldr-modal-hdr">
+      <span class="ldr-modal-title">タスクの編集</span>
+      <button class="ldr-modal-close" onclick="closeTaskEditSheet()">✕</button>
+    </div>
+    <div class="ldr-modal-body" id="taskEditBody"></div>
+    <div class="ldr-modal-ftr" id="taskEditFtr"></div>
   </div>
 </div>
 <div id="undoToast" class="undo-toast">
