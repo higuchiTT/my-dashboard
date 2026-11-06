@@ -23,6 +23,7 @@
   <link rel="stylesheet" href="css/responsive.css?v=e241c7ce">
   <link rel="stylesheet" href="css/notes.css?v=598142bd">
   <link rel="stylesheet" href="css/food-tags.css?v=575b23f6">
+  <link rel="stylesheet" href="css/food-suggest.css?v=a6959dce">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.min.js" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -806,6 +807,7 @@
       </div>
       <div class="food-stats-row" id="foodStatsRow"></div>
       <button class="food-btn-accent food-add-btn-desktop" onclick="openFoodModalNew()">＋ 記録を追加</button>
+      <button class="food-suggest-btn" onclick="openFoodSuggestModal()">献立を考える</button>
     </div>
     <!-- Toolbar: search | segment view | filter pills -->
     <div class="food-toolbar-row">
@@ -905,6 +907,17 @@
   <div class="food-lightbox-counter" id="foodLightboxCounter"></div>
 </div>
 
+<!-- ── FOOD SUGGEST MODAL ── -->
+<div id="foodSuggestOverlay" class="food-suggest-overlay" onclick="closeFoodSuggestModal()">
+  <div class="food-suggest-modal" onclick="event.stopPropagation()">
+    <div class="fsg-modal-hdr">
+      <div class="fsg-modal-title">献立を考える</div>
+      <button class="fsg-modal-close" onclick="closeFoodSuggestModal()">✕</button>
+    </div>
+    <div class="fsg-modal-body" id="foodSuggestBody"></div>
+  </div>
+</div>
+
 <!-- ══ NOTES ══ -->
 <div class="page" id="page-notes">
   <div class="notes-page">
@@ -987,6 +1000,7 @@
 <script src="js/food/modal.js?v=24879a35"></script>
 <script src="js/food/popup.js?v=8812b968"></script>
 <script src="js/food/tags.js?v=bb373044"></script>
+<script src="js/food/suggest.js?v=3bdd8648"></script>
 <script src="js/notes.js?v=46a4ed85"></script>
 <script src="js/core/utils.js?v=843f163e"></script>
 <script src="js/core/backup.js?v=79718970"></script>

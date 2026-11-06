@@ -122,6 +122,46 @@ test('foodTagCategory: 既知のタグは正しい分類を返し、未知は in
   assert.equal(A.foodTagCategory('未知の語'), 'ingredient');
 });
 
+test('suggestFoodDishes: 家にある食材を多く使う料理が上に来て、外食の料理は除外される', () => {
+  const ms = [
+    { id: 'm1', date: '2026-10-01', memo: '', v: 2, sittings: [{ id: 's1', kind: 'dinner', dishes: [
+      { id: 'd1', name: '豚汁', type: 'home', tags: ['豚肉', '大根', '人参'], photos: [] },
+      { id: 'd2', name: 'ラーメン', type: 'out', place: '麺屋', tags: ['豚肉', '麺'], photos: [] }
+    ]}]},
+    { id: 'm2', date: '2026-10-02', memo: '', v: 2, sittings: [{ id: 's2', kind: 'lunch', dishes: [
+      { id: 'd3', name: '野菜炒め', type: 'home', tags: ['大根', '人参', 'キャベツ'], photos: [] }
+    ]}]}
+  ];
+  const result = plain(A.suggestFoodDishes(ms, ['豚肉', '大根'], [], '2026-11-06'));
+  // 外食のラーメンは含まれない
+  assert.ok(result.every(r => r.name !== 'ラーメン'), 'ラーメン（外食）が含まれてはいけない');
+  // 豚汁(usedHome=2, score=4) > 野菜炒め(usedHome=1, score=2)
+  assert.equal(result.length, 2);
+  assert.equal(result[0].name, '豚汁');
+  assert.equal(result[0].usedHome.length, 2);
+});
+
+test('suggestFoodDishes: 7日以内に食べた料理は、score が高くても後ろに回る', () => {
+  const today = '2026-11-06';
+  const ms = [
+    // カレー: 昨日食べた → recent=true, score=4 (豚肉+人参)
+    { id: 'm3', date: '2026-11-05', memo: '', v: 2, sittings: [{ id: 's3', kind: 'dinner', dishes: [
+      { id: 'd5', name: 'カレー', type: 'home', tags: ['豚肉', '人参', 'じゃがいも', '玉ねぎ'], photos: [] }
+    ]}]},
+    // 味噌汁: 古い日 → recent=false, score=2 (豆腐)
+    { id: 'm4', date: '2026-10-01', memo: '', v: 2, sittings: [{ id: 's4', kind: 'dinner', dishes: [
+      { id: 'd6', name: '味噌汁', type: 'home', tags: ['豆腐'], photos: [] }
+    ]}]}
+  ];
+  // home に両方の食材を含める（カレーの方が score 高い）
+  const result = plain(A.suggestFoodDishes(ms, ['豚肉', '人参', '豆腐'], [], today));
+  assert.equal(result.length, 2);
+  // score が高くても recent=true のカレーは後ろ
+  assert.equal(result[0].name, '味噌汁');
+  assert.equal(result[1].name, 'カレー');
+  assert.equal(result[1].recent, true);
+});
+
 test('jsq: 引用符やバックスラッシュを含むタグでも onclick の引数として元の文字列に戻る', () => {
   const unesc = s => s.replace(/&quot;|&#39;|&lt;|&gt;|&amp;/g, m => ({ '&quot;': '"', '&#39;': "'", '&lt;': '<', '&gt;': '>', '&amp;': '&' }[m]));
   for (const tag of ["母's", 'a"b', 'c\d', '<b>&']) {
