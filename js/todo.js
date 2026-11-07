@@ -120,14 +120,6 @@ function loadQuickMemo() { return localStorage.getItem('hd_quick_memo') || ''; }
 // ── DATA SAVE FUNCTIONS ──
 function saveTasks() { localStorage.setItem('hd_tasks', JSON.stringify(tasks)); saveToSupabase(); }
 function saveTaskNote(id, val) { setTaskNote(id, val); }
-function saveTaskCategory(id, val) {
-  const t = tasks.find(t => t.id === id);
-  if (!t) return;
-  t.category = val;
-  saveTasks();
-  renderTodayView();
-  renderHome();
-}
 function saveTaskDue(id, val) {
   const t = tasks.find(t => String(t.id) === String(id));
   if (!t) return;
