@@ -343,17 +343,6 @@ function switchProgressTrip(id) {
   _renderTvProgress(trips.filter(t => !t.isIdea));
 }
 
-function _progressTripAction(tripId, step) {
-  event.stopPropagation();
-  if (step.action === 'toggle') {
-    toggleProgressStep(tripId, step.key);
-  } else if (step.action === 'modal') {
-    openTripModal(tripId);
-  } else if (step.action === 'detail') {
-    openTripDetail(tripId);
-  }
-}
-
 // ── TODOS ──
 function openTripTodosModal() {
   _renderTripTodosModalBody();
@@ -1513,12 +1502,6 @@ function _renderTvProgress(realTrips) {
     <div class="tv-progress-pct">${pct}%</div>
     <div class="tv-progress-steps">${stepsHTML}</div>
   `;
-}
-
-function _progressStepClick(tripId, idx) {
-  const step = PROGRESS_STEPS[idx];
-  if (!step) return;
-  openProgressDetailModal(tripId, step.key);
 }
 
 // ── PROGRESS DETAIL MODAL ──

@@ -75,6 +75,7 @@
     .tv-tag-pop-input { width:100%; border:none; background:transparent; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink); outline:none; }
     .tv-due-wrap { position: relative; flex-shrink: 0; }
     .tv-due { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); cursor: pointer; white-space: nowrap; padding: 2px 4px; border-radius: 3px; display: inline-block; }
+    @media (max-width: 640px) { .tv-due { padding: 8px 10px; margin: -6px -2px; font-size: 12px; } }
     .tv-due:hover { background: rgba(26,24,20,0.06); }
     .tv-due-empty { color: var(--mute); }
     .tv-due-overdue { color: var(--accent); font-weight: 600; }

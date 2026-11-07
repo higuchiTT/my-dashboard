@@ -140,9 +140,9 @@ function foodDishRowHTML(sittingId, d, i) {
       <div class="food-dish-tag-suggest" id="foodDishTagSuggestWrap-${did}" style="${suggestBodyHTML ? '' : 'display:none'}" onclick="event.stopPropagation()">
         <div class="food-dish-tag-suggest-hdr" onclick="event.stopPropagation();toggleFoodTagSuggestions('${did}')">
           <span class="food-dish-tag-suggest-hdr-label">候補</span>
-          <span class="food-dish-tag-suggest-toggle-icon" id="foodDishTagSuggestIcon-${did}">▾</span>
+          <span class="food-dish-tag-suggest-toggle-icon" id="foodDishTagSuggestIcon-${did}">▸</span>
         </div>
-        <div class="food-dish-tag-suggest-body open" id="foodDishTagSuggestBody-${did}">${suggestBodyHTML}</div>
+        <div class="food-dish-tag-suggest-body" id="foodDishTagSuggestBody-${did}">${suggestBodyHTML}</div>
       </div>
       <div class="food-dish-photo-area" id="foodDishPhotoArea-${did}"
         ondragover="foodDishDragOver(event,'${did}')" ondragleave="foodDragLeave(event)" ondrop="foodDishDrop(event,'${did}')">
@@ -684,6 +684,8 @@ function onFoodDishNameBlur(sittingId, dishId) {
   if (!tags.length) return;
   tags.forEach(t => foodDishTagAdd(dishId, t));
   _showFoodTagPresetNotice(dishId);
+  const body = document.getElementById(`foodDishTagSuggestBody-${dishId}`);
+  if (body && !body.classList.contains('open')) toggleFoodTagSuggestions(dishId);
 }
 
 function _showFoodTagPresetNotice(dishId) {

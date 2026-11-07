@@ -9,7 +9,7 @@ function renderHome() {
 
   // ── 0. Task strip ──
   const tsEl = document.getElementById('homeTaskStrip');
-  if(tsEl) tsEl.innerHTML = `<div class="hm-task-strip" onclick="nav('todo')">
+  if(tsEl) tsEl.innerHTML = `<div class="hm-task-strip" onclick="nav('todo');setViewFilter('today')">
     <span class="hm-ts-item"><span class="hm-ts-num">${pending.length}</span> 未完了</span>
     <span class="hm-ts-sep">·</span>
     <span class="hm-ts-item hm-ts-od"><span class="hm-ts-num">${overdue.length}</span> 期限切れ</span>

@@ -338,6 +338,7 @@ function _renderFoodSuggestResults() {
         ${usedHTML}
         ${missingHTML}
         <div class="fsg-card-meta">最後 ${esc(lastLabel)}・${s.count}回</div>
+        <button class="fsg-record-btn" onclick="event.stopPropagation();recordSuggestedDish(${jsq(s.name)},${jsq(s.lastMealId || '')})">今日記録する</button>
       </div>
     </div>`;
   }).join('');
@@ -375,4 +376,31 @@ function _foodSuggestNavCard(delta) {
   const cur  = Math.round(carousel.scrollLeft / w);
   const next = Math.max(0, Math.min(cards.length - 1, cur + delta));
   carousel.scrollTo({ left: next * w, behavior: 'smooth' });
+}
+
+// 提案の料理を今日の食事に入れて、記録の画面を開く（タグは前回の同じ料理から写す）
+function recordSuggestedDish(name, mealId) {
+  let tags = [];
+  const past = meals.find(m => String(m.id) === String(mealId));
+  if (past) {
+    for (const sit of (past.sittings || [])) {
+      const d = (sit.dishes || []).find(d => d.name === name);
+      if (d) { tags = (d.tags || []).slice(); break; }
+    }
+  }
+  closeFoodSuggestModal();
+  openFoodModalNew(localDate());
+  const st = _foodModalState;
+  if (!st) return;
+  const kind = guessKindByHour();
+  let sit = (st.sittings || []).find(x => x.kind === kind);
+  if (!sit) {
+    sit = { id: crypto.randomUUID(), kind, dishes: [] };
+    st.sittings.push(sit);
+  }
+  const empty = sit.dishes.find(d => !d.name && !(d.photos || []).length);
+  const dish = empty || { id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '', note: '', tags: [], photos: [] };
+  dish.name = name; dish.type = 'home'; dish.tags = tags;
+  if (!empty) sit.dishes.push(dish);
+  renderFoodModalBody();
 }
