@@ -13,14 +13,14 @@
   <link rel="stylesheet" href="css/todo-list.css?v=cba4c8d7">
   <link rel="stylesheet" href="css/ledger.css?v=621633c1">
   <link rel="stylesheet" href="css/wishlist.css?v=e4179203">
-  <link rel="stylesheet" href="css/travel.css?v=e9d636b8">
+  <link rel="stylesheet" href="css/travel.css?v=daf460aa">
   <link rel="stylesheet" href="css/ui.css?v=9b3587fd">
   <link rel="stylesheet" href="css/food.css?v=b5c1d3c9">
   <link rel="stylesheet" href="css/misc.css?v=be82bcb4">
   <link rel="stylesheet" href="css/todo.css?v=4446638f">
   <link rel="stylesheet" href="css/feedback.css?v=b8c1df10">
   <link rel="stylesheet" href="css/accounts.css?v=8517bda7">
-  <link rel="stylesheet" href="css/responsive.css?v=955d77ff">
+  <link rel="stylesheet" href="css/responsive.css?v=59944d5f">
   <link rel="stylesheet" href="css/notes.css?v=8804453f">
   <link rel="stylesheet" href="css/food-tags.css?v=4bb375fa">
   <link rel="stylesheet" href="css/food-suggest.css?v=480b24af">
@@ -727,49 +727,110 @@
     </div>
   </div>
 
-  <!-- Plan Item Modal (unchanged) -->
+  <!-- Plan Item Modal -->
   <div class="ldr-modal-overlay" id="tripPlanModal" onclick="if(event.target===this)closePlanItemModal()">
-    <div class="ldr-modal" onclick="event.stopPropagation()">
+    <div class="ldr-modal" style="max-width:520px" onclick="event.stopPropagation()">
       <div class="ldr-modal-hdr">
         <div class="ldr-modal-title" id="tripPlanModalTitle">予定を追加</div>
         <button class="ldr-modal-close" onclick="closePlanItemModal()">✕</button>
       </div>
       <div class="ldr-modal-body">
+        <div>
+          <label class="ldr-modal-lbl">種類</label>
+          <div class="ui-seg plan-kind-seg" id="planKindSeg">
+            <button class="ui-seg-btn" data-kind="move" onclick="setPlanItemKind('move');event.stopPropagation()">移動</button>
+            <button class="ui-seg-btn" data-kind="stay" onclick="setPlanItemKind('stay');event.stopPropagation()">宿</button>
+            <button class="ui-seg-btn active" data-kind="see" onclick="setPlanItemKind('see');event.stopPropagation()">観光</button>
+            <button class="ui-seg-btn" data-kind="eat" onclick="setPlanItemKind('eat');event.stopPropagation()">食事</button>
+            <button class="ui-seg-btn" data-kind="memo" onclick="setPlanItemKind('memo');event.stopPropagation()">メモ</button>
+          </div>
+          <input type="hidden" id="planItemKind" value="see">
+        </div>
+        <div id="planModeRow" style="display:none">
+          <label class="ldr-modal-lbl">交通の種類</label>
+          <div class="ui-seg plan-mode-seg" id="planModeSeg">
+            <button class="ui-seg-btn active" data-mode="flight" onclick="setPlanItemMode('flight');event.stopPropagation()">✈ 飛行機</button>
+            <button class="ui-seg-btn" data-mode="train" onclick="setPlanItemMode('train');event.stopPropagation()">🚄 電車</button>
+            <button class="ui-seg-btn" data-mode="bus" onclick="setPlanItemMode('bus');event.stopPropagation()">🚌 バス</button>
+            <button class="ui-seg-btn" data-mode="car" onclick="setPlanItemMode('car');event.stopPropagation()">🚗 車</button>
+            <button class="ui-seg-btn" data-mode="ship" onclick="setPlanItemMode('ship');event.stopPropagation()">⛴ 船</button>
+            <button class="ui-seg-btn" data-mode="other" onclick="setPlanItemMode('other');event.stopPropagation()">その他</button>
+          </div>
+          <input type="hidden" id="planItemMode" value="flight">
+        </div>
+        <div>
+          <label class="ldr-modal-lbl"><span id="planTitleLbl">名前</span> <span style="color:var(--accent)">*</span></label>
+          <input class="ldr-modal-in" id="planItemTitle" type="text" placeholder="" />
+        </div>
+        <div id="planFromToRow" class="ldr-modal-2col" style="display:none">
+          <div>
+            <label class="ldr-modal-lbl">出発地</label>
+            <input class="ldr-modal-in" id="planItemFrom" type="text" placeholder="例: 羽田空港" />
+          </div>
+          <div>
+            <label class="ldr-modal-lbl">到着地</label>
+            <input class="ldr-modal-in" id="planItemTo" type="text" placeholder="例: 函館空港" />
+          </div>
+        </div>
         <div class="ldr-modal-2col">
           <div>
-            <label class="ldr-modal-lbl">日付</label>
+            <label class="ldr-modal-lbl" id="planDateLbl">日付</label>
             <select class="ldr-modal-in" id="planItemDate"></select>
           </div>
           <div>
-            <label class="ldr-modal-lbl">時刻</label>
+            <label class="ldr-modal-lbl" id="planTimeLbl">時刻</label>
             <input class="ldr-modal-in" id="planItemTime" type="time" />
           </div>
         </div>
-        <div>
-          <label class="ldr-modal-lbl">種類</label>
-          <select class="ldr-modal-in" id="planItemKind">
-            <option value="see">観光</option>
-            <option value="eat">食事</option>
-            <option value="move">移動</option>
-            <option value="stay">宿</option>
-            <option value="memo">メモ</option>
-          </select>
+        <div id="planArrRow" class="ldr-modal-2col" style="display:none">
+          <div>
+            <label class="ldr-modal-lbl">到着日</label>
+            <select class="ldr-modal-in" id="planItemArrDate"></select>
+          </div>
+          <div>
+            <label class="ldr-modal-lbl">到着時刻</label>
+            <input class="ldr-modal-in" id="planItemArrTime" type="time" />
+          </div>
         </div>
-        <div>
-          <label class="ldr-modal-lbl">タイトル <span style="color:var(--accent)">*</span></label>
-          <input class="ldr-modal-in" id="planItemTitle" type="text" placeholder="例: 東京駅発 のぞみ" />
+        <div id="planCheckOutRow" class="ldr-modal-2col" style="display:none">
+          <div>
+            <label class="ldr-modal-lbl">チェックアウト日</label>
+            <select class="ldr-modal-in" id="planItemCheckOut"></select>
+          </div>
+          <div>
+            <label class="ldr-modal-lbl">チェックアウト時刻</label>
+            <input class="ldr-modal-in" id="planItemCheckOutTime" type="time" />
+          </div>
         </div>
-        <div>
+        <div id="planPlaceRow" style="display:none">
           <label class="ldr-modal-lbl">場所</label>
           <input class="ldr-modal-in" id="planItemPlace" type="text" placeholder="例: 京都駅" />
         </div>
-        <div>
+        <div id="planAddressRow" style="display:none">
+          <label class="ldr-modal-lbl">住所</label>
+          <input class="ldr-modal-in" id="planItemAddress" type="text" />
+        </div>
+        <div id="planConfNoRow" style="display:none">
+          <label class="ldr-modal-lbl">予約番号</label>
+          <input class="ldr-modal-in" id="planItemConfNo" type="text" placeholder="予約確認番号" />
+        </div>
+        <div id="planPriceRow" style="display:none">
+          <label class="ldr-modal-lbl">金額 (¥)</label>
+          <input class="ldr-modal-in" id="planItemPrice" type="number" min="0" placeholder="0" />
+        </div>
+        <div id="planUrlRow" style="display:none">
           <label class="ldr-modal-lbl">URL</label>
           <input class="ldr-modal-in" id="planItemUrl" type="url" placeholder="https://..." />
         </div>
         <div>
           <label class="ldr-modal-lbl">メモ</label>
           <input class="ldr-modal-in" id="planItemNote" type="text" />
+        </div>
+        <div style="padding-top:4px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:14px;user-select:none">
+            <input type="checkbox" id="planItemConfirmed" onclick="event.stopPropagation()" style="width:16px;height:16px;cursor:pointer;flex-shrink:0">
+            確定済み（予約・決定済み）
+          </label>
         </div>
       </div>
       <div class="ldr-modal-ftr">
@@ -806,153 +867,6 @@
     </div>
   </div>
 
-  <!-- Transport Edit Modal -->
-  <div class="ldr-modal-overlay" id="tripTransportEditModal" onclick="if(event.target===this)closeTransportEditModal()">
-    <div class="ldr-modal" style="max-width:520px" onclick="event.stopPropagation()">
-      <div class="ldr-modal-hdr">
-        <div class="ldr-modal-title" id="transportEditTitle">交通を追加</div>
-        <button class="ldr-modal-close" onclick="closeTransportEditModal()">✕</button>
-      </div>
-      <div class="ldr-modal-body">
-        <div>
-          <label class="ldr-modal-lbl">種類</label>
-          <div class="ui-seg tv-kind-seg" id="transportKindSeg">
-            <button class="ui-seg-btn" data-kind="flight" onclick="setTransportKind('flight');event.stopPropagation()">✈ 飛行機</button>
-            <button class="ui-seg-btn" data-kind="train" onclick="setTransportKind('train');event.stopPropagation()">🚄 電車</button>
-            <button class="ui-seg-btn" data-kind="bus" onclick="setTransportKind('bus');event.stopPropagation()">🚌 バス</button>
-            <button class="ui-seg-btn" data-kind="car" onclick="setTransportKind('car');event.stopPropagation()">🚗 車</button>
-            <button class="ui-seg-btn" data-kind="ship" onclick="setTransportKind('ship');event.stopPropagation()">⛴ 船</button>
-            <button class="ui-seg-btn" data-kind="other" onclick="setTransportKind('other');event.stopPropagation()">その他</button>
-          </div>
-          <input type="hidden" id="transportKind" value="flight">
-        </div>
-        <div>
-          <label class="ldr-modal-lbl">便名・列車名など</label>
-          <input class="ldr-modal-in" id="transportName" type="text" placeholder="例: JL123、のぞみ15号" />
-        </div>
-        <div class="ldr-modal-2col">
-          <div>
-            <label class="ldr-modal-lbl">出発地</label>
-            <input class="ldr-modal-in" id="transportFrom" type="text" placeholder="例: 羽田空港" />
-          </div>
-          <div>
-            <label class="ldr-modal-lbl">到着地</label>
-            <input class="ldr-modal-in" id="transportTo" type="text" placeholder="例: 函館空港" />
-          </div>
-        </div>
-        <div class="ldr-modal-2col">
-          <div>
-            <label class="ldr-modal-lbl">出発日</label>
-            <input class="ldr-modal-in" id="transportDepDate" type="date" />
-          </div>
-          <div>
-            <label class="ldr-modal-lbl">出発時刻</label>
-            <input class="ldr-modal-in" id="transportDepTime" type="time" />
-          </div>
-        </div>
-        <div class="ldr-modal-2col">
-          <div>
-            <label class="ldr-modal-lbl">到着日</label>
-            <input class="ldr-modal-in" id="transportArrDate" type="date" />
-          </div>
-          <div>
-            <label class="ldr-modal-lbl">到着時刻</label>
-            <input class="ldr-modal-in" id="transportArrTime" type="time" />
-          </div>
-        </div>
-        <div>
-          <label class="ldr-modal-lbl">予約番号</label>
-          <input class="ldr-modal-in" id="transportConfNo" type="text" placeholder="予約確認番号" />
-        </div>
-        <div class="ldr-modal-2col">
-          <div>
-            <label class="ldr-modal-lbl">金額 (¥)</label>
-            <input class="ldr-modal-in" id="transportPrice" type="number" min="0" placeholder="0" />
-          </div>
-          <div>
-            <label class="ldr-modal-lbl">URL</label>
-            <input class="ldr-modal-in" id="transportUrl" type="url" placeholder="https://..." />
-          </div>
-        </div>
-        <div>
-          <label class="ldr-modal-lbl">メモ</label>
-          <input class="ldr-modal-in" id="transportNote" type="text" />
-        </div>
-      </div>
-      <div class="ldr-modal-ftr">
-        <div id="transportEditDelWrap"></div>
-        <div class="ldr-modal-ftr-r">
-          <button class="btn btn-ghost btn-sm" onclick="closeTransportEditModal()">キャンセル</button>
-          <button class="btn btn-primary btn-sm" onclick="saveTransportEdit()">保存</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Stay Edit Modal -->
-  <div class="ldr-modal-overlay" id="tripStayEditModal" onclick="if(event.target===this)closeStayEditModal()">
-    <div class="ldr-modal" style="max-width:520px" onclick="event.stopPropagation()">
-      <div class="ldr-modal-hdr">
-        <div class="ldr-modal-title" id="stayEditTitle">宿泊を追加</div>
-        <button class="ldr-modal-close" onclick="closeStayEditModal()">✕</button>
-      </div>
-      <div class="ldr-modal-body">
-        <div>
-          <label class="ldr-modal-lbl">宿泊先の名前 <span style="color:var(--accent)">*</span></label>
-          <input class="ldr-modal-in" id="stayName" type="text" placeholder="例: 湯の川温泉 ○○旅館" />
-        </div>
-        <div>
-          <label class="ldr-modal-lbl">住所</label>
-          <input class="ldr-modal-in" id="stayAddress" type="text" />
-        </div>
-        <div class="ldr-modal-2col">
-          <div>
-            <label class="ldr-modal-lbl">チェックイン日</label>
-            <input class="ldr-modal-in" id="stayCheckIn" type="date" />
-          </div>
-          <div>
-            <label class="ldr-modal-lbl">チェックイン時刻</label>
-            <input class="ldr-modal-in" id="stayCheckInTime" type="time" />
-          </div>
-        </div>
-        <div class="ldr-modal-2col">
-          <div>
-            <label class="ldr-modal-lbl">チェックアウト日</label>
-            <input class="ldr-modal-in" id="stayCheckOut" type="date" />
-          </div>
-          <div>
-            <label class="ldr-modal-lbl">チェックアウト時刻</label>
-            <input class="ldr-modal-in" id="stayCheckOutTime" type="time" />
-          </div>
-        </div>
-        <div>
-          <label class="ldr-modal-lbl">予約番号</label>
-          <input class="ldr-modal-in" id="stayConfNo" type="text" placeholder="予約確認番号" />
-        </div>
-        <div class="ldr-modal-2col">
-          <div>
-            <label class="ldr-modal-lbl">金額 (¥)</label>
-            <input class="ldr-modal-in" id="stayPrice" type="number" min="0" placeholder="0" />
-          </div>
-          <div>
-            <label class="ldr-modal-lbl">URL</label>
-            <input class="ldr-modal-in" id="stayUrl" type="url" placeholder="https://..." />
-          </div>
-        </div>
-        <div>
-          <label class="ldr-modal-lbl">メモ</label>
-          <input class="ldr-modal-in" id="stayNote" type="text" />
-        </div>
-      </div>
-      <div class="ldr-modal-ftr">
-        <div id="stayEditDelWrap"></div>
-        <div class="ldr-modal-ftr-r">
-          <button class="btn btn-ghost btn-sm" onclick="closeStayEditModal()">キャンセル</button>
-          <button class="btn btn-primary btn-sm" onclick="saveStayEdit()">保存</button>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- ══ FOOD ══ -->
@@ -1146,7 +1060,7 @@
 
 <script src="js/core/state.js?v=4c986b90"></script>
 <script src="js/core/sync.js?v=d49064ec"></script>
-<script src="js/core/init.js?v=9ccd7285"></script>
+<script src="js/core/init.js?v=8cd47f5f"></script>
 <script src="js/core/nav.js?v=430dfaed"></script>
 <script src="js/home.js?v=ef4f5a4f"></script>
 <script src="js/todo.js?v=35bddadf"></script>
@@ -1159,7 +1073,7 @@
 <script src="js/ledger/transactions.js?v=7c1772f4"></script>
 <script src="js/wishlist.js?v=cf9f0b03"></script>
 <script src="js/ledger/subs.js?v=3e1d587d"></script>
-<script src="js/travel.js?v=cc1f0ec6"></script>
+<script src="js/travel.js?v=d88c0391"></script>
 <script src="js/food/list.js?v=cd75a047"></script>
 <script src="js/food/calendar.js?v=7b5233a3"></script>
 <script src="js/food/modal.js?v=0bcec9cf"></script>

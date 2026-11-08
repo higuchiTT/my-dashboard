@@ -27,6 +27,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     localStorage.setItem('food_meals', JSON.stringify(meals));
   }
+  // Apply travel plan migration from localStorage before sync
+  const _preSyncTrips = JSON.stringify(trips);
+  const _tripMigPre = migrateTripDetailsToPlan(trips);
+  if (_tripMigPre.changed) {
+    if (!localStorage.getItem('trips_pre_plan_migration_backup')) {
+      localStorage.setItem('trips_pre_plan_migration_backup', _preSyncTrips);
+    }
+    trips = _tripMigPre.trips;
+    localStorage.setItem('hd_trips', JSON.stringify(trips));
+  }
   const synced = await syncFromSupabase(session.user.id);
   // Initialize category master after sync (sync may have loaded server categories)
   const _catsBefore = JSON.stringify(txRules.categories||[]);
@@ -42,6 +52,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       localStorage.setItem('food_meals_v1_backup', _postSyncMeals);
     }
     saveMeals(); // _syncReady is true at this point
+  }
+  // After sync, re-apply travel plan migration in case server had un-migrated data
+  const _tripMigPost = migrateTripDetailsToPlan(trips);
+  if (_tripMigPost.changed) {
+    if (!localStorage.getItem('trips_pre_plan_migration_backup')) {
+      localStorage.setItem('trips_pre_plan_migration_backup', JSON.stringify(trips));
+    }
+    trips = _tripMigPost.trips;
+    saveTrips(); // _syncReady is true at this point
   }
   loadTaskNotes();
   migrateTaskNotes();

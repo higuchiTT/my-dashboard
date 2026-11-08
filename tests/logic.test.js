@@ -196,3 +196,76 @@ test('jsq: 引用符やバックスラッシュを含むタグでも onclick の
     assert.equal(JSON.parse(unesc(attr)), tag); // ブラウザが属性を読んだ後の JS 文字列が元に戻る
   }
 });
+
+test('migrateTripDetailsToPlan: transport と stay が plan に移行される', () => {
+  const trips = [{
+    id: 'trip1', dest: 'Tokyo', plan: [],
+    details: {
+      transport: [{ id: 'tr1', kind: 'flight', name: 'ANA123', from: '東京', to: '大阪', depDate: '2026-11-01', depTime: '10:00', arrDate: '2026-11-01', arrTime: '11:00', confNo: 'ABC123', price: 15000, url: '', note: 'メモ' }],
+      stay: [{ id: 'st1', name: 'ホテル花', address: '大阪市', checkIn: '2026-11-01', checkInTime: '15:00', checkOut: '2026-11-03', checkOutTime: '11:00', confNo: 'XYZ789', price: 20000, url: '', note: '' }],
+      notes: {}
+    }
+  }];
+  const { trips: result, changed } = A.migrateTripDetailsToPlan(trips);
+  assert.ok(changed);
+  assert.ok(result[0].planMigrated);
+  const moveItems = result[0].plan.filter(p => p.kind === 'move');
+  assert.equal(moveItems.length, 1);
+  assert.equal(moveItems[0].id, 'tr1');
+  assert.equal(moveItems[0].mode, 'flight');
+  assert.equal(moveItems[0].title, 'ANA123');
+  assert.equal(moveItems[0].from, '東京');
+  assert.equal(moveItems[0].to, '大阪');
+  assert.equal(moveItems[0].date, '2026-11-01');
+  assert.equal(moveItems[0].confNo, 'ABC123');
+  assert.equal(moveItems[0].price, 15000);
+  assert.ok(moveItems[0].confirmed);
+  const stayItems = result[0].plan.filter(p => p.kind === 'stay');
+  assert.equal(stayItems.length, 1);
+  assert.equal(stayItems[0].id, 'st1');
+  assert.equal(stayItems[0].title, 'ホテル花');
+  assert.equal(stayItems[0].address, '大阪市');
+  assert.equal(stayItems[0].date, '2026-11-01');
+  assert.equal(stayItems[0].checkOut, '2026-11-03');
+  assert.ok(stayItems[0].confirmed);
+  // original details preserved
+  assert.equal(result[0].details.transport.length, 1);
+  assert.equal(result[0].details.stay.length, 1);
+});
+
+test('migrateTripDetailsToPlan: 重複 ID はスキップされる', () => {
+  const existingPlan = [{ id: 'tr1', kind: 'move', title: '既存', date: null, time: '' }];
+  const trips = [{
+    id: 'trip2', dest: 'Osaka', plan: existingPlan,
+    details: {
+      transport: [{ id: 'tr1', kind: 'train', name: '重複', from: 'A', to: 'B', depDate: null, depTime: '', arrDate: null, arrTime: '', confNo: '', price: null, url: '', note: '' }],
+      stay: [],
+      notes: {}
+    }
+  }];
+  const { trips: result, changed } = A.migrateTripDetailsToPlan(trips);
+  assert.ok(changed);
+  assert.equal(result[0].plan.length, 1); // duplicated tr1 not added again
+  assert.equal(result[0].plan[0].title, '既存');
+});
+
+test('migrateTripDetailsToPlan: planMigrated 済みは再実行しない', () => {
+  const trips = [{
+    id: 'trip3', dest: 'Kyoto', plan: [{ id: 'x', kind: 'see', title: '金閣寺', date: null, time: '' }],
+    planMigrated: true,
+    details: {
+      transport: [{ id: 'tr2', kind: 'bus', name: 'バス', from: 'A', to: 'B', depDate: null, depTime: '', arrDate: null, arrTime: '', confNo: '', price: null, url: '', note: '' }],
+      stay: [],
+      notes: {}
+    }
+  }];
+  const { trips: result, changed } = A.migrateTripDetailsToPlan(trips);
+  assert.ok(!changed);
+  assert.equal(result[0].plan.length, 1); // transport not added since already migrated
+});
+
+test('migrateTripDetailsToPlan: 空の配列は changed=false を返す', () => {
+  const { trips: result, changed } = A.migrateTripDetailsToPlan([]);
+  assert.ok(!changed);
+  assert.deepEqual(result, []);
+});
