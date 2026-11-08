@@ -17,6 +17,7 @@ let _progressDetailTripId = null; // step key shown in progress detail modal
 let _progressDetailKey = null;
 let _transportEditId = null;  // null = new
 let _stayEditId = null;       // null = new
+let _tripPhotoTargetDate = null; // date string for day-specific photo upload
 
 const PLAN_KIND_LABELS = { move:'移動', stay:'宿', see:'観光', eat:'食事', memo:'メモ' };
 const PLAN_KIND_COLORS = { move:'#3b82f6', stay:'#7c3aed', see:'#10b981', eat:'#f59e0b', memo:'#9ca3af' };
@@ -872,11 +873,11 @@ function openTripPhotoInput(tripId) {
 
 async function handleTripPhotoUpload(files) {
   const tripId = _tripPhotoTargetId;
+  const photoDate = _tripPhotoTargetDate; // capture before any async
+  _tripPhotoTargetDate = null;            // clear immediately
   if (!tripId || !files || !files.length) return;
   const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
   if (!t.photos) t.photos = [];
-  const errEl = document.getElementById('tripPhotoError');
-  if (errEl) errEl.textContent = '';
   const errors = [];
   _tripPhotoUploading++;
   try {
@@ -889,7 +890,7 @@ async function handleTripPhotoUpload(files) {
         const path = `${user.id}/trips/${tripId}/${photoId}.jpg`;
         const { error } = await sb.storage.from('meal-photos').upload(path, blob, { contentType: 'image/jpeg' });
         if (error) throw error;
-        t.photos.push({ id: photoId, path, date: t.startDate || null, caption: '' });
+        t.photos.push({ id: photoId, path, date: photoDate || t.startDate || null, caption: '' });
       } catch (e) {
         errors.push(`${file.name}: ${e.message || 'アップロード失敗'}`);
       }
@@ -898,9 +899,16 @@ async function handleTripPhotoUpload(files) {
     errors.push(e.message || 'アップロード失敗');
   }
   _tripPhotoUploading--;
-  if (errEl) errEl.textContent = errors.length ? `エラー: ${errors.join(' / ')}` : '';
   saveTrips();
-  if (_currentTripId === String(tripId)) {
+  if (_currentTripId === String(tripId) && _travelSubView === 'review') {
+    _renderTripReview(t);
+    if (errors.length) {
+      const errEl = document.getElementById('tripPhotoError');
+      if (errEl) errEl.textContent = `エラー: ${errors.join(' / ')}`;
+    }
+  } else if (_currentTripId === String(tripId)) {
+    const errEl = document.getElementById('tripPhotoError');
+    if (errEl) errEl.textContent = errors.length ? `エラー: ${errors.join(' / ')}` : '';
     const wrap = document.getElementById(`tripPhotosWrap-${tripId}`);
     if (wrap) { wrap.innerHTML = _renderTripPhotosHTML(t); fillSignedUrls(wrap); }
   }
@@ -914,8 +922,12 @@ async function deleteTripPhoto(tripId, photoId) {
   delete _signedUrlCache[photo.path];
   t.photos = t.photos.filter(p => String(p.id) !== String(photoId));
   saveTrips();
-  const wrap = document.getElementById(`tripPhotosWrap-${tripId}`);
-  if (wrap) { wrap.innerHTML = _renderTripPhotosHTML(t); fillSignedUrls(wrap); }
+  if (_currentTripId === String(tripId) && _travelSubView === 'review') {
+    _renderTripReview(t);
+  } else {
+    const wrap = document.getElementById(`tripPhotosWrap-${tripId}`);
+    if (wrap) { wrap.innerHTML = _renderTripPhotosHTML(t); fillSignedUrls(wrap); }
+  }
 }
 
 function setTripPhotoDate(tripId, photoId, date) {
@@ -923,8 +935,12 @@ function setTripPhotoDate(tripId, photoId, date) {
   const photo = t.photos.find(p => String(p.id) === String(photoId)); if (!photo) return;
   photo.date = date || null;
   saveTrips();
-  const wrap = document.getElementById(`tripPhotosWrap-${tripId}`);
-  if (wrap) { wrap.innerHTML = _renderTripPhotosHTML(t); fillSignedUrls(wrap); }
+  if (_currentTripId === String(tripId) && _travelSubView === 'review') {
+    _renderTripReview(t);
+  } else {
+    const wrap = document.getElementById(`tripPhotosWrap-${tripId}`);
+    if (wrap) { wrap.innerHTML = _renderTripPhotosHTML(t); fillSignedUrls(wrap); }
+  }
 }
 
 function saveTripPhotoCaption(tripId, photoId, caption) {
@@ -1044,55 +1060,6 @@ function _renderTripPhotosHTML(t) {
   return html;
 }
 
-function _renderPeriodContent(t) {
-  if (!t.startDate || !t.endDate) return '';
-  const DN = '日月火水木金土'.split('');
-  const tripMeals = (meals || []).filter(m => m.date >= t.startDate && m.date <= t.endDate)
-    .sort((a, b) => a.date.localeCompare(b.date));
-  const tripNotes = (reflections || []).filter(r => r.date && r.date >= t.startDate && r.date <= t.endDate)
-    .sort((a, b) => a.date.localeCompare(b.date));
-  if (!tripMeals.length && !tripNotes.length) return '';
-  let html = '';
-  if (tripMeals.length) {
-    html += `<div class="trip-review-section">
-      <div class="trip-review-lbl">この期間の食事</div>
-      <div class="trip-period-meals">`;
-    tripMeals.forEach(m => {
-      const d = new Date(m.date + 'T00:00:00');
-      const dateLabel = `${d.getMonth()+1}/${d.getDate()}（${DN[d.getDay()]}）`;
-      const dishes = (m.sittings || []).flatMap(s => s.dishes || []);
-      const dishNames = dishes.filter(dh => dh.name).map(dh => dh.name).join('、');
-      const firstPhoto = dishes.find(dh => dh.photos && dh.photos.length > 0);
-      const fp = firstPhoto ? firstPhoto.photos[0] : null;
-      const mid = esc(String(m.id));
-      html += `<div class="trip-period-meal-item" onclick="nav('food');setTimeout(()=>openFoodDetailPopup('${mid}'),100)">
-        ${fp ? `<img data-path="${esc(fp.path)}" class="trip-period-meal-thumb" src="" alt="">` : '<div class="trip-period-meal-thumb-empty"></div>'}
-        <div class="trip-period-meal-info">
-          <div class="trip-period-meal-date">${esc(dateLabel)}</div>
-          <div class="trip-period-meal-dishes">${esc(dishNames || '（メモあり）')}</div>
-        </div>
-      </div>`;
-    });
-    html += `</div></div>`;
-  }
-  if (tripNotes.length) {
-    html += `<div class="trip-review-section">
-      <div class="trip-review-lbl">この期間のメモ</div>
-      <div class="trip-period-notes">`;
-    tripNotes.forEach(r => {
-      const d = new Date(r.date + 'T00:00:00');
-      const dateLabel = `${d.getMonth()+1}/${d.getDate()}（${DN[d.getDay()]}）`;
-      const excerpt = (r.body || '').slice(0, 80) + ((r.body || '').length > 80 ? '…' : '');
-      html += `<div class="trip-period-note-item" onclick="nav('notes');setTimeout(()=>notesCalCellClick('${esc(r.date)}'),100)">
-        <div class="trip-period-note-date">${esc(dateLabel)}</div>
-        <div class="trip-period-note-text">${esc(excerpt)}</div>
-      </div>`;
-    });
-    html += `</div></div>`;
-  }
-  return html;
-}
-
 function _buildAutoItems(t) {
   const det = _getTripDetails(t);
   const result = {}; // dateStr -> [{time, label, icon, sourceId, source}]
@@ -1205,46 +1172,512 @@ function _renderTripPlan(t) {
   container.innerHTML = html;
 }
 
+// ── REVIEW: DAY CARD HELPERS ──
+
+function _reviewDayStayAuto(t, ds) {
+  const det = _getTripDetails(t);
+  for (const st of det.stay) {
+    if (st.checkIn && st.checkIn <= ds && (!st.checkOut || st.checkOut > ds)) {
+      return st.name || '宿泊先';
+    }
+  }
+  const planStay = (t.plan || []).find(p => p.kind === 'stay' && p.date === ds);
+  if (planStay) return planStay.title || planStay.place || '宿泊先';
+  return '';
+}
+
+function _reviewDayMoveAutoItems(t, ds) {
+  const det = _getTripDetails(t);
+  const items = [];
+  for (const tr of det.transport) {
+    if (tr.depDate === ds) {
+      const icon = TRANSPORT_KIND_ICONS[tr.kind] || '🚆';
+      let label = icon;
+      if (tr.from || tr.to) label += ' ' + [tr.from, tr.to].filter(Boolean).join('→');
+      if (tr.name) label += ' ' + tr.name;
+      if (tr.depTime) label += ' ' + tr.depTime;
+      items.push(label.trim());
+    }
+  }
+  for (const p of (t.plan || [])) {
+    if (p.kind === 'move' && p.date === ds) {
+      let label = p.title || '';
+      if (p.place) label += (label ? '→' : '') + p.place;
+      if (p.time) label += (label ? ' ' : '') + p.time;
+      items.push(label || '移動');
+    }
+  }
+  return items;
+}
+
+function _reviewPlaceItemHTML(t, item, tid) {
+  const iid = esc(String(item.id));
+  const teid = esc(String(t.id));
+  const kindLabel = PLAN_KIND_LABELS[item.kind] || item.kind;
+  const visited = item.visited || false;
+  const rating = item.rating || 0;
+  const comment = item.comment || '';
+  const starsHTML = [1,2,3,4,5].map(n =>
+    `<button class="trip-drv-star-btn${n <= rating ? ' active' : ''}" onclick="event.stopPropagation();setPlanItemRating('${teid}','${iid}',${n})">★</button>`
+  ).join('');
+  return `<div class="trip-drv-place-item${visited ? ' visited' : ''}" id="trPlaceItem-${teid}-${iid}">
+    <button class="trip-drv-visit-btn${visited ? ' active' : ''}" onclick="event.stopPropagation();togglePlanItemVisited('${teid}','${iid}')" title="${visited ? '訪問済み' : '未訪問'}">☑</button>
+    <div class="trip-drv-place-info">
+      <div class="trip-drv-place-name-row">
+        <span class="trip-drv-place-name">${esc(item.title || item.place || '（名前なし）')}</span>
+        <span class="trip-drv-place-kind ui-pill trip-drv-pill-${esc(item.kind)}">${esc(kindLabel)}</span>
+        <button class="trip-drv-place-del" onclick="event.stopPropagation();deleteReviewPlanItem('${teid}',${jsq(item.date||'')},'${iid}')" title="削除">✕</button>
+      </div>
+      <div class="trip-drv-place-stars">${starsHTML}</div>
+      <input class="trip-drv-place-comment" type="text" value="${esc(comment)}"
+        placeholder="ひとこと…"
+        onblur="savePlanItemComment('${teid}','${iid}',this.value)"
+        onclick="event.stopPropagation()">
+    </div>
+  </div>`;
+}
+
+function _reviewDayPhotosHTML(t, ds) {
+  const tid = esc(String(t.id));
+  const allPhotos = t.photos || [];
+  const photos = allPhotos.filter(p => p.date === ds);
+  if (!photos.length) return '<div class="trip-drv-photos-empty">ここにドラッグ＆ドロップ</div>';
+  return `<div class="trip-photo-grid">${photos.map(p => {
+    const pid = esc(String(p.id));
+    const pidx = allPhotos.indexOf(p);
+    return `<div class="trip-photo-thumb">
+      <img data-path="${esc(p.path)}" src="" alt="${esc(p.caption||'')}"
+        onclick="event.stopPropagation();openTripPhotoLightbox('${tid}',${pidx})">
+      <button class="trip-photo-del" onclick="event.stopPropagation();deleteTripPhoto('${tid}','${pid}')" title="削除">✕</button>
+      <div class="trip-photo-caption" contenteditable="true"
+        onblur="saveTripPhotoCaption('${tid}','${pid}',this.textContent)"
+        onclick="event.stopPropagation()"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
+      >${esc(p.caption||'')}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function _reviewMealItemHTML(meal) {
+  const mid = esc(String(meal.id));
+  const dishes = (meal.sittings || []).flatMap(s => {
+    const kindLabel = (typeof KIND_LABELS !== 'undefined' && KIND_LABELS[s.kind]) || s.kind;
+    return (s.dishes || []).filter(d => d.name).map(d => {
+      let label = kindLabel + ' ' + d.name;
+      if (d.type === 'out' && d.place) label += '（' + d.place + '）';
+      return label;
+    });
+  });
+  const text = dishes.length ? dishes.join('、') : '（記録あり）';
+  return `<div class="trip-drv-meal-item" onclick="event.stopPropagation();openFoodDetailPopup('${mid}')">${esc(text)}</div>`;
+}
+
+function _reviewBuyItemHTML(t, ds, buy, tid) {
+  const bid = esc(String(buy.id));
+  return `<div class="trip-drv-buy-item">
+    <span class="trip-drv-buy-name">${esc(buy.name)}</span>
+    ${buy.note ? `<span class="trip-drv-buy-note">${esc(buy.note)}</span>` : ''}
+    <button class="trip-drv-buy-del" onclick="event.stopPropagation();deleteReviewBuy('${esc(String(t.id))}',${jsq(ds)},'${bid}')" title="削除">✕</button>
+  </div>`;
+}
+
+function _renderUndatedPhotosHTML(t, periodDates) {
+  const tid = esc(String(t.id));
+  const allPhotos = t.photos || [];
+  const photos = allPhotos.filter(p => !p.date || !periodDates.has(p.date));
+  if (!photos.length) return '<div class="trip-photos-empty">写真なし</div>';
+  const DN = '日月火水木金土'.split('');
+  const groups = {};
+  photos.forEach(p => {
+    const key = p.date || '__undated__';
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(p);
+  });
+  let html = '';
+  Object.entries(groups).sort(([a], [b]) => {
+    if (a === '__undated__') return 1; if (b === '__undated__') return -1;
+    return a.localeCompare(b);
+  }).forEach(([dateKey, datePhotos]) => {
+    const dateLabel = dateKey === '__undated__' ? '日付未定' : (() => {
+      const d = new Date(dateKey + 'T00:00:00');
+      return `${d.getMonth()+1}/${d.getDate()}（${DN[d.getDay()]}）`;
+    })();
+    const thumbs = datePhotos.map(p => {
+      const pid = esc(String(p.id));
+      const pidx = allPhotos.indexOf(p);
+      const dateOpts = _buildTripDateOptions(t, p.date || '');
+      return `<div class="trip-photo-thumb">
+        <img data-path="${esc(p.path)}" src="" alt="${esc(p.caption||'')}"
+          onclick="event.stopPropagation();openTripPhotoLightbox('${tid}',${pidx})">
+        <button class="trip-photo-del" onclick="event.stopPropagation();deleteTripPhoto('${tid}','${pid}')" title="削除">✕</button>
+        <select class="trip-photo-date-sel" onclick="event.stopPropagation()" onchange="setTripPhotoDate('${tid}','${pid}',this.value)">${dateOpts}</select>
+        <div class="trip-photo-caption" contenteditable="true"
+          onblur="saveTripPhotoCaption('${tid}','${pid}',this.textContent)"
+          onclick="event.stopPropagation()"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}"
+        >${esc(p.caption||'')}</div>
+      </div>`;
+    }).join('');
+    html += `<div class="trip-photo-group">
+      <div class="trip-photo-date-label">${esc(dateLabel)}</div>
+      <div class="trip-photo-grid">${thumbs}</div>
+    </div>`;
+  });
+  return html;
+}
+
+function _reviewDayCardHTML(t, ds, dayNum, dateObj, isLastDay) {
+  const tid = esc(String(t.id));
+  const DN = '日月火水木金土'.split('');
+  const log = t.log || {};
+  const dayLog = log[ds] || {};
+  const dsQ = jsq(ds);
+  const dateLabel = `${dateObj.getMonth()+1}/${dateObj.getDate()}（${DN[dateObj.getDay()]}）`;
+
+  // 🏨 Stay (omitted on last day)
+  const autoStay = isLastDay ? '' : _reviewDayStayAuto(t, ds);
+  const savedStay = dayLog.stay || '';
+  const stayHTML = isLastDay ? '' : `<div class="trip-drv-row">
+    <div class="trip-drv-row-icon" aria-hidden="true">🏨</div>
+    <div class="trip-drv-row-body">
+      <div class="trip-drv-row-label">泊まったところ</div>
+      <input class="trip-drv-input" type="text"
+        id="trDayStay-${tid}-${ds}"
+        value="${esc(savedStay)}"
+        placeholder="${esc(autoStay || '宿名を入力…')}"
+        onblur="saveTripDayField('${tid}',${dsQ},'stay',this.value)"
+        onclick="event.stopPropagation()">
+    </div>
+  </div>`;
+
+  // 🚃 Transport
+  const autoMoveItems = _reviewDayMoveAutoItems(t, ds);
+  const autoMoveHTML = autoMoveItems.length
+    ? `<div class="trip-drv-auto-items">${autoMoveItems.map(s => `<div class="trip-drv-auto-item">${esc(s)}</div>`).join('')}</div>`
+    : '';
+  const moveHTML = `<div class="trip-drv-row">
+    <div class="trip-drv-row-icon" aria-hidden="true">🚃</div>
+    <div class="trip-drv-row-body">
+      <div class="trip-drv-row-label">移動</div>
+      ${autoMoveHTML}
+      <input class="trip-drv-input" type="text"
+        id="trDayMove-${tid}-${ds}"
+        value="${esc(dayLog.move || '')}"
+        placeholder="移動メモを追加…"
+        onblur="saveTripDayField('${tid}',${dsQ},'move',this.value)"
+        onclick="event.stopPropagation()">
+    </div>
+  </div>`;
+
+  // 📍 Places (non-move, non-stay plan items for this day)
+  const planItems = (t.plan || []).filter(p => p.date === ds && p.kind !== 'move' && p.kind !== 'stay');
+  const placesHTML = `<div class="trip-drv-row">
+    <div class="trip-drv-row-icon" aria-hidden="true">📍</div>
+    <div class="trip-drv-row-body">
+      <div class="trip-drv-row-label">行ったところ</div>
+      <div id="trPlaces-${tid}-${ds}" class="trip-drv-places">${planItems.map(item => _reviewPlaceItemHTML(t, item, tid)).join('')}</div>
+      <input class="trip-drv-add-in" type="text"
+        id="trAddPlace-${tid}-${ds}"
+        placeholder="＋ 行ったところを追加…"
+        onkeydown="if(event.key==='Enter'){event.stopPropagation();addReviewPlace('${tid}',${dsQ},this)}"
+        onclick="event.stopPropagation()">
+    </div>
+  </div>`;
+
+  // 🍴 Food (from global meals array)
+  const dayMeals = (typeof meals !== 'undefined' ? meals : []).filter(m => m.date === ds);
+  const foodHTML = `<div class="trip-drv-row">
+    <div class="trip-drv-row-icon" aria-hidden="true">🍴</div>
+    <div class="trip-drv-row-body">
+      <div class="trip-drv-row-label">食べたもの</div>
+      ${dayMeals.length ? `<div class="trip-drv-food-list">${dayMeals.map(m => _reviewMealItemHTML(m)).join('')}</div>` : ''}
+      <button class="trip-drv-add-btn" onclick="event.stopPropagation();openFoodModalNew(${dsQ})">＋ 食べたものを追加</button>
+    </div>
+  </div>`;
+
+  // 🛍 Buys
+  const buys = dayLog.buys || [];
+  const buysHTML = `<div class="trip-drv-row">
+    <div class="trip-drv-row-icon" aria-hidden="true">🛍</div>
+    <div class="trip-drv-row-body">
+      <div class="trip-drv-row-label">買ったもの・お土産</div>
+      <div id="trBuys-${tid}-${ds}" class="trip-drv-buys">${buys.map(b => _reviewBuyItemHTML(t, ds, b, tid)).join('')}</div>
+      <input class="trip-drv-add-in" type="text"
+        id="trAddBuy-${tid}-${ds}"
+        placeholder="＋ 品名を追加…"
+        onkeydown="if(event.key==='Enter'){event.stopPropagation();addReviewBuy('${tid}',${dsQ},this)}"
+        onclick="event.stopPropagation()">
+    </div>
+  </div>`;
+
+  // 📷 Photos
+  const photosHTML = `<div class="trip-drv-row">
+    <div class="trip-drv-row-icon" aria-hidden="true">📷</div>
+    <div class="trip-drv-row-body">
+      <div class="trip-drv-row-label-row">
+        <div class="trip-drv-row-label">写真</div>
+        <button class="trip-drv-add-btn-sm" onclick="event.stopPropagation();openTripPhotoInputForDay('${tid}',${dsQ})">＋</button>
+      </div>
+      <div id="trDayPhotos-${tid}-${ds}"
+        class="trip-photos-drop-zone"
+        ondragover="tripPhotoDragOver(event)"
+        ondragleave="tripPhotoDragLeave(event)"
+        ondrop="tripPhotoDropForDay(event,'${tid}',${dsQ})">
+        ${_reviewDayPhotosHTML(t, ds)}
+      </div>
+    </div>
+  </div>`;
+
+  // ✏ Note
+  const noteHTML = `<div class="trip-drv-row">
+    <div class="trip-drv-row-icon" aria-hidden="true">✏</div>
+    <div class="trip-drv-row-body">
+      <div class="trip-drv-row-label">ひとこと</div>
+      <textarea class="trip-drv-ta"
+        id="trDayNote-${tid}-${ds}"
+        placeholder="この日のひとこと…"
+        onblur="saveTripDayField('${tid}',${dsQ},'note',this.value)"
+        onclick="event.stopPropagation()"
+        oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
+      >${esc(dayLog.note || '')}</textarea>
+    </div>
+  </div>`;
+
+  return `<div class="trip-day-review-card ui-card">
+    <div class="trip-drv-hdr">
+      <div class="trip-drv-day-num">${dayNum}日目</div>
+      <div class="trip-drv-date">${esc(dateLabel)}</div>
+    </div>
+    ${stayHTML}${moveHTML}${placesHTML}${foodHTML}${buysHTML}${photosHTML}${noteHTML}
+  </div>`;
+}
+
+// ── REVIEW: RENDER ──
+
 function _renderTripReview(t) {
   const container = document.getElementById('tripReviewView'); if (!container) return;
   const review = t.review || { rating: 0, text: '', updatedAt: null };
   const tid = esc(String(t.id));
+
+  // Build period dates set for undated-photo detection
+  const periodDates = new Set();
+  if (t.startDate && t.endDate) {
+    const sdObj = new Date(t.startDate + 'T00:00:00');
+    const edObj = new Date(t.endDate + 'T00:00:00');
+    for (let d = new Date(sdObj); d <= edObj; d.setDate(d.getDate() + 1)) {
+      const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      periodDates.add(ds);
+    }
+  }
+
+  // Stars (overall rating)
   const starsHTML = [1,2,3,4,5].map(n =>
     `<button class="trip-star-btn${n <= (review.rating||0) ? ' active' : ''}" onclick="setTripRating('${tid}',${n});event.stopPropagation()">★</button>`
   ).join('');
-  const periodHTML = _renderPeriodContent(t);
+
+  // Section 2: undated/out-of-period photos (only when trip has period)
+  const allPhotos = t.photos || [];
+  const undatedPhotos = allPhotos.filter(p => !p.date || !periodDates.has(p.date));
+  const undatedSection = (undatedPhotos.length && t.startDate && t.endDate) ? `<div class="trip-review-section">
+    <div class="trip-review-lbl-row">
+      <div class="trip-review-lbl">日付なしの写真</div>
+      <button class="trip-photo-add-btn-text" onclick="openTripPhotoInput('${tid}');event.stopPropagation()">＋ 写真を追加</button>
+    </div>
+    <div id="tripUndatedPhotosWrap-${tid}"
+      class="trip-photos-drop-zone"
+      ondragover="tripPhotoDragOver(event)"
+      ondragleave="tripPhotoDragLeave(event)"
+      ondrop="tripPhotoDrop(event,'${tid}')">
+      ${_renderUndatedPhotosHTML(t, periodDates)}
+    </div>
+  </div>` : '';
+
+  // Section 3: day cards or no-period fallback
+  let dayContent = '';
+  if (t.startDate && t.endDate) {
+    const sdObj = new Date(t.startDate + 'T00:00:00');
+    const edObj = new Date(t.endDate + 'T00:00:00');
+    let dayNum = 0, cards = '';
+    for (let d = new Date(sdObj); d <= edObj; d.setDate(d.getDate() + 1)) {
+      dayNum++;
+      const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      const isLastDay = (ds === t.endDate);
+      cards += _reviewDayCardHTML(t, ds, dayNum, new Date(d), isLastDay);
+    }
+    dayContent = `<div class="trip-review-day-cards">${cards}</div>`;
+  } else {
+    dayContent = `<div class="trip-review-no-period">
+      <p>期間を設定すると、日ごとに記録できます。</p>
+      <div class="trip-review-section">
+        <div class="trip-review-lbl-row">
+          <div class="trip-review-lbl">写真</div>
+          <button class="trip-photo-add-btn-text" onclick="openTripPhotoInput('${tid}');event.stopPropagation()">＋ 写真を追加</button>
+        </div>
+        <div id="tripPhotosWrap-${tid}"
+          class="trip-photos-drop-zone"
+          ondragover="tripPhotoDragOver(event)"
+          ondragleave="tripPhotoDragLeave(event)"
+          ondrop="tripPhotoDrop(event,'${tid}')">
+          ${_renderTripPhotosHTML(t)}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // Section 4: reflections (所感) for the trip period
+  const reflectionsHTML = _renderReviewReflections(t);
+
   container.innerHTML = `<div class="trip-review">
     <div class="trip-review-section">
-      <div class="trip-review-lbl">評価</div>
+      <div class="trip-review-lbl">総合評価</div>
       <div class="trip-stars">${starsHTML}</div>
     </div>
     <div class="trip-review-section">
-      <div class="trip-review-lbl">感想</div>
+      <div class="trip-review-lbl">総合感想</div>
       <textarea class="trip-review-ta" id="tripReviewTa-${tid}"
         placeholder="旅の感想を書いてください…"
         onblur="saveTripReviewText('${tid}')"
         oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
       >${esc(review.text || '')}</textarea>
     </div>
-    <div class="trip-review-section">
-      <div class="trip-review-lbl-row">
-        <div class="trip-review-lbl">写真</div>
-        <button class="trip-photo-add-btn-text" onclick="openTripPhotoInput('${tid}');event.stopPropagation()">＋ 写真を追加</button>
-      </div>
-      <div id="tripPhotosWrap-${tid}"
-        class="trip-photos-drop-zone"
-        ondragover="tripPhotoDragOver(event)"
-        ondragleave="tripPhotoDragLeave(event)"
-        ondrop="tripPhotoDrop(event,'${tid}')">
-        ${_renderTripPhotosHTML(t)}
-      </div>
-      <div id="tripPhotoError" class="food-photo-error"></div>
-    </div>
-    ${periodHTML}
+    ${undatedSection}
+    ${dayContent}
+    ${reflectionsHTML}
+    <div id="tripPhotoError" class="food-photo-error"></div>
   </div>`;
+
   const ta = document.getElementById(`tripReviewTa-${String(t.id)}`);
   if (ta) { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }
+  container.querySelectorAll('.trip-drv-ta').forEach(el => {
+    el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px';
+  });
   fillSignedUrls(container);
+}
+
+function _renderReviewReflections(t) {
+  if (!t.startDate || !t.endDate) return '';
+  const DN = '日月火水木金土'.split('');
+  const tripNotes = (typeof reflections !== 'undefined' ? reflections : [])
+    .filter(r => r.date && r.date >= t.startDate && r.date <= t.endDate)
+    .sort((a, b) => a.date.localeCompare(b.date));
+  if (!tripNotes.length) return '';
+  let html = `<div class="trip-review-section">
+    <div class="trip-review-lbl">この期間の所感</div>
+    <div class="trip-period-notes">`;
+  tripNotes.forEach(r => {
+    const d = new Date(r.date + 'T00:00:00');
+    const dateLabel = `${d.getMonth()+1}/${d.getDate()}（${DN[d.getDay()]}）`;
+    const excerpt = (r.body || '').slice(0, 80) + ((r.body || '').length > 80 ? '…' : '');
+    html += `<div class="trip-period-note-item" onclick="nav('notes');setTimeout(()=>notesCalCellClick('${esc(r.date)}'),100)">
+      <div class="trip-period-note-date">${esc(dateLabel)}</div>
+      <div class="trip-period-note-text">${esc(excerpt)}</div>
+    </div>`;
+  });
+  html += `</div></div>`;
+  return html;
+}
+
+// ── REVIEW: SAVE / UPDATE FUNCTIONS ──
+
+function saveTripDayField(tripId, ds, field, value) {
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  if (!t.log) t.log = {};
+  if (!t.log[ds]) t.log[ds] = {};
+  t.log[ds][field] = value;
+  saveTrips();
+}
+
+function togglePlanItemVisited(tripId, itemId) {
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  const item = (t.plan || []).find(p => String(p.id) === String(itemId)); if (!item) return;
+  item.visited = !item.visited;
+  saveTrips();
+  _updateReviewPlaceItem(tripId, itemId);
+}
+
+function setPlanItemRating(tripId, itemId, n) {
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  const item = (t.plan || []).find(p => String(p.id) === String(itemId)); if (!item) return;
+  item.rating = (item.rating === n) ? 0 : n;
+  saveTrips();
+  _updateReviewPlaceItem(tripId, itemId);
+}
+
+function savePlanItemComment(tripId, itemId, val) {
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  const item = (t.plan || []).find(p => String(p.id) === String(itemId)); if (!item) return;
+  item.comment = (val || '').trim();
+  saveTrips();
+}
+
+function _updateReviewPlaceItem(tripId, itemId) {
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  const item = (t.plan || []).find(p => String(p.id) === String(itemId)); if (!item) return;
+  const el = document.getElementById(`trPlaceItem-${String(tripId)}-${String(itemId)}`);
+  if (el) el.outerHTML = _reviewPlaceItemHTML(t, item, String(tripId));
+}
+
+function addReviewPlace(tripId, ds, inputEl) {
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  const title = inputEl.value.trim(); if (!title) return;
+  if (!t.plan) t.plan = [];
+  t.plan.push({ id: crypto.randomUUID(), date: ds, time: '', kind: 'see', title, place: '', url: '', note: '', visited: true });
+  saveTrips();
+  inputEl.value = '';
+  const container = document.getElementById(`trPlaces-${String(tripId)}-${ds}`);
+  if (container) {
+    const planItems = (t.plan || []).filter(p => p.date === ds && p.kind !== 'move' && p.kind !== 'stay');
+    container.innerHTML = planItems.map(item => _reviewPlaceItemHTML(t, item, String(tripId))).join('');
+  }
+}
+
+function deleteReviewPlanItem(tripId, ds, itemId) {
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  t.plan = (t.plan || []).filter(p => String(p.id) !== String(itemId));
+  saveTrips();
+  const container = document.getElementById(`trPlaces-${String(tripId)}-${ds}`);
+  if (container) {
+    const planItems = (t.plan || []).filter(p => p.date === ds && p.kind !== 'move' && p.kind !== 'stay');
+    container.innerHTML = planItems.map(item => _reviewPlaceItemHTML(t, item, String(tripId))).join('');
+  }
+}
+
+function addReviewBuy(tripId, ds, inputEl) {
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  const name = inputEl.value.trim(); if (!name) return;
+  if (!t.log) t.log = {};
+  if (!t.log[ds]) t.log[ds] = {};
+  if (!t.log[ds].buys) t.log[ds].buys = [];
+  t.log[ds].buys.push({ id: crypto.randomUUID(), name, note: '' });
+  saveTrips();
+  inputEl.value = '';
+  const container = document.getElementById(`trBuys-${String(tripId)}-${ds}`);
+  if (container) container.innerHTML = (t.log[ds].buys || []).map(b => _reviewBuyItemHTML(t, ds, b, String(tripId))).join('');
+}
+
+function deleteReviewBuy(tripId, ds, buyId) {
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  if (!t.log || !t.log[ds] || !t.log[ds].buys) return;
+  t.log[ds].buys = t.log[ds].buys.filter(b => String(b.id) !== String(buyId));
+  saveTrips();
+  const container = document.getElementById(`trBuys-${String(tripId)}-${ds}`);
+  if (container) container.innerHTML = (t.log[ds].buys || []).map(b => _reviewBuyItemHTML(t, ds, b, String(tripId))).join('');
+}
+
+function openTripPhotoInputForDay(tripId, ds) {
+  _tripPhotoTargetId = String(tripId);
+  _tripPhotoTargetDate = ds;
+  document.getElementById('tripPhotoInput').click();
+}
+
+function tripPhotoDropForDay(e, tripId, ds) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  const files = Array.from((e.dataTransfer && e.dataTransfer.files) || []).filter(f => f.type.startsWith('image/') || /\.(heic|heif)$/i.test(f.name));
+  if (!files.length) return;
+  _tripPhotoTargetId = String(tripId);
+  _tripPhotoTargetDate = ds;
+  handleTripPhotoUpload(files);
 }
 
 function _renderTripDetail(tripId) {

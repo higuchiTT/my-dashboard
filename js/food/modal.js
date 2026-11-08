@@ -484,6 +484,12 @@ function saveFoodModal() {
   saveMeals();
   closeFoodModal();
   renderFood();
+  // Refresh Travel review if currently open
+  if (typeof _currentTripId !== 'undefined' && _currentTripId &&
+      typeof _travelSubView !== 'undefined' && _travelSubView === 'review') {
+    const _trip = typeof trips !== 'undefined' ? trips.find(t => String(t.id) === String(_currentTripId)) : null;
+    if (_trip && typeof _renderTripReview === 'function') _renderTripReview(_trip);
+  }
 }
 
 function showFoodDelConfirm() {

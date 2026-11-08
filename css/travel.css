@@ -312,3 +312,91 @@
     .trip-plan-auto-item:hover { background:var(--paper2); opacity:1; }
     .trip-plan-auto-icon { font-size:14px; flex-shrink:0; margin-top:2px; }
     .trip-plan-auto-title { font-size:13px; color:var(--ink2); font-style:italic; }
+
+    /* ── REVIEW: DAY CARDS ── */
+    .trip-review-day-cards { display:flex; flex-direction:column; gap:20px; margin-bottom:28px; }
+    .trip-day-review-card { overflow:hidden; }
+    .trip-drv-hdr { display:flex; align-items:baseline; gap:10px; padding:14px 20px 12px; border-bottom:1px solid var(--rule); background:var(--paper2); border-radius:12px 12px 0 0; }
+    .trip-drv-day-num { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); }
+    .trip-drv-date { font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:600; color:var(--ink); }
+    .trip-drv-row { display:flex; gap:10px; padding:12px 20px; border-bottom:1px solid rgba(26,24,20,0.06); }
+    .trip-drv-row:last-child { border-bottom:none; }
+    .trip-drv-row-icon { font-size:16px; flex-shrink:0; line-height:1.6; width:20px; text-align:center; }
+    .trip-drv-row-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:6px; }
+    .trip-drv-row-label { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); }
+    .trip-drv-row-label-row { display:flex; align-items:center; justify-content:space-between; }
+    .trip-drv-row-label-row .trip-drv-row-label { margin:0; }
+    .trip-drv-auto-items { display:flex; flex-direction:column; gap:3px; }
+    .trip-drv-auto-item { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink3); font-style:italic; }
+    .trip-drv-input { width:100%; box-sizing:border-box; font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink); background:var(--paper); border:1px solid var(--rule); padding:6px 8px; outline:none; transition:border-color 0.15s; min-height:32px; }
+    .trip-drv-input:focus { border-color:var(--ink); }
+    .trip-drv-input::placeholder { color:var(--ink3); opacity:0.6; }
+    .trip-drv-ta { width:100%; box-sizing:border-box; font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink); background:var(--paper); border:1px solid var(--rule); padding:6px 8px; outline:none; resize:none; overflow:hidden; min-height:40px; line-height:1.6; transition:border-color 0.15s; }
+    .trip-drv-ta:focus { border-color:var(--ink); }
+    .trip-drv-ta::placeholder { color:var(--ink3); opacity:0.6; }
+    /* Place items */
+    .trip-drv-places { display:flex; flex-direction:column; gap:6px; }
+    .trip-drv-place-item { display:flex; align-items:flex-start; gap:8px; padding:4px 0; }
+    .trip-drv-visit-btn { background:none; border:1.5px solid var(--rule); font-size:14px; cursor:pointer; padding:2px 5px; border-radius:3px; color:var(--ink3); flex-shrink:0; min-height:32px; min-width:32px; display:flex; align-items:center; justify-content:center; transition:all 0.15s; }
+    .trip-drv-visit-btn.active { background:var(--ok); border-color:var(--ok); color:#fff; }
+    .trip-drv-place-info { flex:1; min-width:0; display:flex; flex-direction:column; gap:4px; }
+    .trip-drv-place-name-row { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+    .trip-drv-place-name { font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; color:var(--ink); }
+    .trip-drv-place-item.visited .trip-drv-place-name { opacity:0.55; text-decoration:line-through; }
+    .trip-drv-place-kind { font-size:10px; padding:2px 7px; cursor:default; }
+    .trip-drv-pill-see  { background:rgba(16,185,129,0.1);  border-color:rgba(16,185,129,0.3); color:#0e9f6e; }
+    .trip-drv-pill-eat  { background:rgba(245,158,11,0.1);  border-color:rgba(245,158,11,0.3); color:#d97706; }
+    .trip-drv-pill-memo { background:var(--paper2); border-color:var(--rule); color:var(--ink3); }
+    .trip-drv-place-stars { display:flex; gap:2px; }
+    .trip-drv-star-btn { background:none; border:none; font-size:16px; cursor:pointer; color:var(--rule); padding:0 1px; transition:color 0.12s; line-height:1; min-height:32px; }
+    .trip-drv-star-btn.active { color:var(--warn); }
+    .trip-drv-star-btn:hover { color:var(--warn); }
+    .trip-drv-place-comment { width:100%; box-sizing:border-box; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink2); background:transparent; border:none; border-bottom:1px solid transparent; padding:2px 0; outline:none; transition:border-color 0.15s; }
+    .trip-drv-place-comment:focus { border-bottom-color:var(--rule); }
+    .trip-drv-place-comment::placeholder { color:var(--ink3); opacity:0.5; }
+    .trip-drv-place-del { background:none; border:none; cursor:pointer; color:var(--ink3); font-size:11px; padding:2px 4px; opacity:0.5; transition:opacity 0.12s; min-height:28px; }
+    .trip-drv-place-del:hover { opacity:1; color:var(--accent); }
+    /* Food list */
+    .trip-drv-food-list { display:flex; flex-direction:column; gap:4px; }
+    .trip-drv-meal-item { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink2); padding:5px 8px; background:var(--paper2); border-radius:4px; cursor:pointer; transition:background 0.12s; min-height:32px; display:flex; align-items:center; }
+    .trip-drv-meal-item:hover { background:var(--paper3); }
+    /* Buy items */
+    .trip-drv-buys { display:flex; flex-direction:column; gap:4px; }
+    .trip-drv-buy-item { display:flex; align-items:center; gap:8px; min-height:28px; }
+    .trip-drv-buy-name { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink); }
+    .trip-drv-buy-note { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink3); }
+    .trip-drv-buy-del { background:none; border:none; cursor:pointer; color:var(--ink3); font-size:11px; padding:2px 4px; opacity:0.5; transition:opacity 0.12s; min-height:28px; flex-shrink:0; }
+    .trip-drv-buy-del:hover { opacity:1; color:var(--accent); }
+    /* Add inputs */
+    .trip-drv-add-in { width:100%; box-sizing:border-box; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink); background:transparent; border:none; border-bottom:1px dashed rgba(139,58,24,0.3); padding:4px 0; outline:none; transition:border-color 0.15s; min-height:32px; }
+    .trip-drv-add-in:focus { border-bottom-color:var(--accent); }
+    .trip-drv-add-in::placeholder { color:var(--accent); opacity:0.6; }
+    .trip-drv-add-btn { background:none; border:1px solid var(--rule); font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--accent); padding:5px 12px; border-radius:4px; cursor:pointer; align-self:flex-start; min-height:32px; transition:all 0.15s; }
+    .trip-drv-add-btn:hover { background:var(--accent); color:var(--paper); border-color:var(--accent); }
+    .trip-drv-add-btn-sm { background:none; border:1px solid var(--rule); font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700; color:var(--ink2); padding:3px 8px; cursor:pointer; border-radius:4px; transition:all 0.15s; min-height:28px; }
+    .trip-drv-add-btn-sm:hover { border-color:var(--accent); color:var(--accent); }
+    .trip-drv-photos-empty { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink3); padding:8px 0; }
+    /* No-period fallback */
+    .trip-review-no-period { margin-bottom:28px; }
+    .trip-review-no-period > p { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink3); font-style:italic; margin:0 0 16px; }
+
+    /* ── REVIEW: DAY CARDS – MOBILE ── */
+    @media (max-width: 640px) {
+      #page-travel .trip-review { padding:12px; }
+      #page-travel .trip-review-day-cards { gap:12px; }
+      #page-travel .trip-day-review-card { border-radius:8px; }
+      #page-travel .trip-drv-hdr { padding:10px 12px 8px; }
+      #page-travel .trip-drv-row { padding:10px 12px; gap:8px; }
+      #page-travel .trip-drv-row-icon { font-size:14px; width:16px; }
+      #page-travel .trip-drv-input { font-size:13px; min-height:36px; padding:7px 8px; }
+      #page-travel .trip-drv-ta { font-size:13px; min-height:44px; }
+      #page-travel .trip-drv-add-in { font-size:13px; min-height:36px; padding:6px 0; }
+      #page-travel .trip-drv-add-btn { min-height:36px; padding:7px 12px; font-size:13px; }
+      #page-travel .trip-drv-visit-btn { min-height:36px; min-width:36px; }
+      #page-travel .trip-drv-star-btn { font-size:18px; min-height:32px; }
+      #page-travel .trip-drv-place-name { font-size:14px; }
+      #page-travel .trip-drv-meal-item { font-size:13px; min-height:36px; }
+      #page-travel .trip-drv-buy-del,
+      #page-travel .trip-drv-place-del { min-height:36px; min-width:28px; opacity:1; }
+      #page-travel .trip-drv-add-btn-sm { min-height:36px; min-width:36px; font-size:14px; }
+    }
