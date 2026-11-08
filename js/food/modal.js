@@ -79,22 +79,49 @@ function renderFoodModalBody() {
 function foodSittingSectionHTML(sit) {
   const dishes = sit.dishes || [];
   const dishesHTML = dishes.map((d, i) => foodDishRowHTML(sit.id, d, i)).join('');
+  const sid = esc(String(sit.id));
+  const kindPillsHTML = KIND_ORDER.map(k =>
+    `<button class="food-sitting-kind-pill${sit.kind === k ? ' active' : ''}" onclick="event.stopPropagation();changeFoodSittingKind('${sid}',${jsq(k)})">${esc(KIND_LABELS[k])}</button>`
+  ).join('');
   return `<div class="food-sitting-section" id="foodSitting-${esc(sit.id)}">
     <div class="food-sitting-hdr">
-      <span class="food-sitting-kind-label">${esc(KIND_LABELS[sit.kind]||sit.kind)}</span>
-      <button class="food-sitting-del-btn" onclick="event.stopPropagation();removeFoodSitting('${esc(String(sit.id))}')" title="このセクションを削除">✕</button>
+      <div class="food-sitting-kind-pills">${kindPillsHTML}</div>
+      <button class="food-sitting-del-btn" onclick="event.stopPropagation();removeFoodSitting('${sid}')" title="このセクションを削除">✕</button>
     </div>
     <div class="food-sitting-body">
       <div id="foodDishList-${esc(sit.id)}">${dishesHTML}</div>
-      <button class="food-add-dish" onclick="event.stopPropagation();addFoodDish('${esc(String(sit.id))}')">＋ 料理を追加</button>
+      <button class="food-add-dish" onclick="event.stopPropagation();addFoodDish('${sid}')">＋ 料理を追加</button>
     </div>
   </div>`;
+}
+
+function changeFoodSittingKind(sittingId, newKind) {
+  if (!_foodModalState) return;
+  _collectModalInputs();
+  const sit = (_foodModalState.sittings||[]).find(s => String(s.id) === String(sittingId));
+  if (!sit || sit.kind === newKind) return;
+  const existing = (_foodModalState.sittings||[]).find(s => s.kind === newKind && String(s.id) !== String(sittingId));
+  if (!existing) {
+    sit.kind = newKind;
+    renderFoodModalBody();
+    return;
+  }
+  // Merge: move non-empty dishes (name or photos or tags or note) to existing sitting
+  const dishesToMove = (sit.dishes||[]).filter(d =>
+    (d.name||'').trim() || (d.photos||[]).length > 0 || (d.tags||[]).length > 0 || (d.note||'').trim()
+  );
+  if (dishesToMove.length > 0) {
+    existing.dishes = [...(existing.dishes||[]), ...dishesToMove];
+  }
+  _foodModalState.sittings = (_foodModalState.sittings||[]).filter(s => String(s.id) !== String(sittingId));
+  renderFoodModalBody();
 }
 
 function foodDishRowHTML(sittingId, d, i) {
   const isOut = d.type === 'out';
   const isDeli = d.type === 'deli';
   const showPlace = isOut || isDeli;
+  const showUrl = (!isOut && !isDeli) || !!(d.recipeUrl || '').trim();
   const sid = esc(String(sittingId));
   const did = esc(String(d.id));
   const photosHTML = foodDishPhotoThumbsHTML(sittingId, d);
@@ -120,7 +147,7 @@ function foodDishRowHTML(sittingId, d, i) {
       </div>
       <div class="food-dish-extra">
         ${showPlace ? `<input class="food-dish-place" type="text" value="${esc(d.place || '')}" placeholder="${esc(placePlaceholder)}" oninput="foodDishFieldInput('${sid}','${did}','place',this.value)" onfocus="event.stopPropagation();_setFocusDishId('${did}')">` : ''}
-        <input class="food-dish-url" type="text" value="${esc(d.recipeUrl || '')}" placeholder="レシピURL（任意）" oninput="foodDishFieldInput('${sid}','${did}','recipeUrl',this.value)" onfocus="event.stopPropagation();_setFocusDishId('${did}')">
+        ${showUrl ? `<input class="food-dish-url" type="text" value="${esc(d.recipeUrl || '')}" placeholder="レシピURL（任意）" oninput="foodDishFieldInput('${sid}','${did}','recipeUrl',this.value)" onfocus="event.stopPropagation();_setFocusDishId('${did}')">` : ''}
       </div>
       <textarea class="food-dish-note-ta" placeholder="料理の感想（任意）"
         oninput="foodDishFieldInput('${sid}','${did}','note',this.value)"
