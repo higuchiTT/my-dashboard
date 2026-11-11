@@ -181,41 +181,6 @@
 
     /* ── TRAVEL DETAIL (unchanged) ── */
     #tripDetailView { min-height:50vh; }
-    .trip-badge { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; padding:3px 8px; flex-shrink:0; }
-    .trip-badge.検討中   { background:rgba(163,106,24,0.15); color:var(--warn); }
-    .trip-badge.計画中   { background:rgba(90,107,58,0.15);  color:var(--ok); }
-    .trip-badge.予約済み { background:rgba(139,58,24,0.15);  color:var(--accent); }
-    .trip-badge.完了     { background:var(--paper3); color:var(--mute); }
-    .trip-detail-hdr { display:flex; align-items:flex-start; gap:16px; padding:20px 40px 16px; border-bottom:1px solid var(--rule); }
-    .trip-detail-back { display:flex; align-items:center; gap:6px; background:none; border:1px solid var(--rule); color:var(--ink2); font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.08em; padding:6px 12px; cursor:pointer; white-space:nowrap; flex-shrink:0; margin-top:4px; transition:border-color 0.15s,color 0.15s; }
-    .trip-detail-back:hover { border-color:var(--ink); color:var(--ink); }
-    .trip-detail-meta { flex:1; min-width:0; }
-    .trip-detail-dest { font-family:'Newsreader',serif; font-size:36px; font-weight:800; font-style:normal; letter-spacing:-0.02em; line-height:1.1; margin:0 0 10px; }
-    .trip-detail-meta-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-    .trip-detail-dates { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink2); }
-    .trip-detail-budget { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--ink2); }
-    .trip-detail-seg-wrap { padding:16px 40px 0; border-bottom:1px solid var(--rule); }
-
-    /* ── PLAN ── */
-    .trip-plan { padding:24px 40px; }
-    .trip-day-group { margin-bottom:28px; }
-    .trip-day-hdr { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:2px solid var(--rule); margin-bottom:8px; }
-    .trip-day-label { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink); }
-    .trip-undated-group .trip-day-label { color:var(--ink3); }
-    .trip-plan-add-btn { background:none; border:1px solid var(--rule); color:var(--ink3); font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.08em; padding:4px 10px; cursor:pointer; transition:all 0.15s; }
-    .trip-plan-add-btn:hover { border-color:var(--accent); color:var(--accent); }
-    .trip-day-items { display:flex; flex-direction:column; gap:2px; }
-    .trip-day-empty { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink3); padding:12px 0; }
-    .trip-plan-item { display:flex; align-items:flex-start; gap:10px; padding:10px 12px; background:var(--paper2); border-left:3px solid transparent; cursor:pointer; transition:background 0.12s; }
-    .trip-plan-item:hover { background:var(--paper3); }
-    .trip-plan-kind-icon { flex-shrink:0; margin-top:2px; }
-    .trip-plan-time { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); min-width:38px; flex-shrink:0; margin-top:3px; }
-    .trip-plan-item-body { flex:1; min-width:0; }
-    .trip-plan-item-title { font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:600; color:var(--ink); margin-bottom:2px; }
-    .trip-plan-item-place { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); }
-    .trip-plan-item-link { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); text-decoration:none; }
-    .trip-plan-item-link:hover { text-decoration:underline; }
-    .trip-plan-item-note { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink3); margin-top:3px; font-style:italic; }
 
     /* ── REVIEW ── */
     .trip-review { padding:24px 40px; max-width:720px; }
@@ -281,12 +246,6 @@
 
     /* ── KIND SEG IN MODALS ── */
     .tv-kind-seg { flex-wrap:wrap; gap:4px; }
-
-    /* ── AUTO PLAN ITEMS ── */
-    .trip-plan-auto-item { background:transparent; border-left:3px solid rgba(139,58,24,0.25); opacity:0.75; }
-    .trip-plan-auto-item:hover { background:var(--paper2); opacity:1; }
-    .trip-plan-auto-icon { font-size:14px; flex-shrink:0; margin-top:2px; }
-    .trip-plan-auto-title { font-size:13px; color:var(--ink2); font-style:italic; }
 
     /* ── REVIEW: DAY CARDS ── */
     .trip-review-day-cards { display:flex; flex-direction:column; gap:20px; margin-bottom:28px; }
@@ -361,10 +320,6 @@
     .plan-confirmed-badge.confirmed:hover { background:rgba(16,185,129,0.22); }
     .plan-confirmed-badge.unconfirmed { background:rgba(202,138,4,0.1); color:#b45309; }
     .plan-confirmed-badge.unconfirmed:hover { background:rgba(202,138,4,0.2); }
-    .trip-plan-item.plan-unconfirmed { opacity:0.78; }
-    .trip-plan-item-confno { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--accent); cursor:pointer; padding:1px 4px; border-radius:3px; transition:background 0.12s; }
-    .trip-plan-item-confno:hover { background:var(--paper3); }
-
     /* ── KIND/MODE SEGMENTS (plan item modal) ── */
     .plan-kind-seg, .plan-mode-seg { flex-wrap:wrap; gap:4px; }
     .plan-kind-seg .ui-seg-btn, .plan-mode-seg .ui-seg-btn { min-height:36px; }
@@ -388,4 +343,156 @@
       #page-travel .trip-drv-buy-del,
       #page-travel .trip-drv-place-del { min-height:36px; min-width:28px; opacity:1; }
       #page-travel .trip-drv-add-btn-sm { min-height:36px; min-width:36px; font-size:14px; }
+    }
+
+    /* ── DETAIL HERO (new 2nd-stage design) ── */
+    .td-detail-hero { position:relative; min-height:220px; overflow:hidden; border-radius:12px; margin:20px 24px 0; background:var(--ink); display:flex; flex-direction:column; }
+    .td-hero-cover-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+    .td-hero-overlay { position:absolute; inset:0; background:linear-gradient(to top,rgba(0,0,0,0.78) 0%,rgba(0,0,0,0.3) 55%,rgba(0,0,0,0.12) 100%); }
+    .td-hero-actions { position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; padding:14px 16px 0; }
+    .td-hero-action-btns { display:flex; align-items:center; gap:8px; }
+    .td-hero-back { display:flex; align-items:center; gap:5px; background:rgba(255,255,255,0.15); color:#fff; border:1px solid rgba(255,255,255,0.3); font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:0.06em; padding:5px 10px; border-radius:4px; cursor:pointer; transition:background 0.12s; min-height:32px; white-space:nowrap; }
+    .td-hero-back:hover { background:rgba(255,255,255,0.25); }
+    .td-hero-btn { display:flex; align-items:center; gap:4px; background:rgba(255,255,255,0.15); color:#fff; border:1px solid rgba(255,255,255,0.3); font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:600; padding:5px 10px; border-radius:4px; cursor:pointer; transition:background 0.12s; min-height:32px; white-space:nowrap; }
+    .td-hero-btn:hover { background:rgba(255,255,255,0.25); }
+    .td-hero-content { position:relative; z-index:2; display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding:0 20px 20px; flex:1; min-height:120px; margin-top:8px; }
+    .td-hero-left { flex:1; min-width:0; }
+    .td-hero-name { font-family:'Newsreader',serif; font-size:36px; font-weight:800; color:#fff; line-height:1.1; margin:8px 0 6px; text-shadow:0 1px 6px rgba(0,0,0,0.4); }
+    .td-hero-daterow, .td-hero-placerow { font-family:'Space Grotesk',sans-serif; font-size:13px; color:rgba(255,255,255,0.9); margin-top:3px; text-shadow:0 1px 3px rgba(0,0,0,0.4); }
+    .td-hero-right { display:flex; flex-direction:column; align-items:flex-end; gap:12px; flex-shrink:0; max-width:200px; }
+    .td-hero-progress-card { background:rgba(255,255,255,0.18); backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,0.25); border-radius:8px; padding:10px 14px; min-width:150px; }
+    .td-hero-prog-title { font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:600; color:rgba(255,255,255,0.9); margin-bottom:6px; display:flex; align-items:center; justify-content:space-between; gap:6px; }
+    .td-hero-prog-title span { font-family:'JetBrains Mono',monospace; font-size:11px; white-space:nowrap; }
+    .td-hero-prog-bar-wrap { height:5px; background:rgba(255,255,255,0.3); border-radius:3px; overflow:hidden; margin-bottom:4px; }
+    .td-hero-prog-bar { height:100%; background:#fff; border-radius:3px; transition:width 0.4s; }
+    .td-hero-prog-pct { font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; color:#fff; text-align:right; }
+    .td-hero-tagline { font-family:'Newsreader',serif; font-size:14px; font-style:italic; color:rgba(255,255,255,0.9); text-shadow:0 1px 3px rgba(0,0,0,0.4); transform:rotate(-2deg); transform-origin:right center; text-align:right; white-space:pre-wrap; max-width:180px; word-break:break-word; }
+
+    /* ── SEGMENT WRAP (detail) ── */
+    .td-seg-wrap { padding:0 24px; border-bottom:1px solid var(--rule); background:var(--paper); }
+    .td-seg-wrap .ui-seg { border-radius:0; border:none; gap:0; }
+    .td-seg-wrap .ui-seg-btn { border-radius:0; border:none; border-bottom:2px solid transparent; padding:12px 20px; font-size:14px; }
+    .td-seg-wrap .ui-seg-btn.active { background:transparent; border-bottom-color:var(--accent); color:var(--accent); }
+
+    /* ── 3-COL PLAN LAYOUT ── */
+    .td-plan-3col { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1.4fr) minmax(0,1.1fr); gap:20px; padding:20px 24px 40px; align-items:start; }
+    .td-col-title { display:flex; align-items:center; gap:7px; font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:700; color:var(--ink); }
+
+    /* ── ITINERARY COLUMN ── */
+    .td-iti-hdr { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 12px; border-bottom:1px solid var(--rule); }
+    .td-day-block { display:flex; gap:0; padding:16px 16px 12px 20px; border-bottom:1px solid var(--rule); }
+    .td-day-block:last-child { border-bottom:none; }
+    .td-day-undated .td-day-badge { opacity:0.5; }
+    .td-day-badge { display:flex; flex-direction:column; align-items:center; justify-content:center; width:52px; min-width:52px; height:68px; background:rgba(241,236,226,0.8); border:1.5px solid var(--rule); border-radius:50%; font-family:'JetBrains Mono',monospace; color:var(--ink2); flex-shrink:0; margin-top:2px; }
+    .td-day-num { font-size:9px; font-weight:700; letter-spacing:0.06em; color:var(--accent); }
+    .td-day-date { font-size:13px; font-weight:700; color:var(--ink); line-height:1.2; }
+    .td-day-dow { font-size:10px; color:var(--ink3); }
+    .td-day-right { flex:1; min-width:0; margin-left:12px; }
+    .td-day-items { display:flex; flex-direction:column; }
+    .td-day-empty-line { height:36px; border-left:2px solid var(--rule); margin:4px 0 4px 7px; opacity:0.35; }
+    .td-iti-item { display:flex; align-items:flex-start; gap:8px; cursor:pointer; transition:background 0.12s; padding:4px 6px 4px 0; border-radius:5px; }
+    .td-iti-item:hover { background:var(--paper2); }
+    .td-iti-item-meal { background:rgba(245,158,11,0.08); border-radius:5px; }
+    .td-iti-item-meal:hover { background:rgba(245,158,11,0.15); }
+    .td-item-icon-wrap { display:flex; flex-direction:column; align-items:center; width:18px; flex-shrink:0; padding-top:3px; }
+    .td-item-line { width:2px; background:var(--rule); flex:1; min-height:12px; }
+    .td-iti-item:last-child .td-item-line { display:none; }
+    .td-item-icon { display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .td-item-body { flex:1; min-width:0; padding:2px 0 8px; }
+    .td-item-title { font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; color:var(--ink); line-height:1.4; }
+    .td-item-stay-title { font-size:14px; }
+    .td-item-meal-label { font-size:12px; color:var(--ink2); padding:3px 6px; background:rgba(245,158,11,0.1); border-radius:3px; display:inline-block; }
+    .td-item-addr { font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--ink3); margin-top:2px; display:flex; align-items:center; gap:3px; }
+    .td-item-place { font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--ink3); margin-top:2px; }
+    .td-item-note { font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--ink3); font-style:italic; margin-top:2px; }
+    .td-day-add-btn { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.06em; color:var(--ink3); background:none; border:1px dashed var(--rule); padding:4px 10px; cursor:pointer; transition:all 0.12s; border-radius:4px; margin-top:8px; min-height:32px; display:block; width:100%; }
+    .td-day-add-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+    /* ── TODOS COLUMN ── */
+    .td-todos-hdr { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 10px; border-bottom:1px solid var(--rule); }
+    .td-todos-prog-bar-wrap { height:4px; background:var(--rule); }
+    .td-todos-prog-bar { height:100%; background:var(--ok); transition:width 0.4s; }
+    .td-todos-list { display:flex; flex-direction:column; padding:6px 16px; gap:2px; }
+    .td-todo-row { display:flex; align-items:center; gap:8px; padding:9px 10px; border-radius:6px; cursor:pointer; transition:background 0.12s; min-height:40px; }
+    .td-todo-row:hover { background:var(--paper2); }
+    .td-todo-done-row { opacity:0.55; }
+    .td-todo-check-btn { background:none; border:none; cursor:pointer; padding:0; flex-shrink:0; display:flex; }
+    .td-todo-title { flex:1; min-width:0; font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .td-todos-done-sep { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink3); padding:4px 10px; margin-top:4px; }
+    .td-todos-add-btn { display:block; width:calc(100% - 32px); margin:4px 16px 12px; font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:600; color:var(--accent); background:none; border:1px dashed rgba(139,58,24,0.3); padding:7px; cursor:pointer; border-radius:5px; transition:all 0.12s; min-height:36px; text-align:center; }
+    .td-todos-add-btn:hover { background:rgba(139,58,24,0.05); border-color:var(--accent); }
+    .td-next-card { margin:4px 16px 16px; background:rgba(245,208,100,0.14); border:1px solid rgba(202,138,4,0.2); border-radius:8px; padding:12px 14px; }
+    .td-next-card-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700; color:var(--ink); }
+    .td-next-badge { background:rgba(202,138,4,0.2); color:#b45309; font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; padding:2px 7px; border-radius:10px; }
+    .td-next-list { margin:0; padding-left:14px; display:flex; flex-direction:column; gap:4px; }
+    .td-next-list li { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink2); line-height:1.5; }
+
+    /* ── INFO COLUMN ── */
+    .td-info-col { display:flex; flex-direction:column; gap:12px; padding-top:0; }
+    .td-info-col-title { padding:16px 16px 0; }
+    .td-map-card { border:1px solid var(--rule); border-radius:8px; overflow:hidden; cursor:pointer; transition:box-shadow 0.15s; background:var(--paper); }
+    .td-map-card:hover { box-shadow:0 2px 12px rgba(26,24,20,0.12); }
+    .td-map-no-map { padding:16px; display:flex; align-items:center; justify-content:center; min-height:70px; cursor:default; border:1px solid var(--rule); border-radius:8px; background:var(--paper); }
+    .td-map-no-map a { font-family:'Space Grotesk',sans-serif; font-size:13px; color:var(--accent); text-decoration:none; }
+    .td-map-no-map a:hover { text-decoration:underline; }
+    .td-map-svg { display:block; width:100%; }
+    .td-map-label { font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--ink3); padding:6px 12px; background:var(--paper2); display:flex; align-items:center; justify-content:space-between; }
+    .td-map-link { color:var(--accent); font-weight:600; }
+    .td-spots-card { border:1px solid var(--rule); border-radius:8px; overflow:hidden; background:var(--paper); }
+    .td-spots-card-hdr { display:flex; align-items:center; justify-content:space-between; padding:12px 16px 10px; border-bottom:1px solid var(--rule); }
+    .td-spots-list { display:flex; flex-direction:column; }
+    .td-spot-row { display:flex; align-items:center; gap:10px; padding:10px 16px; border-bottom:1px solid var(--rule); }
+    .td-spot-row:last-child { border-bottom:none; }
+    .td-spot-thumb { width:44px; height:44px; border-radius:5px; overflow:hidden; flex-shrink:0; background:var(--paper2); display:flex; align-items:center; justify-content:center; }
+    .td-spot-thumb-img { width:100%; height:100%; object-fit:cover; display:block; }
+    .td-spot-thumb-empty { display:flex; align-items:center; justify-content:center; width:100%; height:100%; }
+    .td-spot-info { flex:1; min-width:0; }
+    .td-spot-name { font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:600; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .td-spot-note { font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--ink3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:2px; }
+    .td-spot-actions { display:flex; align-items:center; gap:4px; flex-shrink:0; }
+    .td-spot-planned-badge { font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; letter-spacing:0.05em; background:rgba(16,185,129,0.12); color:#0e9f6e; padding:2px 6px; border-radius:3px; white-space:nowrap; }
+    .td-spot-plan-btn { background:none; border:1px solid var(--rule); font-size:14px; color:var(--accent); width:28px; height:28px; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.12s; }
+    .td-spot-plan-btn:hover { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .td-spot-edit-btn { background:none; border:none; color:var(--ink3); cursor:pointer; padding:4px; display:flex; align-items:center; transition:color 0.12s; min-height:28px; }
+    .td-spot-edit-btn:hover { color:var(--accent); }
+    .td-spots-more-btn { display:block; width:100%; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--accent); background:none; border:none; border-top:1px solid var(--rule); padding:9px; cursor:pointer; text-align:center; transition:background 0.12s; }
+    .td-spots-more-btn:hover { background:var(--paper2); }
+
+    /* ── FEATURED TRIP HERO (list view) ── */
+    #tvFeaturedTrip { padding:16px 24px 0; }
+    #tvFeaturedTrip:empty { display:none; padding:0; }
+    .tv-featured-hero { position:relative; min-height:150px; border-radius:10px; overflow:hidden; cursor:pointer; background:var(--ink); display:flex; flex-direction:column; transition:box-shadow 0.15s; }
+    .tv-featured-hero:hover { box-shadow:0 4px 20px rgba(26,24,20,0.15); }
+    .tv-feat-hero-content { position:relative; z-index:2; display:flex; align-items:flex-end; justify-content:space-between; gap:12px; padding:0 18px 16px; flex:1; min-height:90px; margin-top:8px; }
+    .tv-feat-hero-left { flex:1; min-width:0; }
+    .tv-feat-hero-name { font-family:'Newsreader',serif; font-size:26px; font-weight:700; color:#fff; text-shadow:0 1px 4px rgba(0,0,0,0.4); line-height:1.1; margin:4px 0; }
+    .tv-feat-hero-meta { font-family:'Space Grotesk',sans-serif; font-size:12px; color:rgba(255,255,255,0.85); text-shadow:0 1px 3px rgba(0,0,0,0.3); }
+    .tv-feat-hero-right { flex-shrink:0; }
+    .tv-feat-hero-prog { background:rgba(255,255,255,0.18); backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,0.25); border-radius:7px; padding:8px 12px; min-width:130px; }
+    .tv-feat-hero-prog-label { font-family:'Space Grotesk',sans-serif; font-size:10px; color:rgba(255,255,255,0.85); margin-bottom:4px; }
+    .tv-feat-hero-prog-pct { font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:700; color:#fff; text-align:right; }
+
+    /* ── RESPONSIVE: DETAIL HERO + 3-COL ── */
+    @media (max-width: 640px) {
+      #page-travel .td-detail-hero { margin:12px 12px 0; min-height:160px; border-radius:10px; }
+      #page-travel .td-hero-name { font-size:22px; margin:4px 0; }
+      #page-travel .td-hero-daterow, #page-travel .td-hero-placerow { font-size:11px; }
+      #page-travel .td-hero-content { padding:0 14px 14px; min-height:90px; }
+      #page-travel .td-hero-right { max-width:140px; }
+      #page-travel .td-hero-progress-card { min-width:120px; padding:8px 10px; }
+      #page-travel .td-hero-prog-pct { font-size:14px; }
+      #page-travel .td-hero-tagline { font-size:12px; max-width:140px; }
+      #page-travel .td-seg-wrap { padding:0 12px; }
+      #page-travel .td-seg-wrap .ui-seg-btn { padding:10px 14px; font-size:13px; }
+      #page-travel .td-plan-3col { grid-template-columns:1fr; padding:12px 12px 24px; gap:16px; }
+      #page-travel .td-day-block { padding:12px 10px 10px 12px; }
+      #page-travel .td-day-badge { width:46px; min-width:46px; height:60px; }
+      #page-travel .td-day-num { font-size:8px; }
+      #page-travel .td-day-date { font-size:12px; }
+      #page-travel .td-todo-row { min-height:44px; }
+      #page-travel .td-day-add-btn { min-height:36px; font-size:11px; }
+      #page-travel #tvFeaturedTrip { padding:12px 12px 0; }
+      #page-travel .tv-featured-hero { min-height:130px; }
+      #page-travel .tv-feat-hero-name { font-size:20px; }
+      #page-travel .tv-feat-hero-prog { min-width:110px; }
     }

@@ -13,14 +13,14 @@
   <link rel="stylesheet" href="css/todo-list.css?v=cba4c8d7">
   <link rel="stylesheet" href="css/ledger.css?v=621633c1">
   <link rel="stylesheet" href="css/wishlist.css?v=e4179203">
-  <link rel="stylesheet" href="css/travel.css?v=daf460aa">
+  <link rel="stylesheet" href="css/travel.css?v=04e957f8">
   <link rel="stylesheet" href="css/ui.css?v=9b3587fd">
   <link rel="stylesheet" href="css/food.css?v=b5c1d3c9">
   <link rel="stylesheet" href="css/misc.css?v=be82bcb4">
   <link rel="stylesheet" href="css/todo.css?v=4446638f">
   <link rel="stylesheet" href="css/feedback.css?v=b8c1df10">
   <link rel="stylesheet" href="css/accounts.css?v=8517bda7">
-  <link rel="stylesheet" href="css/responsive.css?v=59944d5f">
+  <link rel="stylesheet" href="css/responsive.css?v=a8553510">
   <link rel="stylesheet" href="css/notes.css?v=8804453f">
   <link rel="stylesheet" href="css/food-tags.css?v=4bb375fa">
   <link rel="stylesheet" href="css/food-suggest.css?v=480b24af">
@@ -487,6 +487,9 @@
       <button class="btn btn-primary" onclick="openNewTripModal()">＋ 旅を追加</button>
     </div>
 
+    <!-- 1b. Featured upcoming trip (JS rendered) -->
+    <div id="tvFeaturedTrip"></div>
+
     <!-- 2. Summary bar (JS rendered) -->
     <div class="tv-summary-bar" id="tvSummaryBar"></div>
 
@@ -556,6 +559,10 @@
         <div>
           <label class="ldr-modal-lbl">説明</label>
           <textarea class="ldr-modal-in" id="tripModalDesc" rows="3" style="resize:vertical;" placeholder="旅のコンセプト・見どころなど"></textarea>
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">ひとことタグライン</label>
+          <input class="ldr-modal-in" id="tripModalTagline" type="text" placeholder="例: 海と温泉の旅（ヒーローに斜体で表示）" />
         </div>
         <div>
           <label class="ldr-modal-lbl">メモ</label>
@@ -843,6 +850,59 @@
     </div>
   </div>
 
+  <!-- Spot Add/Edit Modal -->
+  <div class="ldr-modal-overlay" id="tripSpotModal" onclick="if(event.target===this)closeSpotModal()">
+    <div class="ldr-modal" style="max-width:420px;" onclick="event.stopPropagation()">
+      <div class="ldr-modal-hdr">
+        <div class="ldr-modal-title" id="spotModalTitle">スポットを追加</div>
+        <button class="ldr-modal-close" onclick="closeSpotModal()">✕</button>
+      </div>
+      <div class="ldr-modal-body">
+        <div>
+          <label class="ldr-modal-lbl">スポット名<span style="color:var(--accent)"> *</span></label>
+          <input class="ldr-modal-in" id="spotModalName" type="text" placeholder="例: 金閣寺" />
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">URL（任意）</label>
+          <input class="ldr-modal-in" id="spotModalUrl" type="url" placeholder="https://..." />
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">メモ（任意）</label>
+          <input class="ldr-modal-in" id="spotModalNote" type="text" placeholder="見どころや注意点" />
+        </div>
+        <div>
+          <label class="ldr-modal-lbl">写真（任意）</label>
+          <div class="tv-cover-upload-row">
+            <div id="spotModalPhotoPreview" class="tv-cover-preview"></div>
+            <div class="tv-cover-btns">
+              <button class="btn btn-ghost btn-sm" onclick="openSpotPhotoInput();event.stopPropagation()">アップロード</button>
+              <button class="btn btn-ghost btn-sm" id="spotModalPhotoClearBtn" style="display:none;color:var(--accent)" onclick="clearSpotPhoto();event.stopPropagation()">削除</button>
+            </div>
+          </div>
+          <div id="spotModalPhotoError" class="food-photo-error"></div>
+        </div>
+      </div>
+      <div class="ldr-modal-ftr">
+        <div id="spotModalDelWrap"></div>
+        <div class="ldr-modal-ftr-r">
+          <button class="btn btn-ghost btn-sm" onclick="closeSpotModal()">キャンセル</button>
+          <button class="btn btn-primary btn-sm" onclick="saveSpotModal()">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- All Spots Modal -->
+  <div class="ldr-modal-overlay" id="allSpotsModal" onclick="if(event.target===this)closeAllSpotsModal()">
+    <div class="ldr-modal" style="max-width:480px;" onclick="event.stopPropagation()">
+      <div class="ldr-modal-hdr">
+        <div class="ldr-modal-title">行きたいスポット</div>
+        <button class="ldr-modal-close" onclick="closeAllSpotsModal()">✕</button>
+      </div>
+      <div class="ldr-modal-body" id="allSpotsModalBody"></div>
+    </div>
+  </div>
+
   <!-- Photo file inputs -->
   <input type="file" id="tripPhotoInput" accept="image/*" multiple style="display:none"
     onchange="handleTripPhotoUpload(Array.from(this.files));this.value=''">
@@ -850,6 +910,8 @@
     onchange="handleTripCoverUpload(this.files,'trip');this.value=''">
   <input type="file" id="ideaCoverInput" accept="image/*" style="display:none"
     onchange="handleTripCoverUpload(this.files,'idea');this.value=''">
+  <input type="file" id="spotPhotoInput" accept="image/*" style="display:none"
+    onchange="handleSpotPhotoUpload(this.files);this.value=''">
 
   <!-- Progress Detail Modal -->
   <div class="ldr-modal-overlay" id="tripProgressDetailModal" onclick="if(event.target===this)closeProgressDetailModal()">
@@ -1073,7 +1135,7 @@
 <script src="js/ledger/transactions.js?v=7c1772f4"></script>
 <script src="js/wishlist.js?v=cf9f0b03"></script>
 <script src="js/ledger/subs.js?v=3e1d587d"></script>
-<script src="js/travel.js?v=d88c0391"></script>
+<script src="js/travel.js?v=ac82cb24"></script>
 <script src="js/food/list.js?v=cd75a047"></script>
 <script src="js/food/calendar.js?v=7b5233a3"></script>
 <script src="js/food/modal.js?v=0bcec9cf"></script>
@@ -1082,7 +1144,7 @@
 <script src="js/food/suggest.js?v=7f310287"></script>
 <script src="js/notes.js?v=46a4ed85"></script>
 <script src="js/core/utils.js?v=843f163e"></script>
-<script src="js/core/backup.js?v=79718970"></script>
+<script src="js/core/backup.js?v=c5ecb8a0"></script>
 
 <div id="tvTagPop" class="tv-tag-pop" onclick="event.stopPropagation()">
   <div class="tv-tag-pop-grid" id="tvTagPopGrid"></div>

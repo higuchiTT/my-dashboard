@@ -150,6 +150,7 @@ async function checkOrphanPhotos() {
     (trips || []).forEach(t => {
       (t.photos || []).forEach(p => { if (p.path) refPaths.add(p.path); });
       if (t.coverPhoto && t.coverPhoto.path) refPaths.add(t.coverPhoto.path);
+      (t.spots || []).forEach(s => { if (s.photo && s.photo.path) refPaths.add(s.photo.path); });
     });
     const cutoff = Date.now() - 24 * 60 * 60 * 1000;
     _orphanPhotos = allFiles.filter(f => {

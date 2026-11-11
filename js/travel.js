@@ -16,6 +16,56 @@ let _statusMenuTripId = null; // open status menu
 let _progressDetailTripId = null; // step key shown in progress detail modal
 let _progressDetailKey = null;
 let _tripPhotoTargetDate = null; // date string for day-specific photo upload
+let _spotModalTripId = null;   // trip for spot modal
+let _spotModalId = null;       // spot being edited (null = new)
+let _spotPhotoUploading = 0;
+let _spotPhotoTargetTripId = null;
+
+// ── JAPAN CITY COORDINATES (lat/lon) for map ──
+const JAPAN_CITIES = {
+  '函館':  {lat:41.8,lon:140.7}, '札幌':  {lat:43.1,lon:141.4}, '小樽':  {lat:43.2,lon:141.0},
+  '旭川':  {lat:43.8,lon:142.4}, '釧路':  {lat:43.0,lon:144.4}, '帯広':  {lat:42.9,lon:143.2},
+  '網走':  {lat:44.0,lon:144.3}, '稚内':  {lat:45.4,lon:141.7}, '北海道': {lat:43.1,lon:141.4},
+  '青森':  {lat:40.8,lon:140.7}, '弘前':  {lat:40.6,lon:140.5}, '八戸':  {lat:40.5,lon:141.5},
+  '盛岡':  {lat:39.7,lon:141.2}, '仙台':  {lat:38.3,lon:140.9}, '秋田':  {lat:39.7,lon:140.1},
+  '山形':  {lat:38.2,lon:140.4}, '福島':  {lat:37.8,lon:140.5}, '東北':  {lat:38.3,lon:140.9},
+  '新潟':  {lat:37.9,lon:139.0}, '長野':  {lat:36.7,lon:138.2}, '富山':  {lat:36.7,lon:137.2},
+  '金沢':  {lat:36.6,lon:136.6}, '福井':  {lat:36.1,lon:136.2}, '高山':  {lat:36.1,lon:137.3},
+  '東京':  {lat:35.7,lon:139.7}, '横浜':  {lat:35.4,lon:139.6}, '千葉':  {lat:35.6,lon:140.1},
+  '埼玉':  {lat:35.9,lon:139.6}, 'さいたま':{lat:35.9,lon:139.6},'宇都宮':{lat:36.6,lon:139.9},
+  '水戸':  {lat:36.4,lon:140.5}, '前橋':  {lat:36.4,lon:139.1}, '甲府':  {lat:35.7,lon:138.6},
+  '静岡':  {lat:35.0,lon:138.4}, '浜松':  {lat:34.7,lon:137.7}, '名古屋':{lat:35.2,lon:136.9},
+  '岐阜':  {lat:35.4,lon:136.8}, '津':    {lat:34.7,lon:136.5}, '大阪':  {lat:34.7,lon:135.5},
+  '京都':  {lat:35.0,lon:135.8}, '神戸':  {lat:34.7,lon:135.2}, '奈良':  {lat:34.7,lon:135.8},
+  '和歌山':{lat:34.2,lon:135.2}, '大津':  {lat:35.0,lon:135.9}, '彦根':  {lat:35.3,lon:136.3},
+  '姫路':  {lat:34.8,lon:134.7}, '岡山':  {lat:34.7,lon:133.9}, '広島':  {lat:34.4,lon:132.5},
+  '福山':  {lat:34.5,lon:133.4}, '山口':  {lat:34.2,lon:131.5}, '下関':  {lat:34.0,lon:131.0},
+  '高松':  {lat:34.3,lon:134.0}, '松山':  {lat:33.8,lon:132.8}, '高知':  {lat:33.6,lon:133.6},
+  '徳島':  {lat:34.1,lon:134.6}, '福岡':  {lat:33.6,lon:130.4}, '北九州':{lat:33.8,lon:130.9},
+  '大分':  {lat:33.2,lon:131.6}, '熊本':  {lat:32.8,lon:130.7}, '長崎':  {lat:32.7,lon:129.9},
+  '佐賀':  {lat:33.3,lon:130.3}, '宮崎':  {lat:31.9,lon:131.4}, '鹿児島':{lat:31.6,lon:130.6},
+  '那覇':  {lat:26.2,lon:127.7}, '沖縄':  {lat:26.2,lon:127.7}, '石垣':  {lat:24.3,lon:124.2},
+  '関東':  {lat:35.7,lon:139.7}, '関西':  {lat:34.7,lon:135.5}, '近畿':  {lat:34.7,lon:135.5},
+  '中部':  {lat:35.2,lon:136.9}, '中国':  {lat:34.4,lon:132.5}, '四国':  {lat:33.8,lon:132.8},
+  '九州':  {lat:33.6,lon:130.4}, '沖縄県':{lat:26.2,lon:127.7},
+};
+
+// Pure: find city coord from a string (checks dest + place text)
+function _cityToCoord(str) {
+  if (!str) return null;
+  for (const name of Object.keys(JAPAN_CITIES)) {
+    if (str.includes(name)) return JAPAN_CITIES[name];
+  }
+  return null;
+}
+
+// Pure: lat/lon → SVG point in a 185×215 viewBox
+// x = (lon-123)*8+5, y = (46-lat)*9+5
+function _coordToSVGPoint(lat, lon) {
+  const x = Math.round((lon - 123) * 8.0 + 5);
+  const y = Math.round((46  - lat) * 9.0 + 5);
+  return { x, y };
+}
 
 const PLAN_KIND_LABELS = { move:'移動', stay:'宿', see:'観光', eat:'食事', memo:'メモ' };
 const PLAN_KIND_COLORS = { move:'#3b82f6', stay:'#7c3aed', see:'#10b981', eat:'#f59e0b', memo:'#9ca3af' };
@@ -282,6 +332,7 @@ function openNewTripModal() {
   document.getElementById('tripModalStatus').value = '検討中';
   document.getElementById('tripModalDesc').value = '';
   document.getElementById('tripModalNote').value = '';
+  document.getElementById('tripModalTagline').value = '';
   document.getElementById('tripModalDelWrap').innerHTML = '';
   _updateTripModalCoverPreview(null);
   document.getElementById('tripModal').classList.add('open');
@@ -302,6 +353,7 @@ function openTripModal(id) {
   document.getElementById('tripModalStatus').value = t.status || '検討中';
   document.getElementById('tripModalDesc').value = t.description || '';
   document.getElementById('tripModalNote').value = t.note || '';
+  document.getElementById('tripModalTagline').value = t.tagline || '';
   document.getElementById('tripModalDelWrap').innerHTML = `<button class="btn btn-ghost btn-sm" style="color:var(--accent);border-color:rgba(139,58,24,0.3);" onclick="confirmDelTripModal();event.stopPropagation()">削除</button>`;
   _updateTripModalCoverPreview(t);
   document.getElementById('tripModal').classList.add('open');
@@ -349,6 +401,7 @@ function saveTripModal() {
     t.status = document.getElementById('tripModalStatus').value;
     t.description = document.getElementById('tripModalDesc').value.trim() || null;
     t.note = document.getElementById('tripModalNote').value.trim();
+    t.tagline = document.getElementById('tripModalTagline').value.trim() || null;
   } else {
     // Create new
     const b = document.getElementById('tripModalBudget').value;
@@ -361,8 +414,9 @@ function saveTripModal() {
       status: document.getElementById('tripModalStatus').value,
       description: document.getElementById('tripModalDesc').value.trim() || null,
       note: document.getElementById('tripModalNote').value.trim(),
+      tagline: document.getElementById('tripModalTagline').value.trim() || null,
       plan: [], review: { rating: 0, text: '', updatedAt: null }, photos: [],
-      progress: {}, todos: [], planMigrated: true
+      progress: {}, todos: [], spots: [], planMigrated: true
     });
   }
   saveTrips(); closeTripModal(); renderTravel();
@@ -838,8 +892,11 @@ function setTravelSubView(view, el) {
   if (rv) rv.style.display = view === 'review' ? '' : 'none';
   const t = trips.find(t => String(t.id) === _currentTripId);
   if (!t) return;
-  if (view === 'plan') _renderTripPlan(t);
-  else _renderTripReview(t);
+  if (view === 'plan') {
+    if (!document.getElementById(`tdItinerary-${String(t.id)}`)) _renderDetailPlanView(t);
+  } else {
+    _renderTripReview(t);
+  }
 }
 
 // ── PLAN ITEM MODAL ──
@@ -1021,7 +1078,7 @@ function savePlanItem() {
   }
   saveTrips();
   closePlanItemModal();
-  _renderTripPlan(t);
+  _refreshPlanView(t);
 }
 
 function confirmDelPlanItem() {
@@ -1034,7 +1091,7 @@ function execDelPlanItem() {
   t.plan = (t.plan || []).filter(p => String(p.id) !== _planItemModalId);
   saveTrips();
   closePlanItemModal();
-  _renderTripPlan(t);
+  _refreshPlanView(t);
 }
 
 // ── REVIEW ──
@@ -1189,45 +1246,12 @@ function _buildTripDateOptions(t, selectedDate) {
   return opts.join('');
 }
 
-function _planItemHTML(t, item) {
-  const tid = esc(String(t.id));
-  const iid = esc(String(item.id));
-  const color = PLAN_KIND_COLORS[item.kind] || '#9ca3af';
-  const icon = _planKindSVG(item.kind);
-  const label = PLAN_KIND_LABELS[item.kind] || item.kind;
-  const isValidUrl = /^https?:\/\//.test(item.url || '');
-  const isConfirmed = item.confirmed === true;
-  const confNoHTML = (item.kind === 'move' || item.kind === 'stay') && item.confNo
-    ? `<div class="trip-plan-item-confno" onclick="copyBookingConfNo(${jsq(item.confNo)},this);event.stopPropagation()" title="クリックでコピー">📋 ${esc(item.confNo)}</div>`
-    : '';
-  let placeHTML = '';
-  if (item.kind === 'move' && (item.from || item.to)) {
-    placeHTML = `<div class="trip-plan-item-place">${esc([item.from, item.to].filter(Boolean).join(' → '))}</div>`;
-  } else if (item.kind === 'stay' && item.address) {
-    placeHTML = `<div class="trip-plan-item-place">${esc(item.address)}</div>`;
-  } else if (item.place && item.kind !== 'move') {
-    placeHTML = `<div class="trip-plan-item-place">${esc(item.place)}</div>`;
-  }
-  return `<div class="trip-plan-item${isConfirmed ? '' : ' plan-unconfirmed'}" onclick="openPlanItemModal('${tid}','${iid}');event.stopPropagation()">
-    <span class="trip-plan-kind-icon" style="color:${color}" title="${esc(label)}">${icon}</span>
-    <span class="trip-plan-time">${item.time ? esc(item.time) : ''}</span>
-    <div class="trip-plan-item-body">
-      <div class="trip-plan-item-title">${esc(item.title)}</div>
-      ${placeHTML}
-      ${confNoHTML}
-      ${isValidUrl ? `<a class="trip-plan-item-link" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">リンク ↗</a>` : ''}
-      ${item.note ? `<div class="trip-plan-item-note">${esc(item.note)}</div>` : ''}
-    </div>
-    <button class="plan-confirmed-badge${isConfirmed ? ' confirmed' : ' unconfirmed'}" onclick="togglePlanItemConfirmed('${tid}','${iid}');event.stopPropagation()">${isConfirmed ? '確定' : '未決定'}</button>
-  </div>`;
-}
-
 function togglePlanItemConfirmed(tripId, itemId) {
   const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
   const item = (t.plan || []).find(p => String(p.id) === String(itemId)); if (!item) return;
   item.confirmed = !(item.confirmed === true);
   saveTrips();
-  _renderTripPlan(t);
+  _refreshPlanView(t);
 }
 
 function _renderTripPhotosHTML(t) {
@@ -1273,116 +1297,6 @@ function _renderTripPhotosHTML(t) {
     </div>`;
   });
   return html;
-}
-
-function _buildAutoItems(t) {
-  if (t.planMigrated) return {}; // plan items are direct, no auto items needed from details
-  const det = _getTripDetails(t);
-  const result = {}; // dateStr -> [{time, label, icon, sourceId, source}]
-  const add = (dateStr, time, label, icon, sourceId, source) => {
-    if (!result[dateStr]) result[dateStr] = [];
-    result[dateStr].push({ time: time || '', label, icon, sourceId, source });
-  };
-  for (const tr of det.transport) {
-    const icon = TRANSPORT_KIND_ICONS[tr.kind] || '🚆';
-    const name = tr.name || (tr.from && tr.to ? `${tr.from}→${tr.to}` : TRANSPORT_KIND_LABELS[tr.kind] || '');
-    if (tr.depDate) {
-      add(tr.depDate, tr.depTime, `${name}${tr.from ? ' ('+tr.from+' 出発)' : ' 出発'}`, icon, tr.id, 'transport');
-    }
-    if (tr.arrDate && tr.arrDate !== tr.depDate) {
-      add(tr.arrDate, tr.arrTime, `${name}${tr.to ? ' ('+tr.to+' 到着)' : ' 到着'}`, icon, tr.id, 'transport');
-    }
-  }
-  for (const st of det.stay) {
-    if (st.checkIn)  add(st.checkIn,  st.checkInTime,  `${st.name||'宿泊先'} チェックイン`,    '🏨', st.id, 'stay');
-    if (st.checkOut) add(st.checkOut, st.checkOutTime, `${st.name||'宿泊先'} チェックアウト`, '🏨', st.id, 'stay');
-  }
-  return result;
-}
-
-function _autoItemHTML(t, autoItem) {
-  const tid = esc(String(t.id));
-  const sourceId = esc(String(autoItem.sourceId));
-  return `<div class="trip-plan-item trip-plan-auto-item" onclick="openPlanItemModal('${tid}','${sourceId}');event.stopPropagation()">
-    <span class="trip-plan-auto-icon">${esc(autoItem.icon)}</span>
-    <span class="trip-plan-time">${autoItem.time ? esc(autoItem.time) : ''}</span>
-    <div class="trip-plan-item-body">
-      <div class="trip-plan-item-title trip-plan-auto-title">${esc(autoItem.label)}</div>
-    </div>
-  </div>`;
-}
-
-function _renderTripPlan(t) {
-  const container = document.getElementById('tripPlanView'); if (!container) return;
-  const DN = '日月火水木金土'.split('');
-  const plan = t.plan || [];
-  const tid = esc(String(t.id));
-  const autoByDate = _buildAutoItems(t);
-  const inPeriod = new Set();
-
-  let html = '<div class="trip-plan">';
-  if (t.startDate && t.endDate) {
-    const sdObj = new Date(t.startDate + 'T00:00:00');
-    const edObj = new Date(t.endDate + 'T00:00:00');
-    let dayNum = 0;
-    for (let d = new Date(sdObj); d <= edObj; d.setDate(d.getDate() + 1)) {
-      dayNum++;
-      const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-      inPeriod.add(ds);
-      const manualItems = plan.filter(p => p.date === ds);
-      const autoDay = autoByDate[ds] || [];
-      // Merge: sort by time; no-time items go last
-      const all = [
-        ...manualItems.map(item => ({ ...item, _auto: false })),
-        ...autoDay.map(item => ({ ...item, _auto: true }))
-      ].sort((a, b) => {
-        const at = a.time || '', bt = b.time || '';
-        if (at && bt) return at.localeCompare(bt);
-        if (at) return -1; if (bt) return 1;
-        return 0;
-      });
-      const dayLabel = `${dayNum}日目 ${d.getMonth()+1}/${d.getDate()}（${DN[d.getDay()]}）`;
-      html += `<div class="trip-day-group">
-        <div class="trip-day-hdr">
-          <span class="trip-day-label">${esc(dayLabel)}</span>
-          <button class="trip-plan-add-btn" onclick="openPlanItemModal('${tid}',null,'${esc(ds)}');event.stopPropagation()">＋ 予定</button>
-        </div>
-        <div class="trip-day-items">${
-          all.length
-            ? all.map(item => item._auto ? _autoItemHTML(t, item) : _planItemHTML(t, item)).join('')
-            : '<div class="trip-day-empty">予定なし</div>'
-        }</div>
-      </div>`;
-    }
-  }
-
-  // Undated manual items
-  const undated = plan.filter(p => !p.date).sort((a, b) => (a.time||'99:99').localeCompare(b.time||'99:99'));
-  html += `<div class="trip-day-group trip-undated-group">
-    <div class="trip-day-hdr">
-      <span class="trip-day-label">日付未定のアイデア</span>
-      <button class="trip-plan-add-btn" onclick="openPlanItemModal('${tid}',null,'');event.stopPropagation()">＋ アイデア</button>
-    </div>
-    <div class="trip-day-items">${undated.length ? undated.map(item => _planItemHTML(t, item)).join('') : '<div class="trip-day-empty">アイデアなし</div>'}</div>
-  </div>`;
-
-  // Out-of-period auto items (only if trip has defined period)
-  if (t.startDate && t.endDate) {
-    const oop = [];
-    Object.entries(autoByDate).forEach(([ds, dayItems]) => {
-      if (!inPeriod.has(ds)) dayItems.forEach(item => oop.push({ ...item, _ds: ds }));
-    });
-    if (oop.length) {
-      oop.sort((a, b) => (a._ds+a.time).localeCompare(b._ds+b.time));
-      html += `<div class="trip-day-group trip-undated-group">
-        <div class="trip-day-hdr"><span class="trip-day-label">期間外の移動・宿泊</span></div>
-        <div class="trip-day-items">${oop.map(item => _autoItemHTML(t, item)).join('')}</div>
-      </div>`;
-    }
-  }
-
-  html += '</div>';
-  container.innerHTML = html;
 }
 
 // ── REVIEW: DAY CARD HELPERS ──
@@ -1907,38 +1821,22 @@ function tripPhotoDropForDay(e, tripId, ds) {
 function _renderTripDetail(tripId) {
   const t = trips.find(t => String(t.id) === String(tripId));
   if (!t) { closeTripDetail(); return; }
-  const dateRange = _fmtDetailDateRange(t);
-  const budgetStr = t.budget != null ? `¥${fmt(t.budget)}` : '';
-  const tid = esc(String(t.id));
   const planActive   = _travelSubView !== 'review';
   const reviewActive = _travelSubView === 'review';
   const detailView = document.getElementById('tripDetailView');
   detailView.innerHTML = `
-    <div class="trip-detail-hdr">
-      <button class="trip-detail-back" onclick="closeTripDetail()">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        一覧
-      </button>
-      <div class="trip-detail-meta">
-        <h1 class="trip-detail-dest">${esc(t.dest)}</h1>
-        <div class="trip-detail-meta-row">
-          <span class="trip-badge ${esc(t.status)}">${esc(t.status)}</span>
-          ${dateRange ? `<span class="trip-detail-dates">${esc(dateRange)}</span>` : ''}
-          ${budgetStr ? `<span class="trip-detail-budget">${esc(budgetStr)}</span>` : ''}
-          <button class="btn btn-ghost btn-sm" onclick="openTripModal('${tid}');event.stopPropagation()">編集</button>
-        </div>
-      </div>
-    </div>
-    <div class="trip-detail-seg-wrap">
+    ${_renderDetailHero(t)}
+    <div class="td-seg-wrap">
       <div class="ui-seg" id="tripDetailSeg">
-        <button class="ui-seg-btn${planActive ? ' active' : ''}" onclick="setTravelSubView('plan',this)">日程表</button>
+        <button class="ui-seg-btn${planActive ? ' active' : ''}" onclick="setTravelSubView('plan',this)">計画</button>
         <button class="ui-seg-btn${reviewActive ? ' active' : ''}" onclick="setTravelSubView('review',this)">記録</button>
       </div>
     </div>
     <div id="tripPlanView" style="display:${planActive ? '' : 'none'}"></div>
     <div id="tripReviewView" style="display:${reviewActive ? '' : 'none'}"></div>
   `;
-  if (planActive) _renderTripPlan(t);
+  fillSignedUrls(detailView);
+  if (planActive) _renderDetailPlanView(t);
   else _renderTripReview(t);
 }
 
@@ -2316,7 +2214,7 @@ function _afterDetailsEdit(tripId) {
   if (_progressDetailTripId === String(tripId) && _progressDetailKey) {
     _renderProgressDetailContent(t, _progressDetailKey);
   }
-  if (_currentTripId === String(tripId) && _travelSubView === 'plan') _renderTripPlan(t);
+  if (_currentTripId === String(tripId) && _travelSubView === 'plan') _refreshPlanView(t);
   _renderTvProgress(trips.filter(tv => !tv.isIdea));
 }
 
@@ -2530,10 +2428,627 @@ function renderTravel() {
     listView.style.display = '';
     detailView.style.display = 'none';
     const realTrips = trips.filter(t => !t.isIdea);
+    _renderTvFeaturedTrip(realTrips);
     _renderTvSummaryBar(realTrips);
     _renderTvCards(realTrips);
     _renderTvProgress(realTrips);
     _renderTvTodos();
     _renderTvIdeas();
   }
+}
+
+// ── HELPER: refresh itinerary column in 3-col plan view ──
+function _refreshPlanView(t) {
+  _renderDetailItinerary(t);
+}
+
+// ── RENDER: DETAIL HERO ──
+function _renderDetailHero(t) {
+  const tid = esc(String(t.id));
+  const grad = _tripGradient(t.dest);
+  const hasCover = t.coverPhoto && t.coverPhoto.path;
+  const bgStyle = hasCover ? '' : `background:${grad}`;
+  const dateRange = _fmtDetailDateRange(t);
+  const doneCount = _tripDoneCount(t);
+  const total = PROGRESS_STEPS.length;
+  const pct = Math.round(doneCount / total * 100);
+  const tagline = t.tagline || '';
+  const budgetStr = t.budget != null ? ` · ¥${fmt(t.budget)}` : '';
+
+  return `<div class="td-detail-hero" style="${bgStyle}">
+    ${hasCover ? `<img data-path="${esc(t.coverPhoto.path)}" class="td-hero-cover-img" src="" alt="">` : ''}
+    <div class="td-hero-overlay"></div>
+    <div class="td-hero-actions">
+      <button class="td-hero-back" onclick="closeTripDetail()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        一覧
+      </button>
+      <div class="td-hero-action-btns" onclick="event.stopPropagation()">
+        <button class="td-hero-btn" onclick="openTripModal('${tid}');event.stopPropagation()">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M11 2l3 3L7 12H4v-3z"/></svg>
+          編集
+        </button>
+        <div class="tv-status-btn-wrap" onclick="event.stopPropagation()">
+          <button class="td-hero-btn" onclick="toggleStatusMenu('${tid}',this);event.stopPropagation()">${esc(t.status || '検討中')} ▾</button>
+        </div>
+      </div>
+    </div>
+    <div class="td-hero-content">
+      <div class="td-hero-left">
+        <span class="tv-badge-pill ${esc(t.status || '検討中')}">${esc(t.status || '検討中')}</span>
+        <h1 class="td-hero-name">${esc(t.dest)}</h1>
+        ${dateRange ? `<div class="td-hero-daterow">📅 ${esc(dateRange)}${esc(budgetStr)}</div>` : (t.timing ? `<div class="td-hero-daterow">📅 ${esc(t.timing)}${esc(budgetStr)}</div>` : (budgetStr ? `<div class="td-hero-daterow">${esc(budgetStr.slice(3))}</div>` : ''))}
+        ${(t.place || t.dest) ? `<div class="td-hero-placerow">📍 ${esc(t.place || t.dest)}</div>` : ''}
+      </div>
+      <div class="td-hero-right">
+        <div class="td-hero-progress-card">
+          <div class="td-hero-prog-title">計画の進捗 <span>${doneCount}/${total}</span></div>
+          <div class="td-hero-prog-bar-wrap"><div class="td-hero-prog-bar" style="width:${pct}%"></div></div>
+          <div class="td-hero-prog-pct">${pct}%</div>
+        </div>
+        ${tagline ? `<div class="td-hero-tagline">${esc(tagline)}</div>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── RENDER: 3-COLUMN PLAN VIEW ──
+function _renderDetailPlanView(t) {
+  const container = document.getElementById('tripPlanView'); if (!container) return;
+  const tid = esc(String(t.id));
+  container.innerHTML = `<div class="td-plan-3col">
+    <div class="td-col-itinerary ui-card" id="tdItinerary-${tid}"></div>
+    <div class="td-col-todos ui-card" id="tdTodosCol-${tid}"></div>
+    <div class="td-col-info" id="tdInfoCol-${tid}"></div>
+  </div>`;
+  _renderDetailItinerary(t);
+  _renderDetailTodosCol(t);
+  _renderDetailInfoCol(t);
+}
+
+// ── RENDER: ITINERARY COLUMN ──
+function _renderDetailItinerary(t) {
+  const container = document.getElementById(`tdItinerary-${String(t.id)}`); if (!container) return;
+  const DN = '日月火水木金土'.split('');
+  const tid = esc(String(t.id));
+  const plan = t.plan || [];
+
+  let html = `<div class="td-iti-hdr">
+    <div class="td-col-title">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M2 6h12"/><path d="M6 2v2M10 2v2"/></svg>
+      旅程
+    </div>
+    <button class="tv-section-link" onclick="openPlanItemModal('${tid}',null);event.stopPropagation()">＋ 予定追加</button>
+  </div>`;
+
+  if (t.startDate && t.endDate) {
+    const sdObj = new Date(t.startDate + 'T00:00:00');
+    const edObj = new Date(t.endDate + 'T00:00:00');
+    let dayNum = 0;
+    for (let d = new Date(sdObj); d <= edObj; d.setDate(d.getDate() + 1)) {
+      dayNum++;
+      const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      const dayItems = plan.filter(p => p.date === ds).sort((a, b) => {
+        const at = a.time||'', bt = b.time||'';
+        if (at && bt) return at.localeCompare(bt);
+        if (at) return -1; if (bt) return 1; return 0;
+      });
+      html += `<div class="td-day-block">
+        <div class="td-day-badge">
+          <div class="td-day-num">${dayNum}日目</div>
+          <div class="td-day-date">${d.getMonth()+1}/${d.getDate()}</div>
+          <div class="td-day-dow">（${DN[d.getDay()]}）</div>
+        </div>
+        <div class="td-day-right">
+          <div class="td-day-items">${
+            dayItems.length
+              ? dayItems.map(item => _itiItemHTML(t, item)).join('')
+              : '<div class="td-day-empty-line"></div>'
+          }</div>
+          <button class="td-day-add-btn" onclick="openPlanItemModal('${tid}',null,'${esc(ds)}');event.stopPropagation()">＋ 予定</button>
+        </div>
+      </div>`;
+    }
+    // Undated items
+    const undated = plan.filter(p => !p.date).sort((a, b) => (a.time||'').localeCompare(b.time||''));
+    if (undated.length) {
+      html += `<div class="td-day-block td-day-undated">
+        <div class="td-day-badge"><div class="td-day-num">未定</div></div>
+        <div class="td-day-right">
+          <div class="td-day-items">${undated.map(item => _itiItemHTML(t, item)).join('')}</div>
+          <button class="td-day-add-btn" onclick="openPlanItemModal('${tid}',null,'');event.stopPropagation()">＋ アイデア</button>
+        </div>
+      </div>`;
+    }
+  } else {
+    // No dates - all items as undated
+    const all = plan.slice().sort((a, b) => (a.time||'').localeCompare(b.time||''));
+    html += `<div class="td-day-block td-day-undated">
+      <div class="td-day-badge"><div class="td-day-num">未定</div></div>
+      <div class="td-day-right">
+        <div class="td-day-items">${all.length ? all.map(item => _itiItemHTML(t, item)).join('') : '<div class="td-day-empty-line"></div>'}</div>
+        <button class="td-day-add-btn" onclick="openPlanItemModal('${tid}',null);event.stopPropagation()">＋ 予定</button>
+      </div>
+    </div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+// ── RENDER: SINGLE ITINERARY ITEM ──
+function _itiItemHTML(t, item) {
+  const tid = esc(String(t.id));
+  const iid = esc(String(item.id));
+  const color = PLAN_KIND_COLORS[item.kind] || '#9ca3af';
+  const icon = _planKindSVG(item.kind);
+  const isConfirmed = item.confirmed === true;
+
+  let titleHTML = '', subHTML = '', isYellow = false;
+
+  if (item.kind === 'move') {
+    const modeIcon = TRANSPORT_KIND_ICONS[item.mode] || '🚆';
+    let route = '';
+    if (item.from) route += esc(item.from);
+    if (item.time) route += (route ? ' ' : '') + esc(item.time) + ' 発';
+    if (item.to) route += ' → ' + esc(item.to);
+    if (item.arrTime) route += ' ' + esc(item.arrTime) + ' 着';
+    titleHTML = `<div class="td-item-title">${esc(modeIcon)} ${esc(item.title)}${route ? ` <span style="font-weight:400;font-size:12px">${route}</span>` : ''}</div>`;
+  } else if (item.kind === 'stay') {
+    titleHTML = `<div class="td-item-title td-item-stay-title">${esc(item.title || '宿泊')}</div>`;
+    if (item.address) subHTML = `<div class="td-item-addr"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 2C5.24 2 3 4.24 3 7c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="7" r="1.5"/></svg> ${esc(item.address)}</div>`;
+  } else if (item.kind === 'eat') {
+    isYellow = true;
+    titleHTML = `<div class="td-item-title"><span class="td-item-meal-label">🍴 ${item.time ? esc(item.time)+' ' : ''}${esc(item.title)}</span></div>`;
+  } else if (item.kind === 'memo') {
+    isYellow = true;
+    titleHTML = `<div class="td-item-title"><span class="td-item-meal-label">📝 ${esc(item.title)}</span></div>`;
+  } else {
+    titleHTML = `<div class="td-item-title">${esc(item.title)}</div>`;
+    if (item.place) subHTML = `<div class="td-item-place">${esc(item.place)}</div>`;
+  }
+  const noteHTML = item.note ? `<div class="td-item-note">${esc(item.note)}</div>` : '';
+
+  return `<div class="td-iti-item${isYellow ? ' td-iti-item-meal' : ''}" onclick="openPlanItemModal('${tid}','${iid}');event.stopPropagation()">
+    <div class="td-item-icon-wrap">
+      <span class="td-item-icon" style="color:${color}">${icon}</span>
+      <div class="td-item-line"></div>
+    </div>
+    <div class="td-item-body">${titleHTML}${subHTML}${noteHTML}</div>
+    <button class="plan-confirmed-badge${isConfirmed ? ' confirmed' : ' unconfirmed'}" onclick="togglePlanItemConfirmed('${tid}','${iid}');event.stopPropagation()">${isConfirmed ? '確定' : '未決定'}</button>
+  </div>`;
+}
+
+// ── RENDER: TODOS COLUMN ──
+function _renderDetailTodosCol(t) {
+  const container = document.getElementById(`tdTodosCol-${String(t.id)}`); if (!container) return;
+  const tid = esc(String(t.id));
+  const todos = t.todos || [];
+  const doneCount = todos.filter(td => td.done).length;
+  const total = todos.length;
+  const pct = total > 0 ? Math.round(doneCount / total * 100) : 0;
+  const priOrder = {high:0,mid:1,low:2};
+  const undone = todos.filter(td => !td.done).sort((a,b) => (priOrder[a.priority]||1)-(priOrder[b.priority]||1));
+  const done = todos.filter(td => td.done);
+
+  let html = `<div class="td-todos-hdr">
+    <div class="td-col-title">
+      <svg width="15" height="15" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.4"/><path d="M5.5 9l2.5 2.5L12.5 5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      やることリスト
+    </div>
+    ${total > 0 ? `<span style="font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--ink3)">${doneCount} / ${total} 完了</span>` : ''}
+  </div>`;
+
+  if (total > 0) html += `<div class="td-todos-prog-bar-wrap"><div class="td-todos-prog-bar" style="width:${pct}%"></div></div>`;
+
+  html += `<div class="td-todos-list">`;
+  undone.forEach(todo => {
+    const tdid = esc(String(todo.id));
+    html += `<div class="td-todo-row" onclick="openTripTodoEditModal('${tdid}','${tid}');event.stopPropagation()">
+      <button class="td-todo-check-btn" onclick="toggleTripTodoDone('${tid}','${tdid}');event.stopPropagation()">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.5" stroke="var(--rule)" stroke-width="1.5"/></svg>
+      </button>
+      <div class="td-todo-title">${esc(todo.title)}</div>
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--ink3)" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg>
+    </div>`;
+  });
+  if (done.length) {
+    html += `<div class="td-todos-done-sep">完了 (${done.length}件)</div>`;
+    done.forEach(todo => {
+      const tdid = esc(String(todo.id));
+      html += `<div class="td-todo-row td-todo-done-row" onclick="openTripTodoEditModal('${tdid}','${tid}');event.stopPropagation()">
+        <button class="td-todo-check-btn" onclick="toggleTripTodoDone('${tid}','${tdid}');event.stopPropagation()">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7.5" fill="var(--accent)" stroke="none"/><path d="M5.5 9l2.5 2.5L12.5 5.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="td-todo-title" style="text-decoration:line-through">${esc(todo.title)}</div>
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="var(--ink3)" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg>
+      </div>`;
+    });
+  }
+  if (!todos.length) html += `<div class="tv-todos-empty" style="padding:8px 10px">やることを追加してみましょう</div>`;
+  html += `</div>`;
+
+  html += `<button class="td-todos-add-btn" onclick="openTripTodoEditModal(null,'${tid}');event.stopPropagation()">＋ やることを追加</button>`;
+
+  // "次に決めること" card
+  if (undone.length) {
+    html += `<div class="td-next-card">
+      <div class="td-next-card-hdr">
+        <div style="display:flex;align-items:center;gap:6px">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 2a4 4 0 014 4c0 1.5-.8 2.8-2 3.5V11H6v-1.5C4.8 8.8 4 7.5 4 6a4 4 0 014-4z"/><path d="M6 13h4"/></svg>
+          次に決めること
+        </div>
+        <span class="td-next-badge">${undone.length}件</span>
+      </div>
+      <ul class="td-next-list">
+        ${undone.slice(0,3).map(td => `<li>${esc(td.title)}</li>`).join('')}
+      </ul>
+    </div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+// ── RENDER: INFO COLUMN (map + spots) ──
+function _renderDetailInfoCol(t) {
+  const container = document.getElementById(`tdInfoCol-${String(t.id)}`); if (!container) return;
+  const tid = esc(String(t.id));
+
+  const mapHTML = _tripMapSVGCard(t);
+
+  const spots = t.spots || [];
+  const showSpots = spots.slice(0, 3);
+  let spotsRows = '';
+  if (showSpots.length) {
+    spotsRows = showSpots.map(spot => {
+      const sid = esc(String(spot.id));
+      const hasPhoto = spot.photo && spot.photo.path;
+      return `<div class="td-spot-row">
+        <div class="td-spot-thumb">
+          ${hasPhoto ? `<img data-path="${esc(spot.photo.path)}" src="" alt="" class="td-spot-thumb-img">` : `<div class="td-spot-thumb-empty"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.5" stroke-linecap="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div>`}
+        </div>
+        <div class="td-spot-info">
+          <div class="td-spot-name">${esc(spot.name)}</div>
+          ${spot.note ? `<div class="td-spot-note">${esc(spot.note.slice(0,30))}</div>` : ''}
+        </div>
+        <div class="td-spot-actions">
+          ${spot.planned ? '<span class="td-spot-planned-badge">旅程済</span>' : `<button class="td-spot-plan-btn" onclick="addSpotToPlan('${tid}','${sid}');event.stopPropagation()" title="旅程に入れる">＋</button>`}
+          <button class="td-spot-edit-btn" onclick="openSpotModal('${tid}','${sid}');event.stopPropagation()">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M11 2l3 3L7 12H4v-3z"/></svg>
+          </button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  container.innerHTML = `<div class="td-info-col">
+    <div class="td-col-title td-info-col-title">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 2C5.24 2 3 4.24 3 7c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="7" r="1.5"/></svg>
+      旅の情報
+    </div>
+    ${mapHTML}
+    <div class="td-spots-card">
+      <div class="td-spots-card-hdr">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--ink)">★ 行きたいスポット</div>
+        <button class="tv-section-link" onclick="openSpotModal('${tid}',null);event.stopPropagation()">＋ 追加</button>
+      </div>
+      <div class="td-spots-list">
+        ${spotsRows || `<div style="padding:12px 16px;font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--ink3)">行きたいスポットを追加</div>`}
+      </div>
+      ${spots.length > 3 ? `<button class="td-spots-more-btn" onclick="openAllSpotsModal('${tid}');event.stopPropagation()">もっと見る（${spots.length - 3}件） ›</button>` : ''}
+    </div>
+  </div>`;
+
+  fillSignedUrls(container);
+}
+
+// ── MAP: Japan SVG base polygons ──
+function _japanMapSVGBase() {
+  return `<rect width="185" height="215" fill="#e8f4f8"/>
+    <polygon points="155,10 157,10 165,16 180,24 180,30 165,44 150,47 144,47 140,42 145,33 153,20" fill="#c8bfb0" stroke="#8b7355" stroke-width="0.8" stroke-linejoin="round"/>
+    <polygon points="152,51 153,57 153,72 149,88 150,97 141,101 129,105 107,113 97,109 97,114 93,109 79,106 65,109 63,109 69,105 73,100 85,96 105,90 113,82 125,75 133,69 137,60 141,51" fill="#c8bfb0" stroke="#8b7355" stroke-width="0.8" stroke-linejoin="round"/>
+    <polygon points="89,106 79,109 73,114 85,116 93,114 95,110" fill="#c8bfb0" stroke="#8b7355" stroke-width="0.8" stroke-linejoin="round"/>
+    <polygon points="65,109 69,109 67,123 61,132 57,132 57,123 57,114" fill="#c8bfb0" stroke="#8b7355" stroke-width="0.8" stroke-linejoin="round"/>
+    <rect x="39" y="181" width="8" height="4" rx="2" fill="#c8bfb0" stroke="#8b7355" stroke-width="0.6"/>`;
+}
+
+// ── MAP: trip map card HTML ──
+function _tripMapSVGCard(t) {
+  const searchStr = (t.dest || '') + ' ' + (t.place || '');
+  const coord = _cityToCoord(searchStr);
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(t.place || t.dest || '');
+
+  if (!coord) {
+    return `<div class="td-map-no-map">
+      <a href="${esc(mapsUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📍 地図で見る（${esc(t.place || t.dest || '')}）</a>
+    </div>`;
+  }
+
+  const pt = _coordToSVGPoint(coord.lat, coord.lon);
+  const px = Math.max(5, Math.min(180, pt.x));
+  const py = Math.max(5, Math.min(210, pt.y));
+  const label = esc(t.place || t.dest || '');
+
+  return `<div class="td-map-card" onclick="window.open('${esc(mapsUrl)}','_blank');event.stopPropagation()" title="Google マップで見る">
+    <svg class="td-map-svg" viewBox="0 0 185 215" xmlns="http://www.w3.org/2000/svg">
+      ${_japanMapSVGBase()}
+      <circle cx="${px}" cy="${py}" r="6" fill="#8b3a18" stroke="white" stroke-width="2"/>
+      <circle cx="${px}" cy="${py}" r="2.5" fill="white"/>
+    </svg>
+    <div class="td-map-label">${label} <span class="td-map-link">詳細を見る ›</span></div>
+  </div>`;
+}
+
+// ── FEATURED TRIP HERO (list view top) ──
+function _renderTvFeaturedTrip(realTrips) {
+  const container = document.getElementById('tvFeaturedTrip'); if (!container) return;
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const feat = realTrips
+    .filter(t => t.status !== '完了' && t.startDate && t.startDate >= todayStr)
+    .sort((a, b) => a.startDate.localeCompare(b.startDate))[0];
+  if (!feat) { container.innerHTML = ''; return; }
+
+  const tid = esc(String(feat.id));
+  const grad = _tripGradient(feat.dest);
+  const hasCover = feat.coverPhoto && feat.coverPhoto.path;
+  const bgStyle = hasCover ? '' : `background:${grad}`;
+  const doneCount = _tripDoneCount(feat);
+  const total = PROGRESS_STEPS.length;
+  const pct = Math.round(doneCount / total * 100);
+  const dateRange = fmtTripDateRange(feat);
+
+  container.innerHTML = `<div class="tv-featured-hero" style="${bgStyle}" onclick="openTripDetail('${tid}')">
+    ${hasCover ? `<img data-path="${esc(feat.coverPhoto.path)}" class="tv-card-cover-img" src="" alt="">` : ''}
+    <div class="tv-card-overlay"></div>
+    <div class="tv-feat-hero-content">
+      <div class="tv-feat-hero-left">
+        <span class="tv-badge-pill ${esc(feat.status || '')}">${esc(feat.status || '')}</span>
+        <div class="tv-feat-hero-name">${esc(feat.dest)}</div>
+        <div class="tv-feat-hero-meta">${dateRange ? `📅 ${esc(dateRange)}` : (feat.timing ? `📅 ${esc(feat.timing)}` : '')}${(feat.place || feat.dest) ? ` · 📍 ${esc(feat.place || feat.dest)}` : ''}</div>
+      </div>
+      <div class="tv-feat-hero-right">
+        <div class="tv-feat-hero-prog">
+          <div class="tv-feat-hero-prog-label">計画の進捗 ${doneCount}/${total}</div>
+          <div class="td-todos-prog-bar-wrap"><div class="td-todos-prog-bar" style="width:${pct}%"></div></div>
+          <div class="tv-feat-hero-prog-pct">${pct}%</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  fillSignedUrls(container);
+}
+
+// ── SPOTS: modal ──
+// _pendingSpotPhoto: { id, path } — temporary photo for new spot before save
+let _pendingSpotPhoto = null;
+
+function openSpotModal(tripId, spotId) {
+  // If there's an unsaved pending photo from a previously aborted new-spot, clean it up
+  if (_pendingSpotPhoto) {
+    sb.storage.from('meal-photos').remove([_pendingSpotPhoto.path]).catch(() => {});
+    delete _signedUrlCache[_pendingSpotPhoto.path];
+    _pendingSpotPhoto = null;
+  }
+
+  _spotModalTripId = String(tripId);
+  _spotModalId = spotId ? String(spotId) : null;
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  const title = document.getElementById('spotModalTitle');
+  const delWrap = document.getElementById('spotModalDelWrap');
+
+  if (spotId) {
+    const spot = (t.spots || []).find(s => String(s.id) === String(spotId)); if (!spot) return;
+    title.textContent = 'スポットを編集';
+    document.getElementById('spotModalName').value = spot.name || '';
+    document.getElementById('spotModalUrl').value = spot.url || '';
+    document.getElementById('spotModalNote').value = spot.note || '';
+    _updateSpotPhotoPreview(spot.photo || null);
+    delWrap.innerHTML = `<button class="btn btn-ghost btn-sm" style="color:var(--accent);border-color:rgba(139,58,24,0.3);" onclick="confirmDeleteSpot();event.stopPropagation()">削除</button>`;
+  } else {
+    title.textContent = 'スポットを追加';
+    document.getElementById('spotModalName').value = '';
+    document.getElementById('spotModalUrl').value = '';
+    document.getElementById('spotModalNote').value = '';
+    _updateSpotPhotoPreview(null);
+    delWrap.innerHTML = '';
+  }
+  document.getElementById('tripSpotModal').classList.add('open');
+  setTimeout(() => document.getElementById('spotModalName').focus(), 50);
+}
+
+function _updateSpotPhotoPreview(photo) {
+  const preview = document.getElementById('spotModalPhotoPreview');
+  const clearBtn = document.getElementById('spotModalPhotoClearBtn');
+  if (photo && photo.path) {
+    preview.innerHTML = `<img data-path="${esc(photo.path)}" class="tv-cover-preview-img" src="" alt="">`;
+    fillSignedUrls(preview);
+    clearBtn.style.display = '';
+  } else {
+    preview.innerHTML = '';
+    clearBtn.style.display = 'none';
+  }
+}
+
+function closeSpotModal() {
+  // If new-spot was cancelled, delete any uploaded pending photo
+  if (_pendingSpotPhoto) {
+    sb.storage.from('meal-photos').remove([_pendingSpotPhoto.path]).catch(() => {});
+    delete _signedUrlCache[_pendingSpotPhoto.path];
+    _pendingSpotPhoto = null;
+  }
+  document.getElementById('tripSpotModal').classList.remove('open');
+  _spotModalTripId = null;
+  _spotModalId = null;
+}
+
+function saveSpotModal() {
+  const name = document.getElementById('spotModalName').value.trim();
+  if (!name) { document.getElementById('spotModalName').focus(); return; }
+  const t = trips.find(t => String(t.id) === _spotModalTripId); if (!t) return;
+  if (!t.spots) t.spots = [];
+
+  if (_spotModalId) {
+    const spot = t.spots.find(s => String(s.id) === _spotModalId); if (!spot) return;
+    spot.name = name;
+    spot.url  = document.getElementById('spotModalUrl').value.trim();
+    spot.note = document.getElementById('spotModalNote').value.trim();
+  } else {
+    // Consume any pending photo and attach it to the new spot
+    const photo = _pendingSpotPhoto || null;
+    _pendingSpotPhoto = null; // must be cleared before closeSpotModal to avoid deletion
+    t.spots.push({
+      id: crypto.randomUUID(), name,
+      url:  document.getElementById('spotModalUrl').value.trim(),
+      note: document.getElementById('spotModalNote').value.trim(),
+      photo, planned: false
+    });
+  }
+  saveTrips();
+  closeSpotModal();
+  _renderDetailInfoCol(t);
+}
+
+function confirmDeleteSpot() {
+  const delWrap = document.getElementById('spotModalDelWrap');
+  delWrap.innerHTML = `<span class="ldr-del-confirm">削除しますか?</span><button class="btn btn-ghost btn-sm" style="color:var(--accent);margin-left:8px;" onclick="execDeleteSpot();event.stopPropagation()">はい</button>`;
+}
+
+function execDeleteSpot() {
+  if (!_spotModalTripId || !_spotModalId) return;
+  const t = trips.find(t => String(t.id) === _spotModalTripId); if (!t) return;
+  // Remove photo from storage if exists
+  const spot = (t.spots || []).find(s => String(s.id) === _spotModalId);
+  if (spot && spot.photo && spot.photo.path) {
+    sb.storage.from('meal-photos').remove([spot.photo.path]).catch(() => {});
+    delete _signedUrlCache[spot.photo.path];
+  }
+  t.spots = (t.spots || []).filter(s => String(s.id) !== _spotModalId);
+  saveTrips();
+  closeSpotModal();
+  _renderDetailInfoCol(t);
+}
+
+function openSpotPhotoInput() {
+  if (!_spotModalTripId) return;
+  _spotPhotoTargetTripId = _spotModalTripId;
+  document.getElementById('spotPhotoInput').click();
+}
+
+function clearSpotPhoto() {
+  if (!_spotModalTripId) return;
+  if (_spotModalId) {
+    // Existing spot — remove from storage and clear spot.photo
+    const t = trips.find(t => String(t.id) === _spotModalTripId); if (!t) return;
+    const spot = (t.spots || []).find(s => String(s.id) === _spotModalId); if (!spot) return;
+    if (spot.photo && spot.photo.path) {
+      sb.storage.from('meal-photos').remove([spot.photo.path]).catch(() => {});
+      delete _signedUrlCache[spot.photo.path];
+      spot.photo = null;
+      saveTrips();
+    }
+  } else {
+    // New spot — discard the pending photo
+    if (_pendingSpotPhoto) {
+      sb.storage.from('meal-photos').remove([_pendingSpotPhoto.path]).catch(() => {});
+      delete _signedUrlCache[_pendingSpotPhoto.path];
+      _pendingSpotPhoto = null;
+    }
+  }
+  _updateSpotPhotoPreview(null);
+}
+
+async function handleSpotPhotoUpload(files) {
+  const tripId = _spotPhotoTargetTripId;
+  const errEl = document.getElementById('spotModalPhotoError');
+  if (errEl) errEl.textContent = '';
+  if (!tripId || !files || !files.length) return;
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+
+  _spotPhotoUploading++;
+  try {
+    const { data: { user } } = await sb.auth.getUser();
+    if (!user) throw new Error('ログインが必要です');
+    const blob = await resizeFoodImage(files[0]);
+    const photoId = crypto.randomUUID();
+    const path = `${user.id}/trips/${tripId}/spot-${photoId}.jpg`;
+    const { error } = await sb.storage.from('meal-photos').upload(path, blob, { contentType: 'image/jpeg' });
+    if (error) throw error;
+
+    if (_spotModalId) {
+      // Existing spot — replace photo in-place
+      const spot = (t.spots || []).find(s => String(s.id) === _spotModalId); if (!spot) throw new Error('スポットが見つかりません');
+      if (spot.photo && spot.photo.path) {
+        try { await sb.storage.from('meal-photos').remove([spot.photo.path]); } catch (e) {}
+        delete _signedUrlCache[spot.photo.path];
+      }
+      spot.photo = { id: photoId, path };
+      saveTrips();
+      _updateSpotPhotoPreview(spot.photo);
+    } else {
+      // New spot — store as pending (not yet saved)
+      if (_pendingSpotPhoto) {
+        try { await sb.storage.from('meal-photos').remove([_pendingSpotPhoto.path]); } catch (e) {}
+        delete _signedUrlCache[_pendingSpotPhoto.path];
+      }
+      _pendingSpotPhoto = { id: photoId, path };
+      _updateSpotPhotoPreview(_pendingSpotPhoto);
+    }
+  } catch (e) {
+    if (errEl) errEl.textContent = e.message || 'アップロード失敗';
+  }
+  _spotPhotoUploading--;
+}
+
+// ── SPOTS: add to plan ──
+function addSpotToPlan(tripId, spotId) {
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  const spot = (t.spots || []).find(s => String(s.id) === String(spotId)); if (!spot) return;
+  if (!t.plan) t.plan = [];
+  t.plan.push({
+    id: crypto.randomUUID(), date: null, time: '', kind: 'see',
+    title: spot.name, url: spot.url || '', place: spot.name,
+    note: spot.note || '', confirmed: false
+  });
+  spot.planned = true;
+  saveTrips();
+  _renderDetailItinerary(t);
+  _renderDetailInfoCol(t);
+}
+
+// ── SPOTS: all spots modal ──
+function openAllSpotsModal(tripId) {
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  const tid = esc(String(t.id));
+  const spots = t.spots || [];
+  const body = document.getElementById('allSpotsModalBody'); if (!body) return;
+  let html = '';
+  if (!spots.length) {
+    html = '<div style="color:var(--ink3);font-size:14px;padding:8px">スポットがありません</div>';
+  } else {
+    spots.forEach(spot => {
+      const sid = esc(String(spot.id));
+      const hasPhoto = spot.photo && spot.photo.path;
+      html += `<div class="td-spot-row">
+        <div class="td-spot-thumb">
+          ${hasPhoto ? `<img data-path="${esc(spot.photo.path)}" src="" alt="" class="td-spot-thumb-img">` : `<div class="td-spot-thumb-empty"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink3)" stroke-width="1.5" stroke-linecap="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div>`}
+        </div>
+        <div class="td-spot-info">
+          <div class="td-spot-name">${esc(spot.name)}</div>
+          ${spot.note ? `<div class="td-spot-note">${esc(spot.note)}</div>` : ''}
+        </div>
+        <div class="td-spot-actions">
+          ${spot.planned ? '<span class="td-spot-planned-badge">旅程済</span>' : `<button class="td-spot-plan-btn" onclick="closeAllSpotsModal();addSpotToPlan('${tid}','${sid}');event.stopPropagation()" title="旅程に入れる">＋</button>`}
+          <button class="td-spot-edit-btn" onclick="closeAllSpotsModal();openSpotModal('${tid}','${sid}');event.stopPropagation()">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M11 2l3 3L7 12H4v-3z"/></svg>
+          </button>
+        </div>
+      </div>`;
+    });
+  }
+  body.innerHTML = html;
+  fillSignedUrls(body);
+  document.getElementById('allSpotsModal').classList.add('open');
+}
+
+function closeAllSpotsModal() {
+  document.getElementById('allSpotsModal').classList.remove('open');
 }
