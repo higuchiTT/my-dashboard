@@ -45,7 +45,7 @@
       .food-day-mob { display:flex; width:100%; align-items:stretch; min-width:0; }
       .food-day-mob.no-photos .food-day-mob-names { flex:1 1 0; }
       .food-day-mob.has-photos .food-day-mob-names { flex:7 1 0; }
-      .food-day-mob-names { min-width:0; padding:7px 8px; display:flex; flex-direction:column; justify-content:center; gap:3px; overflow:hidden; }
+      .food-day-mob-names { min-width:0; padding:4px 8px; display:flex; flex-direction:column; justify-content:center; gap:1px; overflow:hidden; }
       .food-day-mob-line { display:flex; align-items:baseline; gap:4px; min-width:0; }
       .food-day-mob-kind { font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; color:var(--mute); background:var(--paper2); padding:1px 4px; border-radius:2px; flex-shrink:0; line-height:1.6; }
       .food-day-mob-kind.is-dim { opacity:0.3; }
@@ -328,6 +328,7 @@
       .trip-period-meal-item { max-width: none; }
       .tv-kind-seg { gap: 4px; }
       .tv-kind-seg .ui-seg-btn { font-size: 12px; padding: 5px 8px; flex: 1 1 auto; }
+      .td-map-iframe-wrap { height: 200px; }
 
       /* ── ログインオーバーレイ ── */
       .login-box { max-width: 90vw; padding: 36px 20px; }

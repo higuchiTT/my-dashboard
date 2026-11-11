@@ -20,52 +20,7 @@ let _spotModalTripId = null;   // trip for spot modal
 let _spotModalId = null;       // spot being edited (null = new)
 let _spotPhotoUploading = 0;
 let _spotPhotoTargetTripId = null;
-
-// ── JAPAN CITY COORDINATES (lat/lon) for map ──
-const JAPAN_CITIES = {
-  '函館':  {lat:41.8,lon:140.7}, '札幌':  {lat:43.1,lon:141.4}, '小樽':  {lat:43.2,lon:141.0},
-  '旭川':  {lat:43.8,lon:142.4}, '釧路':  {lat:43.0,lon:144.4}, '帯広':  {lat:42.9,lon:143.2},
-  '網走':  {lat:44.0,lon:144.3}, '稚内':  {lat:45.4,lon:141.7}, '北海道': {lat:43.1,lon:141.4},
-  '青森':  {lat:40.8,lon:140.7}, '弘前':  {lat:40.6,lon:140.5}, '八戸':  {lat:40.5,lon:141.5},
-  '盛岡':  {lat:39.7,lon:141.2}, '仙台':  {lat:38.3,lon:140.9}, '秋田':  {lat:39.7,lon:140.1},
-  '山形':  {lat:38.2,lon:140.4}, '福島':  {lat:37.8,lon:140.5}, '東北':  {lat:38.3,lon:140.9},
-  '新潟':  {lat:37.9,lon:139.0}, '長野':  {lat:36.7,lon:138.2}, '富山':  {lat:36.7,lon:137.2},
-  '金沢':  {lat:36.6,lon:136.6}, '福井':  {lat:36.1,lon:136.2}, '高山':  {lat:36.1,lon:137.3},
-  '東京':  {lat:35.7,lon:139.7}, '横浜':  {lat:35.4,lon:139.6}, '千葉':  {lat:35.6,lon:140.1},
-  '埼玉':  {lat:35.9,lon:139.6}, 'さいたま':{lat:35.9,lon:139.6},'宇都宮':{lat:36.6,lon:139.9},
-  '水戸':  {lat:36.4,lon:140.5}, '前橋':  {lat:36.4,lon:139.1}, '甲府':  {lat:35.7,lon:138.6},
-  '静岡':  {lat:35.0,lon:138.4}, '浜松':  {lat:34.7,lon:137.7}, '名古屋':{lat:35.2,lon:136.9},
-  '岐阜':  {lat:35.4,lon:136.8}, '津':    {lat:34.7,lon:136.5}, '大阪':  {lat:34.7,lon:135.5},
-  '京都':  {lat:35.0,lon:135.8}, '神戸':  {lat:34.7,lon:135.2}, '奈良':  {lat:34.7,lon:135.8},
-  '和歌山':{lat:34.2,lon:135.2}, '大津':  {lat:35.0,lon:135.9}, '彦根':  {lat:35.3,lon:136.3},
-  '姫路':  {lat:34.8,lon:134.7}, '岡山':  {lat:34.7,lon:133.9}, '広島':  {lat:34.4,lon:132.5},
-  '福山':  {lat:34.5,lon:133.4}, '山口':  {lat:34.2,lon:131.5}, '下関':  {lat:34.0,lon:131.0},
-  '高松':  {lat:34.3,lon:134.0}, '松山':  {lat:33.8,lon:132.8}, '高知':  {lat:33.6,lon:133.6},
-  '徳島':  {lat:34.1,lon:134.6}, '福岡':  {lat:33.6,lon:130.4}, '北九州':{lat:33.8,lon:130.9},
-  '大分':  {lat:33.2,lon:131.6}, '熊本':  {lat:32.8,lon:130.7}, '長崎':  {lat:32.7,lon:129.9},
-  '佐賀':  {lat:33.3,lon:130.3}, '宮崎':  {lat:31.9,lon:131.4}, '鹿児島':{lat:31.6,lon:130.6},
-  '那覇':  {lat:26.2,lon:127.7}, '沖縄':  {lat:26.2,lon:127.7}, '石垣':  {lat:24.3,lon:124.2},
-  '関東':  {lat:35.7,lon:139.7}, '関西':  {lat:34.7,lon:135.5}, '近畿':  {lat:34.7,lon:135.5},
-  '中部':  {lat:35.2,lon:136.9}, '中国':  {lat:34.4,lon:132.5}, '四国':  {lat:33.8,lon:132.8},
-  '九州':  {lat:33.6,lon:130.4}, '沖縄県':{lat:26.2,lon:127.7},
-};
-
-// Pure: find city coord from a string (checks dest + place text)
-function _cityToCoord(str) {
-  if (!str) return null;
-  for (const name of Object.keys(JAPAN_CITIES)) {
-    if (str.includes(name)) return JAPAN_CITIES[name];
-  }
-  return null;
-}
-
-// Pure: lat/lon → SVG point in a 185×215 viewBox
-// x = (lon-123)*8+5, y = (46-lat)*9+5
-function _coordToSVGPoint(lat, lon) {
-  const x = Math.round((lon - 123) * 8.0 + 5);
-  const y = Math.round((46  - lat) * 9.0 + 5);
-  return { x, y };
-}
+let _featuredTripId = null; // trip shown in hero (excluded from card list)
 
 // Pure: add N nights to a check-in date string → check-out date string 'YYYY-MM-DD'
 function calcCheckOutDate(checkInDate, nights) {
@@ -2062,7 +2017,8 @@ function _tripCoverHTML(t, height) {
 
 function _renderTvCards(realTrips) {
   const col = document.getElementById('tvCardsCol'); if (!col) return;
-  const active = realTrips.filter(t => t.status !== '完了').sort((a, b) => {
+  // Exclude the trip already shown in the featured hero
+  const active = realTrips.filter(t => t.status !== '完了' && String(t.id) !== _featuredTripId).sort((a, b) => {
     if (a.startDate && b.startDate) return a.startDate.localeCompare(b.startDate);
     if (a.startDate) return -1; if (b.startDate) return 1;
     return 0;
@@ -2070,7 +2026,9 @@ function _renderTvCards(realTrips) {
   const done = realTrips.filter(t => t.status === '完了');
 
   if (!active.length && !done.length) {
-    col.innerHTML = `<div class="tv-empty">
+    // No trips left to show (all covered by hero or none exist)
+    const hasAnyTrip = realTrips.length > 0;
+    col.innerHTML = hasAnyTrip ? '' : `<div class="tv-empty">
       <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="var(--ink3)" stroke-width="1.2" stroke-linecap="round"><circle cx="24" cy="24" r="20"/><path d="M24 8v5M24 35v5M8 24h5M35 24h5"/><polygon points="24,14 28,30 24,27 20,30" fill="var(--ink3)" stroke="none" opacity="0.4"/></svg>
       <div style="color:var(--ink3);font-size:15px;margin-top:12px">旅のプランをまだ追加していません</div>
       <button class="btn btn-primary" style="margin-top:16px" onclick="openNewTripModal()">＋ 旅を追加</button>
@@ -2950,40 +2908,20 @@ function _renderDetailInfoCol(t) {
   fillSignedUrls(container);
 }
 
-// ── MAP: Japan SVG base polygons ──
-function _japanMapSVGBase() {
-  return `<rect width="185" height="215" fill="#e8f4f8"/>
-    <polygon points="155,10 157,10 165,16 180,24 180,30 165,44 150,47 144,47 140,42 145,33 153,20" fill="#c8bfb0" stroke="#8b7355" stroke-width="0.8" stroke-linejoin="round"/>
-    <polygon points="152,51 153,57 153,72 149,88 150,97 141,101 129,105 107,113 97,109 97,114 93,109 79,106 65,109 63,109 69,105 73,100 85,96 105,90 113,82 125,75 133,69 137,60 141,51" fill="#c8bfb0" stroke="#8b7355" stroke-width="0.8" stroke-linejoin="round"/>
-    <polygon points="89,106 79,109 73,114 85,116 93,114 95,110" fill="#c8bfb0" stroke="#8b7355" stroke-width="0.8" stroke-linejoin="round"/>
-    <polygon points="65,109 69,109 67,123 61,132 57,132 57,123 57,114" fill="#c8bfb0" stroke="#8b7355" stroke-width="0.8" stroke-linejoin="round"/>
-    <rect x="39" y="181" width="8" height="4" rx="2" fill="#c8bfb0" stroke="#8b7355" stroke-width="0.6"/>`;
-}
-
-// ── MAP: trip map card HTML ──
+// ── MAP: trip map card HTML (Google Maps embed) ──
 function _tripMapSVGCard(t) {
-  const searchStr = (t.dest || '') + ' ' + (t.place || '');
-  const coord = _cityToCoord(searchStr);
-  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(t.place || t.dest || '');
-
-  if (!coord) {
-    return `<div class="td-map-no-map">
-      <a href="${esc(mapsUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">📍 地図で見る（${esc(t.place || t.dest || '')}）</a>
-    </div>`;
+  const query = t.place || t.dest || '';
+  if (!query) {
+    return `<div class="td-map-no-map"><span>行き先を入れると地図が出ます</span></div>`;
   }
-
-  const pt = _coordToSVGPoint(coord.lat, coord.lon);
-  const px = Math.max(5, Math.min(180, pt.x));
-  const py = Math.max(5, Math.min(210, pt.y));
-  const label = esc(t.place || t.dest || '');
-
-  return `<div class="td-map-card" onclick="window.open('${esc(mapsUrl)}','_blank');event.stopPropagation()" title="Google マップで見る">
-    <svg class="td-map-svg" viewBox="0 0 185 215" xmlns="http://www.w3.org/2000/svg">
-      ${_japanMapSVGBase()}
-      <circle cx="${px}" cy="${py}" r="6" fill="#8b3a18" stroke="white" stroke-width="2"/>
-      <circle cx="${px}" cy="${py}" r="2.5" fill="white"/>
-    </svg>
-    <div class="td-map-label">${label} <span class="td-map-link">詳細を見る ›</span></div>
+  const q = encodeURIComponent(query);
+  const mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + q;
+  const label = esc(query);
+  return `<div class="td-map-card">
+    <div class="td-map-iframe-wrap">
+      <iframe src="https://www.google.com/maps?q=${q}&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="${label} の地図" allowfullscreen style="border:0;width:100%;height:100%;display:block"></iframe>
+    </div>
+    <div class="td-map-label">${label} <a class="td-map-link" href="${esc(mapsUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">詳細を見る ›</a></div>
   </div>`;
 }
 
@@ -2994,8 +2932,9 @@ function _renderTvFeaturedTrip(realTrips) {
   const feat = realTrips
     .filter(t => t.status !== '完了' && t.startDate && t.startDate >= todayStr)
     .sort((a, b) => a.startDate.localeCompare(b.startDate))[0];
-  if (!feat) { container.innerHTML = ''; return; }
+  if (!feat) { _featuredTripId = null; container.innerHTML = ''; return; }
 
+  _featuredTripId = String(feat.id);
   const tid = esc(String(feat.id));
   const grad = _tripGradient(feat.dest);
   const hasCover = feat.coverPhoto && feat.coverPhoto.path;
@@ -3004,15 +2943,23 @@ function _renderTvFeaturedTrip(realTrips) {
   const total = PROGRESS_STEPS.length;
   const pct = Math.round(doneCount / total * 100);
   const dateRange = fmtTripDateRange(feat);
+  const rawNote = feat.description || feat.note || '';
+  const noteDisp = rawNote.length > 80 ? rawNote.slice(0, 80) + '…' : rawNote;
 
   container.innerHTML = `<div class="tv-featured-hero" style="${bgStyle}" onclick="openTripDetail('${tid}')">
     ${hasCover ? `<img data-path="${esc(feat.coverPhoto.path)}" class="tv-card-cover-img" src="" alt="">` : ''}
     <div class="tv-card-overlay"></div>
+    <div class="tv-feat-hero-top" onclick="event.stopPropagation()">
+      <div class="tv-status-btn-wrap">
+        <button class="tv-status-btn" onclick="toggleStatusMenu('${tid}',this);event.stopPropagation()">ステータス ▾</button>
+      </div>
+    </div>
     <div class="tv-feat-hero-content">
       <div class="tv-feat-hero-left">
         <span class="tv-badge-pill ${esc(feat.status || '')}">${esc(feat.status || '')}</span>
         <div class="tv-feat-hero-name">${esc(feat.dest)}</div>
         <div class="tv-feat-hero-meta">${dateRange ? `📅 ${esc(dateRange)}` : (feat.timing ? `📅 ${esc(feat.timing)}` : '')}${(feat.place || feat.dest) ? ` · 📍 ${esc(feat.place || feat.dest)}` : ''}</div>
+        ${noteDisp ? `<div class="tv-feat-hero-note">${esc(noteDisp)}</div>` : ''}
       </div>
       <div class="tv-feat-hero-right">
         <div class="tv-feat-hero-prog">

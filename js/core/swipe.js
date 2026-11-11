@@ -66,6 +66,9 @@ function swipeDirection(dx, dy, dt) {
     // 横スクロール可能な祖先がある場合は無視（Food 写真帯・献立提案・Ledger 表など）
     if (_horizScrollAncestor(e.target)) return;
 
+    // 地図カードの上は無視（iframe 周囲の余白でスワイプが誤作動しないように）
+    if (e.target.closest && e.target.closest('.td-map-card')) return;
+
     _start = { x: touch.clientX, y: touch.clientY, t: Date.now() };
   }, { passive: true });
 

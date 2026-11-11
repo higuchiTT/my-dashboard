@@ -389,7 +389,7 @@ function renderFoodList() {
         const allMobPhotoPaths = [];
         for (const s of sorted) for (const dish of s.dishes) for (const p of (dish.photos||[])) allMobPhotoPaths.push(p.path);
         const hasMobPhotos = allMobPhotoPaths.length > 0;
-        const MAX_MOB_LINES = hasMobPhotos ? 3 : 5;
+        const MAX_MOB_LINES = hasMobPhotos ? 4 : 5;
 
         const allMobDishLines = [];
         for (const s of sorted) { const kShort = KIND_SHORT[s.kind]||s.kind; s.dishes.forEach((dish, i) => allMobDishLines.push({kShort, dish, isFirst: i===0})); }

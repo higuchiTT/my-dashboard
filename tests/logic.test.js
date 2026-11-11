@@ -317,31 +317,6 @@ test('migrateTripDetailsToPlan: 空の配列は changed=false を返す', () => 
   assert.deepEqual(result, []);
 });
 
-test('_cityToCoord: 都市名を含む文字列から座標を返す', () => {
-  const c = A._cityToCoord('北海道（札幌）');
-  assert.ok(c !== null);
-  assert.ok(typeof c.lat === 'number' && typeof c.lon === 'number');
-  assert.ok(c.lat > 40 && c.lat < 50);  // Hokkaido latitude range
-});
-
-test('_cityToCoord: 未知の地名は null を返す', () => {
-  assert.equal(A._cityToCoord('どこか'), null);
-  assert.equal(A._cityToCoord(''), null);
-  assert.equal(A._cityToCoord(null), null);
-});
-
-test('_coordToSVGPoint: 座標を 185x215 viewBox 内の SVG 点に変換する', () => {
-  // 東京: lat=35.7, lon=139.7
-  const pt = A._coordToSVGPoint(35.7, 139.7);
-  assert.ok(typeof pt.x === 'number' && typeof pt.y === 'number');
-  assert.ok(pt.x >= 0 && pt.x <= 185, `x=${pt.x} should be in [0,185]`);
-  assert.ok(pt.y >= 0 && pt.y <= 215, `y=${pt.y} should be in [0,215]`);
-  // 大阪: lat=34.7, lon=135.5 は東京より西（x小さい）・南（y大きい）
-  const ptOsaka = A._coordToSVGPoint(34.7, 135.5);
-  assert.ok(ptOsaka.x < pt.x, '大阪は東京より西なので x が小さい');
-  assert.ok(ptOsaka.y > pt.y, '大阪は東京より南なので y が大きい');
-});
-
 // ── swipeDirection ──
 
 test('swipeDirection: 左スワイプ（dx 負）は next、右スワイプ（dx 正）は prev', () => {
