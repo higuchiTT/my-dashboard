@@ -387,4 +387,20 @@
       /* Food: Ctrl+V ヒントをスマホで非表示 */
       .food-ctrlv-hint { display: none; }
 
+      /* ── スワイプナビ アニメーション ── */
+      .swipe-in-next { animation: swipeNavInR 0.15s ease-out both; }
+      .swipe-in-prev { animation: swipeNavInL 0.15s ease-out both; }
+      @media (prefers-reduced-motion: reduce) {
+        .swipe-in-next, .swipe-in-prev { animation: none; }
+      }
+
     }
+
+@keyframes swipeNavInR {
+  from { opacity: 0.4; transform: translateX(12px); }
+  to   { opacity: 1;   transform: translateX(0); }
+}
+@keyframes swipeNavInL {
+  from { opacity: 0.4; transform: translateX(-12px); }
+  to   { opacity: 1;   transform: translateX(0); }
+}

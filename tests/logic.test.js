@@ -197,6 +197,53 @@ test('jsq: 引用符やバックスラッシュを含むタグでも onclick の
   }
 });
 
+test('calcCheckOutDate: チェックイン日 + 泊数 = チェックアウト日', () => {
+  assert.equal(A.calcCheckOutDate('2026-11-28', 1), '2026-11-29');
+  assert.equal(A.calcCheckOutDate('2026-11-28', 2), '2026-11-30');
+  assert.equal(A.calcCheckOutDate('2026-12-31', 1), '2027-01-01'); // 年またぎ
+  assert.equal(A.calcCheckOutDate('', 1),           '');           // 日付なし
+  assert.equal(A.calcCheckOutDate('2026-11-28', 0), '');           // 0泊
+});
+
+test('calcNights: チェックイン〜チェックアウト間の泊数を返す', () => {
+  assert.equal(A.calcNights('2026-11-28', '2026-11-29'), 1);
+  assert.equal(A.calcNights('2026-11-28', '2026-11-30'), 2);
+  assert.equal(A.calcNights('2026-11-28', '2026-11-28'), 0); // 同日
+  assert.equal(A.calcNights('', '2026-11-29'),           0); // 日付なし
+});
+
+test('fmtTimeRange: 開始・終了時刻をフォーマットする', () => {
+  assert.equal(A.fmtTimeRange('10:00', '12:00'), '10:00–12:00');
+  assert.equal(A.fmtTimeRange('10:00', ''),      '10:00');
+  assert.equal(A.fmtTimeRange('',      '12:00'), '');
+  assert.equal(A.fmtTimeRange('',      ''),      '');
+});
+
+test('_stayAutoRowsForDay: チェックイン日は返さない', () => {
+  const plan = [{ kind:'stay', date:'2026-11-28', checkOut:'2026-11-30', title:'Hotel A' }];
+  assert.equal(A._stayAutoRowsForDay(plan, '2026-11-28').length, 0);
+});
+
+test('_stayAutoRowsForDay: 中泊日は continuing を返す', () => {
+  const plan = [{ kind:'stay', date:'2026-11-28', checkOut:'2026-11-30', title:'Hotel A' }];
+  const rows = A._stayAutoRowsForDay(plan, '2026-11-29');
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].type, 'continuing');
+  assert.equal(rows[0].item.title, 'Hotel A');
+});
+
+test('_stayAutoRowsForDay: チェックアウト日は checkout を返す', () => {
+  const plan = [{ kind:'stay', date:'2026-11-28', checkOut:'2026-11-30', title:'Hotel A' }];
+  const rows = A._stayAutoRowsForDay(plan, '2026-11-30');
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].type, 'checkout');
+});
+
+test('_stayAutoRowsForDay: checkOut 未設定の宿は中泊・チェックアウト行を出さない', () => {
+  const plan = [{ kind:'stay', date:'2026-11-28', title:'Hotel A' }];
+  assert.equal(A._stayAutoRowsForDay(plan, '2026-11-29').length, 0);
+});
+
 test('migrateTripDetailsToPlan: transport と stay が plan に移行される', () => {
   const trips = [{
     id: 'trip1', dest: 'Tokyo', plan: [],
@@ -293,4 +340,36 @@ test('_coordToSVGPoint: 座標を 185x215 viewBox 内の SVG 点に変換する'
   const ptOsaka = A._coordToSVGPoint(34.7, 135.5);
   assert.ok(ptOsaka.x < pt.x, '大阪は東京より西なので x が小さい');
   assert.ok(ptOsaka.y > pt.y, '大阪は東京より南なので y が大きい');
+});
+
+// ── swipeDirection ──
+
+test('swipeDirection: 左スワイプ（dx 負）は next、右スワイプ（dx 正）は prev', () => {
+  assert.equal(A.swipeDirection(-80, 10, 300), 'next');
+  assert.equal(A.swipeDirection(80, 10, 300), 'prev');
+});
+
+test('swipeDirection: 移動量が 60px 未満は null', () => {
+  assert.equal(A.swipeDirection(-59, 0, 300), null);
+  assert.equal(A.swipeDirection(59, 0, 300), null);
+  assert.equal(A.swipeDirection(-60, 0, 300), 'next'); // ちょうど 60px はOK
+  assert.equal(A.swipeDirection(60, 0, 300), 'prev');
+});
+
+test('swipeDirection: 600ms を超えると null', () => {
+  assert.equal(A.swipeDirection(-80, 10, 601), null);
+  assert.equal(A.swipeDirection(-80, 10, 600), 'next'); // ちょうど 600ms はOK
+});
+
+test('swipeDirection: 横移動が縦移動の 2 倍未満（縦スクロール優勢）は null', () => {
+  assert.equal(A.swipeDirection(-80, 41, 300), null);  // 80 < 41*2=82 → null
+  assert.equal(A.swipeDirection(-80, 40, 300), 'next'); // 80 = 40*2=80 → ちょうど境界でOK
+  assert.equal(A.swipeDirection(-80, 39, 300), 'next'); // 80 > 39*2=78 → OK
+});
+
+test('swipeDirection: 条件が複数 NG でも null', () => {
+  // 距離不足かつ時間超過
+  assert.equal(A.swipeDirection(-30, 0, 700), null);
+  // ゼロ移動
+  assert.equal(A.swipeDirection(0, 0, 100), null);
 });

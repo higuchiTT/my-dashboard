@@ -458,6 +458,39 @@
     .td-spots-more-btn { display:block; width:100%; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--accent); background:none; border:none; border-top:1px solid var(--rule); padding:9px; cursor:pointer; text-align:center; transition:background 0.12s; }
     .td-spots-more-btn:hover { background:var(--paper2); }
 
+    /* ── ITINERARY: TIME COLUMN ── */
+    .td-item-time { width:68px; min-width:68px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--ink3); text-align:right; padding-top:4px; flex-shrink:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.4; }
+    .td-item-time-end { display:inline; }
+    .td-iti-hdr-actions { display:flex; align-items:center; gap:8px; }
+    .td-iti-spot-link { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.06em; color:var(--accent); background:rgba(139,58,24,0.08); border:1px solid rgba(139,58,24,0.2); padding:4px 10px; border-radius:20px; cursor:pointer; transition:all 0.12s; min-height:28px; }
+    .td-iti-spot-link:hover { background:rgba(139,58,24,0.15); }
+
+    /* ── ITINERARY: STAY AUTO ROWS ── */
+    .td-stay-auto-row { display:flex; align-items:center; gap:8px; cursor:pointer; padding:3px 6px 3px 0; border-radius:4px; transition:background 0.12s; }
+    .td-stay-auto-row:hover { background:var(--paper2); }
+    .td-stay-auto-continuing { opacity:0.7; }
+    .td-stay-auto-icon { font-size:13px; flex-shrink:0; }
+    .td-stay-auto-label { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink3); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .td-stay-auto-checkout .td-stay-auto-label { color:var(--ink2); font-weight:600; }
+
+    /* ── PLAN MODAL: NIGHTS PILLS ── */
+    .plan-nights-pills { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+    .plan-nights-pill { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; border:1px solid var(--rule); background:var(--paper2); color:var(--ink2); padding:4px 10px; border-radius:20px; cursor:pointer; transition:all 0.12s; min-height:32px; }
+    .plan-nights-pill.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .plan-nights-pill:hover:not(.active) { border-color:var(--accent); color:var(--accent); }
+    .plan-nights-info { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink3); margin-top:6px; min-height:16px; }
+
+    /* ── PLAN MODAL: SPOT SUGGEST PILLS ── */
+    .plan-spot-suggest-pills { display:flex; flex-wrap:wrap; gap:6px; }
+    .plan-spot-pill { font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:600; border:1px solid rgba(139,58,24,0.3); background:rgba(139,58,24,0.07); color:var(--accent); padding:5px 12px; border-radius:20px; cursor:pointer; transition:all 0.12s; min-height:32px; }
+    .plan-spot-pill:hover { background:rgba(139,58,24,0.15); border-color:var(--accent); }
+
+    /* ── SPOTS CARD: QUICK-ADD INPUT ── */
+    .td-spots-add-row { padding:8px 12px; border-bottom:1px solid var(--rule); }
+    .td-spots-quick-input { width:100%; box-sizing:border-box; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink); background:var(--paper2); border:1px solid var(--rule); border-radius:5px; padding:6px 10px; outline:none; transition:border-color 0.12s; min-height:32px; }
+    .td-spots-quick-input::placeholder { color:var(--ink3); }
+    .td-spots-quick-input:focus { border-color:var(--accent); }
+
     /* ── FEATURED TRIP HERO (list view) ── */
     #tvFeaturedTrip { padding:16px 24px 0; }
     #tvFeaturedTrip:empty { display:none; padding:0; }
@@ -491,6 +524,10 @@
       #page-travel .td-day-date { font-size:12px; }
       #page-travel .td-todo-row { min-height:44px; }
       #page-travel .td-day-add-btn { min-height:36px; font-size:11px; }
+      #page-travel .td-item-time { width:52px; min-width:52px; font-size:10px; white-space:normal; overflow:visible; text-overflow:clip; }
+      #page-travel .td-item-time-end { display:block; }
+      #page-travel .td-stay-auto-label { font-size:11px; }
+      #page-travel .td-spots-quick-input { font-size:11px; }
       #page-travel #tvFeaturedTrip { padding:12px 12px 0; }
       #page-travel .tv-featured-hero { min-height:130px; }
       #page-travel .tv-feat-hero-name { font-size:20px; }

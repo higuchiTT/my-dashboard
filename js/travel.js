@@ -67,8 +67,49 @@ function _coordToSVGPoint(lat, lon) {
   return { x, y };
 }
 
+// Pure: add N nights to a check-in date string → check-out date string 'YYYY-MM-DD'
+function calcCheckOutDate(checkInDate, nights) {
+  if (!checkInDate || !nights) return '';
+  const d = new Date(checkInDate + 'T00:00:00');
+  d.setDate(d.getDate() + Number(nights));
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+// Pure: difference in nights between two date strings (0 if invalid or same day)
+function calcNights(checkInDate, checkOutDate) {
+  if (!checkInDate || !checkOutDate) return 0;
+  const ci = new Date(checkInDate + 'T00:00:00');
+  const co = new Date(checkOutDate + 'T00:00:00');
+  const n = Math.round((co - ci) / 86400000);
+  return n > 0 ? n : 0;
+}
+
+// Pure: format a time range for display ('10:00–12:00' or '10:00' or '')
+function fmtTimeRange(startTime, endTime) {
+  if (!startTime) return '';
+  if (endTime) return startTime + '–' + endTime;
+  return startTime;
+}
+
+// Pure: returns synthetic stay rows for a day that is NOT the check-in day.
+// type 'continuing': stay spans through this day (date < ds < checkOut)
+// type 'checkout':   stay checks out on this day (checkOut === ds, date < ds)
+function _stayAutoRowsForDay(planItems, ds) {
+  const rows = [];
+  for (const p of (planItems || [])) {
+    if (p.kind !== 'stay' || !p.date) continue;
+    if (p.checkOut === ds && p.date < ds) {
+      rows.push({ type: 'checkout', item: p });
+    } else if (p.checkOut && p.date < ds && p.checkOut > ds) {
+      rows.push({ type: 'continuing', item: p });
+    }
+  }
+  return rows;
+}
+
 const PLAN_KIND_LABELS = { move:'移動', stay:'宿', see:'観光', eat:'食事', memo:'メモ' };
 const PLAN_KIND_COLORS = { move:'#3b82f6', stay:'#7c3aed', see:'#10b981', eat:'#f59e0b', memo:'#9ca3af' };
+const PLAN_MEAL_LABELS = { breakfast:'朝食', lunch:'昼食', dinner:'夕食', cafe:'カフェ/おやつ' };
 
 const PROGRESS_STEPS = [
   { key:'theme',     label:'目的・テーマ',  autoKey:null,        action:'detail' },
@@ -950,6 +991,17 @@ function openPlanItemModal(tripId, itemId, prefillDate, prefillKind) {
       const kind = item.kind || 'see';
       setPlanItemKind(kind);
       if (kind === 'move') setPlanItemMode(mode);
+      // Set new fields (endTime, meal, conditional planPlaceRow)
+      const endTimeEl = document.getElementById('planItemEndTime');
+      if (endTimeEl) endTimeEl.value = item.endTime || '';
+      if (kind === 'eat') setPlanItemMeal(item.meal || '');
+      if ((kind === 'see' || kind === 'eat') && item.place) {
+        const pr = document.getElementById('planPlaceRow');
+        if (pr) pr.style.display = '';
+      }
+      // Hide spot suggestions when editing
+      const sw = document.getElementById('planSpotSuggestWrap');
+      if (sw) sw.style.display = 'none';
     }
     document.getElementById('planItemDelWrap').innerHTML = `<button class="btn btn-ghost btn-sm" style="color:var(--accent);border-color:rgba(139,58,24,0.3);" onclick="confirmDelPlanItem();event.stopPropagation()">削除</button>`;
   } else {
@@ -973,7 +1025,11 @@ function openPlanItemModal(tripId, itemId, prefillDate, prefillKind) {
     document.getElementById('planItemMode').value = 'flight';
     setPlanItemKind(kind);
     if (kind === 'move') setPlanItemMode('flight');
+    if (kind === 'eat') setPlanItemMeal('');
+    const endTimeElN = document.getElementById('planItemEndTime');
+    if (endTimeElN) endTimeElN.value = '';
     document.getElementById('planItemDelWrap').innerHTML = '';
+    _renderPlanSpotSuggestions(tripId, prefillDate);
   }
 
   document.getElementById('tripPlanModal').classList.add('open');
@@ -987,22 +1043,33 @@ function setPlanItemKind(kind) {
   });
   const show = (...ids) => ids.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = ''; });
   const hide = (...ids) => ids.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
-  hide('planModeRow','planFromToRow','planArrRow','planCheckOutRow','planPlaceRow','planAddressRow','planConfNoRow','planPriceRow','planUrlRow');
+  hide('planModeRow','planFromToRow','planArrRow','planCheckOutRow','planPlaceRow','planAddressRow',
+       'planConfNoRow','planPriceRow','planUrlRow','planMealRow','planEndTimeRow','planNightsRow');
   const titleLbl = document.getElementById('planTitleLbl');
   const dateLbl  = document.getElementById('planDateLbl');
   const timeLbl  = document.getElementById('planTimeLbl');
-  const titleLabels = { move:'便名・名前', stay:'宿の名前', see:'名前', eat:'名前', memo:'内容' };
+  const titleLabels = { move:'便名・名前', stay:'宿の名前', see:'場所の名前', eat:'お店の名前', memo:'内容' };
   const dateLabels  = { move:'出発日', stay:'チェックイン日', see:'日付', eat:'日付', memo:'日付' };
   const timeLabels  = { move:'出発時刻', stay:'チェックイン時刻', see:'時刻', eat:'時刻', memo:'時刻' };
   if (titleLbl) titleLbl.textContent = titleLabels[kind] || '名前';
   if (dateLbl)  dateLbl.textContent  = dateLabels[kind]  || '日付';
   if (timeLbl)  timeLbl.textContent  = timeLabels[kind]  || '時刻';
+  // Wire check-in date change to refresh nights (stay only)
+  const dateEl = document.getElementById('planItemDate');
+  if (dateEl) dateEl.onchange = kind === 'stay' ? _renderNightsPills : null;
   if (kind === 'move') {
     show('planModeRow','planFromToRow','planArrRow','planConfNoRow','planPriceRow','planUrlRow');
   } else if (kind === 'stay') {
-    show('planCheckOutRow','planAddressRow','planConfNoRow','planPriceRow','planUrlRow');
-  } else if (kind === 'see' || kind === 'eat') {
-    show('planPlaceRow','planUrlRow');
+    show('planNightsRow','planCheckOutRow','planAddressRow','planConfNoRow','planPriceRow','planUrlRow');
+    _renderNightsPills();
+  } else if (kind === 'eat') {
+    show('planMealRow','planEndTimeRow','planUrlRow');
+    // planPlaceRow shown conditionally for existing items (see openPlanItemModal)
+  } else if (kind === 'see') {
+    show('planEndTimeRow','planUrlRow');
+    // planPlaceRow shown conditionally for existing items
+  } else if (kind === 'memo') {
+    show('planEndTimeRow');
   }
 }
 
@@ -1011,6 +1078,75 @@ function setPlanItemMode(mode) {
   document.querySelectorAll('#planModeSeg .ui-seg-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.mode === mode);
   });
+}
+
+function setPlanItemMeal(meal) {
+  const inp = document.getElementById('planItemMeal');
+  if (inp) inp.value = meal || '';
+  document.querySelectorAll('#planMealSeg .ui-seg-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.meal === (meal || ''));
+  });
+}
+
+function _renderNightsPills() {
+  const container = document.getElementById('planNightsPills');
+  if (!container) return;
+  const checkInDateEl  = document.getElementById('planItemDate');
+  const checkOutDateEl = document.getElementById('planItemCheckOut');
+  const checkInDate  = checkInDateEl  ? checkInDateEl.value  : '';
+  const checkOutDate = checkOutDateEl ? checkOutDateEl.value : '';
+  const currentNights = calcNights(checkInDate, checkOutDate);
+  container.innerHTML = Array.from({ length: 14 }, (_, i) => i + 1).map(n => {
+    const isActive = n === currentNights;
+    return `<button class="plan-nights-pill${isActive ? ' active' : ''}" data-nights="${n}" onclick="setPlanItemNights(${n});event.stopPropagation()">${n}泊</button>`;
+  }).join('');
+  if (checkInDate && currentNights > 0) {
+    _updateNightsInfo(checkInDate, currentNights);
+  } else {
+    const infoEl = document.getElementById('planNightsInfo');
+    if (infoEl) infoEl.textContent = '';
+  }
+}
+
+function setPlanItemNights(n) {
+  const checkInDateEl = document.getElementById('planItemDate');
+  const checkInDate = checkInDateEl ? checkInDateEl.value : '';
+  if (!checkInDate) {
+    const infoEl = document.getElementById('planNightsInfo');
+    if (infoEl) infoEl.textContent = 'チェックイン日を先に選んでください';
+    return;
+  }
+  const checkOut = calcCheckOutDate(checkInDate, n);
+  const checkOutEl = document.getElementById('planItemCheckOut');
+  if (checkOutEl) {
+    // Add computed date to options if not already present
+    if (!Array.from(checkOutEl.options).find(o => o.value === checkOut)) {
+      const DN = '日月火水木金土'.split('');
+      const d = new Date(checkOut + 'T00:00:00');
+      const opt = document.createElement('option');
+      opt.value = checkOut;
+      opt.textContent = `${d.getMonth() + 1}/${d.getDate()}（${DN[d.getDay()]}）`;
+      const undatedOpt = Array.from(checkOutEl.options).find(o => o.value === '');
+      checkOutEl.insertBefore(opt, undatedOpt || null);
+    }
+    checkOutEl.value = checkOut;
+  }
+  _updateNightsInfo(checkInDate, n);
+  document.querySelectorAll('#planNightsPills .plan-nights-pill').forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.nights, 10) === n);
+  });
+}
+
+function _updateNightsInfo(checkInDate, nights) {
+  const infoEl = document.getElementById('planNightsInfo');
+  if (!infoEl || !checkInDate || !nights) {
+    if (infoEl) infoEl.textContent = '';
+    return;
+  }
+  const checkOut = calcCheckOutDate(checkInDate, nights);
+  const DN = '日月火水木金土'.split('');
+  const d = new Date(checkOut + 'T00:00:00');
+  infoEl.textContent = `チェックアウト ${d.getMonth() + 1}/${d.getDate()}（${DN[d.getDay()]}）`;
 }
 
 function closePlanItemModal() {
@@ -1058,9 +1194,17 @@ function savePlanItem() {
     item.price        = pv !== '' ? parseFloat(pv) : null;
     item.url          = document.getElementById('planItemUrl').value.trim();
     item.place        = item.address || '';
-  } else if (kind === 'see' || kind === 'eat') {
-    item.place = document.getElementById('planItemPlace').value.trim();
-    item.url   = document.getElementById('planItemUrl').value.trim();
+  } else if (kind === 'see') {
+    item.place   = document.getElementById('planItemPlace').value.trim();
+    item.url     = document.getElementById('planItemUrl').value.trim();
+    item.endTime = document.getElementById('planItemEndTime').value || '';
+  } else if (kind === 'eat') {
+    item.place   = document.getElementById('planItemPlace').value.trim();
+    item.url     = document.getElementById('planItemUrl').value.trim();
+    item.endTime = document.getElementById('planItemEndTime').value || '';
+    item.meal    = document.getElementById('planItemMeal').value || '';
+  } else if (kind === 'memo') {
+    item.endTime = document.getElementById('planItemEndTime').value || '';
   }
 
   if (_planItemModalId) {
@@ -2512,13 +2656,18 @@ function _renderDetailItinerary(t) {
   const DN = '日月火水木金土'.split('');
   const tid = esc(String(t.id));
   const plan = t.plan || [];
+  const unplannedSpots = (t.spots || []).filter(s => !s.planned);
+
+  const spotLinkHTML = unplannedSpots.length
+    ? `<button class="tv-section-link td-iti-spot-link" onclick="document.getElementById('tdSpotsCard-${tid}')?.scrollIntoView({behavior:'smooth',block:'nearest'});event.stopPropagation()">候補 ${unplannedSpots.length}件</button>`
+    : '';
 
   let html = `<div class="td-iti-hdr">
     <div class="td-col-title">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M2 6h12"/><path d="M6 2v2M10 2v2"/></svg>
       旅程
     </div>
-    <button class="tv-section-link" onclick="openPlanItemModal('${tid}',null);event.stopPropagation()">＋ 予定追加</button>
+    <div class="td-iti-hdr-actions">${spotLinkHTML}<button class="tv-section-link" onclick="openPlanItemModal('${tid}',null);event.stopPropagation()">＋ 予定追加</button></div>
   </div>`;
 
   if (t.startDate && t.endDate) {
@@ -2533,6 +2682,9 @@ function _renderDetailItinerary(t) {
         if (at && bt) return at.localeCompare(bt);
         if (at) return -1; if (bt) return 1; return 0;
       });
+      const autoRows = _stayAutoRowsForDay(plan, ds);
+      const autoHTML = autoRows.map(r => _itiStayAutoRowHTML(t, r.item, r.type)).join('');
+      const itemsHTML = dayItems.map(item => _itiItemHTML(t, item)).join('') + autoHTML;
       html += `<div class="td-day-block">
         <div class="td-day-badge">
           <div class="td-day-num">${dayNum}日目</div>
@@ -2541,9 +2693,7 @@ function _renderDetailItinerary(t) {
         </div>
         <div class="td-day-right">
           <div class="td-day-items">${
-            dayItems.length
-              ? dayItems.map(item => _itiItemHTML(t, item)).join('')
-              : '<div class="td-day-empty-line"></div>'
+            itemsHTML || '<div class="td-day-empty-line"></div>'
           }</div>
           <button class="td-day-add-btn" onclick="openPlanItemModal('${tid}',null,'${esc(ds)}');event.stopPropagation()">＋ 予定</button>
         </div>
@@ -2575,6 +2725,34 @@ function _renderDetailItinerary(t) {
   container.innerHTML = html;
 }
 
+// ── RENDER: AUTO STAY ROWS (continuing / checkout) ──
+function _itiStayAutoRowHTML(t, item, type) {
+  const tid = esc(String(t.id));
+  const iid = esc(String(item.id));
+  const name = item.title || '宿泊先';
+  if (type === 'checkout') {
+    const time = item.checkOutTime || '';
+    return `<div class="td-stay-auto-row td-stay-auto-checkout" onclick="openPlanItemModal('${tid}','${iid}');event.stopPropagation()">
+      <div class="td-item-time">${esc(time)}</div>
+      <span class="td-stay-auto-icon">🚪</span>
+      <span class="td-stay-auto-label">チェックアウト${time ? ' ' + esc(time) : ''}：${esc(name)}</span>
+    </div>`;
+  }
+  return `<div class="td-stay-auto-row td-stay-auto-continuing" onclick="openPlanItemModal('${tid}','${iid}');event.stopPropagation()">
+    <div class="td-item-time"></div>
+    <span class="td-stay-auto-icon">🛏</span>
+    <span class="td-stay-auto-label">同じ宿に宿泊：${esc(name)}</span>
+  </div>`;
+}
+
+// Pure-display helper: renders time column HTML.
+// On mobile (.td-item-time-end becomes display:block) the end time wraps to a second line.
+function _timeColHTML(startTime, endTime) {
+  if (!startTime) return '';
+  if (!endTime) return esc(startTime);
+  return `${esc(startTime)}<span class="td-item-time-end">${esc('–' + endTime)}</span>`;
+}
+
 // ── RENDER: SINGLE ITINERARY ITEM ──
 function _itiItemHTML(t, item) {
   const tid = esc(String(t.id));
@@ -2583,32 +2761,60 @@ function _itiItemHTML(t, item) {
   const icon = _planKindSVG(item.kind);
   const isConfirmed = item.confirmed === true;
 
+  // Time column HTML (uses _timeColHTML so endTime wraps to second line on mobile)
+  let timeHTML = '';
+  if (item.kind === 'move') {
+    timeHTML = _timeColHTML(item.time || '', item.arrTime || '');
+  } else if (item.kind === 'stay') {
+    timeHTML = esc(item.time || '');
+  } else {
+    timeHTML = _timeColHTML(item.time || '', item.endTime || '');
+  }
+
   let titleHTML = '', subHTML = '', isYellow = false;
 
   if (item.kind === 'move') {
     const modeIcon = TRANSPORT_KIND_ICONS[item.mode] || '🚆';
     let route = '';
     if (item.from) route += esc(item.from);
-    if (item.time) route += (route ? ' ' : '') + esc(item.time) + ' 発';
-    if (item.to) route += ' → ' + esc(item.to);
-    if (item.arrTime) route += ' ' + esc(item.arrTime) + ' 着';
+    if (item.to) route += (route ? ' → ' : '') + esc(item.to);
+    // Show arrival date only when it differs from departure date (time is in time column)
+    if (item.arrDate && item.arrDate !== (item.date || '')) {
+      let arrLabel = '';
+      if (item.date) {
+        const diffDays = Math.round((new Date(item.arrDate + 'T00:00:00') - new Date(item.date + 'T00:00:00')) / 86400000);
+        if (diffDays === 1) {
+          arrLabel = '翌日着';
+        } else {
+          const ad = new Date(item.arrDate + 'T00:00:00');
+          arrLabel = `${ad.getMonth()+1}/${ad.getDate()} 着`;
+        }
+      } else {
+        const ad = new Date(item.arrDate + 'T00:00:00');
+        arrLabel = `${ad.getMonth()+1}/${ad.getDate()} 着`;
+      }
+      if (arrLabel) route += (route ? ' ' : '') + esc(arrLabel);
+    }
     titleHTML = `<div class="td-item-title">${esc(modeIcon)} ${esc(item.title)}${route ? ` <span style="font-weight:400;font-size:12px">${route}</span>` : ''}</div>`;
   } else if (item.kind === 'stay') {
     titleHTML = `<div class="td-item-title td-item-stay-title">${esc(item.title || '宿泊')}</div>`;
     if (item.address) subHTML = `<div class="td-item-addr"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 2C5.24 2 3 4.24 3 7c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5z"/><circle cx="8" cy="7" r="1.5"/></svg> ${esc(item.address)}</div>`;
   } else if (item.kind === 'eat') {
     isYellow = true;
-    titleHTML = `<div class="td-item-title"><span class="td-item-meal-label">🍴 ${item.time ? esc(item.time)+' ' : ''}${esc(item.title)}</span></div>`;
+    const mealLabel = item.meal ? (PLAN_MEAL_LABELS[item.meal] || item.meal) : '';
+    titleHTML = `<div class="td-item-title"><span class="td-item-meal-label">🍴 ${mealLabel ? esc(mealLabel) + '：' : ''}${esc(item.title)}</span></div>`;
+    if (item.place) subHTML = `<div class="td-item-place">${esc(item.place)}</div>`;
   } else if (item.kind === 'memo') {
     isYellow = true;
     titleHTML = `<div class="td-item-title"><span class="td-item-meal-label">📝 ${esc(item.title)}</span></div>`;
-  } else {
+  } else { // see
     titleHTML = `<div class="td-item-title">${esc(item.title)}</div>`;
     if (item.place) subHTML = `<div class="td-item-place">${esc(item.place)}</div>`;
   }
   const noteHTML = item.note ? `<div class="td-item-note">${esc(item.note)}</div>` : '';
 
   return `<div class="td-iti-item${isYellow ? ' td-iti-item-meal' : ''}" onclick="openPlanItemModal('${tid}','${iid}');event.stopPropagation()">
+    <div class="td-item-time">${timeHTML}</div>
     <div class="td-item-icon-wrap">
       <span class="td-item-icon" style="color:${color}">${icon}</span>
       <div class="td-item-line"></div>
@@ -2726,10 +2932,13 @@ function _renderDetailInfoCol(t) {
       旅の情報
     </div>
     ${mapHTML}
-    <div class="td-spots-card">
+    <div class="td-spots-card" id="tdSpotsCard-${tid}">
       <div class="td-spots-card-hdr">
         <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--ink)">★ 行きたいスポット</div>
         <button class="tv-section-link" onclick="openSpotModal('${tid}',null);event.stopPropagation()">＋ 追加</button>
+      </div>
+      <div class="td-spots-add-row">
+        <input class="td-spots-quick-input" type="text" placeholder="スポット名 or URL を入力してEnter" onkeydown="if(event.key==='Enter'){addSpotQuick('${tid}',this);event.stopPropagation()}" onclick="event.stopPropagation()" />
       </div>
       <div class="td-spots-list">
         ${spotsRows || `<div style="padding:12px 16px;font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--ink3)">行きたいスポットを追加</div>`}
@@ -3012,6 +3221,60 @@ function addSpotToPlan(tripId, spotId) {
   saveTrips();
   _renderDetailItinerary(t);
   _renderDetailInfoCol(t);
+}
+
+// ── SPOTS: plan spot suggestions (pills at top of plan modal) ──
+function _renderPlanSpotSuggestions(tripId, prefillDate) {
+  const wrap = document.getElementById('planSpotSuggestWrap'); if (!wrap) return;
+  const pillsEl = document.getElementById('planSpotSuggestPills'); if (!pillsEl) return;
+  const t = trips.find(t => String(t.id) === String(tripId));
+  const unplanned = t ? (t.spots || []).filter(s => !s.planned) : [];
+  if (!unplanned.length) { wrap.style.display = 'none'; return; }
+  const tid = esc(String(tripId));
+  const pd = esc(prefillDate || '');
+  pillsEl.innerHTML = unplanned.map(s => {
+    const sid = esc(String(s.id));
+    return `<button class="plan-spot-pill" onclick="selectSpotAsPlanItem('${tid}','${sid}','${pd}');event.stopPropagation()">${esc(s.name)}</button>`;
+  }).join('');
+  wrap.style.display = '';
+}
+
+function selectSpotAsPlanItem(tripId, spotId, prefillDate) {
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  const spot = (t.spots || []).find(s => String(s.id) === String(spotId)); if (!spot) return;
+  if (!t.plan) t.plan = [];
+  t.plan.push({
+    id: crypto.randomUUID(),
+    date: prefillDate || null,
+    time: '', kind: 'see',
+    title: spot.name, url: spot.url || '',
+    note: spot.note || '', confirmed: false
+  });
+  spot.planned = true;
+  saveTrips();
+  _renderDetailItinerary(t);
+  _renderDetailInfoCol(t);
+  // close the plan modal
+  closePlanItemModal();
+}
+
+function addSpotQuick(tripId, inputEl) {
+  const raw = (inputEl ? inputEl.value : '').trim();
+  if (!raw) return;
+  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
+  if (!t.spots) t.spots = [];
+  let name = raw, url = '';
+  if (/^https?:\/\//i.test(raw)) {
+    url = raw;
+    try {
+      name = new URL(raw).hostname.replace(/^www\./, '');
+    } catch(e) { name = raw; }
+  }
+  t.spots.push({ id: crypto.randomUUID(), name, url, note: '', planned: false });
+  if (inputEl) inputEl.value = '';
+  saveTrips();
+  _renderDetailInfoCol(t);
+  _renderDetailItinerary(t);
 }
 
 // ── SPOTS: all spots modal ──

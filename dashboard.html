@@ -13,14 +13,14 @@
   <link rel="stylesheet" href="css/todo-list.css?v=cba4c8d7">
   <link rel="stylesheet" href="css/ledger.css?v=621633c1">
   <link rel="stylesheet" href="css/wishlist.css?v=e4179203">
-  <link rel="stylesheet" href="css/travel.css?v=04e957f8">
+  <link rel="stylesheet" href="css/travel.css?v=8f05d8ae">
   <link rel="stylesheet" href="css/ui.css?v=9b3587fd">
   <link rel="stylesheet" href="css/food.css?v=b5c1d3c9">
   <link rel="stylesheet" href="css/misc.css?v=be82bcb4">
   <link rel="stylesheet" href="css/todo.css?v=4446638f">
   <link rel="stylesheet" href="css/feedback.css?v=b8c1df10">
   <link rel="stylesheet" href="css/accounts.css?v=8517bda7">
-  <link rel="stylesheet" href="css/responsive.css?v=a8553510">
+  <link rel="stylesheet" href="css/responsive.css?v=9b8a04e3">
   <link rel="stylesheet" href="css/notes.css?v=8804453f">
   <link rel="stylesheet" href="css/food-tags.css?v=4bb375fa">
   <link rel="stylesheet" href="css/food-suggest.css?v=480b24af">
@@ -742,6 +742,10 @@
         <button class="ldr-modal-close" onclick="closePlanItemModal()">✕</button>
       </div>
       <div class="ldr-modal-body">
+        <div id="planSpotSuggestWrap" style="display:none;margin-bottom:4px">
+          <div class="ldr-modal-lbl" style="margin-bottom:6px">候補から選ぶ</div>
+          <div id="planSpotSuggestPills" class="plan-spot-suggest-pills"></div>
+        </div>
         <div>
           <label class="ldr-modal-lbl">種類</label>
           <div class="ui-seg plan-kind-seg" id="planKindSeg">
@@ -769,6 +773,16 @@
           <label class="ldr-modal-lbl"><span id="planTitleLbl">名前</span> <span style="color:var(--accent)">*</span></label>
           <input class="ldr-modal-in" id="planItemTitle" type="text" placeholder="" />
         </div>
+        <div id="planMealRow" style="display:none">
+          <label class="ldr-modal-lbl">食事の種類</label>
+          <div class="ui-seg plan-meal-seg" id="planMealSeg">
+            <button class="ui-seg-btn" data-meal="breakfast" onclick="setPlanItemMeal('breakfast');event.stopPropagation()">朝食</button>
+            <button class="ui-seg-btn" data-meal="lunch" onclick="setPlanItemMeal('lunch');event.stopPropagation()">昼食</button>
+            <button class="ui-seg-btn" data-meal="dinner" onclick="setPlanItemMeal('dinner');event.stopPropagation()">夕食</button>
+            <button class="ui-seg-btn" data-meal="cafe" onclick="setPlanItemMeal('cafe');event.stopPropagation()">カフェ/おやつ</button>
+          </div>
+          <input type="hidden" id="planItemMeal" value="">
+        </div>
         <div id="planFromToRow" class="ldr-modal-2col" style="display:none">
           <div>
             <label class="ldr-modal-lbl">出発地</label>
@@ -789,6 +803,13 @@
             <input class="ldr-modal-in" id="planItemTime" type="time" />
           </div>
         </div>
+        <div id="planEndTimeRow" class="ldr-modal-2col" style="display:none">
+          <div></div>
+          <div>
+            <label class="ldr-modal-lbl">〜 終了時刻（任意）</label>
+            <input class="ldr-modal-in" id="planItemEndTime" type="time" />
+          </div>
+        </div>
         <div id="planArrRow" class="ldr-modal-2col" style="display:none">
           <div>
             <label class="ldr-modal-lbl">到着日</label>
@@ -798,6 +819,11 @@
             <label class="ldr-modal-lbl">到着時刻</label>
             <input class="ldr-modal-in" id="planItemArrTime" type="time" />
           </div>
+        </div>
+        <div id="planNightsRow" style="display:none">
+          <label class="ldr-modal-lbl">泊数</label>
+          <div id="planNightsPills" class="plan-nights-pills"></div>
+          <div id="planNightsInfo" class="plan-nights-info"></div>
         </div>
         <div id="planCheckOutRow" class="ldr-modal-2col" style="display:none">
           <div>
@@ -1135,7 +1161,7 @@
 <script src="js/ledger/transactions.js?v=7c1772f4"></script>
 <script src="js/wishlist.js?v=cf9f0b03"></script>
 <script src="js/ledger/subs.js?v=3e1d587d"></script>
-<script src="js/travel.js?v=ac82cb24"></script>
+<script src="js/travel.js?v=c2ef6296"></script>
 <script src="js/food/list.js?v=cd75a047"></script>
 <script src="js/food/calendar.js?v=7b5233a3"></script>
 <script src="js/food/modal.js?v=0bcec9cf"></script>
@@ -1145,6 +1171,7 @@
 <script src="js/notes.js?v=46a4ed85"></script>
 <script src="js/core/utils.js?v=843f163e"></script>
 <script src="js/core/backup.js?v=c5ecb8a0"></script>
+<script src="js/core/swipe.js?v=5242e47d"></script>
 
 <div id="tvTagPop" class="tv-tag-pop" onclick="event.stopPropagation()">
   <div class="tv-tag-pop-grid" id="tvTagPopGrid"></div>
