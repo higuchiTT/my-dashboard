@@ -16,7 +16,7 @@ tools:
   - mcp__playwright__browser_evaluate
   - mcp__playwright__browser_resize
   - mcp__playwright__browser_take_screenshot
-model: claude-sonnet-4-6
+model: claude-sonnet-5-5
 ---
 
 # Advisor エージェント

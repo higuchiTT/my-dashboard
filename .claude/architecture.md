@@ -7,7 +7,7 @@ c:\work\private\
 ├── dashboard.html          ← HTML のみ（css/・js/ を ?v=ハッシュ付きで順番に読み込む）
 ├── css\                    ← base / タブごと / responsive（スマホ用）。読み込み順で上書きされる
 ├── js\                     ← core\（state, sync, init, nav, utils, backup）とタブごと（ledger\, food\ 等）
-├── tests\                  ← logic.test.js（npm test）/ load.js（js を node で読み込む）/ smoke.js（ブラウザ用の回帰チェック）
+├── tests\                  ← logic.test.js（npm test）/ load.js（js を node で読み込む）/ smoke.js（ブラウザ用の回帰チェック）/ ui-audit.js（決まりごとの自動検査。checker が最初に使う）
 ├── tools\bump_assets.py    ← ?v= を中身のハッシュに更新（コミット前に実行）
 ├── package.json            ← npm test / npm run bump（依存パッケージなし）
 ├── .mcp.json               ← Playwright MCP をプロジェクトスコープで登録
@@ -17,9 +17,10 @@ c:\work\private\
     ├── checklist.md        ← UIチェック項目（Hook が直接参照）
     ├── architecture.md     ← このファイル
     ├── agents\
-    │   ├── coder.md        ← 実装専任エージェント
-    │   ├── checker.md      ← Playwright 視覚確認エージェント
-    │   └── advisor.md      ← 改善案を出すエージェント（読むだけ。10件前後、半分以上は大胆な案。ユーザーが「改善案を出して」と言ったときに呼ぶ）
+    │   ├── coder.md        ← 実装専任エージェント（Sonnet 5.5）
+    │   ├── coder-lite.md   ← 小さな修正だけのエージェント（Haiku 5.5。場所と直し方が決まっているもの）
+    │   ├── checker.md      ← Playwright 視覚確認エージェント（Sonnet 5.5。最初に tests/ui-audit.js を動かす）
+    │   └── advisor.md      ← 改善案を出すエージェント（Sonnet 5.5。読むだけ。10件前後、半分以上は大胆な案。ユーザーが「改善案を出して」と言ったときに呼ぶ）
     └── hooks\
         ├── mark-dirty.ps1  ← 編集検知フラグ（dashboard.html と css\・js\ 配下）
         └── check-ui.ps1    ← 完了ブロック
@@ -53,6 +54,16 @@ c:\work\private\
   .dirty が残っていたらブロック（checklist.md の内容を reason として返す）
   .dirty が消えていれば通過
 ```
+
+## モデルの割り当て（2026-11-12、使用量を抑えるため）
+
+| 担当 | モデル | 理由 |
+|------|--------|------|
+| メイン会話 | Opus（ユーザーの設定） | 判断・設計・ユーザーとのやりとり。機能ごとにセッションを区切る |
+| coder | claude-sonnet-5-5 | 設計の判断が要る実装 |
+| coder-lite | claude-haiku-5-5 | 場所と直し方が決まった小さな修正 |
+| checker | claude-sonnet-5-5 | 動きの確認。決まりごとは tests/ui-audit.js で自動化して手間を減らす |
+| advisor | claude-sonnet-5-5 | 改善案（大胆な案も含む） |
 
 ## 各レイヤーの役割
 

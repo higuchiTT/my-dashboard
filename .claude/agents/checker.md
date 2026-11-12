@@ -15,7 +15,7 @@ tools:
   - mcp__playwright__browser_resize
   - mcp__playwright__browser_snapshot
   - mcp__playwright__browser_close
-model: claude-sonnet-4-6
+model: claude-sonnet-5-5
 ---
 
 # Checker エージェント
@@ -38,6 +38,22 @@ navigate: http://localhost:8765/dashboard.html
 
 ```
 ```
+
+### Step 1.5: 自動の検査を1回だけ動かす（2026-11-12〜）
+
+決まりごと（横にはみ出さない・押せる高さ 32px 以上・文字 10px 以上・全タブでエラーなし）は、手で1つずつ測らずに `tests/ui-audit.js` で一度に調べる。
+
+```javascript
+evaluate: `
+  for (const f of ['tests/smoke.js','tests/ui-audit.js']) eval.call(window, await (await fetch(f)).text());
+  JSON.stringify(await runUiAudit())                     // 全タブ（今の画面幅で）
+  // 変更した部分だけ: await runUiAudit({ seed:false, root:'#tripDetailView' })（自分で入れたダミーのまま、その要素の中だけ）
+`
+```
+
+- スマホ 375px と PC 1280px で1回ずつ。結果の JSON を報告の根拠に使い、同じことを手で測り直さない。
+- 既存の画面には以前からの違反（例: Ledger のサブタブの高さ）が残っている。**今回の変更で増えたもの・変更した部分にあるもの**だけを fail にし、以前からのものは「既存」として件数だけ添える。
+- 手間（ブラウザ操作）は、検査で分からない「今回変えた機能の動き」の確認に使う。
 
 ### Step 2: 変更対象のページに移動
 
