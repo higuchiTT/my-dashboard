@@ -484,11 +484,10 @@ function saveFoodModal() {
   saveMeals();
   closeFoodModal();
   renderFood();
-  // Refresh Travel review if currently open
-  if (typeof _currentTripId !== 'undefined' && _currentTripId &&
-      typeof _travelSubView !== 'undefined' && _travelSubView === 'review') {
+  // Refresh Travel itinerary (for day record food section) if currently open
+  if (typeof _currentTripId !== 'undefined' && _currentTripId) {
     const _trip = typeof trips !== 'undefined' ? trips.find(t => String(t.id) === String(_currentTripId)) : null;
-    if (_trip && typeof _renderTripReview === 'function') _renderTripReview(_trip);
+    if (_trip && typeof _refreshPlanView === 'function') _refreshPlanView(_trip);
   }
 }
 

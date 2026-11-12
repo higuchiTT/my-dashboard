@@ -368,15 +368,44 @@
     .td-hero-prog-pct { font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; color:#fff; text-align:right; }
     .td-hero-tagline { font-family:'Newsreader',serif; font-size:14px; font-style:italic; color:rgba(255,255,255,0.9); text-shadow:0 1px 3px rgba(0,0,0,0.4); transform:rotate(-2deg); transform-origin:right center; text-align:right; white-space:pre-wrap; max-width:180px; word-break:break-word; }
 
-    /* ── SEGMENT WRAP (detail) ── */
-    .td-seg-wrap { padding:0 24px; border-bottom:1px solid var(--rule); background:var(--paper); }
-    .td-seg-wrap .ui-seg { border-radius:0; border:none; gap:0; }
-    .td-seg-wrap .ui-seg-btn { border-radius:0; border:none; border-bottom:2px solid transparent; padding:12px 20px; font-size:14px; }
-    .td-seg-wrap .ui-seg-btn.active { background:transparent; border-bottom-color:var(--accent); color:var(--accent); }
-
-    /* ── 3-COL PLAN LAYOUT ── */
+    /* ── 3-COL PLAN LAYOUT (active trip) ── */
     .td-plan-3col { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1.4fr) minmax(0,1.1fr); gap:20px; padding:20px 24px 40px; align-items:start; }
+
+    /* ── 2-COL PLAN LAYOUT (done trip: itinerary + info/review) ── */
+    .td-plan-2col { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1.1fr); gap:20px; padding:20px 24px 40px; align-items:start; }
+    .td-col-info-done { position:sticky; top:72px; display:flex; flex-direction:column; gap:12px; }
+    .td-done-review-card { overflow:hidden; }
+
     .td-col-title { display:flex; align-items:center; gap:7px; font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:700; color:var(--ink); }
+
+    /* ── PER-ITEM RECORD ROW ── */
+    /* Aligns visit button under the icon column of the item above it */
+    .td-item-rec-row { display:flex; align-items:center; gap:6px; padding:2px 4px 6px 76px; margin-top:-4px; }
+    .td-rec-visit-btn { display:inline-flex; align-items:center; gap:4px; background:none; border:1px solid var(--rule); font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:600; color:var(--ink3); padding:3px 8px; border-radius:20px; cursor:pointer; white-space:nowrap; flex-shrink:0; min-height:32px; transition:all 0.12s; }
+    .td-rec-visit-btn:hover { border-color:var(--ok); color:var(--ok); }
+    .td-rec-visit-btn.active { background:rgba(16,185,129,0.1); border-color:var(--ok); color:var(--ok); }
+    .td-rec-stars { display:flex; gap:0; flex-shrink:0; flex-wrap:nowrap; }
+    .td-rec-star-btn { display:inline-flex; align-items:center; justify-content:center; background:none; border:none; font-size:14px; cursor:pointer; color:var(--rule); padding:0 2px; transition:color 0.12s; line-height:1; min-height:32px; min-width:24px; }
+    .td-rec-star-btn.active { color:var(--warn); }
+    .td-rec-star-btn:hover { color:var(--warn); }
+    .td-rec-comment { flex-grow:1; flex-shrink:1; flex-basis:0%; min-width:0; font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--ink2); background:transparent; border:none; border-bottom:1px solid transparent; padding:2px 0; outline:none; transition:border-color 0.15s; min-height:26px; }
+    .td-rec-comment:focus { border-bottom-color:var(--rule); }
+    .td-rec-comment::placeholder { color:var(--ink3); opacity:0.5; }
+
+    /* ── DAY RECORD SECTION (photos / food / buys / note) ── */
+    .td-day-rec-section { margin:6px 0 4px; padding:8px 10px; background:rgba(26,24,20,0.025); border-radius:6px; display:flex; flex-direction:column; gap:4px; }
+    .td-day-rec-row { display:flex; gap:8px; align-items:flex-start; }
+    .td-day-rec-icon { font-size:13px; flex-shrink:0; color:var(--ink3); width:18px; text-align:center; padding-top:2px; }
+    .td-day-rec-body { flex:1; min-width:0; }
+    .td-day-rec-row-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+    .td-day-rec-label { font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink3); }
+    .td-day-rec-legacy { font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--ink3); font-style:italic; padding:2px 0; }
+
+    /* ── RECORD: "記録を開く" TOGGLE BUTTON ── */
+    .td-rec-open-btn { display:block; width:100%; font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:600; color:var(--ink3); background:none; border:1px dashed rgba(26,24,20,0.15); padding:5px 10px; border-radius:4px; cursor:pointer; text-align:left; margin:4px 0; transition:all 0.12s; min-height:32px; }
+    .td-rec-open-btn:hover { border-color:var(--accent); color:var(--accent); }
+    .td-rec-close-btn { display:block; width:100%; font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:600; color:var(--ink3); background:none; border:none; padding:4px 2px 6px; border-radius:4px; cursor:pointer; text-align:right; margin:0 0 4px; transition:color 0.12s; min-height:32px; }
+    .td-rec-close-btn:hover { color:var(--accent); }
 
     /* ── ITINERARY COLUMN ── */
     .td-iti-hdr { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 12px; border-bottom:1px solid var(--rule); }
@@ -516,8 +545,6 @@
       #page-travel .td-hero-progress-card { min-width:120px; padding:8px 10px; }
       #page-travel .td-hero-prog-pct { font-size:14px; }
       #page-travel .td-hero-tagline { font-size:12px; max-width:140px; }
-      #page-travel .td-seg-wrap { padding:0 12px; }
-      #page-travel .td-seg-wrap .ui-seg-btn { padding:10px 14px; font-size:13px; }
       #page-travel .td-plan-3col { grid-template-columns:1fr; padding:12px 12px 24px; gap:16px; }
       #page-travel .td-day-block { padding:12px 10px 10px 12px; }
       #page-travel .td-day-badge { width:46px; min-width:46px; }
@@ -533,4 +560,12 @@
       #page-travel .tv-featured-hero { min-height:130px; }
       #page-travel .tv-feat-hero-name { font-size:20px; }
       #page-travel .tv-feat-hero-prog { min-width:110px; }
+      /* done trip 2-col → single col on mobile */
+      #page-travel .td-plan-2col { grid-template-columns:1fr; padding:12px 12px 24px; gap:16px; }
+      #page-travel .td-col-info-done { position:static; }
+      /* per-item record row */
+      #page-travel .td-item-rec-row { padding-left:52px; flex-wrap:wrap; gap:4px; }
+      /* day record section */
+      #page-travel .td-day-rec-section { padding:6px 8px; }
+      #page-travel .td-day-rec-label { font-size:9px; }
     }

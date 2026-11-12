@@ -1,7 +1,7 @@
 // ── TRAVEL ──
 let tripModalId = null;
 let _currentTripId = null;
-let _travelSubView = 'plan'; // 'plan' | 'review'
+let _dayRecordOpen = {}; // ds → true: force-open record section for a day not yet passed
 let _planItemModalId = null;
 let _planItemTripId = null;
 let _tripPhotoUploading = 0;
@@ -37,6 +37,23 @@ function calcNights(checkInDate, checkOutDate) {
   const co = new Date(checkOutDate + 'T00:00:00');
   const n = Math.round((co - ci) / 86400000);
   return n > 0 ? n : 0;
+}
+
+// Pure: returns true if the trip is considered done (status=完了 or today > endDate).
+// Accepts optional todayStr (YYYY-MM-DD) for testing.
+function isTripDone(t, todayStr) {
+  if (t.status === '完了') return true;
+  if (!t.endDate) return false;
+  const d = todayStr || new Date().toISOString().slice(0, 10);
+  return d > t.endDate;
+}
+
+// Pure: returns true if the given day string has arrived or passed (today >= ds).
+// Accepts optional todayStr (YYYY-MM-DD) for testing.
+function isDayPassed(ds, todayStr) {
+  if (!ds) return false;
+  const d = todayStr || new Date().toISOString().slice(0, 10);
+  return d >= ds;
 }
 
 // Pure: format a time range for display ('10:00–12:00' or '10:00' or '')
@@ -865,34 +882,13 @@ function selectCoverFromPhotos(photoId) {
 // ── DETAIL NAVIGATION ──
 function openTripDetail(id) {
   _currentTripId = String(id);
-  const t = trips.find(t => String(t.id) === _currentTripId);
-  if (t) {
-    const sv = (_travelSubView === 'booking') ? 'plan' : _travelSubView;
-    _travelSubView = (t.status === '完了') ? 'review' : (sv === 'review' ? 'review' : 'plan');
-  }
+  _dayRecordOpen = {};
   renderTravel();
 }
 
 function closeTripDetail() {
   _currentTripId = null;
   renderTravel();
-}
-
-function setTravelSubView(view, el) {
-  _travelSubView = view;
-  document.querySelectorAll('#tripDetailSeg .ui-seg-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  const pv = document.getElementById('tripPlanView');
-  const rv = document.getElementById('tripReviewView');
-  if (pv) pv.style.display = view === 'plan' ? '' : 'none';
-  if (rv) rv.style.display = view === 'review' ? '' : 'none';
-  const t = trips.find(t => String(t.id) === _currentTripId);
-  if (!t) return;
-  if (view === 'plan') {
-    if (!document.getElementById(`tdItinerary-${String(t.id)}`)) _renderDetailPlanView(t);
-  } else {
-    _renderTripReview(t);
-  }
 }
 
 // ── PLAN ITEM MODAL ──
@@ -1200,8 +1196,9 @@ function setTripRating(tripId, rating) {
   t.review.rating = (t.review.rating === rating) ? 0 : rating;
   t.review.updatedAt = new Date().toISOString();
   saveTrips();
-  const stars = document.querySelectorAll('#tripReviewView .trip-star-btn');
-  stars.forEach((btn, i) => btn.classList.toggle('active', i + 1 <= t.review.rating));
+  const reviewEl = document.getElementById(`tdTripReview-${tripId}`);
+  if (reviewEl) reviewEl.querySelectorAll('.trip-star-btn').forEach((btn, i) =>
+    btn.classList.toggle('active', i + 1 <= t.review.rating));
 }
 
 function saveTripReviewText(tripId) {
@@ -1249,17 +1246,10 @@ async function handleTripPhotoUpload(files) {
   }
   _tripPhotoUploading--;
   saveTrips();
-  if (_currentTripId === String(tripId) && _travelSubView === 'review') {
-    _renderTripReview(t);
-    if (errors.length) {
-      const errEl = document.getElementById('tripPhotoError');
-      if (errEl) errEl.textContent = `エラー: ${errors.join(' / ')}`;
-    }
-  } else if (_currentTripId === String(tripId)) {
+  if (_currentTripId === String(tripId)) {
     const errEl = document.getElementById('tripPhotoError');
     if (errEl) errEl.textContent = errors.length ? `エラー: ${errors.join(' / ')}` : '';
-    const wrap = document.getElementById(`tripPhotosWrap-${tripId}`);
-    if (wrap) { wrap.innerHTML = _renderTripPhotosHTML(t); fillSignedUrls(wrap); }
+    _refreshPlanView(t);
   }
 }
 
@@ -1271,12 +1261,7 @@ async function deleteTripPhoto(tripId, photoId) {
   delete _signedUrlCache[photo.path];
   t.photos = t.photos.filter(p => String(p.id) !== String(photoId));
   saveTrips();
-  if (_currentTripId === String(tripId) && _travelSubView === 'review') {
-    _renderTripReview(t);
-  } else {
-    const wrap = document.getElementById(`tripPhotosWrap-${tripId}`);
-    if (wrap) { wrap.innerHTML = _renderTripPhotosHTML(t); fillSignedUrls(wrap); }
-  }
+  if (_currentTripId === String(tripId)) _refreshPlanView(t);
 }
 
 function setTripPhotoDate(tripId, photoId, date) {
@@ -1284,12 +1269,7 @@ function setTripPhotoDate(tripId, photoId, date) {
   const photo = t.photos.find(p => String(p.id) === String(photoId)); if (!photo) return;
   photo.date = date || null;
   saveTrips();
-  if (_currentTripId === String(tripId) && _travelSubView === 'review') {
-    _renderTripReview(t);
-  } else {
-    const wrap = document.getElementById(`tripPhotosWrap-${tripId}`);
-    if (wrap) { wrap.innerHTML = _renderTripPhotosHTML(t); fillSignedUrls(wrap); }
-  }
+  if (_currentTripId === String(tripId)) _refreshPlanView(t);
 }
 
 function saveTripPhotoCaption(tripId, photoId, caption) {
@@ -1398,82 +1378,6 @@ function _renderTripPhotosHTML(t) {
   return html;
 }
 
-// ── REVIEW: DAY CARD HELPERS ──
-
-function _reviewDayStayAuto(t, ds) {
-  if (t.planMigrated) {
-    const stayItem = (t.plan || []).find(p =>
-      p.kind === 'stay' && p.date && p.date <= ds && (!p.checkOut || p.checkOut > ds));
-    if (stayItem) return stayItem.title || stayItem.place || '宿泊先';
-    return '';
-  }
-  const det = _getTripDetails(t);
-  for (const st of det.stay) {
-    if (st.checkIn && st.checkIn <= ds && (!st.checkOut || st.checkOut > ds)) {
-      return st.name || '宿泊先';
-    }
-  }
-  const planStay = (t.plan || []).find(p => p.kind === 'stay' && p.date === ds);
-  if (planStay) return planStay.title || planStay.place || '宿泊先';
-  return '';
-}
-
-function _reviewDayMoveAutoItems(t, ds) {
-  const items = [];
-  if (!t.planMigrated) {
-    const det = _getTripDetails(t);
-    for (const tr of det.transport) {
-      if (tr.depDate === ds) {
-        const icon = TRANSPORT_KIND_ICONS[tr.kind] || '🚆';
-        let label = icon;
-        if (tr.from || tr.to) label += ' ' + [tr.from, tr.to].filter(Boolean).join('→');
-        if (tr.name) label += ' ' + tr.name;
-        if (tr.depTime) label += ' ' + tr.depTime;
-        items.push(label.trim());
-      }
-    }
-  }
-  for (const p of (t.plan || [])) {
-    if (p.kind === 'move' && p.date === ds) {
-      const modeIcon = p.mode ? (TRANSPORT_KIND_ICONS[p.mode] || '🚆') : '🚃';
-      let label = modeIcon + ' ';
-      if (p.title) label += p.title;
-      if (p.from || p.to) label += ' ' + [p.from, p.to].filter(Boolean).join('→');
-      else if (p.place) label += '→' + p.place;
-      if (p.time) label += ' ' + p.time;
-      items.push(label.trim() || '移動');
-    }
-  }
-  return items;
-}
-
-function _reviewPlaceItemHTML(t, item, tid) {
-  const iid = esc(String(item.id));
-  const teid = esc(String(t.id));
-  const kindLabel = PLAN_KIND_LABELS[item.kind] || item.kind;
-  const visited = item.visited || false;
-  const rating = item.rating || 0;
-  const comment = item.comment || '';
-  const starsHTML = [1,2,3,4,5].map(n =>
-    `<button class="trip-drv-star-btn${n <= rating ? ' active' : ''}" onclick="event.stopPropagation();setPlanItemRating('${teid}','${iid}',${n})">★</button>`
-  ).join('');
-  return `<div class="trip-drv-place-item${visited ? ' visited' : ''}" id="trPlaceItem-${teid}-${iid}">
-    <button class="trip-drv-visit-btn${visited ? ' active' : ''}" onclick="event.stopPropagation();togglePlanItemVisited('${teid}','${iid}')" title="${visited ? '訪問済み' : '未訪問'}">☑</button>
-    <div class="trip-drv-place-info">
-      <div class="trip-drv-place-name-row">
-        <span class="trip-drv-place-name">${esc(item.title || item.place || '（名前なし）')}</span>
-        <span class="trip-drv-place-kind ui-pill trip-drv-pill-${esc(item.kind)}">${esc(kindLabel)}</span>
-        <button class="trip-drv-place-del" onclick="event.stopPropagation();deleteReviewPlanItem('${teid}',${jsq(item.date||'')},'${iid}')" title="削除">✕</button>
-      </div>
-      <div class="trip-drv-place-stars">${starsHTML}</div>
-      <input class="trip-drv-place-comment" type="text" value="${esc(comment)}"
-        placeholder="ひとこと…"
-        onblur="savePlanItemComment('${teid}','${iid}',this.value)"
-        onclick="event.stopPropagation()">
-    </div>
-  </div>`;
-}
-
 function _reviewDayPhotosHTML(t, ds) {
   const tid = esc(String(t.id));
   const allPhotos = t.photos || [];
@@ -1563,234 +1467,6 @@ function _renderUndatedPhotosHTML(t, periodDates) {
   return html;
 }
 
-function _reviewDayCardHTML(t, ds, dayNum, dateObj, isLastDay) {
-  const tid = esc(String(t.id));
-  const DN = '日月火水木金土'.split('');
-  const log = t.log || {};
-  const dayLog = log[ds] || {};
-  const dsQ = jsq(ds);
-  const dateLabel = `${dateObj.getMonth()+1}/${dateObj.getDate()}（${DN[dateObj.getDay()]}）`;
-
-  // 🏨 Stay (omitted on last day)
-  const autoStay = isLastDay ? '' : _reviewDayStayAuto(t, ds);
-  const savedStay = dayLog.stay || '';
-  const stayHTML = isLastDay ? '' : `<div class="trip-drv-row">
-    <div class="trip-drv-row-icon" aria-hidden="true">🏨</div>
-    <div class="trip-drv-row-body">
-      <div class="trip-drv-row-label">泊まったところ</div>
-      <input class="trip-drv-input" type="text"
-        id="trDayStay-${tid}-${ds}"
-        value="${esc(savedStay)}"
-        placeholder="${esc(autoStay || '宿名を入力…')}"
-        onblur="saveTripDayField('${tid}',${dsQ},'stay',this.value)"
-        onclick="event.stopPropagation()">
-    </div>
-  </div>`;
-
-  // 🚃 Transport
-  const autoMoveItems = _reviewDayMoveAutoItems(t, ds);
-  const autoMoveHTML = autoMoveItems.length
-    ? `<div class="trip-drv-auto-items">${autoMoveItems.map(s => `<div class="trip-drv-auto-item">${esc(s)}</div>`).join('')}</div>`
-    : '';
-  const moveHTML = `<div class="trip-drv-row">
-    <div class="trip-drv-row-icon" aria-hidden="true">🚃</div>
-    <div class="trip-drv-row-body">
-      <div class="trip-drv-row-label">移動</div>
-      ${autoMoveHTML}
-      <input class="trip-drv-input" type="text"
-        id="trDayMove-${tid}-${ds}"
-        value="${esc(dayLog.move || '')}"
-        placeholder="移動メモを追加…"
-        onblur="saveTripDayField('${tid}',${dsQ},'move',this.value)"
-        onclick="event.stopPropagation()">
-    </div>
-  </div>`;
-
-  // 📍 Places (non-move, non-stay plan items for this day)
-  const planItems = (t.plan || []).filter(p => p.date === ds && p.kind !== 'move' && p.kind !== 'stay');
-  const placesHTML = `<div class="trip-drv-row">
-    <div class="trip-drv-row-icon" aria-hidden="true">📍</div>
-    <div class="trip-drv-row-body">
-      <div class="trip-drv-row-label">行ったところ</div>
-      <div id="trPlaces-${tid}-${ds}" class="trip-drv-places">${planItems.map(item => _reviewPlaceItemHTML(t, item, tid)).join('')}</div>
-      <input class="trip-drv-add-in" type="text"
-        id="trAddPlace-${tid}-${ds}"
-        placeholder="＋ 行ったところを追加…"
-        onkeydown="if(event.key==='Enter'){event.stopPropagation();addReviewPlace('${tid}',${dsQ},this)}"
-        onclick="event.stopPropagation()">
-    </div>
-  </div>`;
-
-  // 🍴 Food (from global meals array)
-  const dayMeals = (typeof meals !== 'undefined' ? meals : []).filter(m => m.date === ds);
-  const foodHTML = `<div class="trip-drv-row">
-    <div class="trip-drv-row-icon" aria-hidden="true">🍴</div>
-    <div class="trip-drv-row-body">
-      <div class="trip-drv-row-label">食べたもの</div>
-      ${dayMeals.length ? `<div class="trip-drv-food-list">${dayMeals.map(m => _reviewMealItemHTML(m)).join('')}</div>` : ''}
-      <button class="trip-drv-add-btn" onclick="event.stopPropagation();openFoodModalNew(${dsQ})">＋ 食べたものを追加</button>
-    </div>
-  </div>`;
-
-  // 🛍 Buys
-  const buys = dayLog.buys || [];
-  const buysHTML = `<div class="trip-drv-row">
-    <div class="trip-drv-row-icon" aria-hidden="true">🛍</div>
-    <div class="trip-drv-row-body">
-      <div class="trip-drv-row-label">買ったもの・お土産</div>
-      <div id="trBuys-${tid}-${ds}" class="trip-drv-buys">${buys.map(b => _reviewBuyItemHTML(t, ds, b, tid)).join('')}</div>
-      <input class="trip-drv-add-in" type="text"
-        id="trAddBuy-${tid}-${ds}"
-        placeholder="＋ 品名を追加…"
-        onkeydown="if(event.key==='Enter'){event.stopPropagation();addReviewBuy('${tid}',${dsQ},this)}"
-        onclick="event.stopPropagation()">
-    </div>
-  </div>`;
-
-  // 📷 Photos
-  const photosHTML = `<div class="trip-drv-row">
-    <div class="trip-drv-row-icon" aria-hidden="true">📷</div>
-    <div class="trip-drv-row-body">
-      <div class="trip-drv-row-label-row">
-        <div class="trip-drv-row-label">写真</div>
-        <button class="trip-drv-add-btn-sm" onclick="event.stopPropagation();openTripPhotoInputForDay('${tid}',${dsQ})">＋</button>
-      </div>
-      <div id="trDayPhotos-${tid}-${ds}"
-        class="trip-photos-drop-zone"
-        ondragover="tripPhotoDragOver(event)"
-        ondragleave="tripPhotoDragLeave(event)"
-        ondrop="tripPhotoDropForDay(event,'${tid}',${dsQ})">
-        ${_reviewDayPhotosHTML(t, ds)}
-      </div>
-    </div>
-  </div>`;
-
-  // ✏ Note
-  const noteHTML = `<div class="trip-drv-row">
-    <div class="trip-drv-row-icon" aria-hidden="true">✏</div>
-    <div class="trip-drv-row-body">
-      <div class="trip-drv-row-label">ひとこと</div>
-      <textarea class="trip-drv-ta"
-        id="trDayNote-${tid}-${ds}"
-        placeholder="この日のひとこと…"
-        onblur="saveTripDayField('${tid}',${dsQ},'note',this.value)"
-        onclick="event.stopPropagation()"
-        oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
-      >${esc(dayLog.note || '')}</textarea>
-    </div>
-  </div>`;
-
-  return `<div class="trip-day-review-card ui-card">
-    <div class="trip-drv-hdr">
-      <div class="trip-drv-day-num">${dayNum}日目</div>
-      <div class="trip-drv-date">${esc(dateLabel)}</div>
-    </div>
-    ${stayHTML}${moveHTML}${placesHTML}${foodHTML}${buysHTML}${photosHTML}${noteHTML}
-  </div>`;
-}
-
-// ── REVIEW: RENDER ──
-
-function _renderTripReview(t) {
-  const container = document.getElementById('tripReviewView'); if (!container) return;
-  const review = t.review || { rating: 0, text: '', updatedAt: null };
-  const tid = esc(String(t.id));
-
-  // Build period dates set for undated-photo detection
-  const periodDates = new Set();
-  if (t.startDate && t.endDate) {
-    const sdObj = new Date(t.startDate + 'T00:00:00');
-    const edObj = new Date(t.endDate + 'T00:00:00');
-    for (let d = new Date(sdObj); d <= edObj; d.setDate(d.getDate() + 1)) {
-      const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-      periodDates.add(ds);
-    }
-  }
-
-  // Stars (overall rating)
-  const starsHTML = [1,2,3,4,5].map(n =>
-    `<button class="trip-star-btn${n <= (review.rating||0) ? ' active' : ''}" onclick="setTripRating('${tid}',${n});event.stopPropagation()">★</button>`
-  ).join('');
-
-  // Section 2: undated/out-of-period photos (only when trip has period)
-  const allPhotos = t.photos || [];
-  const undatedPhotos = allPhotos.filter(p => !p.date || !periodDates.has(p.date));
-  const undatedSection = (undatedPhotos.length && t.startDate && t.endDate) ? `<div class="trip-review-section">
-    <div class="trip-review-lbl-row">
-      <div class="trip-review-lbl">日付なしの写真</div>
-      <button class="trip-photo-add-btn-text" onclick="openTripPhotoInput('${tid}');event.stopPropagation()">＋ 写真を追加</button>
-    </div>
-    <div id="tripUndatedPhotosWrap-${tid}"
-      class="trip-photos-drop-zone"
-      ondragover="tripPhotoDragOver(event)"
-      ondragleave="tripPhotoDragLeave(event)"
-      ondrop="tripPhotoDrop(event,'${tid}')">
-      ${_renderUndatedPhotosHTML(t, periodDates)}
-    </div>
-  </div>` : '';
-
-  // Section 3: day cards or no-period fallback
-  let dayContent = '';
-  if (t.startDate && t.endDate) {
-    const sdObj = new Date(t.startDate + 'T00:00:00');
-    const edObj = new Date(t.endDate + 'T00:00:00');
-    let dayNum = 0, cards = '';
-    for (let d = new Date(sdObj); d <= edObj; d.setDate(d.getDate() + 1)) {
-      dayNum++;
-      const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-      const isLastDay = (ds === t.endDate);
-      cards += _reviewDayCardHTML(t, ds, dayNum, new Date(d), isLastDay);
-    }
-    dayContent = `<div class="trip-review-day-cards">${cards}</div>`;
-  } else {
-    dayContent = `<div class="trip-review-no-period">
-      <p>期間を設定すると、日ごとに記録できます。</p>
-      <div class="trip-review-section">
-        <div class="trip-review-lbl-row">
-          <div class="trip-review-lbl">写真</div>
-          <button class="trip-photo-add-btn-text" onclick="openTripPhotoInput('${tid}');event.stopPropagation()">＋ 写真を追加</button>
-        </div>
-        <div id="tripPhotosWrap-${tid}"
-          class="trip-photos-drop-zone"
-          ondragover="tripPhotoDragOver(event)"
-          ondragleave="tripPhotoDragLeave(event)"
-          ondrop="tripPhotoDrop(event,'${tid}')">
-          ${_renderTripPhotosHTML(t)}
-        </div>
-      </div>
-    </div>`;
-  }
-
-  // Section 4: reflections (所感) for the trip period
-  const reflectionsHTML = _renderReviewReflections(t);
-
-  container.innerHTML = `<div class="trip-review">
-    <div class="trip-review-section">
-      <div class="trip-review-lbl">総合評価</div>
-      <div class="trip-stars">${starsHTML}</div>
-    </div>
-    <div class="trip-review-section">
-      <div class="trip-review-lbl">総合感想</div>
-      <textarea class="trip-review-ta" id="tripReviewTa-${tid}"
-        placeholder="旅の感想を書いてください…"
-        onblur="saveTripReviewText('${tid}')"
-        oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
-      >${esc(review.text || '')}</textarea>
-    </div>
-    ${undatedSection}
-    ${dayContent}
-    ${reflectionsHTML}
-    <div id="tripPhotoError" class="food-photo-error"></div>
-  </div>`;
-
-  const ta = document.getElementById(`tripReviewTa-${String(t.id)}`);
-  if (ta) { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }
-  container.querySelectorAll('.trip-drv-ta').forEach(el => {
-    el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px';
-  });
-  fillSignedUrls(container);
-}
-
 function _renderReviewReflections(t) {
   if (!t.startDate || !t.endDate) return '';
   const DN = '日月火水木金土'.split('');
@@ -1850,33 +1526,8 @@ function savePlanItemComment(tripId, itemId, val) {
 function _updateReviewPlaceItem(tripId, itemId) {
   const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
   const item = (t.plan || []).find(p => String(p.id) === String(itemId)); if (!item) return;
-  const el = document.getElementById(`trPlaceItem-${String(tripId)}-${String(itemId)}`);
-  if (el) el.outerHTML = _reviewPlaceItemHTML(t, item, String(tripId));
-}
-
-function addReviewPlace(tripId, ds, inputEl) {
-  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
-  const title = inputEl.value.trim(); if (!title) return;
-  if (!t.plan) t.plan = [];
-  t.plan.push({ id: crypto.randomUUID(), date: ds, time: '', kind: 'see', title, place: '', url: '', note: '', visited: true });
-  saveTrips();
-  inputEl.value = '';
-  const container = document.getElementById(`trPlaces-${String(tripId)}-${ds}`);
-  if (container) {
-    const planItems = (t.plan || []).filter(p => p.date === ds && p.kind !== 'move' && p.kind !== 'stay');
-    container.innerHTML = planItems.map(item => _reviewPlaceItemHTML(t, item, String(tripId))).join('');
-  }
-}
-
-function deleteReviewPlanItem(tripId, ds, itemId) {
-  const t = trips.find(t => String(t.id) === String(tripId)); if (!t) return;
-  t.plan = (t.plan || []).filter(p => String(p.id) !== String(itemId));
-  saveTrips();
-  const container = document.getElementById(`trPlaces-${String(tripId)}-${ds}`);
-  if (container) {
-    const planItems = (t.plan || []).filter(p => p.date === ds && p.kind !== 'move' && p.kind !== 'stay');
-    container.innerHTML = planItems.map(item => _reviewPlaceItemHTML(t, item, String(tripId))).join('');
-  }
+  const el = document.getElementById(`tdItemRec-${String(tripId)}-${String(itemId)}`);
+  if (el) el.outerHTML = _itiItemRecordHTML(t, item);
 }
 
 function addReviewBuy(tripId, ds, inputEl) {
@@ -1920,23 +1571,13 @@ function tripPhotoDropForDay(e, tripId, ds) {
 function _renderTripDetail(tripId) {
   const t = trips.find(t => String(t.id) === String(tripId));
   if (!t) { closeTripDetail(); return; }
-  const planActive   = _travelSubView !== 'review';
-  const reviewActive = _travelSubView === 'review';
   const detailView = document.getElementById('tripDetailView');
   detailView.innerHTML = `
     ${_renderDetailHero(t)}
-    <div class="td-seg-wrap">
-      <div class="ui-seg" id="tripDetailSeg">
-        <button class="ui-seg-btn${planActive ? ' active' : ''}" onclick="setTravelSubView('plan',this)">計画</button>
-        <button class="ui-seg-btn${reviewActive ? ' active' : ''}" onclick="setTravelSubView('review',this)">記録</button>
-      </div>
-    </div>
-    <div id="tripPlanView" style="display:${planActive ? '' : 'none'}"></div>
-    <div id="tripReviewView" style="display:${reviewActive ? '' : 'none'}"></div>
+    <div id="tripPlanView"></div>
   `;
   fillSignedUrls(detailView);
-  if (planActive) _renderDetailPlanView(t);
-  else _renderTripReview(t);
+  _renderDetailPlanView(t);
 }
 
 // ── RENDER LIST: SUMMARY BAR ──
@@ -2316,7 +1957,7 @@ function _afterDetailsEdit(tripId) {
   if (_progressDetailTripId === String(tripId) && _progressDetailKey) {
     _renderProgressDetailContent(t, _progressDetailKey);
   }
-  if (_currentTripId === String(tripId) && _travelSubView === 'plan') _refreshPlanView(t);
+  if (_currentTripId === String(tripId)) _refreshPlanView(t);
   _renderTvProgress(trips.filter(tv => !tv.isIdea));
 }
 
@@ -2598,14 +2239,33 @@ function _renderDetailHero(t) {
 function _renderDetailPlanView(t) {
   const container = document.getElementById('tripPlanView'); if (!container) return;
   const tid = esc(String(t.id));
-  container.innerHTML = `<div class="td-plan-3col">
-    <div class="td-col-itinerary ui-card" id="tdItinerary-${tid}"></div>
-    <div class="td-col-todos ui-card" id="tdTodosCol-${tid}"></div>
-    <div class="td-col-info" id="tdInfoCol-${tid}"></div>
-  </div>`;
+  const done = isTripDone(t);
+  if (done) {
+    container.innerHTML = `<div class="td-plan-2col">
+      <div class="td-col-itinerary ui-card" id="tdItinerary-${tid}"></div>
+      <div class="td-col-info-done" id="tdInfoCol-${tid}"></div>
+    </div>`;
+  } else {
+    container.innerHTML = `<div class="td-plan-3col">
+      <div class="td-col-itinerary ui-card" id="tdItinerary-${tid}"></div>
+      <div class="td-col-todos ui-card" id="tdTodosCol-${tid}"></div>
+      <div class="td-col-info" id="tdInfoCol-${tid}"></div>
+    </div>`;
+    _renderDetailTodosCol(t);
+  }
   _renderDetailItinerary(t);
-  _renderDetailTodosCol(t);
-  _renderDetailInfoCol(t);
+  _renderDetailInfoCol(t, done);
+}
+
+// Pure: converts a time string ('H:MM' or 'HH:MM') to minutes for sort comparison.
+// No time → 9999 (after all timed items).
+// isContinuing=true → 10000 (always last, represents 「同じ宿に宿泊」).
+function _itiTimeSortKey(timeStr, isContinuing) {
+  if (isContinuing) return 10000;
+  if (!timeStr) return 9999;
+  const m = timeStr.match(/^(\d{1,2}):(\d{2})/);
+  if (!m) return 9999;
+  return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
 }
 
 // ── RENDER: ITINERARY COLUMN ──
@@ -2615,6 +2275,8 @@ function _renderDetailItinerary(t) {
   const tid = esc(String(t.id));
   const plan = t.plan || [];
   const unplannedSpots = (t.spots || []).filter(s => !s.planned);
+  const done = isTripDone(t);
+  const started = !!(t.startDate && isDayPassed(t.startDate));
 
   const spotLinkHTML = unplannedSpots.length
     ? `<button class="tv-section-link td-iti-spot-link" onclick="document.getElementById('tdSpotsCard-${tid}')?.scrollIntoView({behavior:'smooth',block:'nearest'});event.stopPropagation()">候補 ${unplannedSpots.length}件</button>`
@@ -2631,18 +2293,45 @@ function _renderDetailItinerary(t) {
   if (t.startDate && t.endDate) {
     const sdObj = new Date(t.startDate + 'T00:00:00');
     const edObj = new Date(t.endDate + 'T00:00:00');
+    // Build period date set for undated-photo detection
+    const periodDates = new Set();
     let dayNum = 0;
     for (let d = new Date(sdObj); d <= edObj; d.setDate(d.getDate() + 1)) {
       dayNum++;
       const ds = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-      const dayItems = plan.filter(p => p.date === ds).sort((a, b) => {
-        const at = a.time||'', bt = b.time||'';
-        if (at && bt) return at.localeCompare(bt);
-        if (at) return -1; if (bt) return 1; return 0;
-      });
+      periodDates.add(ds);
+      // Merge plan items and auto rows, sort all by time so checkout/continuing land correctly.
+      // Auto rows: checkout uses checkOutTime (falls to 9999 if unset), continuing always last (10000).
       const autoRows = _stayAutoRowsForDay(plan, ds);
-      const autoHTML = autoRows.map(r => _itiStayAutoRowHTML(t, r.item, r.type)).join('');
-      const itemsHTML = dayItems.map(item => _itiItemHTML(t, item)).join('') + autoHTML;
+      const combined = [
+        ...plan.filter(p => p.date === ds).map(item => ({ _t: 'plan', item })),
+        ...autoRows.map(r => ({ _t: r.type, item: r.item })),
+      ].sort((a, b) => {
+        const keyOf = e => {
+          if (e._t === 'plan') return _itiTimeSortKey(e.item.time || '');
+          if (e._t === 'checkout') return e.item.checkOutTime ? _itiTimeSortKey(e.item.checkOutTime) : -1;
+          return _itiTimeSortKey('', true); // continuing → 10000
+        };
+        return keyOf(a) - keyOf(b);
+      });
+
+      // Show record if trip has started and this day has passed, or user toggled it open
+      const recordOpen = done || isDayPassed(ds) || !!_dayRecordOpen[ds];
+
+      const itemsHTML = combined.map(entry => {
+        if (entry._t === 'plan') {
+          return _itiItemHTML(t, entry.item) +
+            (recordOpen && entry.item.kind !== 'memo' ? _itiItemRecordHTML(t, entry.item) : '');
+        }
+        return _itiStayAutoRowHTML(t, entry.item, entry._t);
+      }).join('');
+
+      // showClose: only when user manually toggled a future day (not done, not yet passed)
+      const manuallyOpened = !done && !isDayPassed(ds) && !!_dayRecordOpen[ds];
+      const dayRecHTML = recordOpen
+        ? _dayRecordSectionHTML(t, ds, manuallyOpened)
+        : (t.startDate ? `<button class="td-rec-open-btn" onclick="toggleDayRecord(${jsq(ds)});event.stopPropagation()">記録を開く ›</button>` : '');
+
       html += `<div class="td-day-block">
         <div class="td-day-badge">
           <div class="td-day-num">${dayNum}日目</div>
@@ -2653,11 +2342,12 @@ function _renderDetailItinerary(t) {
           <div class="td-day-items">${
             itemsHTML || '<div class="td-day-empty-line"></div>'
           }</div>
+          ${dayRecHTML}
           <button class="td-day-add-btn" onclick="openPlanItemModal('${tid}',null,'${esc(ds)}');event.stopPropagation()">＋ 予定</button>
         </div>
       </div>`;
     }
-    // Undated items
+    // Undated items (no record section since date unknown)
     const undated = plan.filter(p => !p.date).sort((a, b) => (a.time||'').localeCompare(b.time||''));
     if (undated.length) {
       html += `<div class="td-day-block td-day-undated">
@@ -2668,8 +2358,51 @@ function _renderDetailItinerary(t) {
         </div>
       </div>`;
     }
+    // Undated/out-of-period photos: show when started or done, or if photos already exist (pre-start)
+    {
+      const allPhotos = t.photos || [];
+      const undatedPhotos = allPhotos.filter(p => !p.date || !periodDates.has(p.date));
+      if (done || started || undatedPhotos.length) {
+        html += `<div class="td-day-block">
+          <div class="td-day-badge"><div class="td-day-num" style="opacity:0.5">写真</div></div>
+          <div class="td-day-right">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0 8px">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:0.08em;color:var(--ink3)">日付なしの写真</span>
+              <button class="trip-drv-add-btn-sm" onclick="openTripPhotoInput('${tid}');event.stopPropagation()">＋</button>
+            </div>
+            <div id="tripUndatedPhotosWrap-${tid}" class="trip-photos-drop-zone"
+              ondragover="tripPhotoDragOver(event)" ondragleave="tripPhotoDragLeave(event)"
+              ondrop="tripPhotoDrop(event,'${tid}')">
+              ${_renderUndatedPhotosHTML(t, periodDates)}
+            </div>
+          </div>
+        </div>`;
+      }
+    }
+    // For started-but-not-done trip: overall review at bottom of itinerary
+    if (started && !done) {
+      const review = t.review || { rating: 0, text: '' };
+      const starsHTML = [1,2,3,4,5].map(n =>
+        `<button class="trip-star-btn${n <= (review.rating||0) ? ' active' : ''}" onclick="setTripRating('${tid}',${n});event.stopPropagation()">★</button>`
+      ).join('');
+      const reflHTML = _renderReviewReflections(t);
+      html += `<div class="td-day-block" id="tdTripReview-${tid}">
+        <div class="td-day-badge" style="opacity:0.65"><div class="td-day-num">総評</div></div>
+        <div class="td-day-right" style="padding-top:4px">
+          <div class="trip-stars" style="margin-bottom:8px">${starsHTML}</div>
+          <textarea class="trip-review-ta" id="tripReviewTa-${tid}"
+            placeholder="旅の感想を書いてください…"
+            onblur="saveTripReviewText('${tid}')"
+            oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
+            onclick="event.stopPropagation()"
+          >${esc(review.text || '')}</textarea>
+          ${reflHTML}
+          <div id="tripPhotoError" class="food-photo-error"></div>
+        </div>
+      </div>`;
+    }
   } else {
-    // No dates - all items as undated
+    // No dates - all items as undated, no record section
     const all = plan.slice().sort((a, b) => (a.time||'').localeCompare(b.time||''));
     html += `<div class="td-day-block td-day-undated">
       <div class="td-day-badge"><div class="td-day-num">未定</div></div>
@@ -2681,6 +2414,130 @@ function _renderDetailItinerary(t) {
   }
 
   container.innerHTML = html;
+  // Auto-resize textareas and fill signed URLs for photos
+  container.querySelectorAll('.trip-review-ta,.trip-drv-ta').forEach(el => {
+    el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px';
+  });
+  fillSignedUrls(container);
+}
+
+// ── RECORD: PER-ITEM ROW (visited / rating / comment) ──
+// Rendered inline below each itinerary item when record is open for that day.
+function _itiItemRecordHTML(t, item) {
+  const tid = esc(String(t.id));
+  const iid = esc(String(item.id));
+  const visited = item.visited || false;
+  const rating = item.rating || 0;
+  const comment = item.comment || '';
+  const showFullRecord = item.kind === 'see' || item.kind === 'eat';
+
+  const visitBtn = `<button class="td-rec-visit-btn${visited ? ' active' : ''}"
+    onclick="togglePlanItemVisited('${tid}','${iid}');event.stopPropagation()"
+    title="${visited ? '取り消す' : '行った！'}">
+    ${visited
+      ? '<svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" fill="var(--ok)" stroke="none"/><path d="M3.5 7l2.5 2.5L10.5 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      : '<svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="var(--rule)" stroke-width="1.5"/></svg>'}
+    ${visited ? '行った' : '行く'}
+  </button>`;
+
+  const starsHTML = showFullRecord
+    ? `<div class="td-rec-stars">${[1,2,3,4,5].map(n =>
+        `<button class="td-rec-star-btn${n <= rating ? ' active' : ''}" onclick="setPlanItemRating('${tid}','${iid}',${n});event.stopPropagation()">★</button>`
+      ).join('')}</div>` : '';
+
+  const commentHTML = showFullRecord
+    ? `<input class="td-rec-comment" type="text" value="${esc(comment)}"
+        placeholder="ひとこと…"
+        onblur="savePlanItemComment('${tid}','${iid}',this.value)"
+        onclick="event.stopPropagation()">` : '';
+
+  return `<div class="td-item-rec-row" id="tdItemRec-${tid}-${iid}">
+    ${visitBtn}${starsHTML}${commentHTML}
+  </div>`;
+}
+
+// ── RECORD: DAY RECORD SECTION (photos / food / buys / note) ──
+function _dayRecordSectionHTML(t, ds, showClose) {
+  const tid = esc(String(t.id));
+  const dsQ = jsq(ds);
+  const log = t.log || {};
+  const dayLog = log[ds] || {};
+  const dayMeals = (typeof meals !== 'undefined' ? meals : []).filter(m => m.date === ds);
+  const buys = dayLog.buys || [];
+
+  // Legacy: show saved stay/move from log if they have values (read-only, preserve existing data)
+  let legacyHTML = '';
+  if (dayLog.stay) legacyHTML += `<div class="td-day-rec-legacy">🏨 ${esc(dayLog.stay)}</div>`;
+  if (dayLog.move) legacyHTML += `<div class="td-day-rec-legacy">🚃 ${esc(dayLog.move)}</div>`;
+
+  const photosHTML = `<div class="td-day-rec-row">
+    <span class="td-day-rec-icon">📷</span>
+    <div class="td-day-rec-body">
+      <div class="td-day-rec-row-hdr">
+        <span class="td-day-rec-label">写真</span>
+        <button class="trip-drv-add-btn-sm" onclick="event.stopPropagation();openTripPhotoInputForDay('${tid}',${dsQ})">＋</button>
+      </div>
+      <div id="trDayPhotos-${tid}-${ds}" class="trip-photos-drop-zone"
+        ondragover="tripPhotoDragOver(event)" ondragleave="tripPhotoDragLeave(event)"
+        ondrop="tripPhotoDropForDay(event,'${tid}',${dsQ})">
+        ${_reviewDayPhotosHTML(t, ds)}
+      </div>
+    </div>
+  </div>`;
+
+  const mealsListHTML = dayMeals.length
+    ? `<div class="trip-drv-food-list">${dayMeals.map(m => _reviewMealItemHTML(m)).join('')}</div>` : '';
+  const foodHTML = `<div class="td-day-rec-row">
+    <span class="td-day-rec-icon">🍴</span>
+    <div class="td-day-rec-body">
+      <div class="td-day-rec-row-hdr">
+        <span class="td-day-rec-label">食べたもの</span>
+        <button class="trip-drv-add-btn-sm" onclick="event.stopPropagation();openFoodModalNew(${dsQ})">＋</button>
+      </div>
+      ${mealsListHTML}
+    </div>
+  </div>`;
+
+  const buysHTML = `<div class="td-day-rec-row">
+    <span class="td-day-rec-icon">🛍</span>
+    <div class="td-day-rec-body">
+      <div id="trBuys-${tid}-${ds}" class="trip-drv-buys">
+        ${buys.map(b => _reviewBuyItemHTML(t, ds, b, String(t.id))).join('')}
+      </div>
+      <input class="trip-drv-add-in" type="text"
+        id="trAddBuy-${tid}-${ds}"
+        placeholder="＋ 買ったもの…"
+        onkeydown="if(event.key==='Enter'){event.stopPropagation();addReviewBuy('${tid}',${dsQ},this)}"
+        onclick="event.stopPropagation()">
+    </div>
+  </div>`;
+
+  const noteHTML = `<div class="td-day-rec-row">
+    <span class="td-day-rec-icon">✏</span>
+    <div class="td-day-rec-body">
+      <textarea class="trip-drv-ta"
+        id="trDayNote-${tid}-${ds}"
+        placeholder="この日のひとこと…"
+        onblur="saveTripDayField('${tid}',${dsQ},'note',this.value)"
+        onclick="event.stopPropagation()"
+        oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
+      >${esc(dayLog.note || '')}</textarea>
+    </div>
+  </div>`;
+
+  const closeBtn = showClose
+    ? `<button class="td-rec-close-btn" onclick="toggleDayRecord(${dsQ});event.stopPropagation()">閉じる ‹</button>`
+    : '';
+  return `<div class="td-day-rec-section">
+    ${closeBtn}${legacyHTML}${photosHTML}${foodHTML}${buysHTML}${noteHTML}
+  </div>`;
+}
+
+// ── RECORD: TOGGLE DAY RECORD OPEN/CLOSE ──
+function toggleDayRecord(ds) {
+  _dayRecordOpen[ds] = !_dayRecordOpen[ds];
+  const t = trips.find(t => String(t.id) === String(_currentTripId));
+  if (t) _renderDetailItinerary(t);
 }
 
 // ── RENDER: AUTO STAY ROWS (continuing / checkout) ──
@@ -2852,8 +2709,8 @@ function _renderDetailTodosCol(t) {
   container.innerHTML = html;
 }
 
-// ── RENDER: INFO COLUMN (map + spots) ──
-function _renderDetailInfoCol(t) {
+// ── RENDER: INFO COLUMN (map + spots; + overall review when done) ──
+function _renderDetailInfoCol(t, isDone) {
   const container = document.getElementById(`tdInfoCol-${String(t.id)}`); if (!container) return;
   const tid = esc(String(t.id));
 
@@ -2904,6 +2761,33 @@ function _renderDetailInfoCol(t) {
       ${spots.length > 3 ? `<button class="td-spots-more-btn" onclick="openAllSpotsModal('${tid}');event.stopPropagation()">もっと見る（${spots.length - 3}件） ›</button>` : ''}
     </div>
   </div>`;
+
+  // For done trip: overall review + reflections at bottom of info column
+  if (isDone) {
+    const review = t.review || { rating: 0, text: '' };
+    const starsHTML = [1,2,3,4,5].map(n =>
+      `<button class="trip-star-btn${n <= (review.rating||0) ? ' active' : ''}" onclick="setTripRating('${tid}',${n});event.stopPropagation()">★</button>`
+    ).join('');
+    const reflHTML = _renderReviewReflections(t);
+    container.innerHTML += `<div class="ui-card td-done-review-card" id="tdTripReview-${tid}">
+      <div style="padding:16px 20px">
+        <div class="trip-review-lbl" style="margin-bottom:8px">総合評価</div>
+        <div class="trip-stars" style="margin-bottom:12px">${starsHTML}</div>
+        <div class="trip-review-lbl" style="margin-bottom:6px">総合感想</div>
+        <textarea class="trip-review-ta" id="tripReviewTa-${tid}"
+          placeholder="旅の感想を書いてください…"
+          onblur="saveTripReviewText('${tid}')"
+          oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"
+          onclick="event.stopPropagation()"
+        >${esc(review.text || '')}</textarea>
+      </div>
+      ${reflHTML ? `<div style="padding:0 20px 16px">${reflHTML}</div>` : ''}
+      <div id="tripPhotoError" class="food-photo-error" style="padding:0 20px 4px"></div>
+    </div>`;
+    // Auto-resize textarea
+    const ta = container.querySelector(`#tripReviewTa-${String(t.id)}`);
+    if (ta) { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }
+  }
 
   fillSignedUrls(container);
 }
@@ -3060,7 +2944,7 @@ function saveSpotModal() {
   }
   saveTrips();
   closeSpotModal();
-  _renderDetailInfoCol(t);
+  _renderDetailInfoCol(t, isTripDone(t));
 }
 
 function confirmDeleteSpot() {
@@ -3080,7 +2964,7 @@ function execDeleteSpot() {
   t.spots = (t.spots || []).filter(s => String(s.id) !== _spotModalId);
   saveTrips();
   closeSpotModal();
-  _renderDetailInfoCol(t);
+  _renderDetailInfoCol(t, isTripDone(t));
 }
 
 function openSpotPhotoInput() {
@@ -3167,7 +3051,7 @@ function addSpotToPlan(tripId, spotId) {
   spot.planned = true;
   saveTrips();
   _renderDetailItinerary(t);
-  _renderDetailInfoCol(t);
+  _renderDetailInfoCol(t, isTripDone(t));
 }
 
 // ── SPOTS: plan spot suggestions (pills at top of plan modal) ──
@@ -3200,7 +3084,7 @@ function selectSpotAsPlanItem(tripId, spotId, prefillDate) {
   spot.planned = true;
   saveTrips();
   _renderDetailItinerary(t);
-  _renderDetailInfoCol(t);
+  _renderDetailInfoCol(t, isTripDone(t));
   // close the plan modal
   closePlanItemModal();
 }
@@ -3220,7 +3104,7 @@ function addSpotQuick(tripId, inputEl) {
   t.spots.push({ id: crypto.randomUUID(), name, url, note: '', planned: false });
   if (inputEl) inputEl.value = '';
   saveTrips();
-  _renderDetailInfoCol(t);
+  _renderDetailInfoCol(t, isTripDone(t));
   _renderDetailItinerary(t);
 }
 

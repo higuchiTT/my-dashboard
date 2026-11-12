@@ -348,3 +348,83 @@ test('swipeDirection: 条件が複数 NG でも null', () => {
   // ゼロ移動
   assert.equal(A.swipeDirection(0, 0, 100), null);
 });
+
+// ── isTripDone ──────────────────────────────────────────────────────────────
+test('isTripDone: status=完了 は endDate に関係なく true', () => {
+  assert.equal(A.isTripDone({ status: '完了' }, '2026-01-01'), true);
+  assert.equal(A.isTripDone({ status: '完了', endDate: '2030-12-31' }, '2026-01-01'), true);
+});
+
+test('isTripDone: endDate なしは false', () => {
+  assert.equal(A.isTripDone({ status: '予定' }, '2026-11-12'), false);
+  assert.equal(A.isTripDone({}, '2026-11-12'), false);
+});
+
+test('isTripDone: today > endDate は true', () => {
+  assert.equal(A.isTripDone({ status: '予定', endDate: '2026-11-10' }, '2026-11-12'), true);
+});
+
+test('isTripDone: today === endDate は false（まだ当日）', () => {
+  assert.equal(A.isTripDone({ status: '予定', endDate: '2026-11-12' }, '2026-11-12'), false);
+});
+
+test('isTripDone: today < endDate は false', () => {
+  assert.equal(A.isTripDone({ status: '予定', endDate: '2026-11-30' }, '2026-11-12'), false);
+});
+
+// ── isDayPassed ──────────────────────────────────────────────────────────────
+test('isDayPassed: ds なし（undated）は false', () => {
+  assert.equal(A.isDayPassed(null, '2026-11-12'), false);
+  assert.equal(A.isDayPassed(undefined, '2026-11-12'), false);
+  assert.equal(A.isDayPassed('', '2026-11-12'), false);
+});
+
+test('isDayPassed: today === ds は true（当日は記録を開く）', () => {
+  assert.equal(A.isDayPassed('2026-11-12', '2026-11-12'), true);
+});
+
+test('isDayPassed: today > ds は true（過去日）', () => {
+  assert.equal(A.isDayPassed('2026-11-10', '2026-11-12'), true);
+});
+
+test('isDayPassed: today < ds は false（未来日）', () => {
+  assert.equal(A.isDayPassed('2026-11-20', '2026-11-12'), false);
+});
+
+// ── _itiTimeSortKey ──────────────────────────────────────────────────────────
+test('_itiTimeSortKey: 9:00 は 10:00 より前になる（H:MM と HH:MM の混在）', () => {
+  assert.ok(A._itiTimeSortKey('9:00') < A._itiTimeSortKey('10:00'),
+    `9:00=${A._itiTimeSortKey('9:00')} should be < 10:00=${A._itiTimeSortKey('10:00')}`);
+});
+
+test('_itiTimeSortKey: チェックアウト 10:00 は 14:00 の便より前になる', () => {
+  assert.ok(A._itiTimeSortKey('10:00') < A._itiTimeSortKey('14:00'),
+    `10:00=${A._itiTimeSortKey('10:00')} should be < 14:00=${A._itiTimeSortKey('14:00')}`);
+});
+
+test('_itiTimeSortKey: 時刻なし項目はすべての時刻付き項目より後', () => {
+  assert.ok(A._itiTimeSortKey('') > A._itiTimeSortKey('23:59'),
+    `no-time=${A._itiTimeSortKey('')} should be > 23:59=${A._itiTimeSortKey('23:59')}`);
+});
+
+test('_itiTimeSortKey: 同じ宿に宿泊（isContinuing）は時刻なし項目より後で常に最後', () => {
+  assert.ok(A._itiTimeSortKey('', true) > A._itiTimeSortKey(''),
+    `continuing=${A._itiTimeSortKey('', true)} should be > no-time=${A._itiTimeSortKey('')}`);
+  assert.ok(A._itiTimeSortKey('', true) > A._itiTimeSortKey('23:59'),
+    `continuing should be > any timed item`);
+});
+
+test('_itiTimeSortKey: チェックアウト→便→宿泊継続 の正しい順序', () => {
+  const checkout = A._itiTimeSortKey('10:00');       // 600
+  const flight   = A._itiTimeSortKey('14:00');       // 840
+  const cont     = A._itiTimeSortKey('', true);      // 10000
+  assert.ok(checkout < flight && flight < cont,
+    `expected checkout(${checkout}) < flight(${flight}) < continuing(${cont})`);
+});
+
+test('_itiTimeSortKey: 時刻なしのチェックアウトは 9:00 の項目より前（先頭扱い -1）', () => {
+  // checkOutTime なしのチェックアウト行は keyOf で -1 を返す約束
+  const noTimeCheckout = -1;
+  assert.ok(noTimeCheckout < A._itiTimeSortKey('9:00'),
+    `-1 should be < 9:00(${A._itiTimeSortKey('9:00')})`);
+});
