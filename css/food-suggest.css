@@ -488,3 +488,47 @@
   .fsg-card-body { padding: 10px 12px 14px; gap: 6px; }
   .fsg-card-name  { font-size: 15px; }
 }
+
+/* ── 作りたいリスト ── */
+.fsg-wish-summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; }
+.fsg-wish-list { display: flex; flex-direction: column; gap: 6px; margin: 6px 0 10px; }
+.fsg-wish-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(26,24,20,0.1);
+}
+.fsg-wish-main { display: flex; align-items: center; gap: 6px; flex: 1 1 140px; min-width: 120px; }
+.fsg-wish-name { font-size: 13px; font-weight: 600; color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
+a.fsg-wish-name { color: var(--accent); }
+a.fsg-wish-name:hover { text-decoration: underline; }
+.fsg-wish-chips { display: flex; flex-wrap: wrap; gap: 4px; flex: 2 1 160px; }
+.fsg-wish-chips .fsg-ingr-chip { border: 1px solid rgba(26,24,20,0.15); color: var(--ink2); }
+.fsg-wish-del {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--ink3);
+  font-size: 16px;
+  min-width: 32px;
+  min-height: 32px;
+  margin-left: auto;
+}
+.fsg-wish-del:hover { color: var(--ink); }
+.fsg-wish-edit {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--ink2);
+  font-size: 12px;
+  min-width: 40px;
+  min-height: 32px;
+  margin-left: auto;
+}
+.fsg-wish-edit:hover { color: var(--ink); text-decoration: underline; }
+.fsg-wish-edit + .fsg-wish-del { margin-left: 0; }
+.fsg-wish-editing { flex-direction: column; align-items: stretch; gap: 6px; }
+.fsg-wish-form { display: flex; flex-direction: column; gap: 6px; }
+.fsg-wish-form-row { display: flex; gap: 8px; align-items: center; }

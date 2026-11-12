@@ -20,7 +20,7 @@ function downloadBackup() {
   const backup = {
     app: 'my-dashboard', version: 1, exportedAt: new Date().toISOString(),
     data: { tasks, task_notes: taskNotes, shopping, subs, txs, trips, meals,
-      budgets, accounts, tx_rules: txRules, reflections, seed_flags: _collectSeedFlags() }
+      budgets, accounts, tx_rules: txRules, reflections, recipe_wishes: recipeWishes, seed_flags: _collectSeedFlags() }
   };
   const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
   const url  = URL.createObjectURL(blob);
@@ -79,17 +79,18 @@ async function doRestore() {
     accounts:    Array.isArray(d.accounts)    ? d.accounts    : accounts,
     tx_rules:    (d.tx_rules && typeof d.tx_rules==='object') ? d.tx_rules : txRules,
     reflections: Array.isArray(d.reflections) ? d.reflections : reflections,
+    recipe_wishes: Array.isArray(d.recipe_wishes) ? d.recipe_wishes : recipeWishes,
     seed_flags:  d.seed_flags || {}
   });
   rerenderAll();
   const { data: { user } } = await sb.auth.getUser();
   if (user) {
     const seedFlags = _collectSeedFlags();
-    const { data: upsertData, error: upsertErr } = await sb.from('user_data').upsert({
+    const { data: upsertData, error: upsertErr } = await sb.from('user_data').upsert(_withOptionalCols({
       user_id: user.id, tasks, task_notes: taskNotes,
       shopping, subs, txs, trips, meals, budgets, accounts, tx_rules: txRules, reflections,
       seed_flags: seedFlags, updated_at: new Date().toISOString()
-    }).select('updated_at').single();
+    })).select('updated_at').single();
     if (upsertErr) {
       _showSaveErrToast(`復元の保存に失敗しました（${upsertErr.message}）`);
     } else {

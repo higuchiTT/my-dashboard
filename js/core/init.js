@@ -87,6 +87,7 @@ async function _checkRemoteChanges() {
     const { data: serverRow, error: fetchErr } = await sb.from('user_data')
       .select('*').eq('user_id', user.id).single();
     if (fetchErr || !serverRow) return;
+    _noteServerColumns(serverRow);
     const merged = mergeCollections(_baseSnapshot || {}, _localCollections(), serverRow);
     _applyCollections(merged);
     rerenderAll();

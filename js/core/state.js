@@ -20,6 +20,9 @@ let _ldrBalAdjAccId = null;
 let tripFilter = 'all';
 let shopFilter = 'all';
 let reflections = (()=>{ try{ return JSON.parse(localStorage.getItem('reflections')||'[]'); }catch(e){ return []; } })();
+let recipeWishes = (()=>{ try{ const v = JSON.parse(localStorage.getItem('food_recipe_wishes')||'[]'); return Array.isArray(v) ? v : []; }catch(e){ return []; } })();
+// サーバーの user_data に recipe_wishes 列があるときだけ true（無い間は保存データに含めない）
+let _recipeWishesColumn = false;
 let notesFilter = { tag: null, search: '' };
 let notesVisibleCount = 50;
 let notesNewTags = [];

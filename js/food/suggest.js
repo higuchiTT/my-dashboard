@@ -116,6 +116,51 @@ function suggestFoodDishes(meals, home, buy, today) {
   return results.map(({ _score, ...rest }) => rest);
 }
 
+// 作りたいリスト項目のタグ一覧（古い形式の ingredients + role も読む）
+function _wishTags(w) {
+  if (Array.isArray(w.tags)) return w.tags;
+  return [...(Array.isArray(w.ingredients) ? w.ingredients : []), ...(w.role ? [w.role] : [])];
+}
+
+/**
+ * Pure function: 作りたいリストの全件（名前があるもの）を、suggestFoodDishes と同じ形
+ * （＋ wish/wishId/url）で返す。
+ * 並び: 選んだ食材に1つでも一致するものが先（家にある食材を多く使う順 → 買う食材 → 足りない食材が少ない順
+ * → 新しい順）、その後に一致しないものを新しい順。何も選んでいなければ全件を新しい順。
+ */
+function rankRecipeWishes(wishes, home, buy) {
+  if (!Array.isArray(wishes)) return [];
+  const homeSet = new Set(Array.isArray(home) ? home : []);
+  const buySet  = new Set(Array.isArray(buy) ? buy : []);
+  const allSet  = new Set([...homeSet, ...buySet]);
+  const byNewest = (a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || ''));
+  const items = [];
+  for (const w of wishes) {
+    if (!w || !String(w.name || '').trim()) continue;
+    const tags = _wishTags(w);
+    const ingredients = tags.filter(t => foodTagCategory(t) === 'ingredient');
+    const usedHome = ingredients.filter(t => homeSet.has(t));
+    const usedBuy  = ingredients.filter(t => buySet.has(t) && !homeSet.has(t));
+    items.push({
+      name: String(w.name).trim(),
+      role: dishRoleGroup(tags),
+      ingredients, usedHome, usedBuy,
+      missing: ingredients.filter(t => !allSet.has(t)),
+      count: 0, lastDate: '', lastMealId: null, photoPath: null, recent: false,
+      wish: true, wishId: String(w.id), url: w.url || '', tags: tags.slice(),
+      createdAt: w.createdAt || ''
+    });
+  }
+  const isMatch = x => x.usedHome.length + x.usedBuy.length > 0;
+  const matched = items.filter(isMatch).sort((a, b) =>
+    (b.usedHome.length - a.usedHome.length) ||
+    (b.usedBuy.length - a.usedBuy.length) ||
+    (a.missing.length - b.missing.length) ||
+    byNewest(a, b));
+  const rest = items.filter(x => !isMatch(x)).sort(byNewest);
+  return matched.concat(rest);
+}
+
 // ── Pantry state ──────────────────────────────────────────────────────────────
 
 let _foodSuggestPantry = { home: [], buy: [] };
@@ -232,9 +277,130 @@ function _renderFoodSuggestModal() {
         onclick="event.stopPropagation();_foodSuggestClear()">クリア</button>
     </div>
     <div class="fsg-results" id="fsgResults"></div>
+    ${_foodSuggestWishSectionHTML()}
   `;
 
   _renderFoodSuggestResults();
+}
+
+// ── 作りたいリスト ────────────────────────────────────────────────────────────
+
+let _foodWishEditId = null; // 編集中の項目 ID
+let _foodWishOpen = null; // null = 件数が少ないときだけ開く（初期）、true/false = ユーザーが切り替えた状態
+
+function _saveRecipeWishes() {
+  try { localStorage.setItem('food_recipe_wishes', JSON.stringify(recipeWishes)); } catch(e) {}
+  saveToSupabase();
+}
+
+function _foodSuggestWishSectionHTML() {
+  const list = recipeWishes.slice().sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+  const open = _foodWishOpen === null ? list.length <= 3 : _foodWishOpen;
+  const keyAttr = (fn) => `onkeydown="if(event.key==='Enter'){event.preventDefault();${fn}}" oninput="event.stopPropagation()"`;
+  const rowsHTML = list.length ? list.map(w => {
+    if (String(w.id) === String(_foodWishEditId)) {
+      const sid = jsq(String(w.id));
+      return `<div class="fsg-wish-row fsg-wish-editing" onclick="event.stopPropagation()">
+        <input type="text" class="fsg-add-input" id="fsgWishEditName" value="${esc(w.name)}" placeholder="料理名（必須）" ${keyAttr(`_foodSuggestSaveWish(${sid})`)}>
+        <input type="text" class="fsg-add-input" id="fsgWishEditUrl" value="${esc(w.url || '')}" placeholder="レシピの URL（任意）" ${keyAttr(`_foodSuggestSaveWish(${sid})`)}>
+        <input type="text" class="fsg-add-input" id="fsgWishEditTags" value="${esc(_wishTags(w).join(' '))}" placeholder="タグ（食材・主菜など。空白で区切る）" ${keyAttr(`_foodSuggestSaveWish(${sid})`)}>
+        <div class="fsg-wish-form-row">
+          <button type="button" class="btn btn-sm" onclick="event.stopPropagation();_foodSuggestSaveWish(${sid})">保存</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="event.stopPropagation();_foodSuggestEditWish('')">キャンセル</button>
+        </div>
+      </div>`;
+    }
+    const nameHTML = w.url
+      ? `<a class="fsg-wish-name" href="${esc(w.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(w.name)} ↗</a>`
+      : `<span class="fsg-wish-name">${esc(w.name)}</span>`;
+    const chips = _wishTags(w).map(t => `<span class="fsg-ingr-chip">${esc(t)}</span>`).join('');
+    return `<div class="fsg-wish-row">
+      <div class="fsg-wish-main">${nameHTML}</div>
+      ${chips ? `<div class="fsg-wish-chips">${chips}</div>` : ''}
+      <button type="button" class="fsg-wish-edit" aria-label="編集" onclick="event.stopPropagation();_foodSuggestEditWish(${jsq(String(w.id))})">編集</button>
+      <button type="button" class="fsg-wish-del" aria-label="削除" onclick="event.stopPropagation();_foodSuggestDeleteWish(${jsq(String(w.id))})">×</button>
+    </div>`;
+  }).join('') : '<div class="fsg-no-candidates">まだありません</div>';
+
+  return `<div class="fsg-section">
+    <details class="fsg-wish-details" ${open ? 'open' : ''} onclick="event.stopPropagation()" ontoggle="_foodWishOpen=this.open">
+      <summary class="fsg-section-label fsg-wish-summary">作りたいリスト（${list.length}件）</summary>
+      <div class="fsg-wish-list">${rowsHTML}</div>
+      <div class="fsg-wish-form" onclick="event.stopPropagation()">
+        <input type="text" class="fsg-add-input" id="fsgWishUrl" placeholder="レシピの URL（任意）"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();_foodSuggestAddWish()}" oninput="event.stopPropagation()">
+        <input type="text" class="fsg-add-input" id="fsgWishName" placeholder="料理名（必須）"
+          onchange="_foodSuggestWishAutoTags()"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();_foodSuggestAddWish()}" oninput="event.stopPropagation()">
+        <input type="text" class="fsg-add-input" id="fsgWishIngr" placeholder="タグ（食材・主菜など。空なら料理名から自動で推定）"
+          onkeydown="if(event.key==='Enter'){event.preventDefault();_foodSuggestAddWish()}" oninput="event.stopPropagation()">
+        <div class="fsg-wish-form-row">
+          <button type="button" class="btn btn-sm" onclick="event.stopPropagation();_foodSuggestAddWish()">追加</button>
+        </div>
+      </div>
+    </details>
+  </div>`;
+}
+
+function _foodWishParseTags(s) {
+  return [...new Set(String(s || '').split(/[,、，\s　]+/).map(x => x.trim()).filter(Boolean))];
+}
+function _foodWishNormUrl(url) {
+  url = String(url || '').trim();
+  return url && !/^https?:\/\//i.test(url) ? 'https://' + url : url;
+}
+
+// 料理名を入れたとき、タグ欄が空なら過去の記録と語句ルールから推定して入れる（手で直せる）
+function _foodSuggestWishAutoTags() {
+  const nameEl = document.getElementById('fsgWishName');
+  const tagEl  = document.getElementById('fsgWishIngr');
+  if (!nameEl || !tagEl || tagEl.value.trim()) return;
+  tagEl.value = presetFoodTags(nameEl.value, meals).join(' ');
+}
+
+function _foodSuggestAddWish() {
+  const val = id => (document.getElementById(id)?.value || '').trim();
+  const name = val('fsgWishName');
+  if (!name) { document.getElementById('fsgWishName')?.focus(); return; }
+  const url = _foodWishNormUrl(val('fsgWishUrl'));
+  let tags = _foodWishParseTags(val('fsgWishIngr'));
+  if (!tags.length) tags = presetFoodTags(name, meals);
+  recipeWishes.push({ id: crypto.randomUUID(), name, url, tags, createdAt: new Date().toISOString() });
+  _foodWishOpen = true;
+  _saveRecipeWishes();
+  _renderFoodSuggestModal();
+  document.getElementById('fsgWishUrl')?.focus();
+}
+
+function _foodSuggestEditWish(id) {
+  _foodWishEditId = id ? String(id) : null;
+  _foodWishOpen = true;
+  _renderFoodSuggestModal();
+  document.getElementById('fsgWishEditName')?.focus();
+}
+
+function _foodSuggestSaveWish(id) {
+  const w = recipeWishes.find(x => String(x.id) === String(id));
+  if (!w) return;
+  const val = el => (document.getElementById(el)?.value || '').trim();
+  const name = val('fsgWishEditName');
+  if (!name) { document.getElementById('fsgWishEditName')?.focus(); return; }
+  w.name = name;
+  w.url  = _foodWishNormUrl(val('fsgWishEditUrl'));
+  w.tags = _foodWishParseTags(val('fsgWishEditTags'));
+  delete w.ingredients; delete w.role; // 古い形式から tags に統一
+  _foodWishEditId = null;
+  _saveRecipeWishes();
+  _renderFoodSuggestModal();
+}
+
+async function _foodSuggestDeleteWish(id) {
+  const w = recipeWishes.find(x => String(x.id) === String(id));
+  if (!w) return;
+  if (!(await uiConfirm(`「${w.name}」を作りたいリストから削除しますか？`, { title: '削除の確認', okLabel: '削除', danger: true }))) return;
+  recipeWishes = recipeWishes.filter(x => String(x.id) !== String(id));
+  _saveRecipeWishes();
+  _renderFoodSuggestModal();
 }
 
 function _foodSuggestAddItem(section, tag) {
@@ -288,21 +454,7 @@ function _renderFoodSuggestResults() {
   if (!container) return;
 
   const { home, buy } = _foodSuggestPantry;
-  if (home.length === 0 && buy.length === 0) {
-    container.innerHTML =
-      `<div class="fsg-empty">家にある食材を選ぶと、過去の献立から提案します</div>`;
-    return;
-  }
-
-  const todayStr  = localDate();
-  const suggestions = suggestFoodDishes(meals, home, buy, todayStr);
-  const webLinksHTML = _foodSuggestWebLinksHTML([...home, ...buy].join(' '), '食材でネットのレシピを探す');
-
-  if (suggestions.length === 0) {
-    container.innerHTML =
-      `<div class="fsg-empty">この食材を使った料理の記録がまだありません</div>${webLinksHTML}`;
-    return;
-  }
+  const hasPantry = home.length + buy.length > 0;
 
   const placeholderSVG = `<svg class="fsg-no-photo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 .55.45 1 1 1h3c.55 0 1 .45 1 1v4"/><path d="M21 22v-2"/></svg>`;
 
@@ -318,15 +470,30 @@ function _renderFoodSuggestResults() {
     const usedHTML = usedParts.length
       ? `<div class="fsg-card-ingr-row">${usedParts.join('')}</div>` : '';
 
-    const missingHTML = s.missing.length
-      ? `<div class="fsg-card-missing"><span class="fsg-missing-label">足りない:</span> ${s.missing.map(t => `<span class="fsg-missing-tag">${esc(t)}</span>`).join(' ')}</div>`
-      : `<div class="fsg-card-no-missing">足りない食材なし</div>`;
+    let missingHTML;
+    if (s.wish && !hasPantry) {
+      missingHTML = s.ingredients.length
+        ? `<div class="fsg-card-missing"><span class="fsg-missing-label">食材:</span> ${s.ingredients.map(t => `<span class="fsg-missing-tag">${esc(t)}</span>`).join(' ')}</div>`
+        : '';
+    } else {
+      missingHTML = s.missing.length
+        ? `<div class="fsg-card-missing"><span class="fsg-missing-label">足りない:</span> ${s.missing.map(t => `<span class="fsg-missing-tag">${esc(t)}</span>`).join(' ')}</div>`
+        : `<div class="fsg-card-no-missing">足りない食材なし</div>`;
+    }
 
     const lastD     = s.lastDate ? new Date(s.lastDate + 'T00:00:00') : null;
     const lastLabel = lastD ? `${lastD.getMonth() + 1}/${lastD.getDate()}` : '';
-    const recentBadge = s.recent ? `<span class="fsg-recent-badge">最近食べた</span>` : '';
+    const recentBadge = (!s.wish && s.recent) ? `<span class="fsg-recent-badge">最近食べた</span>` : '';
 
     const mealId = s.lastMealId ? esc(String(s.lastMealId)) : '';
+    const metaHTML = s.wish
+      ? '<div class="fsg-card-meta">作りたいリスト</div>'
+      : `<div class="fsg-card-meta">最後 ${esc(lastLabel)}・${s.count}回</div>`;
+    const recordOnclick = s.wish
+      ? `recordSuggestedWish(${jsq(s.wishId)})`
+      : `recordSuggestedDish(${jsq(s.name)},${jsq(s.lastMealId || '')})`;
+    const recipeHref = (s.wish && s.url) ? s.url : FOOD_RECIPE_SITES[2].url + encodeURIComponent(s.name);
+    const recipeLabel = (s.wish && s.url) ? 'レシピを開く ↗' : 'この料理のレシピを探す ↗';
     const cardClick = mealId
       ? `onclick="event.stopPropagation();openFoodDetailPopup('${mealId}')"`
       : '';
@@ -340,20 +507,16 @@ function _renderFoodSuggestResults() {
         </div>
         ${usedHTML}
         ${missingHTML}
-        <div class="fsg-card-meta">最後 ${esc(lastLabel)}・${s.count}回</div>
-        <button class="fsg-record-btn" onclick="event.stopPropagation();recordSuggestedDish(${jsq(s.name)},${jsq(s.lastMealId || '')})">今日記録する</button>
-        <a class="fsg-card-recipe-link" href="${esc(FOOD_RECIPE_SITES[2].url + encodeURIComponent(s.name))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">この料理のレシピを探す ↗</a>
+        ${metaHTML}
+        <button class="fsg-record-btn" onclick="event.stopPropagation();${recordOnclick}">今日記録する</button>
+        <a class="fsg-card-recipe-link" href="${esc(recipeHref)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${recipeLabel}</a>
       </div>
     </div>`;
   };
 
-  // 役割ごとのグループ（候補がないグループは出さない）
-  const groupsHTML = FOOD_SUGGEST_GROUPS.map((g, gi) => {
-    const items = suggestions.filter(s => s.role === g);
-    if (!items.length) return '';
-    return `<div class="fsg-group" data-group="${gi}" data-total="${items.length}">
+  const groupHTML = (title, gi, items) => `<div class="fsg-group" data-group="${gi}" data-total="${items.length}">
       <div class="fsg-group-head">
-        <span class="fsg-group-title">${esc(g)}</span><span class="fsg-group-count">${items.length}件</span>
+        <span class="fsg-group-title">${esc(title)}</span><span class="fsg-group-count">${items.length}件</span>
       </div>
       <div class="fsg-counter-row">
         <button type="button" class="fsg-nav-btn"
@@ -364,15 +527,47 @@ function _renderFoodSuggestResults() {
       </div>
       <div class="fsg-carousel">${items.map(cardHTML).join('')}</div>
     </div>`;
+
+  // 作りたいリスト（役割グループには混ぜず、一番上に別グループで出す。空なら何も出さない）
+  const wishItems = rankRecipeWishes(recipeWishes, home, buy);
+  const wishHTML = wishItems.length ? groupHTML('作りたい', FOOD_SUGGEST_GROUPS.length, wishItems) : '';
+
+  if (!hasPantry) {
+    container.innerHTML = wishHTML +
+      `<div class="fsg-empty">家にある食材を選ぶと、過去の献立から提案します</div>`;
+    fillSignedUrls(container);
+    _foodSuggestBindCarousels(container);
+    return;
+  }
+
+  const suggestions = suggestFoodDishes(meals, home, buy, localDate());
+  const webLinksHTML = _foodSuggestWebLinksHTML([...home, ...buy].join(' '), '食材でネットのレシピを探す');
+
+  if (suggestions.length === 0) {
+    container.innerHTML = wishHTML +
+      `<div class="fsg-empty">この食材を使った料理の記録がまだありません</div>${webLinksHTML}`;
+    fillSignedUrls(container);
+    _foodSuggestBindCarousels(container);
+    return;
+  }
+
+  // 役割ごとのグループ（候補がないグループは出さない）
+  const groupsHTML = FOOD_SUGGEST_GROUPS.map((g, gi) => {
+    const items = suggestions.filter(s => s.role === g);
+    return items.length ? groupHTML(g, gi, items) : '';
   }).join('');
 
-  container.innerHTML = webLinksHTML + groupsHTML;
+  container.innerHTML = wishHTML + webLinksHTML + groupsHTML;
 
   fillSignedUrls(container);
+  _foodSuggestBindCarousels(container);
+}
 
+function _foodSuggestBindCarousels(container) {
   container.querySelectorAll('.fsg-group').forEach(grp => {
     const carousel = grp.querySelector('.fsg-carousel');
     const counter  = grp.querySelector('.fsg-counter');
+    if (!carousel || !counter) return;
     const total    = Number(grp.dataset.total) || 1;
     carousel.addEventListener('scroll', () => {
       const w   = carousel.offsetWidth || 1;
@@ -424,10 +619,23 @@ function recordSuggestedDish(name, mealId) {
       if (d) { tags = (d.tags || []).slice(); break; }
     }
   }
+  _openFoodModalWithDish(name, tags, '');
+}
+
+// 作りたいリストの料理を今日の食事に入れて記録の画面を開く。開けたらリストから外す
+function recordSuggestedWish(id) {
+  const w = recipeWishes.find(x => String(x.id) === String(id));
+  if (!w) return;
+  if (!_openFoodModalWithDish(w.name, _wishTags(w).slice(), w.url || '')) return;
+  recipeWishes = recipeWishes.filter(x => String(x.id) !== String(id));
+  _saveRecipeWishes();
+}
+
+function _openFoodModalWithDish(name, tags, recipeUrl) {
   closeFoodSuggestModal();
   openFoodModalNew(localDate());
   const st = _foodModalState;
-  if (!st) return;
+  if (!st) return false;
   const kind = guessKindByHour();
   let sit = (st.sittings || []).find(x => x.kind === kind);
   if (!sit) {
@@ -437,6 +645,8 @@ function recordSuggestedDish(name, mealId) {
   const empty = sit.dishes.find(d => !d.name && !(d.photos || []).length);
   const dish = empty || { id: crypto.randomUUID(), name: '', type: 'home', place: '', recipeUrl: '', note: '', tags: [], photos: [] };
   dish.name = name; dish.type = 'home'; dish.tags = tags;
+  if (recipeUrl) dish.recipeUrl = recipeUrl;
   if (!empty) sit.dishes.push(dish);
   renderFoodModalBody();
+  return true;
 }

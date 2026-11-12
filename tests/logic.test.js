@@ -152,6 +152,39 @@ test('dishRoleGroup: 役割タグから見出しグループを決める', () =>
   assert.equal(A.dishRoleGroup(undefined), 'その他');
 });
 
+test('rankRecipeWishes: 一致するものが先、一致しないものも後ろに全部残す', () => {
+  const ws = [
+    { id: 'a', name: 'A', url: '', tags: ['豚肉', '副菜'], createdAt: '2026-11-01T00:00:00Z' },
+    { id: 'b', name: 'B', url: 'https://x.test/b', tags: ['豚肉', '大根', '味噌', '主菜'], createdAt: '2026-11-02T00:00:00Z' },
+    { id: 'c', name: 'C', tags: ['鮭'], createdAt: '2026-11-03T00:00:00Z' },
+    { id: 'd', name: 'D', tags: ['大根', '汁物'], createdAt: '2026-11-04T00:00:00Z' },
+    { id: 'e', name: 'E', tags: ['主菜'], createdAt: '2026-11-05T00:00:00Z' }
+  ];
+  const r = plain(A.rankRecipeWishes(ws, ['豚肉', '大根'], ['味噌']));
+  assert.deepEqual(r.map(x => x.name), ['B', 'D', 'A', 'E', 'C']);
+  assert.equal(r[0].role, '主菜');
+  assert.equal(r[1].role, '汁物');
+  assert.equal(r[2].role, '副菜');
+  assert.equal(r[0].wish, true);
+  assert.equal(r[0].wishId, 'b');
+  assert.equal(r[0].url, 'https://x.test/b');
+  assert.deepEqual(r[0].usedHome, ['豚肉', '大根']);
+  assert.deepEqual(r[0].usedBuy, ['味噌']);
+  assert.deepEqual(r[0].missing, []);
+  assert.deepEqual(r[0].ingredients, ['豚肉', '大根', '味噌']);
+  assert.deepEqual(plain(A.rankRecipeWishes(ws, [], [])).map(x => x.name), ['E', 'D', 'C', 'B', 'A']);
+  assert.deepEqual(plain(A.rankRecipeWishes(ws, ['卵'], [])).map(x => x.name), ['E', 'D', 'C', 'B', 'A']);
+  assert.deepEqual(plain(A.rankRecipeWishes(null, ['豚肉'], [])), []);
+  assert.deepEqual(plain(A.rankRecipeWishes([{ id: 'x', name: ' ', tags: [] }, null], [], [])), []);
+});
+
+test('rankRecipeWishes: 古い形式（ingredients / role）の項目も読める', () => {
+  const ws = [{ id: 'o', name: 'O', ingredients: ['鮭'], role: '主菜', createdAt: '2026-11-01T00:00:00Z' }];
+  const r = plain(A.rankRecipeWishes(ws, ['鮭'], []));
+  assert.equal(r.length, 1);
+  assert.equal(r[0].role, '主菜');
+});
+
 test('suggestFoodDishes: 結果に role（見出しグループ）が付く', () => {
   const ms = [
     { id: 'm1', date: '2026-10-01', memo: '', v: 2, sittings: [{ id: 's1', kind: 'dinner', dishes: [

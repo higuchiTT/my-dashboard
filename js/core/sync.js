@@ -41,13 +41,22 @@ function _collectSeedFlags() {
 function _snapshotCollections() {
   return JSON.parse(JSON.stringify({
     tasks, task_notes: taskNotes, shopping, subs, txs, trips, meals,
-    budgets, accounts, tx_rules: txRules, reflections, seed_flags: _collectSeedFlags()
+    budgets, accounts, tx_rules: txRules, reflections, recipe_wishes: recipeWishes, seed_flags: _collectSeedFlags()
   }));
 }
 
 function _localCollections() {
   return { tasks, task_notes: taskNotes, shopping, subs, txs, trips, meals,
-    budgets, accounts, tx_rules: txRules, reflections, seed_flags: _collectSeedFlags() };
+    budgets, accounts, tx_rules: txRules, reflections, recipe_wishes: recipeWishes, seed_flags: _collectSeedFlags() };
+}
+
+// recipe_wishes 列がまだ無いサーバーに送ると保存全体が失敗するので、列があると確認できたときだけ付ける
+function _withOptionalCols(payload) {
+  if (_recipeWishesColumn) payload.recipe_wishes = recipeWishes;
+  return payload;
+}
+function _noteServerColumns(row) {
+  if (row && typeof row === 'object' && 'recipe_wishes' in row) _recipeWishesColumn = true;
 }
 
 function _extractSnapshot(row) {
@@ -63,6 +72,7 @@ function _extractSnapshot(row) {
     accounts:    Array.isArray(row.accounts)    ? row.accounts    : [],
     tx_rules:    (row.tx_rules && typeof row.tx_rules==='object') ? row.tx_rules : {rules:[]},
     reflections: Array.isArray(row.reflections) ? row.reflections : [],
+    recipe_wishes: Array.isArray(row.recipe_wishes) ? row.recipe_wishes : [],
     seed_flags:  row.seed_flags  || {}
   };
 }
@@ -79,6 +89,7 @@ function _applyCollections(c) {
   if (Array.isArray(c.accounts))   { accounts  = c.accounts;  localStorage.setItem('ledger_accounts',JSON.stringify(accounts)); }
   if (c.tx_rules && typeof c.tx_rules==='object' && !Array.isArray(c.tx_rules)) { txRules = c.tx_rules; localStorage.setItem('ledger_tx_rules', JSON.stringify(txRules)); }
   if (Array.isArray(c.reflections)){ reflections = c.reflections; localStorage.setItem('reflections', JSON.stringify(reflections)); }
+  if (Array.isArray(c.recipe_wishes)){ recipeWishes = c.recipe_wishes; localStorage.setItem('food_recipe_wishes', JSON.stringify(recipeWishes)); }
   if (c.seed_flags) Object.entries(c.seed_flags).forEach(([k,v]) => localStorage.setItem(k, v));
 }
 
@@ -163,6 +174,7 @@ function mergeCollections(base, local, server) {
     accounts:    mergeArrayById(b.accounts,   l.accounts,   s.accounts),
     tx_rules:    { rules: mergeArrayById(b.tx_rules && b.tx_rules.rules, l.tx_rules && l.tx_rules.rules, s.tx_rules && s.tx_rules.rules), categories: mergeArrayById(b.tx_rules && b.tx_rules.categories, l.tx_rules && l.tx_rules.categories, s.tx_rules && s.tx_rules.categories) },
     reflections: mergeArrayById(b.reflections, l.reflections, s.reflections),
+    recipe_wishes: mergeArrayById(b.recipe_wishes, l.recipe_wishes, s.recipe_wishes),
     seed_flags:  mergeObjKeysDeep(b.seed_flags,  l.seed_flags,  s.seed_flags),
   };
 }
@@ -188,11 +200,11 @@ async function pushToSupabase(userId) {
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     const seedFlags = _collectSeedFlags();
     const newTs = new Date().toISOString();
-    const payload = {
+    const payload = _withOptionalCols({
       user_id: userId, tasks, task_notes: taskNotes,
       shopping, subs, txs, trips, meals, budgets, accounts, tx_rules: txRules, reflections,
       seed_flags: seedFlags, updated_at: newTs
-    };
+    });
 
     // No server baseline yet → insert (initial user)
     if (_serverUpdatedAt === null) {
@@ -230,6 +242,7 @@ async function pushToSupabase(userId) {
         _showSaveErrToast('競合解決に失敗しました。再読み込みしてください');
         return;
       }
+      _noteServerColumns(serverRow);
       const merged = mergeCollections(_baseSnapshot || {}, _localCollections(), serverRow);
       _applyCollections(merged);
       rerenderAll();
@@ -249,11 +262,11 @@ async function syncFromSupabase(userId) {
         // 行が存在しない（初回ユーザー）— insert with upsert
         const seedFlags = _collectSeedFlags();
         const newTs = new Date().toISOString();
-        const { data: upsertData, error: upsertErr } = await sb.from('user_data').upsert({
+        const { data: upsertData, error: upsertErr } = await sb.from('user_data').upsert(_withOptionalCols({
           user_id: userId, tasks, task_notes: taskNotes,
           shopping, subs, txs, trips, meals, budgets, accounts, tx_rules: txRules, reflections,
           seed_flags: seedFlags, updated_at: newTs
-        }).select('updated_at').single();
+        })).select('updated_at').single();
         if (!upsertErr && upsertData) {
           _serverUpdatedAt = upsertData.updated_at;
           _baseSnapshot    = _snapshotCollections();
@@ -281,6 +294,8 @@ async function syncFromSupabase(userId) {
     if (Array.isArray(data.accounts)) { accounts = data.accounts; localStorage.setItem('ledger_accounts', JSON.stringify(accounts)); }
     if (data.tx_rules && typeof data.tx_rules==='object' && !Array.isArray(data.tx_rules)) { txRules = data.tx_rules; localStorage.setItem('ledger_tx_rules', JSON.stringify(txRules)); }
     if (Array.isArray(data.reflections)) { reflections = data.reflections; localStorage.setItem('reflections', JSON.stringify(reflections)); }
+    _noteServerColumns(data);
+    if (Array.isArray(data.recipe_wishes)) { recipeWishes = data.recipe_wishes; localStorage.setItem('food_recipe_wishes', JSON.stringify(recipeWishes)); }
     if (data.seed_flags) Object.entries(data.seed_flags).forEach(([k,v]) => localStorage.setItem(k,v));
     _serverUpdatedAt = data.updated_at || null;
     _baseSnapshot    = _snapshotCollections();
