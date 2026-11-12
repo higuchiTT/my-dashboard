@@ -24,6 +24,16 @@ function foodTagCategory(tag) {
   return 'ingredient';
 }
 
+// タグ配列 → 提案の見出しグループ ('主菜' | '副菜' | '汁物' | 'その他')
+// 複数あるときは 主菜 > 副菜 > 汁物 の順。主食・デザート・役割タグなしは 'その他'
+function dishRoleGroup(tags) {
+  const arr = Array.isArray(tags) ? tags : [];
+  for (const r of ['主菜', '副菜', '汁物']) {
+    if (arr.includes(r)) return r;
+  }
+  return 'その他';
+}
+
 // ── FOOD TAG VIEW ──
 let _foodTagsActiveTag = null;
 let _foodTagsCatFilter = null; // null = すべて

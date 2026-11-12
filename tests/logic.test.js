@@ -141,6 +141,29 @@ test('suggestFoodDishes: 家にある食材を多く使う料理が上に来て�
   assert.equal(result[0].usedHome.length, 2);
 });
 
+test('dishRoleGroup: 役割タグから見出しグループを決める', () => {
+  assert.equal(A.dishRoleGroup(['豚肉', '主菜']), '主菜');
+  assert.equal(A.dishRoleGroup(['副菜']), '副菜');
+  assert.equal(A.dishRoleGroup(['汁物', '豆腐']), '汁物');
+  assert.equal(A.dishRoleGroup(['副菜', '主菜']), '主菜');
+  assert.equal(A.dishRoleGroup(['主食']), 'その他');
+  assert.equal(A.dishRoleGroup(['デザート']), 'その他');
+  assert.equal(A.dishRoleGroup(['豚肉']), 'その他');
+  assert.equal(A.dishRoleGroup(undefined), 'その他');
+});
+
+test('suggestFoodDishes: 結果に role（見出しグループ）が付く', () => {
+  const ms = [
+    { id: 'm1', date: '2026-10-01', memo: '', v: 2, sittings: [{ id: 's1', kind: 'dinner', dishes: [
+      { id: 'd1', name: '豚汁', type: 'home', tags: ['豚肉', '汁物'], photos: [] },
+      { id: 'd2', name: '炒め', type: 'home', tags: ['豚肉'], photos: [] }
+    ]}]}
+  ];
+  const r = plain(A.suggestFoodDishes(ms, ['豚肉'], [], '2026-11-06'));
+  assert.equal(r.find(x => x.name === '豚汁').role, '汁物');
+  assert.equal(r.find(x => x.name === '炒め').role, 'その他');
+});
+
 test('suggestFoodDishes: 7日以内に食べた料理は、score が高くても後ろに回る', () => {
   const today = '2026-11-06';
   const ms = [

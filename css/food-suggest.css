@@ -189,6 +189,63 @@
   line-height: 1.55;
 }
 
+/* ── Role groups ── */
+.fsg-group { margin-bottom: 18px; }
+.fsg-group-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(26,24,20,0.15);
+}
+.fsg-group-title {
+  font-family: 'Newsreader', serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.fsg-group-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--ink3);
+}
+
+/* ── Web recipe links ── */
+.fsg-weblinks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0 14px;
+}
+.fsg-weblinks-label {
+  font-size: 12px;
+  color: var(--ink2);
+  width: 100%;
+}
+.fsg-weblink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1.5px solid rgba(26,24,20,0.2);
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--ink2);
+  text-decoration: none;
+}
+.fsg-weblink:hover { border-color: var(--ink); color: var(--ink); }
+.fsg-card-recipe-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  font-size: 11px;
+  color: var(--accent);
+  text-decoration: none;
+}
+.fsg-card-recipe-link:hover { text-decoration: underline; }
+
 /* ── Counter + nav row ── */
 .fsg-counter-row {
   display: flex;

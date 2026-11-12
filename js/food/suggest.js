@@ -31,6 +31,7 @@ function suggestFoodDishes(meals, home, buy, today) {
         if (!dishMap[name]) {
           dishMap[name] = {
             tags: new Set(),
+            allTags: new Set(),
             count: 0,
             lastDate: '',
             lastMealId: null,
@@ -42,6 +43,7 @@ function suggestFoodDishes(meals, home, buy, today) {
 
         // Collect ingredient tags only
         for (const tag of (dish.tags || [])) {
+          entry.allTags.add(tag);
           if (foodTagCategory(tag) === 'ingredient') entry.tags.add(tag);
         }
 
@@ -88,6 +90,7 @@ function suggestFoodDishes(meals, home, buy, today) {
 
     results.push({
       name,
+      role: dishRoleGroup([...entry.allTags]),
       ingredients,
       usedHome,
       usedBuy,
@@ -293,17 +296,17 @@ function _renderFoodSuggestResults() {
 
   const todayStr  = localDate();
   const suggestions = suggestFoodDishes(meals, home, buy, todayStr);
+  const webLinksHTML = _foodSuggestWebLinksHTML([...home, ...buy].join(' '), '食材でネットのレシピを探す');
 
   if (suggestions.length === 0) {
     container.innerHTML =
-      `<div class="fsg-empty">この食材を使った料理の記録がまだありません</div>`;
+      `<div class="fsg-empty">この食材を使った料理の記録がまだありません</div>${webLinksHTML}`;
     return;
   }
 
-  const total = suggestions.length;
   const placeholderSVG = `<svg class="fsg-no-photo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 .55.45 1 1 1h3c.55 0 1 .45 1 1v4"/><path d="M21 22v-2"/></svg>`;
 
-  const cardsHTML = suggestions.map((s, i) => {
+  const cardHTML = (s, i) => {
     const photoHTML = s.photoPath
       ? `<div class="fsg-card-photo"><img data-path="${esc(s.photoPath)}" alt="" loading="lazy"></div>`
       : `<div class="fsg-card-photo fsg-card-no-photo">${placeholderSVG}</div>`;
@@ -339,36 +342,69 @@ function _renderFoodSuggestResults() {
         ${missingHTML}
         <div class="fsg-card-meta">最後 ${esc(lastLabel)}・${s.count}回</div>
         <button class="fsg-record-btn" onclick="event.stopPropagation();recordSuggestedDish(${jsq(s.name)},${jsq(s.lastMealId || '')})">今日記録する</button>
+        <a class="fsg-card-recipe-link" href="${esc(FOOD_RECIPE_SITES[2].url + encodeURIComponent(s.name))}" target="_blank" rel="noopener" onclick="event.stopPropagation()">この料理のレシピを探す ↗</a>
       </div>
+    </div>`;
+  };
+
+  // 役割ごとのグループ（候補がないグループは出さない）
+  const groupsHTML = FOOD_SUGGEST_GROUPS.map((g, gi) => {
+    const items = suggestions.filter(s => s.role === g);
+    if (!items.length) return '';
+    return `<div class="fsg-group" data-group="${gi}" data-total="${items.length}">
+      <div class="fsg-group-head">
+        <span class="fsg-group-title">${esc(g)}</span><span class="fsg-group-count">${items.length}件</span>
+      </div>
+      <div class="fsg-counter-row">
+        <button type="button" class="fsg-nav-btn"
+          onclick="event.stopPropagation();_foodSuggestNavCard(${gi},-1)">&#8249;</button>
+        <span class="fsg-counter">1 / ${items.length}</span>
+        <button type="button" class="fsg-nav-btn"
+          onclick="event.stopPropagation();_foodSuggestNavCard(${gi},1)">&#8250;</button>
+      </div>
+      <div class="fsg-carousel">${items.map(cardHTML).join('')}</div>
     </div>`;
   }).join('');
 
-  container.innerHTML = `
-    <div class="fsg-counter-row">
-      <button type="button" class="fsg-nav-btn"
-        onclick="event.stopPropagation();_foodSuggestNavCard(-1)">&#8249;</button>
-      <span class="fsg-counter" id="fsgCounter">1 / ${total}</span>
-      <button type="button" class="fsg-nav-btn"
-        onclick="event.stopPropagation();_foodSuggestNavCard(1)">&#8250;</button>
-    </div>
-    <div class="fsg-carousel" id="fsgCarousel">${cardsHTML}</div>
-  `;
+  container.innerHTML = webLinksHTML + groupsHTML;
 
   fillSignedUrls(container);
 
-  const carousel = document.getElementById('fsgCarousel');
-  if (carousel) {
+  container.querySelectorAll('.fsg-group').forEach(grp => {
+    const carousel = grp.querySelector('.fsg-carousel');
+    const counter  = grp.querySelector('.fsg-counter');
+    const total    = Number(grp.dataset.total) || 1;
     carousel.addEventListener('scroll', () => {
       const w   = carousel.offsetWidth || 1;
       const idx = Math.round(carousel.scrollLeft / w);
-      const counter = document.getElementById('fsgCounter');
-      if (counter) counter.textContent = `${Math.min(idx + 1, total)} / ${total}`;
+      counter.textContent = `${Math.min(idx + 1, total)} / ${total}`;
     }, { passive: true });
-  }
+  });
 }
 
-function _foodSuggestNavCard(delta) {
-  const carousel = document.getElementById('fsgCarousel');
+const FOOD_SUGGEST_GROUPS = ['主菜', '副菜', '汁物', 'その他'];
+
+const FOOD_RECIPE_SITES = [
+  { name: 'デリッシュキッチン', url: 'https://delishkitchen.tv/search?q=' },
+  { name: 'Nadia',             url: 'https://oceans-nadia.com/search?q=' },
+  { name: 'クラシル',           url: 'https://www.kurashiru.com/search?query=' },
+  { name: '白ごはん.com',       url: 'https://www.sirogohan.com/recipe/index?data%5BRecipe%5D%5Bkeyword%5D=' },
+];
+
+// ネットのレシピ検索リンク（4サイト）。query が空なら何も出さない
+function _foodSuggestWebLinksHTML(query, label) {
+  query = String(query || '').trim();
+  if (!query) return '';
+  const q = encodeURIComponent(query);
+  return `<div class="fsg-weblinks">
+    <span class="fsg-weblinks-label">${esc(label)}</span>
+    ${FOOD_RECIPE_SITES.map(s => `<a class="fsg-weblink" href="${esc(s.url + q)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(s.name)} ↗</a>`).join('')}
+  </div>`;
+}
+
+function _foodSuggestNavCard(gi, delta) {
+  const grp = document.querySelector(`#fsgResults .fsg-group[data-group="${Number(gi)}"]`);
+  const carousel = grp && grp.querySelector('.fsg-carousel');
   if (!carousel) return;
   const w     = carousel.offsetWidth || 1;
   const cards = carousel.querySelectorAll('.fsg-card');
