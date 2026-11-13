@@ -128,6 +128,16 @@ function _parseUnknownRows(csvRows,colAssign){
   return{rows:parsed,skipCount:skip};
 }
 
+// CSV 1行の重複判定。'imported'=取り込み済み（importKey 一致、またはメール取り込みの支出と口座・日付・金額が同じ）、
+// 'possible'=手入力などと同じ口座・日付・金額、null=重複なし
+function _csvDupStatus(list,importKey,accountId,date,amount,kind){
+  if(list.some(t=>t.importKey===importKey))return'imported';
+  const same=t=>String(t.accountId)===String(accountId)&&t.date===date&&t.amount===amount&&t.type===kind;
+  if(kind==='expense'&&list.some(t=>t.mailKey&&same(t)))return'imported';
+  if(list.some(t=>!t.importKey&&!t.mailKey&&same(t)))return'possible';
+  return null;
+}
+
 function _buildImportRows(parsedRows,accountId){
   const keyCount={};
   return parsedRows.map(p=>{
@@ -141,10 +151,8 @@ function _buildImportRows(parsedRows,accountId){
     keyCount[baseKey]=(keyCount[baseKey]||0)+1;
     const seq=keyCount[baseKey];
     const importKey=seq===1?baseKey:`${baseKey}|#${seq}`;
-    const alreadyImported=txs.some(t=>t.importKey===importKey);
-    let dupStatus=null;
-    if(alreadyImported)dupStatus='imported';
-    else if(txs.some(t=>!t.importKey&&String(t.accountId)===String(accountId)&&t.date===p.date&&t.amount===amount&&t.type===kind))dupStatus='possible';
+    const dupStatus=_csvDupStatus(txs,importKey,accountId,p.date,amount,kind);
+    const alreadyImported=dupStatus==='imported';
     return{
       _id:crypto.randomUUID(),checked:!alreadyImported,date:p.date,title:srcName||p.rawTitle,
       srcName,rawTitle:p.rawTitle,amount,kind,note:p.note||'',importKey,dupStatus,

@@ -56,6 +56,9 @@ function renderLdrSettings(){
       <div class="ldr-cat-kind-label" style="margin-top:18px;">収入</div>${incTable}
     </div>
     <div class="ldr-settings-section ui-card" style="padding:16px 18px;margin-top:14px;">
+      ${_renderMailSettingsSection()}
+    </div>
+    <div class="ldr-settings-section ui-card" style="padding:16px 18px;margin-top:14px;">
       ${_renderImportRulesSection()}
     </div>
   </div>`;

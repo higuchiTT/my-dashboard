@@ -145,7 +145,9 @@ function ldrTab(tab, el){
   const showMon=tab==='overview'||tab==='txlist'||tab==='budget'||tab==='accounts'||tab==='subs'||tab==='review';
   const nav=document.getElementById('ldrMonNav');
   if(nav)nav.style.display=showMon?'':'none';
-  if(tab==='overview')renderFinance();
+  const mailBox=document.getElementById('ldrMailInbox');
+  if(mailBox)mailBox.style.display=(tab==='overview')?'':'none';
+  if(tab==='overview'){renderFinance();mailAutoFetch();}
   else if(tab==='txlist')renderLdrTxList();
   else if(tab==='subs'){renderSubs();}
   else if(tab==='accounts')renderAccountsPanel();

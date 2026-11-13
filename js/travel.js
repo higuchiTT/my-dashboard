@@ -2710,6 +2710,7 @@ function _renderDetailTodosCol(t) {
 }
 
 // ── RENDER: INFO COLUMN (map + spots; + overall review when done) ──
+const TD_SPOTS_SHOW = 10;
 function _renderDetailInfoCol(t, isDone) {
   const container = document.getElementById(`tdInfoCol-${String(t.id)}`); if (!container) return;
   const tid = esc(String(t.id));
@@ -2717,7 +2718,7 @@ function _renderDetailInfoCol(t, isDone) {
   const mapHTML = _tripMapSVGCard(t);
 
   const spots = t.spots || [];
-  const showSpots = spots.slice(0, 3);
+  const showSpots = spots.slice(0, TD_SPOTS_SHOW);
   let spotsRows = '';
   if (showSpots.length) {
     spotsRows = showSpots.map(spot => {
@@ -2758,7 +2759,7 @@ function _renderDetailInfoCol(t, isDone) {
       <div class="td-spots-list">
         ${spotsRows || `<div style="padding:12px 16px;font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--ink3)">行きたいスポットを追加</div>`}
       </div>
-      ${spots.length > 3 ? `<button class="td-spots-more-btn" onclick="openAllSpotsModal('${tid}');event.stopPropagation()">もっと見る（${spots.length - 3}件） ›</button>` : ''}
+      ${spots.length > TD_SPOTS_SHOW ? `<button class="td-spots-more-btn" onclick="openAllSpotsModal('${tid}');event.stopPropagation()">もっと見る（${spots.length - TD_SPOTS_SHOW}件） ›</button>` : ''}
     </div>
   </div>`;
 

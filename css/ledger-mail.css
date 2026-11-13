@@ -1,0 +1,40 @@
+/* メールから取り込み（js/ledger/mail-import.js）。Overview の上の未確認パネルと、設定の入力欄 */
+.ldr-mail-inbox { margin-bottom:12px; }
+.lm-box { padding:0; overflow:hidden; }
+.lm-banner { display:flex; align-items:center; justify-content:space-between; width:100%; min-height:44px; padding:0 16px; background:transparent; border:none; border-left:3px solid var(--accent); color:var(--ink); font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:600; cursor:pointer; text-align:left; }
+.lm-caret { font-size:12px; color:rgba(26,24,20,0.6); }
+.lm-idle { display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; font-family:'Space Grotesk',sans-serif; font-size:12px; color:rgba(26,24,20,0.6); }
+.lm-idle-txt { margin-right:auto; }
+.lm-status { font-family:'Space Grotesk',sans-serif; font-size:12px; color:rgba(26,24,20,0.6); }
+
+.lm-panel { border-top:1px solid rgba(26,24,20,0.12); padding:8px 12px 12px; }
+.lm-toolbar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:4px 0 8px; }
+.lm-btn { min-height:44px; min-width:44px; padding:0 14px; border:1px solid rgba(26,24,20,0.3); border-radius:6px; background:transparent; color:var(--ink); font-family:'Space Grotesk',sans-serif; font-size:13px; cursor:pointer; white-space:nowrap; }
+.lm-btn-main { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+.lm-btn[disabled] { opacity:0.4; cursor:default; }
+
+.lm-row { padding:8px 0; border-top:1px solid rgba(26,24,20,0.1); }
+.lm-row.is-dup { background:rgba(139,58,24,0.05); }
+.lm-line1 { display:flex; align-items:baseline; gap:10px; min-width:0; }
+.lm-date { flex:none; min-width:40px; font-family:'JetBrains Mono',monospace; font-size:12px; color:rgba(26,24,20,0.6); }
+.lm-store { flex:1 1 auto; min-width:0; font-family:'Space Grotesk',sans-serif; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.lm-amt { flex:none; min-width:72px; text-align:right; font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; font-variant-numeric:tabular-nums; }
+.lm-line2 { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-top:4px; }
+.lm-tag { padding:2px 8px; border-radius:10px; background:rgba(26,24,20,0.08); font-family:'Space Grotesk',sans-serif; font-size:11px; }
+.lm-tag-dup { background:rgba(139,58,24,0.15); color:var(--accent); }
+.lm-catbtn { display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 10px; border:1px solid rgba(26,24,20,0.25); border-radius:22px; background:#fff; color:var(--ink); font-family:'Space Grotesk',sans-serif; font-size:12px; cursor:pointer; white-space:nowrap; }
+.lm-acts { display:flex; gap:6px; margin-left:auto; }
+.lm-catlist { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.lm-chip { min-height:44px; padding:0 12px; border:1px solid rgba(26,24,20,0.25); border-radius:22px; background:transparent; color:var(--ink); font-family:'Space Grotesk',sans-serif; font-size:12px; cursor:pointer; white-space:nowrap; }
+.lm-chip.is-on { background:var(--ink); color:var(--paper); border-color:var(--ink); }
+
+.lm-set { display:flex; flex-direction:column; gap:10px; }
+.lm-set-lbl { display:flex; flex-direction:column; gap:4px; font-family:'Space Grotesk',sans-serif; font-size:12px; color:rgba(26,24,20,0.7); }
+.lm-in { box-sizing:border-box; width:100%; min-height:44px; padding:0 10px; border:1px solid rgba(26,24,20,0.3); border-radius:6px; background:#fff; color:var(--ink); font-family:'Space Grotesk',sans-serif; font-size:16px; }
+.lm-set-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.lm-set-note { font-family:'Space Grotesk',sans-serif; font-size:11px; color:rgba(26,24,20,0.55); }
+
+@media (max-width: 640px) {
+  .lm-acts { width:100%; margin-left:0; }
+  .lm-acts .lm-btn { flex:1 1 0; }
+}

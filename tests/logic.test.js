@@ -152,6 +152,87 @@ test('suggestTxCategory: ルール → 過去の取引 → 類似店舗の順で
   assert.equal(A.suggestTxCategory('', list, rules), null);
 });
 
+// ── メールから取り込み（楽天カード） ──
+const RK_BODY = `<カードご利用情報>
+《ショッピングご利用分》
+■利用日: 2026/10/29
+■利用先: 楽天ＳＰ　アルプラザアプリ
+■利用者: 本人
+■支払方法: 1回
+■利用金額: 952 円
+■支払月: 2026/12
+
+■利用日: 2026/11/02
+■利用先: ﾊﾞﾛ-(ｽ-ﾊﾟ-)
+■利用者: 家族
+■支払方法: 1回
+■利用金額: 1,497 円
+■支払月: 2026/12
+
+■ご利用明細のご確認
+https://example.test/
+`;
+
+test('parseRakutenUsageMail: 複数ブロック・カンマ・家族を読む', () => {
+  const r = plain(A.parseRakutenUsageMail(RK_BODY));
+  assert.deepEqual(r, [
+    { date: '2026-10-29', store: '楽天ＳＰ　アルプラザアプリ', user: '本人', amount: 952 },
+    { date: '2026-11-02', store: 'ﾊﾞﾛ-(ｽ-ﾊﾟ-)', user: '家族', amount: 1497 },
+  ]);
+});
+
+test('parseRakutenUsageMail: 日付か金額がないブロックは無視、CRLF・全角コロン・全角数字も読む', () => {
+  const body = '■利用日: 2026/11/03\r\n■利用先: A\r\n■利用者: 本人\r\n\r\n■利用日：2026/11/04\r\n■利用先: B\r\n■利用金額：１,２００ 円\r\n';
+  assert.deepEqual(plain(A.parseRakutenUsageMail(body)), [{ date: '2026-11-04', store: 'B', user: '', amount: 1200 }]);
+  assert.deepEqual(plain(A.parseRakutenUsageMail('')), []);
+  assert.deepEqual(plain(A.parseRakutenUsageMail(null)), []);
+});
+
+test('mailItemKey / isRakutenUsageSubject', () => {
+  assert.equal(A.mailItemKey('abc', 1), 'rkmail:abc:1');
+  assert.equal(A.isRakutenUsageSubject('カード利用のお知らせ(本人・家族会員ご利用分)'), true);
+  assert.equal(A.isRakutenUsageSubject('カード利用のお知らせ(速報版)'), false);
+  assert.equal(A.isRakutenUsageSubject('ご請求金額のお知らせ'), false);
+});
+
+test('buildMailInbox: 処理済み・取り込み済みを除き、記録済みかもを付けて日付降順', () => {
+  const mails = [{ id: 'm1', subject: 'カード利用のお知らせ(本人・家族会員ご利用分)', body: RK_BODY },
+                 { id: 'm2', subject: 'カード利用のお知らせ(速報版)', body: RK_BODY }];
+  const base = { handledKeys: [], txs: [], accountId: 'a1' };
+  let r = plain(A.buildMailInbox(mails, base));
+  assert.deepEqual(r.map(x => x.key), ['rkmail:m1:1', 'rkmail:m1:0']);   // 速報版は無視、日付降順
+  assert.equal(r[0].user, '家族');
+  assert.equal(r.every(x => !x.possibleDup), true);
+  r = plain(A.buildMailInbox(mails, { ...base, handledKeys: ['rkmail:m1:0'] }));
+  assert.deepEqual(r.map(x => x.key), ['rkmail:m1:1']);
+  r = plain(A.buildMailInbox(mails, { ...base, txs: [{ type: 'expense', mailKey: 'rkmail:m1:1', accountId: 'a1', date: '2026-11-02', amount: 1497 }] }));
+  assert.deepEqual(r.map(x => x.key), ['rkmail:m1:0']);
+  // 手入力と同じ口座・日付・金額 → possibleDup。口座が違えば対象外
+  const hand = { type: 'expense', accountId: 'a1', date: '2026-10-29', amount: 952 };
+  r = plain(A.buildMailInbox(mails, { ...base, txs: [hand] }));
+  assert.equal(r.find(x => x.key === 'rkmail:m1:0').possibleDup, true);
+  assert.equal(r.find(x => x.key === 'rkmail:m1:1').possibleDup, false);
+  r = plain(A.buildMailInbox(mails, { ...base, accountId: 'a2', txs: [hand] }));
+  assert.equal(r.every(x => !x.possibleDup), true);
+});
+
+test('mailFetchUrl: トークンをエンコードして GET の URL を作る', () => {
+  assert.equal(A.mailFetchUrl('https://x.test/exec', 'a b&c', 45), 'https://x.test/exec?token=a%20b%26c&days=45');
+});
+
+test('_csvDupStatus: メール取り込みの支出は imported、手入力は possible', () => {
+  const mailTx = { type: 'expense', mailKey: 'rkmail:m:0', accountId: 'a1', date: '2026-10-29', amount: 952 };
+  const handTx = { type: 'expense', accountId: 'a1', date: '2026-10-30', amount: 500 };
+  const csvTx = { type: 'expense', importKey: 'k1', accountId: 'a1', date: '2026-10-31', amount: 700 };
+  const L = [mailTx, handTx, csvTx];
+  assert.equal(A._csvDupStatus(L, 'zz', 'a1', '2026-10-29', 952, 'expense'), 'imported');
+  assert.equal(A._csvDupStatus(L, 'zz', 'a2', '2026-10-29', 952, 'expense'), null);
+  assert.equal(A._csvDupStatus(L, 'zz', 'a1', '2026-10-29', 952, 'income'), null);
+  assert.equal(A._csvDupStatus(L, 'zz', 'a1', '2026-10-30', 500, 'expense'), 'possible');
+  assert.equal(A._csvDupStatus(L, 'zz', 'a1', '2026-10-31', 700, 'expense'), null);   // importKey 付きは possible にしない
+  assert.equal(A._csvDupStatus(L, 'k1', 'a1', '2026-10-31', 700, 'expense'), 'imported');
+});
+
 test('foodTagCategory: 既知のタグは正しい分類を返し、未知は ingredient', () => {
   assert.equal(A.foodTagCategory('主菜'),    'role');
   assert.equal(A.foodTagCategory('和食'),    'genre');
