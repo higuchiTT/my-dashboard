@@ -82,6 +82,38 @@ function normTxName(s,forMatch){
   if(forMatch)n=n.toLowerCase();
   return n;
 }
+// ── suggestTxCategory: 名前からカテゴリ（と口座）を提案する共通処理 ──
+// ① txRules.rules のキーワード ② 過去の取引（normTxName 一致）③ 類似店舗（txCoreName 一致）の順。
+// 戻り値: {category, accountId} / 提案なしは null。txList・rules は省略時にグローバルを使う
+function suggestTxCategory(raw,txList,rules){
+  const list=txList||txs, rs=rules||(txRules.rules||[]);
+  raw=String(raw||'').trim();if(!raw)return null;
+  const srcKey=normTxName(raw,true);if(!srcKey)return null;
+  for(const r of rs){
+    if(!r.keyword)continue;
+    if(srcKey.includes(r.keyword.toLowerCase())){
+      if((r.type==='expense'||r.type==='income')&&r.category)return{category:r.category,accountId:''};
+      return null;
+    }
+  }
+  const isEI=t=>t.type==='expense'||t.type==='income';
+  const latest=arr=>arr.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
+  const pick=ref=>ref&&ref.category?{category:ref.category,accountId:ref.accountId?String(ref.accountId):''}:null;
+  const matching=list.filter(t=>{
+    const ts=t.srcName?normTxName(t.srcName,true):normTxName(t.title,true);
+    return ts===srcKey&&ts!==''&&isEI(t);
+  });
+  if(matching.length)return pick(latest(matching));
+  const coreName=txCoreName(raw);
+  if(coreName&&coreName!==srcKey){
+    const coreMatching=list.filter(t=>{
+      const ts=t.srcName?txCoreName(t.srcName):txCoreName(t.title);
+      return ts===coreName&&ts!==''&&isEI(t);
+    });
+    if(coreMatching.length)return pick(latest(coreMatching));
+  }
+  return null;
+}
 // ── txCoreName: 類似店舗マッチ用のコア店名を取り出す ──
 function txCoreName(name){
   const n=normTxName(name,true);

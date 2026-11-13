@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('topDate').textContent = fmtFull(new Date());
   rerenderAll();
   restoreLdrGuide(); restoreLdrSubtab();
+  qxHandleHash(); // #add=expense ならクイック入力シートを開く（データ読み込み後）
 });
 
 function rerenderAll() {

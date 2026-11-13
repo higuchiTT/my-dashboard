@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="css/notes.css?v=8804453f">
   <link rel="stylesheet" href="css/food-tags.css?v=4bb375fa">
   <link rel="stylesheet" href="css/food-suggest.css?v=aa138220">
+  <link rel="stylesheet" href="css/ledger-quick.css?v=2ab0cc32">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.min.js" integrity="sha384-UagCvVPT5XXA0Hx+nJYUAGBFseHT9zBgpJMSebsAxl9lciTwbT+39j5VfRjdP5Tp" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -1148,17 +1149,18 @@
 
 <script src="js/core/state.js?v=fa7cde08"></script>
 <script src="js/core/sync.js?v=fdb3c39c"></script>
-<script src="js/core/init.js?v=c8edd6c2"></script>
+<script src="js/core/init.js?v=5ec1ef46"></script>
 <script src="js/core/nav.js?v=430dfaed"></script>
 <script src="js/home.js?v=ef4f5a4f"></script>
 <script src="js/todo.js?v=35bddadf"></script>
-<script src="js/ledger/core.js?v=c60c1f2c"></script>
+<script src="js/ledger/core.js?v=d6e19e98"></script>
 <script src="js/ledger/import.js?v=6ea1265b"></script>
 <script src="js/ledger/settings.js?v=9d565e3b"></script>
 <script src="js/ledger/accounts.js?v=2e171497"></script>
 <script src="js/ledger/budget.js?v=b726d671"></script>
 <script src="js/ledger/guide.js?v=48699094"></script>
-<script src="js/ledger/transactions.js?v=7c1772f4"></script>
+<script src="js/ledger/transactions.js?v=663ae257"></script>
+<script src="js/ledger/quick.js?v=7ef476d8"></script>
 <script src="js/wishlist.js?v=cf9f0b03"></script>
 <script src="js/ledger/subs.js?v=3e1d587d"></script>
 <script src="js/travel.js?v=a9fbdd18"></script>
@@ -1197,6 +1199,9 @@
 </div>
 <div id="saveErrToast"></div>
 <div id="syncInfoToast"></div>
+<button type="button" class="qx-fab" id="qxFab" onclick="event.stopPropagation();qxOpen()" aria-label="支出をすばやく記録">＋</button>
+<div class="qx-overlay" id="qxOverlay" onclick="qxClose(event)"></div>
+<div id="qxToast"></div>
 
 <!-- ══ BOTTOM NAV (mobile) ══ -->
 <nav class="hm-bottom-nav" id="bottomNav">

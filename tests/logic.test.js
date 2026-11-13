@@ -113,6 +113,45 @@ test('txCoreName: 短くなりすぎる場合は元の値（normTxName 結果）
   assert.equal(A.txCoreName('マクドナルド'), 'マクドナルド');
 });
 
+test('qxKeypad: 数字・00・⌫、先頭の 0 と桁あふれを防ぐ', () => {
+  assert.equal(A.qxKeypad('', '0'), '');
+  assert.equal(A.qxKeypad('', '00'), '');
+  assert.equal(A.qxKeypad('', '5'), '5');
+  assert.equal(A.qxKeypad('12', '00'), '1200');
+  assert.equal(A.qxKeypad('1280', 'back'), '128');
+  assert.equal(A.qxKeypad('', 'back'), '');
+  assert.equal(A.qxKeypad('12345678', '9'), '12345678');
+  assert.equal(A.qxKeypad('1234567', '00'), '1234567');
+  assert.equal(A.qxKeypad('12', 'x'), '12');
+});
+
+test('qxTopCategories: 直近60日の件数順、足りなければ設定順で補う', () => {
+  const cats = ['食費', '交通費', '娯楽', '日用品', '医療', '衣服', 'その他'].map(name => ({ name }));
+  const now = new Date(2026, 10, 13);
+  const e = (category, date) => ({ type: 'expense', category, date });
+  const list = [
+    e('娯楽', '2026-11-10'), e('娯楽', '2026-11-01'), e('娯楽', '2026-10-20'),
+    e('交通費', '2026-11-05'),
+    e('食費', '2026-08-01'),                       // 60日より前 → 数えない
+    { type: 'income', category: '食費', date: '2026-11-10' }, // 支出以外 → 数えない
+  ];
+  assert.deepEqual(plain(A.qxTopCategories(list, cats, now)), ['娯楽', '交通費', '食費', '日用品', '医療', '衣服']);
+  assert.deepEqual(plain(A.qxTopCategories([], cats, now)), ['食費', '交通費', '娯楽', '日用品', '医療', '衣服']);
+});
+
+test('suggestTxCategory: ルール → 過去の取引 → 類似店舗の順で提案', () => {
+  const list = [
+    { type: 'expense', title: 'ローソン 駅前店', category: '食費', date: '2026-11-01', accountId: 'a1' },
+    { type: 'expense', title: 'ローソン 駅前店', category: '日用品', date: '2026-11-09', accountId: 'a2' },
+  ];
+  const rules = [{ keyword: 'jr', type: 'expense', category: '交通費' }];
+  assert.deepEqual(plain(A.suggestTxCategory('JR東日本', list, rules)), { category: '交通費', accountId: '' });
+  assert.deepEqual(plain(A.suggestTxCategory('ローソン 駅前店', list, rules)), { category: '日用品', accountId: 'a2' });
+  assert.equal(A.suggestTxCategory('ローソン 渋谷店', list, rules).category, '日用品');
+  assert.equal(A.suggestTxCategory('知らない店', list, rules), null);
+  assert.equal(A.suggestTxCategory('', list, rules), null);
+});
+
 test('foodTagCategory: 既知のタグは正しい分類を返し、未知は ingredient', () => {
   assert.equal(A.foodTagCategory('主菜'),    'role');
   assert.equal(A.foodTagCategory('和食'),    'genre');

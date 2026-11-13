@@ -66,40 +66,10 @@ function openTxModal(type,txId){
       const catEl=document.getElementById('ldrTxCat');
       if(!catEl||catEl.value!=='その他')return;
       const raw=titleInEl.value.trim();if(!raw)return;
-      const srcKey=normTxName(raw,true);if(!srcKey)return;
-      const rules=txRules.rules||[];
-      for(const r of rules){
-        if(!r.keyword)continue;
-        if(srcKey.includes(r.keyword.toLowerCase())){
-          if((r.type==='expense'||r.type==='income')&&r.category){catEl.value=r.category;}
-          return;
-        }
-      }
-      const matching=txs.filter(t=>{
-        const ts=t.srcName?normTxName(t.srcName,true):normTxName(t.title,true);
-        return ts===srcKey&&ts!==''&&(t.type==='expense'||t.type==='income');
-      });
-      if(matching.length){
-        const ref=matching.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
-        if(ref.category)catEl.value=ref.category;
-        const accEl=document.getElementById('ldrTxAcc');
-        if(accEl&&!accEl.value&&ref.accountId)accEl.value=String(ref.accountId);
-      } else {
-        // ③ 類似店舗（txCoreName）で提案
-        const coreName=txCoreName(raw);
-        if(coreName&&coreName!==srcKey){
-          const coreMatching=txs.filter(t=>{
-            const ts=t.srcName?txCoreName(t.srcName):txCoreName(t.title);
-            return ts===coreName&&ts!==''&&(t.type==='expense'||t.type==='income');
-          });
-          if(coreMatching.length){
-            const ref=coreMatching.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
-            if(ref.category)catEl.value=ref.category;
-            const accEl=document.getElementById('ldrTxAcc');
-            if(accEl&&!accEl.value&&ref.accountId)accEl.value=String(ref.accountId);
-          }
-        }
-      }
+      const sg=suggestTxCategory(raw);if(!sg)return;
+      if(sg.category)catEl.value=sg.category;
+      const accEl=document.getElementById('ldrTxAcc');
+      if(accEl&&!accEl.value&&sg.accountId)accEl.value=sg.accountId;
     };
   }
   document.addEventListener('keydown',_ldrTxEsc);
