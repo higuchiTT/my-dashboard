@@ -216,7 +216,79 @@ test('buildMailInbox: 処理済み・取り込み済みを除き、記録済み�
   assert.equal(r.every(x => !x.possibleDup), true);
 });
 
-test('mailFetchUrl: トークンをエンコードして GET の URL を作る', () => {
+const MUFG_BODY = (amt, shop) => ` 山田　太郎 様
+
+三菱ＵＦＪ‐ＶＩＳＡデビットをご利用いただきましてありがとうございます。
+
+三菱ＵＦＪ‐ＶＩＳＡデビットのご利用がありましたので、ご連絡いたします。
+
+ご利用金額（円）　 : ${amt}
+ご利用先　　　　　　: ${shop}
+
+●「ご利用金額（円）」について
+プラス金額の場合はお引落し、マイナス金額の場合はご入金となります。
+`;
+
+test('parseMufgDebitMail: 通常・カンマ・マイナス（返金）・JST の日付', () => {
+  assert.deepEqual(plain(A.parseMufgDebitMail(MUFG_BODY('276', 'HEIWADO'), '2026-11-10T03:00:00Z')),
+    [{ date: '2026-11-10', store: 'HEIWADO', user: '', amount: 276 }]);
+  assert.equal(A.parseMufgDebitMail(MUFG_BODY('12,345', 'X'), '2026-11-10T03:00:00Z')[0].amount, 12345);
+  assert.deepEqual(plain(A.parseMufgDebitMail(MUFG_BODY('-500', 'X'), '2026-11-10T03:00:00Z')), []);
+  assert.equal(A.parseMufgDebitMail(MUFG_BODY('276', 'X'), '2026-11-10T16:30:00Z')[0].date, '2026-11-11');
+  assert.deepEqual(plain(A.parseMufgDebitMail('本文なし', '2026-11-10T03:00:00Z')), []);
+});
+
+const JCB_A = `山田　太郎 様
+カード名称　：　ＫＩＰＳ－ＪＣＢ
+
+JCBカードのご利用がありましたのでご連絡します。
+
+【ご利用日時(日本時間)】　2026/10/26 08:34
+【ご利用金額】　2,290円
+【ご利用先】　ベネフイツト　ワン
+
+▼ご留意点
+`;
+const JCB_B = `山田　太郎 様
+　◆ご利用１
+　　【ご利用日】　2026/10/31
+　　【ご利用金額】　 3,190円
+　　【ご利用先】　タイムズカー
+　◆ご利用２
+　　【ご利用日】　2026/10/31
+　　【ご利用金額】　 4,510円
+　　【ご利用先】　タイムズカー
+
+　※本通知は、カードご利用時に通知していないものが対象です。
+`;
+
+test('parseJcbUsageMail: 利用時の通知（1件・カンマ）と売上到着分（複数）', () => {
+  assert.deepEqual(plain(A.parseJcbUsageMail(JCB_A)), [{ date: '2026-10-26', store: 'ベネフイツト　ワン', user: '', amount: 2290 }]);
+  assert.deepEqual(plain(A.parseJcbUsageMail(JCB_B)), [
+    { date: '2026-10-31', store: 'タイムズカー', user: '', amount: 3190 },
+    { date: '2026-10-31', store: 'タイムズカー', user: '', amount: 4510 },
+  ]);
+  assert.deepEqual(plain(A.parseJcbUsageMail('【ご利用日】2026/10/31\n【ご利用金額】0円\n')), []);
+});
+
+test('buildMailInbox: 楽天・UFJ・JCB 混在で、口座は種別ごと。source なしは楽天', () => {
+  const mails = [
+    { id: 'r1', subject: 'カード利用のお知らせ(本人・家族会員ご利用分)', body: RK_BODY },
+    { id: 'u1', source: 'mufg', subject: '【三菱ＵＦＪ‐ＶＩＳＡデビット】ご利用のお知らせ', date: '2026-11-10T03:00:00Z', body: MUFG_BODY('276', 'HEIWADO') },
+    { id: 'j1', source: 'jcb', subject: '（売上到着分）JCBカード/ショッピングご利用のお知らせ', date: '2026-11-01T03:00:00Z', body: JCB_B },
+  ];
+  const opts = { handledKeys: [], accountId: 'ra', mufgAccountId: 'ua', jcbAccountId: 'ja',
+    txs: [{ type: 'expense', accountId: 'ua', date: '2026-11-10', amount: 276 },    // UFJ 口座の手入力 → UFJ だけ dup
+          { type: 'expense', accountId: 'ra', date: '2026-10-31', amount: 3190 }] }; // 楽天口座の同額 → JCB は dup でない
+  const r = plain(A.buildMailInbox(mails, opts));
+  assert.equal(r.length, 5);
+  assert.deepEqual(r.map(x => x.source).sort(), ['jcb', 'jcb', 'mufg', 'rakuten', 'rakuten']);
+  assert.equal(r.find(x => x.source === 'mufg').possibleDup, true);
+  assert.equal(r.filter(x => x.source === 'jcb').every(x => !x.possibleDup), true);
+  assert.equal(r[0].key, 'rkmail:u1:0');   // 11/10 が最新
+});
+
+test('mailFetchUrl:トークンをエンコードして GET の URL を作る', () => {
   assert.equal(A.mailFetchUrl('https://x.test/exec', 'a b&c', 45), 'https://x.test/exec?token=a%20b%26c&days=45');
 });
 
@@ -231,6 +303,11 @@ test('_csvDupStatus: メール取り込みの支出は imported、手入力は p
   assert.equal(A._csvDupStatus(L, 'zz', 'a1', '2026-10-30', 500, 'expense'), 'possible');
   assert.equal(A._csvDupStatus(L, 'zz', 'a1', '2026-10-31', 700, 'expense'), null);   // importKey 付きは possible にしない
   assert.equal(A._csvDupStatus(L, 'k1', 'a1', '2026-10-31', 700, 'expense'), 'imported');
+  // メール確定済みは ±3 日まで imported、4 日ずれは対象外、手入力は日付ぴったりだけ
+  assert.equal(A._csvDupStatus(L, 'zz', 'a1', '2026-11-01', 952, 'expense'), 'imported');
+  assert.equal(A._csvDupStatus(L, 'zz', 'a1', '2026-10-26', 952, 'expense'), 'imported');
+  assert.equal(A._csvDupStatus(L, 'zz', 'a1', '2026-11-02', 952, 'expense'), null);
+  assert.equal(A._csvDupStatus(L, 'zz', 'a1', '2026-11-02', 500, 'expense'), null);
 });
 
 test('foodTagCategory: 既知のタグは正しい分類を返し、未知は ingredient', () => {

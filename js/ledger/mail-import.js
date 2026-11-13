@@ -1,6 +1,6 @@
-// ── メールから取り込み（楽天カード「カード利用のお知らせ」） ──
-// Apps Script（tools/gas/rakuten-mail.gs）が返したメールを解析し、Ledger に「未確認」として出す。
-// 設定は txRules.mailImport = {url, token, accountId}、処理済みは txRules.mailHandled = [{key, at}]。
+// ── メールから取り込み（楽天カード「カード利用のお知らせ」・三菱UFJデビット「ご利用のお知らせ」） ──
+// Apps Script（tools/gas/rakuten-mail.gs）が返したメールを解析し、Ledger に「未確認」として出す。item.source は 'rakuten' | 'mufg'（なければ楽天）。
+// 設定は txRules.mailImport = {url, token, accountId(楽天), mufgAccountId, jcbAccountId}、source は 'rakuten' | 'mufg' | 'jcb'、処理済みは txRules.mailHandled = [{key, at}]。
 // メール本文はメモリにだけ持つ（保存しない）。
 const MAIL_FETCH_DAYS = 45;
 const MAIL_FETCH_INTERVAL_MS = 10 * 60 * 1000;
@@ -35,6 +35,51 @@ function parseRakutenUsageMail(body) {
   return out;
 }
 
+// 三菱UFJ-VISAデビットの「ご利用のお知らせ」。1通1件、本文に日付がないのでメールの日時（JST の暦日）を使う。
+// マイナス金額（ご入金＝返金）と、金額が読めないものは空配列
+function parseMufgDebitMail(body, dateIso) {
+  const text = String(body || '').replace(/\r/g, '');
+  const am = text.match(/^[\s　]*ご利用金額[（(]円[）)][\s　]*[:：][\s　]*(.*)$/m);
+  if (!am) return [];
+  const raw = am[1].normalize('NFKC').replace(/[−－ー]/g, '-').replace(/[,\s]/g, '');
+  const a = raw.match(/^-?\d+/);
+  if (!a) return [];
+  const amount = Number(a[0]);
+  if (!isFinite(amount) || amount <= 0) return [];
+  const t = new Date(dateIso).getTime();
+  if (isNaN(t)) return [];
+  const date = new Date(t + 9 * 3600000).toISOString().slice(0, 10);
+  const sm = text.match(/^[\s　]*ご利用先[\s　]*[:：][\s　]*(.*)$/m);
+  return [{ date, store: sm ? sm[1].trim() : '', user: '', amount }];
+}
+
+// JCB「ショッピングご利用のお知らせ」。利用時の通知（【ご利用日時(日本時間)】1件）と
+// 売上到着分（◆ご利用１…の【ご利用日】が複数）の両方を読む。金額が 0 以下・読めないブロックは捨てる
+function parseJcbUsageMail(body) {
+  const lines = String(body || '').replace(/\r/g, '').split('\n');
+  const blocks = [];
+  let cur = null;
+  for (const line of lines) {
+    const m = line.match(/【(ご利用日時[^】]*|ご利用日|ご利用金額|ご利用先)】[\s　]*(.*)$/);
+    if (!m) continue;
+    const label = m[1], val = m[2].trim();
+    if (label.indexOf('ご利用日') === 0) { cur = { dateRaw: val, store: '', amountRaw: '' }; blocks.push(cur); continue; }
+    if (!cur) { cur = { dateRaw: '', store: '', amountRaw: '' }; blocks.push(cur); }
+    if (label === 'ご利用先') cur.store = val;
+    else if (label === 'ご利用金額') cur.amountRaw = val;
+  }
+  const out = [];
+  for (const b of blocks) {
+    const d = String(b.dateRaw).normalize('NFKC').match(/(\d{4})\s*[\/\-.年]\s*(\d{1,2})\s*[\/\-.月]\s*(\d{1,2})/);
+    const a = String(b.amountRaw).normalize('NFKC').replace(/[−－]/g, '-').replace(/[,\s]/g, '').match(/^-?\d+/);
+    if (!d || !a) continue;
+    const amount = Number(a[0]);
+    if (!isFinite(amount) || amount <= 0) continue;
+    out.push({ date: `${d[1]}-${String(d[2]).padStart(2, '0')}-${String(d[3]).padStart(2, '0')}`, store: b.store, user: '', amount });
+  }
+  return out;
+}
+
 function mailItemKey(msgId, idx) { return 'rkmail:' + msgId + ':' + idx; }
 
 // 確定版の「カード利用のお知らせ」だけ true（subject が無いときは判断せず true）
@@ -49,16 +94,21 @@ function buildMailInbox(mails, opts) {
   const handled = new Set(Array.isArray(o.handledKeys) ? o.handledKeys : (o.handledKeys ? Array.from(o.handledKeys) : []));
   const list = o.txs || [];
   const mailKeys = new Set(list.filter(t => t && t.mailKey).map(t => t.mailKey));
-  const accId = String(o.accountId || '');
+  const accIds = { rakuten: String(o.accountId || ''), mufg: String(o.mufgAccountId || ''), jcb: String(o.jcbAccountId || '') };
   const out = [];
   (mails || []).forEach(mail => {
-    if (!mail || !isRakutenUsageSubject(mail.subject)) return;
-    parseRakutenUsageMail(mail.body).forEach((p, idx) => {
+    if (!mail) return;
+    const source = mail.source === 'mufg' || mail.source === 'jcb' ? mail.source : 'rakuten';   // source なし（古いデプロイ）は楽天
+    if (source === 'rakuten' && !isRakutenUsageSubject(mail.subject)) return;
+    const parsed = source === 'mufg' ? parseMufgDebitMail(mail.body, mail.date)
+      : source === 'jcb' ? parseJcbUsageMail(mail.body) : parseRakutenUsageMail(mail.body);
+    const accId = accIds[source];
+    parsed.forEach((p, idx) => {
       const key = mailItemKey(mail.id, idx);
       if (handled.has(key) || mailKeys.has(key)) return;
       const possibleDup = list.some(t => t && t.type === 'expense' && !t.mailKey
         && String(t.accountId || '') === accId && t.date === p.date && t.amount === p.amount);
-      out.push({ key, mailId: mail.id, date: p.date, store: p.store, user: p.user, amount: p.amount, possibleDup });
+      out.push({ key, mailId: mail.id, source, date: p.date, store: p.store, user: p.user, amount: p.amount, possibleDup });
     });
   });
   out.sort((a, b) => b.date.localeCompare(a.date) || a.key.localeCompare(b.key));
@@ -79,9 +129,20 @@ function _mailGuessAccountId() {
   return a ? String(a.id) : '';
 }
 function _mailAccountId() { return _mailCfg().accountId || _mailGuessAccountId(); }
+function _mailMufgAccountId() {
+  if (_mailCfg().mufgAccountId) return _mailCfg().mufgAccountId;
+  const a = accounts.find(x => !x.archived && /三菱|UFJ/i.test(x.name || ''));
+  return a ? String(a.id) : '';
+}
+function _mailJcbAccountId() {
+  if (_mailCfg().jcbAccountId) return _mailCfg().jcbAccountId;
+  const a = accounts.find(x => !x.archived && /JCB/i.test(x.name || ''));
+  return a ? String(a.id) : '';
+}
+function _mailAccountForSource(source) { return source === 'mufg' ? _mailMufgAccountId() : source === 'jcb' ? _mailJcbAccountId() : _mailAccountId(); }
 function _mailHandledKeys() { return (txRules.mailHandled || []).map(h => h.key); }
 function _mailPending() {
-  return buildMailInbox(_mail.mails, { handledKeys: _mailHandledKeys(), txs, accountId: _mailAccountId() });
+  return buildMailInbox(_mail.mails, { handledKeys: _mailHandledKeys(), txs, accountId: _mailAccountId(), mufgAccountId: _mailMufgAccountId(), jcbAccountId: _mailJcbAccountId() });
 }
 function _mailStop(e) { if (e && e.stopPropagation) e.stopPropagation(); }
 function _mailGuessCat(store) {
@@ -179,7 +240,7 @@ function _mailRowHtml(it) {
   return `<div class="lm-row${it.possibleDup ? ' is-dup' : ''}">
     <div class="lm-line1"><span class="lm-date">${esc(dl)}</span><span class="lm-store">${esc(store)}</span><span class="lm-amt">¥${fmt(it.amount)}</span></div>
     <div class="lm-line2">
-      ${it.user === '家族' ? '<span class="lm-tag">家族</span>' : ''}${it.possibleDup ? '<span class="lm-tag lm-tag-dup">記録済みかも</span>' : ''}
+      <span class="lm-tag lm-tag-src">${it.source === 'mufg' ? 'UFJ' : it.source === 'jcb' ? 'JCB' : '楽天'}</span>${it.user === '家族' ?'<span class="lm-tag">家族</span>' : ''}${it.possibleDup ? '<span class="lm-tag lm-tag-dup">記録済みかも</span>' : ''}
       <button type="button" class="lm-catbtn" onclick="mailToggleCat(event,${k})"><span class="qx-dot" style="background:${esc(catColor(cat))}"></span>${esc(cat)} ▾</button>
       <span class="lm-acts">${it.possibleDup ? skipBtn + confirmBtn : confirmBtn + skipBtn}</span>
     </div>${catPick}
@@ -206,8 +267,8 @@ function _mailAfterChange() {
 function _mailCommit(items) {
   if (!items.length) return;
   const now = new Date().toISOString();
-  const accId = _mailAccountId();
   items.forEach(it => {
+    const accId = _mailAccountForSource(it.source);
     const srcName = normTxName(it.store);
     const tx = {
       id: crypto.randomUUID(), type: 'expense', title: srcName || it.store, srcName, amount: it.amount,
@@ -244,10 +305,10 @@ function mailSkip(e, key) {
 // ── 設定（Ledger「設定」） ──
 function _renderMailSettingsSection() {
   const c = _mailCfg();
-  const accId = _mailAccountId();
-  const opts = accounts.filter(a => !a.archived).map(a =>
-    `<option value="${esc(String(a.id))}"${String(a.id) === String(accId) ? ' selected' : ''}>${esc(a.name)}</option>`).join('');
-  return `<div class="ldr-settings-title">メールから取り込み（楽天カード）</div>
+  const optsFor = sel => accounts.filter(a => !a.archived).map(a =>
+    `<option value="${esc(String(a.id))}"${String(a.id) === String(sel) ? ' selected' : ''}>${esc(a.name)}</option>`).join('');
+  const opts = optsFor(_mailAccountId()), mufgOpts = optsFor(_mailMufgAccountId()), jcbOpts = optsFor(_mailJcbAccountId());
+  return `<div class="ldr-settings-title">メールから取り込み（楽天カード・三菱UFJデビット・JCB）</div>
     <div class="lm-set">
       <label class="lm-set-lbl">Apps Script URL
         <input type="url" class="lm-in" value="${esc(c.url || '')}" placeholder="https://script.google.com/macros/s/.../exec" autocomplete="off"
@@ -255,9 +316,15 @@ function _renderMailSettingsSection() {
       <label class="lm-set-lbl">トークン
         <input type="password" class="lm-in" value="${esc(c.token || '')}" autocomplete="off"
           onclick="event.stopPropagation()" onchange="event.stopPropagation();mailCfgSet('token',this.value)"></label>
-      <label class="lm-set-lbl">カード口座
+      <label class="lm-set-lbl">楽天カードの口座
         <select class="lm-in" onclick="event.stopPropagation()" onchange="event.stopPropagation();mailCfgSet('accountId',this.value)">
           <option value="">口座未設定</option>${opts}</select></label>
+      <label class="lm-set-lbl">三菱UFJデビットの口座
+        <select class="lm-in" onclick="event.stopPropagation()" onchange="event.stopPropagation();mailCfgSet('mufgAccountId',this.value)">
+          <option value="">口座未設定</option>${mufgOpts}</select></label>
+      <label class="lm-set-lbl">JCBカードの口座
+        <select class="lm-in" onclick="event.stopPropagation()" onchange="event.stopPropagation();mailCfgSet('jcbAccountId',this.value)">
+          <option value="">口座未設定</option>${jcbOpts}</select></label>
       <div class="lm-set-row">
         <button type="button" class="lm-btn" onclick="mailTestConnection(event)">接続を確かめる</button>
         <span class="lm-status" id="mailTestResult"></span>
@@ -266,7 +333,7 @@ function _renderMailSettingsSection() {
     </div>`;
 }
 function mailCfgSet(field, value) {
-  const c = Object.assign({ url: '', token: '', accountId: _mailAccountId() }, _mailCfg());
+  const c = Object.assign({ url: '', token: '', accountId: _mailAccountId(), mufgAccountId: _mailMufgAccountId(), jcbAccountId: _mailJcbAccountId() }, _mailCfg());
   c[field] = String(value || '').trim();
   txRules.mailImport = c;
   saveTxRules();
@@ -280,7 +347,7 @@ async function mailTestConnection(e) {
   if (out) out.textContent = '確認中…';
   try {
     const items = await _mailFetchItems(c.url, c.token);
-    const n = items.reduce((s, m) => s + parseRakutenUsageMail(m.body).length, 0);
+    const n = buildMailInbox(items, {}).length;   // 3社とも数える（処理済みも含めた全件）
     if (out) out.textContent = `接続できました（メール ${items.length}通・利用 ${n}件）`;
   } catch (err) {
     if (out) out.textContent = err.message || '接続できませんでした';

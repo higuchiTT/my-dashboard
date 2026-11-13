@@ -128,12 +128,14 @@ function _parseUnknownRows(csvRows,colAssign){
   return{rows:parsed,skipCount:skip};
 }
 
-// CSV 1行の重複判定。'imported'=取り込み済み（importKey 一致、またはメール取り込みの支出と口座・日付・金額が同じ）、
+// CSV 1行の重複判定。'imported'=取り込み済み（importKey 一致、またはメール取り込みの支出と口座・金額が同じで日付が ±3 日以内）、
 // 'possible'=手入力などと同じ口座・日付・金額、null=重複なし
 function _csvDupStatus(list,importKey,accountId,date,amount,kind){
   if(list.some(t=>t.importKey===importKey))return'imported';
   const same=t=>String(t.accountId)===String(accountId)&&t.date===date&&t.amount===amount&&t.type===kind;
-  if(kind==='expense'&&list.some(t=>t.mailKey&&same(t)))return'imported';
+  // メール確定済みの取引は、銀行 CSV では計上日が利用日から 1〜3 日遅れることがあるので ±3 日で合わせる
+  const dayDiff=(a,b)=>Math.abs(Date.parse(a+'T00:00:00Z')-Date.parse(b+'T00:00:00Z'))/86400000;
+  if(kind==='expense'&&list.some(t=>t.mailKey&&String(t.accountId)===String(accountId)&&t.amount===amount&&t.type==='expense'&&t.date&&dayDiff(t.date,date)<=3))return'imported';
   if(list.some(t=>!t.importKey&&!t.mailKey&&same(t)))return'possible';
   return null;
 }

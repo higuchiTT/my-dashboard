@@ -33,7 +33,7 @@ function loadApp() {
   const files = [...html.matchAll(/<script src="(js\/[^"?]+)/g)].map(m => m[1]);
   // 全ファイルを1つのスクリプトとして評価する（ブラウザでの classic script と同じく、変数を共有させるため）
   const code = files.map(f => fs.readFileSync(path.join(ROOT, f), 'utf8')).join('\n;\n')
-    + '\n;globalThis.__app = { mergeCollections, mergeArrayById, normTxName, txCoreName, _parseCSV, _parseDateStr, _parseAmtStr, migrateMealV2, migrateTripDetailsToPlan, _detectImportFormat, getEffBudget, accountBalance, _catAutoId, esc, jsq, foodTagCategory, dishRoleGroup, suggestFoodDishes, rankRecipeWishes, presetFoodTags, swipeDirection, calcCheckOutDate, calcNights, fmtTimeRange, _stayAutoRowsForDay, isTripDone, isDayPassed, _itiTimeSortKey, qxKeypad, qxTopCategories, suggestTxCategory, parseRakutenUsageMail, mailItemKey, buildMailInbox, isRakutenUsageSubject, mailFetchUrl, _csvDupStatus };'
+    + '\n;globalThis.__app = { mergeCollections, mergeArrayById, normTxName, txCoreName, _parseCSV, _parseDateStr, _parseAmtStr, migrateMealV2, migrateTripDetailsToPlan, _detectImportFormat, getEffBudget, accountBalance, _catAutoId, esc, jsq, foodTagCategory, dishRoleGroup, suggestFoodDishes, rankRecipeWishes, presetFoodTags, swipeDirection, calcCheckOutDate, calcNights, fmtTimeRange, _stayAutoRowsForDay, isTripDone, isDayPassed, _itiTimeSortKey, qxKeypad, qxTopCategories, suggestTxCategory, parseRakutenUsageMail, parseMufgDebitMail, parseJcbUsageMail, mailItemKey, buildMailInbox, isRakutenUsageSubject, mailFetchUrl, _csvDupStatus };'
     + '\n;globalThis.__setState = (s) => { if (s.txs) txs = s.txs; if (s.accounts) accounts = s.accounts; if (s.budgets) budgets = s.budgets; };';
   vm.runInContext(code, ctx, { filename: 'app.js' });
   return ctx;
