@@ -1,20 +1,36 @@
 // ── TASKS ──
 function updateBadge(){const n=tasks.filter(t=>!t.done).length;const b=document.getElementById('navBadge');b.textContent=n;b.style.display=n>0?'':'none';const bb=document.getElementById('bottomBadge');if(bb){bb.textContent=n;bb.style.display=n>0?'':'none';}}
-function toggleAddTask(){const f=document.getElementById('addTaskForm');f.classList.toggle('open');if(f.classList.contains('open'))document.getElementById('taskTitle').focus();}
+function tkFind(id){ return tasks.find(t => String(t.id) === String(id)); }
+function toggleAddTask(){
+  const f=document.getElementById('addTaskForm');
+  const open=f.classList.toggle('open');
+  todoState.addOpen=open;
+  const b=document.getElementById('tkAddMoreBtn'); if(b) b.classList.toggle('active',open);
+  if(open)document.getElementById('taskTitle').focus();
+}
 function addTask(){
-  const title=document.getElementById('taskTitle').value.trim();
-  if(!title){document.getElementById('taskTitle').focus();return;}
-  const t={id:crypto.randomUUID(),title,category:document.getElementById('taskCategory').value,priority:document.getElementById('taskPriority').value,due:document.getElementById('taskDue').value,done:false,createdAt:new Date().toISOString(),tags:[],isPinned:false,completedAt:null,dueTime:null};
+  const titleEl=document.getElementById('taskTitle');
+  const title=titleEl.value.trim();
+  if(!title){titleEl.focus();return;}
+  const due=document.getElementById('taskDue').value;
+  const pickEl=document.getElementById('taskToday');
+  const t={id:crypto.randomUUID(),title,category:document.getElementById('taskCategory').value,priority:document.getElementById('taskPriority').value,due,done:false,createdAt:new Date().toISOString(),tags:[],isPinned:false,completedAt:null,dueTime:null};
+  // 「今日やる」にチェック、または 今日ビューで期限なしで追加 → 今日の分として登録（翌日には自動で外れる）
+  if((pickEl&&pickEl.checked)||(todoState.viewFilter==='today'&&!due))t.todayDate=localDate();
   t.tags=deriveInitialTags(t);
   tasks.unshift(t);
   saveTasks();
-  document.getElementById('taskTitle').value='';
+  titleEl.value='';
   document.getElementById('taskDue').value='';
-  toggleAddTask();
+  if(pickEl)pickEl.checked=false;
   renderTodayView();renderHome();updateBadge();
+  titleEl.focus();
 }
-function toggleTask(id){const t=tasks.find(t=>String(t.id)===String(id));if(t){t.done=!t.done;saveTasks();renderTodayView();renderHome();updateBadge();}}
-function delTask(id){tasks=tasks.filter(t=>String(t.id)!==String(id));saveTasks();renderTodayView();renderHome();updateBadge();}
+function delTask(id){
+  tasks=tasks.filter(t=>String(t.id)!==String(id));
+  if(String(todoState.selectedId)===String(id))todoState.selectedId=null;
+  saveTasks();renderTodayView();renderHome();updateBadge();
+}
 
 // ── CATEGORY COLOR MAP ──
 const CAT_COLORS = {
@@ -39,43 +55,54 @@ function classifyTask(t, now, thisSun) {
   if (d <= thisSun) return 'thisweek';
   return 'later';
 }
+// 「今日やること」に入るか。期限切れ / 今日が期限 / 「今日やる」で今日付けにしたもの（翌日には自動で外れる）
+function todayBucket(t, todayStr) {
+  if (!t || t.done) return null;
+  if (t.due && t.due < todayStr) return 'overdue';
+  if (t.due && t.due === todayStr) return 'due';
+  if (t.todayDate && t.todayDate === todayStr) return 'picked';
+  return null;
+}
 
 // ── VIEW / CAT / TAG FILTER SETTERS ──
-function setViewFilter(f, el) {
-  todoState.viewFilter = f;
+function setViewFilter(f) {
+  todoState.viewFilter = (f === undefined ? null : f);
   todoState.sectionFilter = null;
   todoState.tagFilter = null;
-  document.querySelectorAll('#tvViewNav .ts-nav-item').forEach(b => {
-    b.classList.toggle('active', b.dataset.view === (f === null ? 'null' : f));
-  });
   renderTodayView();
 }
 function setCatFilter(cat) {
-  todoState.sectionFilter = (todoState.sectionFilter === cat ? null : cat);
-  todoState.tagFilter = null;
+  todoState.sectionFilter = cat || null;
   renderTodayView();
 }
 function setTagFilter(tag) {
   todoState.tagFilter = (todoState.tagFilter === tag ? null : tag);
-  todoState.sectionFilter = null;
   renderTodayView();
 }
 
-// ── PIN ──
+// ── PIN / 今日やる ──
 function togglePin(id) {
-  const t = tasks.find(t => String(t.id) === String(id));
+  const t = tkFind(id);
   if (!t) return;
   t.isPinned = !t.isPinned;
+  saveTasks();
+  renderTodayView();
+}
+function togglePickToday(id) {
+  const t = tkFind(id);
+  if (!t) return;
+  const today = localDate();
+  if (t.todayDate === today) delete t.todayDate; else t.todayDate = today;
   saveTasks();
   renderTodayView();
 }
 
 // ── COMPLETE TASK (with fade animation) ──
 function completeTask(id) {
-  const t = tasks.find(t => String(t.id) === String(id));
+  const t = tkFind(id);
   if (!t || t._completing) return;
   t._completing = true;
-  const btn = document.querySelector(`[data-task-id="${id}"] .tv-done-btn`);
+  const btn = document.querySelector(`[data-task-id="${id}"] .tk-check`);
   if (btn) btn.disabled = true;
   const row = document.querySelector(`[data-task-id="${id}"]`);
   if (row) { row.style.opacity = '0.3'; row.style.transition = 'opacity 0.4s'; }
@@ -106,11 +133,15 @@ function showUndoToast(id, title) {
 }
 function undoComplete() {
   if (!_undoTaskId) return;
-  const t = tasks.find(t => String(t.id) === String(_undoTaskId));
+  const t = tkFind(_undoTaskId);
   if (t) { t.done = false; t.completedAt = null; saveTasks(); renderTodayView(); renderHome(); updateBadge(); }
   clearTimeout(_undoTimer);
   document.getElementById('undoToast').classList.remove('show');
   _undoTaskId = null;
+}
+function undoCompleteById(id) {
+  const t = tkFind(id);
+  if (t) { t.done = false; t.completedAt = null; saveTasks(); renderTodayView(); renderHome(); updateBadge(); }
 }
 
 // ── QUICK MEMO ──
@@ -119,11 +150,10 @@ function loadQuickMemo() { return localStorage.getItem('hd_quick_memo') || ''; }
 
 // ── DATA SAVE FUNCTIONS ──
 function saveTasks() { localStorage.setItem('hd_tasks', JSON.stringify(tasks)); saveToSupabase(); }
-function saveTaskNote(id, val) { setTaskNote(id, val); }
 function saveTaskDue(id, val) {
-  const t = tasks.find(t => String(t.id) === String(id));
+  const t = tkFind(id);
   if (!t) return;
-  t.due = val;
+  t.due = val || null;
   saveTasks();
   renderTodayView();
   renderHome();
@@ -131,7 +161,7 @@ function saveTaskDue(id, val) {
 
 // ── DUE DATE LABEL ──
 function fmtTaskDueLabel(due) {
-  if (!due) return { label: '＋ 期限', cls: 'tv-due-empty' };
+  if (!due) return { label: '＋ 期限', cls: 'tk-due-empty' };
   const today = getTodayDate();
   const d = new Date(due + 'T00:00:00');
   const diff = Math.round((d - today) / 86400000);
@@ -139,17 +169,17 @@ function fmtTaskDueLabel(due) {
   const shortLabel = d.getFullYear() === thisYear
     ? `${d.getMonth()+1}/${d.getDate()}`
     : `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`;
-  if (diff < 0) return { label: shortLabel, cls: 'tv-due-overdue' };
-  if (diff === 0) return { label: '今日', cls: 'tv-due-today' };
-  if (diff === 1) return { label: '明日', cls: 'tv-due-soon' };
-  return { label: shortLabel, cls: diff <= 7 ? 'tv-due-soon' : '' };
+  if (diff < 0) return { label: shortLabel, cls: 'tk-due-overdue' };
+  if (diff === 0) return { label: '今日', cls: 'tk-due-today' };
+  if (diff === 1) return { label: '明日', cls: 'tk-due-soon' };
+  return { label: shortLabel, cls: diff <= 7 ? 'tk-due-soon' : '' };
 }
 
-// ── OPEN DUE DATE PICKER ──
+// ── OPEN DUE DATE PICKER (行の期限チップ) ──
 function openDuePicker(id, el) {
-  const wrap = el.closest('.tv-due-wrap');
-  const input = wrap.querySelector('.tv-due-input');
-  const t = tasks.find(tt => String(tt.id) === String(id));
+  const wrap = el.closest('.tk-due-wrap');
+  const input = wrap.querySelector('.tk-due-input');
+  const t = tkFind(id);
   input.value = t && t.due ? t.due : '';
   input.onchange = () => { saveTaskDue(String(id), input.value); };
   const showInline = () => {
@@ -164,28 +194,7 @@ function openDuePicker(id, el) {
   }
 }
 
-// ── TASK ROW HTML ──
-function tvRowHTML(t) {
-  const color = getCatColor(t.category);
-  const isPinned = !!t.isPinned;
-  const tags = [...new Set(t.tags || [])].slice(0, 3);
-  const tagsHTML = tags.map(tag => `<span class="tv-tag-chip tag-${esc(tag)}">${esc(tag)}</span>`).join('');
-  const timeHTML = t.dueTime ? `<span class="tv-time">${esc(t.dueTime)}</span>` : '';
-  const dueInfo = fmtTaskDueLabel(t.due);
-  const dueHTML = `<div class="tv-due-wrap"><span class="tv-due ${dueInfo.cls}" onclick="event.stopPropagation();openDuePicker('${esc(String(t.id))}',this)">${dueInfo.label}</span><input type="date" class="tv-due-input" tabindex="-1"></div>`;
-  return `<div class="tv-row" data-task-id="${esc(t.id)}" onclick="openTaskEditSheet('${esc(String(t.id))}')" style="cursor:pointer">
-    <span class="tv-dot" style="background:${color}"></span>
-    <div class="tv-title">${esc(t.title)}</div>
-    ${dueHTML}
-    ${timeHTML}
-    <button class="tv-pin${isPinned ? ' pinned' : ''}" onclick="event.stopPropagation();togglePin('${esc(String(t.id))}')">${isPinned ? '★' : '☆'}</button>
-    <span class="tv-cat" style="background:${color}">${esc(t.category)}</span>
-    <div class="tv-tags" onclick="event.stopPropagation();openTvTagEditor('${esc(String(t.id))}',event)">${tagsHTML}${tags.length===0?'<span style="font-size:11px;color:var(--mute);cursor:pointer;">+ タグ</span>':''}</div>
-    <button class="tv-done-btn" onclick="event.stopPropagation();completeTask('${esc(String(t.id))}')" title="完了にする">完了</button>
-  </div>`;
-}
-
-// ── SECTION SORT (pinned first, then by due date) ──
+// ── SORT (pinned first, then by due date) ──
 function sortSectionTasks(items) {
   return [...items].sort((a, b) => {
     if (a.isPinned && !b.isPinned) return -1;
@@ -197,229 +206,301 @@ function sortSectionTasks(items) {
   });
 }
 
-// ── ACCORDION TOGGLE ──
-function toggleSection(key) {
-  tvOpenSections[key] = !tvOpenSections[key];
-  renderTodayView();
+// ── ROW ──
+function tkRowHTML(t, todayStr) {
+  const q = jsq(String(t.id));
+  const done = !!t.done;
+  const bucket = todayBucket(t, todayStr);
+  const color = getCatColor(t.category);
+  const sel = String(todoState.selectedId) === String(t.id);
+  const tags = [...new Set(t.tags || [])].slice(0, 3);
+  const tagsHTML = tags.map(tag => `<span class="tv-tag-chip tag-${esc(tag)}">${esc(tag)}</span>`).join('');
+  const tagBox = done
+    ? `<span class="tk-tags">${tagsHTML}</span>`
+    : `<span class="tk-tags" onclick="event.stopPropagation();openTvTagEditor(${q},event)">${tagsHTML}${tags.length ? '' : '<span class="tk-tag-add">＋ タグ</span>'}</span>`;
+  let dueHTML = '';
+  if (done) {
+    if (t.due) dueHTML = `<span class="tk-due">${esc(fmtTaskDueLabel(t.due).label)}</span>`;
+  } else {
+    const di = fmtTaskDueLabel(t.due);
+    dueHTML = `<span class="tk-due-wrap${t.due ? '' : ' tk-due-none'}"><span class="tk-due ${di.cls}" onclick="event.stopPropagation();openDuePicker(${q},this)">${esc(di.label)}</span><input type="date" class="tk-due-input" tabindex="-1"></span>`;
+  }
+  const timeHTML = t.dueTime ? `<span class="tk-time">${esc(t.dueTime)}</span>` : '';
+  const prioHTML = t.priority === 'high' ? '<span class="tk-prio" title="優先度 高">高</span>' : '';
+  const pickChip = bucket === 'picked' ? '<span class="tk-chip tk-chip-pick">今日</span>' : '';
+  let pickBtn = '';
+  if (!done && bucket === null) pickBtn = `<button class="tk-pick" onclick="event.stopPropagation();togglePickToday(${q})">今日やる</button>`;
+  else if (!done && bucket === 'picked') pickBtn = `<button class="tk-pick on" onclick="event.stopPropagation();togglePickToday(${q})">今日から外す</button>`;
+  const pinBtn = done ? '' : `<button class="tk-pin${t.isPinned ? ' pinned' : ''}" onclick="event.stopPropagation();togglePin(${q})" aria-label="ピン留め">${t.isPinned ? '★' : '☆'}</button>`;
+  const checkAct = done ? `undoCompleteById(${q})` : `completeTask(${q})`;
+  return `<div class="tk-row${sel ? ' sel' : ''}${done ? ' done' : ''}${bucket === 'overdue' ? ' overdue' : ''}" data-task-id="${esc(t.id)}" onclick="tkRowClick(${q})">
+    <button class="tk-check${done ? ' done' : ''}" onclick="event.stopPropagation();${checkAct}" aria-label="${done ? '未完了に戻す' : '完了にする'}"><span class="tk-check-box">${done ? '✓' : ''}</span></button>
+    <div class="tk-row-body">
+      <div class="tk-row-title">${esc(t.title)}</div>
+      <div class="tk-row-meta">
+        <span class="tk-chip"><span class="tk-dot" style="background:${color}"></span>${esc(t.category || '')}</span>
+        ${dueHTML}${timeHTML}${prioHTML}${pickChip}${tagBox}
+      </div>
+    </div>
+    ${pickBtn}${pinBtn}
+  </div>`;
 }
 
-// ── OPEN ADD FORM FOR SECTION ──
-function openAddTaskForSection(sec) {
-  const f = document.getElementById('addTaskForm');
-  if (!f.classList.contains('open')) { f.classList.add('open'); }
-  document.getElementById('taskTitle').focus();
-  document.getElementById('taskDue').value = sec === 'today' ? new Date().toISOString().split('T')[0] : '';
+function tkRowClick(id) {
+  if (window.matchMedia('(max-width: 640px)').matches) { openTaskEditSheet(id); return; }
+  todoState.selectedId = String(id);
+  renderTodayView();
+}
+function tkDeselect() { todoState.selectedId = null; renderTodayView(); }
+function toggleDoneList() { todoState.showDone = !todoState.showDone; tkRenderMain(); }
+
+// ── ICONS ──
+const TK_ICONS = {
+  today: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+  over: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.5M12 16.5v.01"/></svg>',
+  week: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+  prog: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 3 3 5-6"/></svg>'
+};
+
+// ── RENDER (main column) ──
+function tkRenderMain() {
+  const todayStr = localDate();
+  const now = getTodayDate();
+  const thisSun = getThisWeekSunday(now);
+  const pending = tasks.filter(t => !t.done);
+  const bucketOf = t => todayBucket(t, todayStr);
+  const cls = t => classifyTask(t, now, thisSun);
+
+  const todayTasks = pending.filter(t => bucketOf(t));
+  const overdueTasks = pending.filter(t => bucketOf(t) === 'overdue');
+  const weekTasks = pending.filter(t => cls(t) === 'thisweek');
+  const laterTasks = pending.filter(t => cls(t) === 'later');
+  const undefTasks = pending.filter(t => cls(t) === 'undef');
+  const doneTasks = tasks.filter(t => t.done);
+  const doneTodayN = doneTasks.filter(t => t.completedAt && localDate(new Date(t.completedAt)) === todayStr).length;
+  const total = doneTodayN + todayTasks.length;
+  const pct = total > 0 ? Math.round(doneTodayN / total * 100) : null;
+
+  updateEl('tkDate', fmtFull(new Date()));
+
+  // 1. サマリーカード
+  const card = (icon, label, num, unit, extra, danger) =>
+    `<div class="tk-stat-card${danger ? ' danger' : ''}"><span class="tk-stat-icon">${icon}</span><div class="tk-stat-body"><div class="tk-stat-label">${label}</div><div class="tk-stat-num-row"><span class="tk-stat-num">${num}</span><span class="tk-stat-unit">${unit}</span></div>${extra || ''}</div></div>`;
+  const statsEl = document.getElementById('tkStats');
+  if (statsEl) {
+    statsEl.innerHTML =
+      card(TK_ICONS.today, '今日', todayTasks.length, '件') +
+      card(TK_ICONS.over, '期限切れ', overdueTasks.length, '件', '', overdueTasks.length > 0) +
+      card(TK_ICONS.week, '今週', weekTasks.length, '件') +
+      card(TK_ICONS.prog, '進捗', total > 0 ? `${doneTodayN}/${total}` : '—', total > 0 ? '完了' : '', `<div class="tk-bar"><span style="width:${pct || 0}%"></span></div>`);
+  }
+
+  // 2. ビュー切替ピル
+  const views = [['today', '今日', todayTasks.length], ['thisweek', '今週', weekTasks.length], ['later', '後で', laterTasks.length], ['undef', '未定', undefTasks.length], [null, 'すべて', pending.length]];
+  const viewsEl = document.getElementById('tkViews');
+  if (viewsEl) {
+    viewsEl.innerHTML = views.map(([v, label, n]) =>
+      `<button class="ui-pill tk-pill${todoState.viewFilter === v ? ' active' : ''}" onclick="setViewFilter(${v === null ? 'null' : `'${v}'`})">${label} <span class="tk-pill-n">${n}</span></button>`
+    ).join('') +
+      `<button class="ui-pill tk-pill tk-pill-done${todoState.showDone ? ' active' : ''}" onclick="toggleDoneList()">完了 <span class="tk-pill-n">${doneTasks.length}</span></button>`;
+  }
+
+  // 3. カテゴリ・タグ
+  const cats = [...new Set(pending.map(t => t.category).filter(Boolean))];
+  if (todoState.sectionFilter && !cats.includes(todoState.sectionFilter)) cats.push(todoState.sectionFilter);
+  const tagCount = {};
+  pending.forEach(t => (t.tags || []).forEach(tag => { tagCount[tag] = (tagCount[tag] || 0) + 1; }));
+  const topTags = Object.entries(tagCount).sort((a, b) => b[1] - a[1]).slice(0, 8).map(e => e[0]);
+  if (todoState.tagFilter && !topTags.includes(todoState.tagFilter)) topTags.push(todoState.tagFilter);
+  const filtersEl = document.getElementById('tkFilters');
+  if (filtersEl) {
+    filtersEl.innerHTML = `<select class="tk-cat-sel" onchange="setCatFilter(this.value)" aria-label="カテゴリ">
+      <option value="">すべてのカテゴリ</option>
+      ${cats.map(c => `<option value="${esc(c)}"${todoState.sectionFilter === c ? ' selected' : ''}>${esc(c)}（${pending.filter(t => t.category === c).length}）</option>`).join('')}
+    </select>` + topTags.map(tag =>
+      `<button class="ui-pill tk-mini${todoState.tagFilter === tag ? ' active' : ''}" onclick="setTagFilter(${jsq(tag)})">#${esc(tag)}</button>`
+    ).join('');
+  }
+
+  // 4. リスト
+  let filtered = pending;
+  if (todoState.sectionFilter) filtered = filtered.filter(t => t.category === todoState.sectionFilter);
+  if (todoState.tagFilter) filtered = filtered.filter(t => (t.tags || []).includes(todoState.tagFilter));
+  const v = todoState.viewFilter;
+  let groups = [];
+  if (v === 'today') {
+    const od = filtered.filter(t => bucketOf(t) === 'overdue');
+    const rest = filtered.filter(t => bucketOf(t) && bucketOf(t) !== 'overdue');
+    if (od.length) {
+      groups.push({ label: '期限切れ', danger: true, items: od });
+      groups.push({ label: '今日', items: rest, hideEmpty: true });
+    } else {
+      groups.push({ label: '', items: rest });
+    }
+  } else if (v === null) {
+    groups = [
+      { label: '期限切れ', danger: true, items: filtered.filter(t => bucketOf(t) === 'overdue'), hideEmpty: true },
+      { label: '今日', items: filtered.filter(t => bucketOf(t) && bucketOf(t) !== 'overdue'), hideEmpty: true },
+      { label: '今週', items: filtered.filter(t => !bucketOf(t) && cls(t) === 'thisweek'), hideEmpty: true },
+      { label: '後で', items: filtered.filter(t => !bucketOf(t) && cls(t) === 'later'), hideEmpty: true },
+      { label: '未定', items: filtered.filter(t => !bucketOf(t) && cls(t) === 'undef'), hideEmpty: true },
+    ];
+  } else {
+    groups.push({ label: '', items: filtered.filter(t => cls(t) === v) });
+  }
+  groups = groups.filter(g => !g.hideEmpty || g.items.length);
+
+  let html = '';
+  const anyItems = groups.some(g => g.items.length);
+  groups.forEach(g => {
+    if (!g.items.length) return;
+    const sorted = sortSectionTasks(g.items);
+    html += `<div class="tk-group">
+      ${g.label ? `<div class="tk-group-hdr${g.danger ? ' danger' : ''}"><span class="tk-group-mark"></span><span class="tk-group-label">${g.label}</span><span class="tk-group-n">${g.items.length}件</span></div>` : ''}
+      <div class="ui-card tk-group-card">${sorted.map(t => tkRowHTML(t, todayStr)).join('')}</div>
+    </div>`;
+  });
+  if (!anyItems) {
+    html = v === 'today'
+      ? `<div class="ui-card tk-empty"><div class="tk-empty-title">今日やることはありません</div><div class="tk-empty-sub">他のタスクの「今日やる」を押すと、ここに加わります</div></div>`
+      : `<div class="ui-card tk-empty"><div class="tk-empty-title">タスクがありません</div></div>`;
+  }
+
+  if (todoState.showDone) {
+    let dl = doneTasks;
+    if (todoState.sectionFilter) dl = dl.filter(t => t.category === todoState.sectionFilter);
+    if (todoState.tagFilter) dl = dl.filter(t => (t.tags || []).includes(todoState.tagFilter));
+    dl = [...dl].sort((a, b) => String(b.completedAt || '').localeCompare(String(a.completedAt || '')));
+    const shown = dl.slice(0, 30);
+    html += `<div class="tk-group">
+      <div class="tk-group-hdr"><span class="tk-group-label">完了済み</span><span class="tk-group-n">${dl.length}件</span></div>
+      <div class="ui-card tk-group-card">${shown.length ? shown.map(t => tkRowHTML(t, todayStr)).join('') : '<div class="tk-empty-sub" style="padding:16px">完了したタスクはありません</div>'}</div>
+      ${dl.length > shown.length ? `<div class="tk-more">ほか ${dl.length - shown.length} 件（新しい順に30件まで表示）</div>` : ''}
+    </div>`;
+  }
+  const listEl = document.getElementById('tkList');
+  if (listEl) listEl.innerHTML = html;
+}
+
+// ── RENDER (right detail panel) ──
+function tkRenderPanel() {
+  const el = document.getElementById('tkDetail');
+  if (!el) return;
+  const t = todoState.selectedId != null ? tkFind(todoState.selectedId) : null;
+  if (!t) {
+    todoState.selectedId = null;
+    el.innerHTML = tkEmptyPanelHTML();
+    return;
+  }
+  el.innerHTML = tkDetailHTML(t);
+}
+
+function tkEmptyPanelHTML() {
+  const days7 = '日月火水木金土'.split('');
+  const base = getTodayDate();
+  const items = [];
+  for (let i = 0; i <= 7; i++) {
+    const d = new Date(base); d.setDate(d.getDate() + i);
+    const ds = localDate(d);
+    tasks.filter(t => !t.done && t.due === ds)
+      .sort((a, b) => (a.dueTime || '').localeCompare(b.dueTime || ''))
+      .forEach(t => items.push({ date: d, task: t }));
+  }
+  const upcoming = items.length
+    ? items.slice(0, 8).map(({ date, task: t }) => {
+        const label = `${date.getMonth() + 1}/${date.getDate()}(${days7[date.getDay()]})${t.dueTime ? ' ' + t.dueTime : ''}`;
+        return `<div class="tk-up-item"><span class="tk-up-date">${esc(label)}</span><span class="tk-up-title">${esc(t.title)}</span></div>`;
+      }).join('')
+    : '<div class="tk-d-hint">今後7日間の予定はありません</div>';
+  return `<div class="tk-d-empty">
+      <div class="tk-d-empty-text">タスクを選ぶと、ここで詳しく編集できます</div>
+    </div>
+    <div class="tk-d-sec"><h3 class="tk-d-sec-title">今後の予定</h3>${upcoming}</div>
+    <div class="tk-d-sec"><h3 class="tk-d-sec-title">クイックメモ</h3>
+      <textarea class="tk-memo" id="tkQuickMemo" placeholder="メモを追加" oninput="saveQuickMemo(this.value)">${esc(loadQuickMemo())}</textarea>
+    </div>`;
+}
+
+function tkDetailHTML(t) {
+  const q = jsq(String(t.id));
+  const todayStr = localDate();
+  const bucket = todayBucket(t, todayStr);
+  const cats = [...new Set([...TV_CATEGORIES, t.category].filter(Boolean))];
+  const pr = t.priority || 'medium';
+  const noteVal = typeof t.note === 'string' ? t.note : (taskNotes[String(t.id)] || '');
+  const tags = [...new Set(t.tags || [])];
+  const tagsHTML = tags.map(tag => `<span class="tv-tag-chip tag-${esc(tag)}">${esc(tag)}</span>`).join('') || '';
+  let todayCtl;
+  if (t.done) todayCtl = '<span class="tk-d-hint">完了済み</span>';
+  else if (bucket === 'overdue') todayCtl = '<span class="tk-d-hint danger">期限切れのため今日に表示中</span>';
+  else if (bucket === 'due') todayCtl = '<span class="tk-d-hint">期限が今日のため今日に表示中</span>';
+  else todayCtl = `<button class="ui-pill tk-d-pill${bucket === 'picked' ? ' active' : ''}" onclick="togglePickToday(${q})">${bucket === 'picked' ? '今日から外す' : '今日やる'}</button>`;
+  const checkAct = t.done ? `undoCompleteById(${q})` : `completeTask(${q})`;
+  return `<div class="tk-d-head" data-task-id="${esc(t.id)}">
+      <button class="tk-check big${t.done ? ' done' : ''}" onclick="${checkAct}" aria-label="${t.done ? '未完了に戻す' : '完了にする'}"><span class="tk-check-box">${t.done ? '✓' : ''}</span></button>
+      <input class="tk-d-title" type="text" value="${esc(t.title)}" onchange="tkSetTitle(${q},this)" onkeydown="if(event.key==='Enter'&&!event.isComposing)this.blur()" aria-label="タイトル">
+      <button class="tk-d-close" onclick="tkDeselect()" aria-label="閉じる">✕</button>
+    </div>
+    <div class="tk-d-body">
+      <div class="tk-d-row"><label class="tk-d-lbl">期限</label>
+        <div class="tk-d-due"><input type="date" class="tk-d-in" value="${esc(t.due || '')}" onchange="tkSetDue(${q},this.value)"><input type="time" class="tk-d-in" value="${esc(t.dueTime || '')}" onchange="tkSetDueTime(${q},this.value)"></div></div>
+      <div class="tk-d-row"><label class="tk-d-lbl">優先度</label>
+        <div class="ui-seg tk-d-seg">
+          <button class="ui-seg-btn${pr === 'high' ? ' active' : ''}" onclick="tkSetPriority(${q},'high')">高い</button>
+          <button class="ui-seg-btn${pr === 'medium' ? ' active' : ''}" onclick="tkSetPriority(${q},'medium')">普通</button>
+          <button class="ui-seg-btn${pr === 'low' ? ' active' : ''}" onclick="tkSetPriority(${q},'low')">低い</button>
+        </div></div>
+      <div class="tk-d-row"><label class="tk-d-lbl">カテゴリ</label>
+        <select class="tk-d-in" onchange="tkSetCategory(${q},this.value)">${cats.map(c => `<option value="${esc(c)}"${t.category === c ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></div>
+      <div class="tk-d-row"><label class="tk-d-lbl">タグ</label>
+        <div class="tk-d-tags" onclick="openTvTagEditor(${q},event)">${tagsHTML}<span class="tk-tag-add always">＋ タグ</span></div></div>
+      <div class="tk-d-row"><label class="tk-d-lbl">今日</label>
+        <div class="tk-d-actions">${todayCtl}<button class="ui-pill tk-d-pill${t.isPinned ? ' active' : ''}" onclick="togglePin(${q})">${t.isPinned ? '★ ピン留め中' : '☆ ピン留め'}</button></div></div>
+      <div class="tk-d-row col"><label class="tk-d-lbl">メモ</label>
+        <textarea class="tk-memo" rows="4" placeholder="メモ" onchange="tkSetNote(${q},this.value)">${esc(noteVal)}</textarea></div>
+    </div>
+    <div class="tk-d-foot"><button class="tk-d-del" onclick="deleteTaskById(${q})">削除</button></div>`;
+}
+
+function renderTodayView() { tkRenderMain(); tkRenderPanel(); }
+
+// ── 右パネルの編集（保存して一覧だけ描き直す。パネル自身は描き直さない = 入力中のフォーカスを奪わない） ──
+function tkCommit(withPanel) {
+  saveTasks();
+  tkRenderMain();
+  if (withPanel) tkRenderPanel();
+  renderHome();
+  updateBadge();
+}
+function tkSetTitle(id, input) {
+  const t = tkFind(id); if (!t) return;
+  const v = input.value.trim();
+  if (!v) { input.value = t.title; return; }
+  t.title = v;
+  tkCommit(false);
+}
+function tkSetDue(id, val) { const t = tkFind(id); if (!t) return; t.due = val || null; tkCommit(true); }
+function tkSetDueTime(id, val) { const t = tkFind(id); if (!t) return; t.dueTime = val || null; tkCommit(false); }
+function tkSetPriority(id, p) { const t = tkFind(id); if (!t) return; t.priority = p; tkCommit(true); }
+function tkSetCategory(id, c) { const t = tkFind(id); if (!t) return; t.category = c; tkCommit(true); }
+function tkSetNote(id, val) {
+  const t = tkFind(id); if (!t) return;
+  setTaskNote(t.id, val); // setTaskNote は id を === で比べるので、元の型のまま渡す
+}
+
+async function deleteTaskById(id) {
+  const t = tkFind(id);
+  if (!t) return false;
+  const ok = await uiConfirm(`「${t.title}」を削除しますか？`, {title:'タスクを削除', okLabel:'削除', danger:true});
+  if (!ok) return false;
+  delete taskNotes[String(id)];
+  saveTaskNotes();
+  delTask(id);
+  return true;
 }
 
 // ── HELPER ──
 function updateEl(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
-
-// ── PROGRESS DONUT ──
-function renderProgressDonut(todayDone, todayTotal) {
-  if (todayTotal === 0) return '<div class="trs-donut-empty">今日のタスクなし</div>';
-  const pct = Math.round((todayDone / todayTotal) * 100);
-  const r = 56, c = 2 * Math.PI * r;
-  const doneLen = (todayDone / todayTotal) * c;
-  return `<svg viewBox="0 0 160 160" class="trs-donut-svg">
-    <circle cx="80" cy="80" r="${r}" fill="none" stroke="#e5e7eb" stroke-width="16"/>
-    ${todayDone > 0 ? `<circle cx="80" cy="80" r="${r}" fill="none" stroke="#5a6b3a" stroke-width="16" stroke-dasharray="${doneLen} ${c - doneLen}" stroke-dashoffset="0" transform="rotate(-90 80 80)"/>` : ''}
-    <text x="80" y="78" text-anchor="middle" class="trs-donut-num">${pct}%</text>
-    <text x="80" y="98" text-anchor="middle" class="trs-donut-label">${todayDone}/${todayTotal}件完了</text>
-  </svg>`;
-}
-
-// ── RENDER TODAY VIEW (main todo render) ──
-function renderTodayView() {
-  const now = getTodayDate();
-  const thisSun = getThisWeekSunday(now);
-  const pending = tasks.filter(t => !t.done);
-
-  const todayTasks    = pending.filter(t => classifyTask(t, now, thisSun) === 'today');
-  const thisweekTasks = pending.filter(t => classifyTask(t, now, thisSun) === 'thisweek');
-  const laterTasks    = pending.filter(t => classifyTask(t, now, thisSun) === 'later');
-  const undefTasks    = pending.filter(t => classifyTask(t, now, thisSun) === 'undef');
-
-  // 1. 左サイドバー
-  updateEl('tvCntAll', pending.length);
-  updateEl('tvCntToday', todayTasks.length);
-  updateEl('tvCntThisweek', thisweekTasks.length);
-  updateEl('tvCntLater', laterTasks.length);
-  updateEl('tvCntUndef', undefTasks.length);
-
-  const catNav = document.getElementById('tvCatNav');
-  if (catNav) {
-    const cats = [...new Set(tasks.map(t => t.category))];
-    catNav.innerHTML = cats.map(cat => {
-      const cnt = pending.filter(t => t.category === cat).length;
-      const isAct = todoState.sectionFilter === cat;
-      const col = getCatColor(cat);
-      return `<button class="ts-sec-item${isAct ? ' active' : ''}" onclick="setCatFilter('${esc(cat)}')">
-        <span style="width:8px;height:8px;border-radius:50%;background:${col};display:inline-block;flex-shrink:0"></span>
-        <span style="flex:1;margin-left:6px">${esc(cat)}</span>
-        <span class="ts-sec-cnt">${cnt}</span>
-      </button>`;
-    }).join('');
-  }
-
-  const allTagsMap = {};
-  pending.forEach(t => { (t.tags || []).forEach(tag => { allTagsMap[tag] = (allTagsMap[tag] || 0) + 1; }); });
-  const sortedTags = Object.entries(allTagsMap).sort((a, b) => b[1] - a[1]);
-
-  const tagNav = document.getElementById('tvTagNav');
-  if (tagNav) {
-    tagNav.innerHTML = sortedTags.slice(0, 8).map(([tag]) => {
-      const isAct = todoState.tagFilter === tag;
-      return `<button class="tv-sidebar-tag tv-tag-chip tag-${esc(tag)}${isAct ? ' active' : ''}" onclick="setTagFilter(${jsq(tag)})">${esc(tag)}</button>`;
-    }).join('');
-  }
-
-  // 2. ヘッダー
-  updateEl('tvMainTitle', '今日やること');
-  updateEl('tvMainDate', fmtFull(new Date()));
-
-  // 3. 統計カード
-  const todayAllTasks = tasks.filter(t => t.due && new Date(t.due + 'T00:00:00') <= now);
-  const todayDone = todayAllTasks.filter(t => t.done).length;
-  const todayTotal = todayAllTasks.length;
-  const pct = todayTotal > 0 ? Math.round((todayDone / todayTotal) * 100) : null;
-  const statsEl = document.getElementById('tvStats');
-  if (statsEl) {
-    statsEl.innerHTML = `
-      <div class="tv-stat-card"><div class="tv-stat-label">今日</div><div class="tv-stat-num">${todayTasks.length}</div><div class="tv-stat-sub">件</div></div>
-      <div class="tv-stat-card"><div class="tv-stat-label">今週</div><div class="tv-stat-num">${thisweekTasks.length}</div><div class="tv-stat-sub">件</div></div>
-      <div class="tv-stat-card"><div class="tv-stat-label">未定</div><div class="tv-stat-num">${undefTasks.length}</div><div class="tv-stat-sub">件</div></div>
-      <div class="tv-stat-card"><div class="tv-stat-label">進捗</div><div class="tv-stat-num">${pct !== null ? pct + '%' : '—'}</div><div class="tv-stat-sub">${todayTotal > 0 ? `${todayDone}/${todayTotal}件完了` : '今日のタスクなし'}</div></div>`;
-  }
-
-  // 4. フィルタリング
-  let filtered = pending;
-  if (todoState.sectionFilter) filtered = filtered.filter(t => t.category === todoState.sectionFilter);
-  if (todoState.tagFilter) filtered = filtered.filter(t => (t.tags || []).includes(todoState.tagFilter));
-  if (todoState.viewFilter === 'today')    filtered = filtered.filter(t => classifyTask(t, now, thisSun) === 'today');
-  else if (todoState.viewFilter === 'thisweek') filtered = filtered.filter(t => classifyTask(t, now, thisSun) === 'thisweek');
-  else if (todoState.viewFilter === 'later')    filtered = filtered.filter(t => classifyTask(t, now, thisSun) === 'later');
-  else if (todoState.viewFilter === 'undef')    filtered = filtered.filter(t => classifyTask(t, now, thisSun) === 'undef');
-
-  // 5/6. セクション描画
-  const sections = [
-    { key:'today',    label:'📅 今日', tasks: filtered.filter(t => classifyTask(t, now, thisSun) === 'today') },
-    { key:'thisweek', label:'📆 今週', tasks: filtered.filter(t => classifyTask(t, now, thisSun) === 'thisweek') },
-    { key:'later',    label:'🗓 後で', tasks: filtered.filter(t => classifyTask(t, now, thisSun) === 'later') },
-    { key:'undef',    label:'💭 未定', tasks: filtered.filter(t => classifyTask(t, now, thisSun) === 'undef') },
-  ];
-
-  const sectionsEl = document.getElementById('tvSections');
-  if (!sectionsEl) return;
-  let html = '';
-  sections.forEach(sec => {
-    const sorted = sortSectionTasks(sec.tasks);
-    if (sec.key === 'today') {
-      html += `<div class="tv-section">
-        <div class="tv-sec-hdr today-hdr">
-          <span class="tv-sec-label">${sec.label}</span>
-          <span class="tv-sec-count">&nbsp;(${sorted.length}件)</span>
-          <span style="margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink3)">期限が近い順</span>
-        </div>
-        <div>${sorted.map(t => tvRowHTML(t)).join('')}</div>
-        <div class="tv-add-row" onclick="openAddTaskForSection('today')">＋ タスクを追加</div>
-      </div>`;
-    } else {
-      if (!sorted.length) return;
-      const isOpen = tvOpenSections[sec.key];
-      html += `<div class="tv-section">
-        <div class="tv-sec-hdr" onclick="toggleSection('${sec.key}')">
-          <span class="tv-sec-label">${sec.label}</span>
-          <span class="tv-sec-count">&nbsp;(${sorted.length}件)</span>
-          <span class="tv-sec-chevron">${isOpen ? '▲' : '▼'}</span>
-        </div>`;
-      if (isOpen) {
-        html += `<div>${sorted.map(t => tvRowHTML(t)).join('')}</div>
-        <div class="tv-add-row" onclick="openAddTaskForSection('${sec.key}')">＋ タスクを追加</div>`;
-      } else {
-        const preview = sorted.slice(0, 3);
-        const remaining = sorted.length - 3;
-        html += `<div class="tv-sec-preview">
-          ${preview.map(t => `<span class="tv-sec-preview-item">・${esc(t.title)}</span>`).join('')}
-          ${remaining > 0 ? `<span class="tv-sec-preview-more" onclick="toggleSection('${sec.key}')">+ さらに${remaining}件を表示</span>` : ''}
-        </div>`;
-      }
-      html += `</div>`;
-    }
-  });
-  if (!html) html = '<div class="empty" style="padding:40px 24px"><div class="ei">✓</div><div>タスクがありません</div></div>';
-  sectionsEl.innerHTML = html;
-
-  // 7. 右サイドバー
-  const progressEl = document.getElementById('tvProgress');
-  if (progressEl) {
-    progressEl.innerHTML = renderProgressDonut(todayDone, todayTotal) +
-      `<ul class="trs-donut-legend" style="margin-top:10px">
-        <li><span class="dot" style="background:#dc2626"></span>今日<span class="n">${todayTasks.length}</span></li>
-        <li><span class="dot" style="background:#f59e0b"></span>今週<span class="n">${thisweekTasks.length}</span></li>
-        <li><span class="dot" style="background:#2563eb"></span>後で<span class="n">${laterTasks.length}</span></li>
-        <li><span class="dot" style="background:#9ca3af"></span>未定<span class="n">${undefTasks.length}</span></li>
-      </ul>`;
-  }
-
-  const days7 = '日月火水木金土'.split('');
-  const upcomingEl = document.getElementById('tvUpcoming');
-  if (upcomingEl) {
-    const items = [];
-    for (let i = 0; i <= 7; i++) {
-      const d = new Date(now); d.setDate(d.getDate() + i);
-      const ds = d.toISOString().split('T')[0];
-      tasks.filter(t => !t.done && t.due === ds)
-        .sort((a, b) => (a.dueTime || '').localeCompare(b.dueTime || ''))
-        .forEach(t => items.push({ date: d, task: t }));
-    }
-    upcomingEl.innerHTML = items.length
-      ? items.slice(0, 8).map(({ date, task: t }) => {
-          const ds2 = `${date.getMonth() + 1}/${date.getDate()}(${days7[date.getDay()]})`;
-          const ts = t.dueTime ? ` ${t.dueTime}` : '';
-          return `<div class="tv-upcoming-item"><span class="tv-upcoming-date">${ds2}${ts}</span><span class="tv-upcoming-title">${esc(t.title)}</span></div>`;
-        }).join('')
-      : '<div style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--mute);padding:6px 0">今後7日間の予定はありません</div>';
-  }
-
-  const topTagsEl = document.getElementById('tvTopTags');
-  if (topTagsEl) {
-    topTagsEl.innerHTML = sortedTags.slice(0, 6).map(([tag]) => {
-      const isAct = todoState.tagFilter === tag;
-      return `<button class="trs-tag-btn tv-tag-chip tag-${esc(tag)}${isAct ? ' active' : ''}" onclick="setTagFilter(${jsq(tag)})">${esc(tag)}</button>`;
-    }).join('');
-  }
-
-  const doneTodayEl = document.getElementById('tvDoneToday');
-  if (doneTodayEl) {
-    const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-    const doneTodayCnt = tasks.filter(t => t.done && t.completedAt && t.completedAt.startsWith(todayStr)).length;
-    const doneAllCnt = tasks.filter(t => t.done).length;
-    const doneTasks = tasks.filter(t => t.done);
-    doneTodayEl.innerHTML = `
-      <div style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:var(--ok)">${doneTodayCnt}件</div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--mute);margin-top:2px">今日完了</div>
-      <div style="margin-top:8px;">
-        <button onclick="toggleDoneList()" style="background:none;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink3);padding:0;text-decoration:underline;">累計 ${doneAllCnt}件完了 ›</button>
-      </div>
-      <div id="tvDoneList" style="display:none;margin-top:8px;max-height:200px;overflow-y:auto;">
-        ${doneTasks.length ? doneTasks.map(t=>`<div style="font-size:12px;padding:4px 0;border-bottom:1px solid var(--rule);color:var(--ink2);display:flex;align-items:center;gap:6px;">
-          <button onclick="undoCompleteById('${t.id}')" style="background:none;border:1px solid var(--rule);border-radius:3px;cursor:pointer;font-size:10px;padding:1px 5px;color:var(--ink3);flex-shrink:0;">戻す</button>
-          <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.title)}</span>
-        </div>`).join('') : '<div style="font-size:12px;color:var(--mute);padding:4px 0;">完了タスクなし</div>'}
-      </div>`;
-  }
-
-  const memoEl = document.getElementById('tvQuickMemo');
-  if (memoEl && !memoEl._loaded) {
-    memoEl.value = loadQuickMemo();
-    memoEl._loaded = true;
-  }
-}
-
-function toggleDoneList() {
-  const el = document.getElementById('tvDoneList');
-  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}
 
 // ── TAG EDITOR ──
 let _tvTagEditId = null;
@@ -427,7 +508,7 @@ const TV_ALL_TAGS = ['重要','手続き','準備','連絡','見直し','家事'
 
 function openTvTagEditor(id, e) {
   _tvTagEditId = id;
-  const t = tasks.find(t => String(t.id) === String(id));
+  const t = tkFind(id);
   if (!t) return;
   const tags = Array.isArray(t.tags) ? t.tags : [];
   // タスクが持つタグ ＋ 全既存タグ ＋ TV_ALL_TAGS の和集合
@@ -440,13 +521,13 @@ function openTvTagEditor(id, e) {
   // 位置計算
   const rect = e.currentTarget.getBoundingClientRect();
   pop.style.top = (rect.bottom + 4) + 'px';
-  pop.style.left = Math.min(rect.left, window.innerWidth - 230) + 'px';
+  pop.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 230)) + 'px';
   pop.classList.add('open');
   e.stopPropagation();
 }
 
 function tvToggleTag(tag) {
-  const t = tasks.find(t => String(t.id) === String(_tvTagEditId));
+  const t = tkFind(_tvTagEditId);
   if (!t) return;
   if (!Array.isArray(t.tags)) t.tags = [];
   const idx = t.tags.indexOf(tag);
@@ -457,7 +538,7 @@ function tvToggleTag(tag) {
   // ポップオーバーを再描画（選択状態を更新）
   const allTags = [...new Set([...TV_ALL_TAGS, ...tasks.flatMap(tt => tt.tags||[]), ...t.tags])];
   document.getElementById('tvTagPopGrid').innerHTML = allTags.map(tag2 =>
-    `<span class="tv-tag-pop-chip tag-${esc(tag2)}${(t.tags||[]).includes(tag2)?' sel':''}" onclick="tvToggleTag('${esc(tag2)}')">${esc(tag2)}</span>`
+    `<span class="tv-tag-pop-chip tag-${esc(tag2)}${(t.tags||[]).includes(tag2)?' sel':''}" onclick="tvToggleTag(${jsq(tag2)})">${esc(tag2)}</span>`
   ).join('');
 }
 
@@ -474,18 +555,13 @@ function closeTvTagPop() {
   _tvTagEditId = null;
 }
 
-function undoCompleteById(id) {
-  const t = tasks.find(t => String(t.id) === String(id));
-  if (t) { t.done = false; t.completedAt = null; saveTasks(); renderTodayView(); renderHome(); updateBadge(); }
-}
-
-// ── TASK EDIT SHEET ──
+// ── TASK EDIT SHEET (スマホ用。PC は右パネルで編集) ──
 let _taskEditId = null;
 let _taskEditTags = null;
 const TV_CATEGORIES = ['仕事','手続き','家事','買い物','修理','ダッシュボード改善案','その他'];
 
 function openTaskEditSheet(id) {
-  const t = tasks.find(t => String(t.id) === String(id));
+  const t = tkFind(id);
   if (!t) return;
   _taskEditId = String(id);
   _taskEditTags = [...(t.tags || [])];
@@ -512,6 +588,8 @@ function _renderTaskEditBody() {
   const tags = _taskEditTags || [];
   const allTags = [...new Set([...TV_ALL_TAGS, ...tasks.flatMap(tt => tt.tags||[]), ...tags])];
   const noteVal = typeof t.note === 'string' ? t.note : (taskNotes[_taskEditId] || '');
+  const pr = t.priority || 'medium';
+  const todayPicked = t.todayDate === localDate();
 
   document.getElementById('taskEditBody').innerHTML = `
     <div>
@@ -528,11 +606,21 @@ function _renderTaskEditBody() {
         <input class="ldr-modal-in" id="teTime" type="time" value="${esc(t.dueTime||'')}">
       </div>
     </div>
-    <div>
-      <label class="ldr-modal-lbl">カテゴリ</label>
-      <select class="ldr-modal-in" id="teCat">
-        ${TV_CATEGORIES.map(c => `<option value="${esc(c)}"${t.category===c?' selected':''}>${esc(c)}</option>`).join('')}
-      </select>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:140px;">
+        <label class="ldr-modal-lbl">カテゴリ</label>
+        <select class="ldr-modal-in" id="teCat">
+          ${[...new Set([...TV_CATEGORIES, t.category].filter(Boolean))].map(c => `<option value="${esc(c)}"${t.category===c?' selected':''}>${esc(c)}</option>`).join('')}
+        </select>
+      </div>
+      <div style="flex:1;min-width:120px;">
+        <label class="ldr-modal-lbl">優先度</label>
+        <select class="ldr-modal-in" id="tePrio">
+          <option value="high"${pr==='high'?' selected':''}>高い</option>
+          <option value="medium"${pr==='medium'?' selected':''}>普通</option>
+          <option value="low"${pr==='low'?' selected':''}>低い</option>
+        </select>
+      </div>
     </div>
     <div>
       <label class="ldr-modal-lbl">タグ</label>
@@ -549,6 +637,9 @@ function _renderTaskEditBody() {
       <textarea class="ldr-modal-in" id="teNote" rows="3" style="resize:vertical;line-height:1.5;height:auto;" placeholder="メモ">${esc(noteVal)}</textarea>
     </div>
     <div style="display:flex;gap:16px;flex-wrap:wrap;padding:4px 0;">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:13px;">
+        <input type="checkbox" id="teToday"${todayPicked?' checked':''}> 今日やる
+      </label>
       <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-family:'Space Grotesk',sans-serif;font-size:13px;">
         <input type="checkbox" id="tePinned"${t.isPinned?' checked':''}> ピン留め
       </label>
@@ -611,7 +702,9 @@ function saveTaskEditSheet() {
   t.due = document.getElementById('teDue').value || null;
   t.dueTime = document.getElementById('teTime').value || null;
   t.category = document.getElementById('teCat').value;
+  t.priority = document.getElementById('tePrio').value;
   t.isPinned = document.getElementById('tePinned').checked;
+  if (document.getElementById('teToday').checked) t.todayDate = localDate(); else if (t.todayDate === localDate()) delete t.todayDate;
   t.tags = [...(_taskEditTags || [])];
   const wasDone = t.done;
   t.done = document.getElementById('teDone').checked;
@@ -628,13 +721,5 @@ function saveTaskEditSheet() {
 
 async function deleteTaskFromSheet() {
   if (!_taskEditId) return;
-  const id = _taskEditId;
-  const t = tasks.find(t => String(t.id) === id);
-  if (!t) return;
-  const ok = await uiConfirm(`「${t.title}」を削除しますか？`, {title:'タスクを削除', okLabel:'削除', danger:true});
-  if (!ok) return;
-  closeTaskEditSheet();
-  delete taskNotes[id];
-  saveTaskNotes();
-  delTask(id);
+  if (await deleteTaskById(_taskEditId)) closeTaskEditSheet();
 }

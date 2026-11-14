@@ -77,58 +77,46 @@
       .food-popup-overlay { z-index:7100; }
 
       /* ── ToDo（1列レイアウト） ── */
-      #page-todo { min-width: unset; overflow-x: hidden; }
-      /* グリッドを1列に変更・min-height 解除 */
-      .todo-app { grid-template-columns: 1fr; min-height: unset; }
-      /* sidebar-l を display:contents に → 子要素がグリッドの直接アイテムになる */
-      .todo-sidebar-l { display: contents; }
-      /* ☑ Todo 見出しは非表示 */
-      .ts-head { display: none; }
-      /* "ビュー" ラベルも非表示（ボタン自体が自明） */
-      .ts-view-label { display: none; }
-      /* ① ビュー切替：横並び・横スクロール (order:1 = 最上部) */
-      #tvViewNav {
-        order: 1;
-        display: flex; flex-direction: row; flex-wrap: nowrap;
-        overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
-        padding: 8px 10px; gap: 4px;
-        background: var(--paper2); border-bottom: 1px solid var(--rule);
-      }
-      #tvViewNav::-webkit-scrollbar { display: none; }
-      #tvViewNav .ts-nav-item {
-        flex-shrink: 0; width: auto; padding: 6px 12px;
-        border-radius: 20px; border: 1px solid rgba(26,24,20,0.12);
-      }
-      #tvViewNav .ts-nav-item.active { border-color: var(--accent); }
-      /* ② メイン (order:2) */
-      .todo-main { order: 2; overflow: visible; }
-      .tv-sections { overflow-y: visible; flex: none; }
-      /* ③ カテゴリ・タグ (order:3) */
-      .ts-cat-label { order: 3; border-top: 1px solid var(--rule); }
-      #tvCatNav { order: 3; flex-direction: row; flex-wrap: wrap; }
-      #tvCatNav .ts-sec-item { width: auto; padding: 4px 10px; border-radius: 14px; }
-      .ts-tag-label { order: 3; }
-      #tvTagNav { order: 3; }
-      /* ④ 右サイドバー (order:4) */
-      .todo-sidebar-r { order: 4; border-left: none; border-top: 2px solid var(--rule); background: var(--paper2); }
-      /* メイン内パディング調整 */
-      .tm-head { padding: 14px 14px 10px; }
-      .todo-main .add-form { padding: 14px 14px; }
-      .todo-main { min-width: 0; }
-      .tv-row { padding: 8px 14px; }
-      .tv-sec-hdr { padding: 10px 14px; }
-      .tv-add-row { padding: 8px 14px; }
-      .tv-sec-preview { padding: 6px 14px 8px; }
-      /* 統計カード 2列 */
-      .tv-stats { grid-template-columns: repeat(2, 1fr); }
-      .tv-stat-card:nth-child(even) { border-right: none; }
-      /* 行内カテゴリ・タグチップは非表示（省略） */
-      .tv-cat { display: none; }
-      .tv-tags { display: none; }
-      /* 時刻は非表示（横スペース確保） */
-      .tv-time { display: none; }
-      /* 完了ボタン：押しやすい大きさ */
-      .tv-done-btn { min-height: 32px; min-width: 56px; font-size: 12px; padding: 4px 8px; }
+      #page-todo { overflow-x: hidden; }
+      .tk-page { padding: 14px 14px 28px; }
+      .tk-2col { grid-template-columns: minmax(0, 1fr); gap: 0; }
+      /* 右パネルはなし（行のタップで編集シートを開く） */
+      .tk-detail-panel { display: none; }
+      .tk-header { margin-bottom: 12px; }
+      .tk-header-icon svg { width: 28px; height: 28px; }
+      .tk-header-title { font-size: 24px; }
+      /* サマリー 2×2 */
+      .tk-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+      .tk-stat-card { padding: 10px 12px; }
+      .tk-stat-icon { display: none; }
+      .tk-stat-num { font-size: 22px; }
+      /* ビュー切替：横スクロール、押しやすい高さ */
+      .tk-views { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; margin-bottom: 8px; }
+      .tk-views::-webkit-scrollbar { display: none; }
+      .tk-pill { flex-shrink: 0; min-height: 44px; height: 44px; }
+      .tk-pill-done { margin-left: 0; }
+      .tk-filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-bottom: 10px; }
+      .tk-filters::-webkit-scrollbar { display: none; }
+      .tk-cat-sel { flex-shrink: 0; min-height: 44px; font-size: 14px; }
+      .tk-mini { flex-shrink: 0; min-height: 44px; padding: 3px 14px; font-size: 13px; }
+      /* 追加入力（リストの先頭） */
+      .tk-add { padding: 8px; margin-bottom: 12px; }
+      .tk-add-input, .tk-add-more-btn, .tk-btn-accent { height: 44px; }
+      .tk-add-input { font-size: 16px; } /* iOS のズーム防止 */
+      .tk-add-more { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .tk-add-fld select, .tk-add-fld input { height: 44px; font-size: 16px; }
+      .tk-add-check { min-height: 44px; }
+      /* 行 */
+      .tk-row { padding: 6px 10px 6px 2px; min-height: 60px; gap: 6px; }
+      .tk-check { width: 44px; height: 44px; }
+      .tk-pick { height: 44px; min-width: 56px; padding: 0 10px; font-size: 12px; white-space: normal; line-height: 1.2; max-width: 84px; }
+      /* ピン・タグ・期限はタップを行へ通す（編集はシートで） */
+      .tk-pin { pointer-events: none; width: 20px; }
+      .tk-pin:not(.pinned) { display: none; }
+      .tk-tags { pointer-events: none; }
+      .tk-tag-add, .tk-due-none { display: none; }
+      .tk-due { pointer-events: none; }
+      .tk-time { display: inline; }
       /* タスク編集シート：下から出るシート */
       #taskEditModal { max-height: 90vh; overflow-y: auto; border-radius: 16px 16px 0 0; }
       #taskEditModal .ldr-modal-in { min-height: 40px; }

@@ -32,11 +32,13 @@ let _notesCal = { y: new Date().getFullYear(), m: new Date().getMonth() };
 
 // ── TODO STATE ──
 let todoState = {
-  viewFilter: null,
-  sectionFilter: null,
+  viewFilter: 'today',   // 'today' | 'thisweek' | 'later' | 'undef' | null(すべて)
+  sectionFilter: null,   // カテゴリ
   tagFilter: null,
+  selectedId: null,      // PC の右パネルで開いているタスク
+  showDone: false,       // 完了リストを開いているか
+  addOpen: false,        // 追加フォームの詳細を開いているか
 };
-const tvOpenSections = { today: true, thisweek: false, later: false, undef: false };
 let vy = new Date().getFullYear(), vm = new Date().getMonth();
 const PAGE_TITLES = { home:'ホーム', todo:'TODO', finance:'家計 / 資産', shopping:'買い物リスト', travel:'旅行', food:'食事' };
 

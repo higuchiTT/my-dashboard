@@ -1,70 +1,153 @@
-    /* ── 左サイドバー ── */
-    .todo-sidebar-l { background: #fafafa; border-right: 1px solid var(--rule); display: flex; flex-direction: column; padding: 0; overflow-y: auto; }
-    .ts-head { display: flex; align-items: center; gap: 10px; padding: 20px 16px 14px; border-bottom: 1px solid rgba(26,24,20,0.12); }
-    .ts-head-icon { font-size: 22px; }
-    .ts-head-title { font-family: 'Newsreader', serif; font-size: 20px; font-weight: 800; font-style: italic; }
-    .ts-nav { display: flex; flex-direction: column; padding: 8px 0; }
-    .ts-nav-item { display: flex; align-items: center; gap: 0; padding: 8px 16px; border: none; background: transparent; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--ink2); transition: background 0.12s; text-align: left; width: 100%; }
-    .ts-nav-item:hover { background: rgba(26,24,20,0.06); }
-    .ts-nav-item.active { background: rgba(139,58,24,0.09); color: var(--accent); font-weight: 600; }
-    .ts-nav-label { flex: 1; }
-    .ts-nav-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: var(--ink3); background: var(--paper3); padding: 1px 6px; border-radius: 10px; min-width: 22px; text-align: center; }
-    .ts-group-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mute); padding: 12px 16px 4px; }
-    .ts-sec-nav { display: flex; flex-direction: column; padding: 0 0 4px; }
-    .ts-sec-item { display: flex; align-items: center; gap: 0; padding: 7px 16px; border: none; background: transparent; cursor: pointer; font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink2); transition: background 0.12s; text-align: left; width: 100%; }
-    .ts-sec-item:hover { background: rgba(26,24,20,0.06); }
-    .ts-sec-item.active { background: rgba(139,58,24,0.09); color: var(--accent); font-weight: 600; }
-    .ts-sec-cnt { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); margin-left: auto; }
-    .tv-tag-list { display: flex; flex-wrap: wrap; gap: 5px; padding: 4px 16px 12px; }
-    .tv-sidebar-tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 3px; border: 1px solid rgba(26,24,20,0.15); background: transparent; cursor: pointer; font-weight: 600; transition: all 0.12s; }
-    .tv-sidebar-tag:hover { background: rgba(26,24,20,0.06); }
-    .tv-sidebar-tag.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    /* ══ To-Do（Food と同じ作り: ui-card / ui-pill / ui-seg ＋ 右の詳細パネル） ══ */
+    .tk-page { padding: 28px 40px 40px; }
+    .tk-2col { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 20px; align-items: start; }
+    .tk-main { min-width: 0; }
 
-    /* ── メインエリア ── */
-    .todo-main { background: #fff; display: flex; flex-direction: column; overflow: hidden; }
-    .tm-head { display: flex; align-items: flex-start; justify-content: space-between; padding: 20px 24px 12px; border-bottom: 1px solid rgba(26,24,20,0.12); }
-    .tm-title { font-family: 'Newsreader', serif; font-size: 22px; font-weight: 800; font-style: italic; }
-    .tm-sub { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); margin-top: 4px; }
-    .tm-head-act { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-    .todo-main .add-form { margin: 0; border-bottom: 1px solid var(--rule); padding: 14px 24px; background: var(--paper2); border-radius: 0; }
+    /* ヘッダー */
+    .tk-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .tk-header-icon { color: var(--accent); display: flex; flex-shrink: 0; }
+    .tk-header-title { font-family: 'Newsreader', serif; font-size: 34px; font-weight: 800; font-style: normal; line-height: 1; color: var(--ink); }
+    .tk-header-date { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink3); margin-top: 6px; }
 
-    /* ── 統計カード ── */
-    .tv-stats { display: grid; grid-template-columns: repeat(4,1fr); border-bottom: 1px solid rgba(26,24,20,0.12); background: #fafafa; flex-shrink: 0; }
-    .tv-stat-card { padding: 14px 20px; border-right: 1px solid rgba(26,24,20,0.1); }
-    .tv-stat-card:last-child { border-right: none; }
-    .tv-stat-label { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3); font-weight: 600; margin-bottom: 4px; }
-    .tv-stat-num { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; color: var(--ink); }
-    .tv-stat-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); margin-top: 2px; }
+    /* サマリーカード */
+    .tk-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+    .tk-stat-card { display: flex; align-items: center; gap: 10px; padding: 12px 14px; min-width: 0; background: var(--paper); border: 1px solid rgba(26,24,20,0.12); border-radius: 10px; box-shadow: 0 1px 6px rgba(26,24,20,0.06); }
+    .tk-stat-icon { color: var(--accent); display: flex; flex-shrink: 0; }
+    .tk-stat-card.danger { border-color: rgba(139,58,24,0.45); background: rgba(139,58,24,0.06); }
+    .tk-stat-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 auto; }
+    .tk-stat-label { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink3); font-weight: 600; white-space: nowrap; }
+    .tk-stat-num-row { display: flex; align-items: baseline; gap: 3px; }
+    .tk-stat-num { font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700; line-height: 1; color: var(--ink); }
+    .tk-stat-card.danger .tk-stat-num { color: var(--red); }
+    .tk-stat-unit { font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: var(--ink3); }
+    .tk-bar { height: 5px; border-radius: 3px; background: var(--paper3); overflow: hidden; margin-top: 4px; }
+    .tk-bar span { display: block; height: 100%; background: var(--ok); border-radius: 3px; transition: width 0.3s; }
 
-    /* ── セクション ── */
-    .tv-sections { flex: 1; overflow-y: auto; }
-    .tv-section { border-bottom: 1px solid rgba(26,24,20,0.1); }
-    .tv-sec-hdr { display: flex; align-items: center; gap: 8px; padding: 10px 24px; cursor: pointer; user-select: none; background: #fafafa; border-bottom: 1px solid rgba(26,24,20,0.08); }
-    .tv-sec-hdr:hover { background: rgba(26,24,20,0.03); }
-    .tv-sec-hdr.today-hdr { background: #fff; cursor: default; border-bottom: 2px solid var(--rule); }
-    .tv-sec-hdr.today-hdr:hover { background: #fff; }
-    .tv-sec-label { font-family: 'Newsreader', serif; font-size: 15px; font-weight: 700; font-style: italic; }
-    .tv-sec-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); }
-    .tv-sec-chevron { font-size: 11px; color: var(--mute); margin-left: auto; }
-    .tv-sec-preview { padding: 6px 24px 8px; background: #fafafa; }
-    .tv-sec-preview-item { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink3); padding: 2px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .tv-sec-preview-more { display: inline-block; margin-top: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent); cursor: pointer; }
-    .tv-sec-preview-more:hover { text-decoration: underline; }
+    /* ビュー切替・フィルタ */
+    .tk-views { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+    .tk-pill { height: 38px; display: inline-flex; align-items: center; gap: 4px; font-size: 14px; }
+    .tk-pill-n { font-family: 'JetBrains Mono', monospace; font-size: 11px; opacity: 0.75; }
+    .tk-pill-done { margin-left: auto; }
+    .tk-filters { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+    .tk-mini { padding: 3px 10px; font-size: 12px; }
+    .tk-cat-sel { height: 32px; max-width: 100%; font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; padding: 0 10px; border: 1.5px solid rgba(26,24,20,0.25); border-radius: 20px; background: var(--paper); color: var(--ink2); outline: none; }
 
-    /* ── タスク行 ── */
-    .tv-row { display: flex; align-items: center; gap: 10px; padding: 10px 24px; border-bottom: 1px solid rgba(26,24,20,0.06); min-height: 44px; transition: background 0.12s; }
-    .tv-row:hover { background: rgba(26,24,20,0.02); }
-    .tv-dot { width: 8px; height: 8px; min-width: 8px; border-radius: 50%; flex-shrink: 0; }
-    .tv-done-btn { font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(26,24,20,0.2); background: transparent; cursor: pointer; flex-shrink: 0; color: var(--ink); white-space: nowrap; transition: border-color 0.15s, color 0.15s; }
-    .tv-done-btn:hover { border-color: var(--ok); color: var(--ok); }
-    .tv-done-btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
-    .tv-title { font-family: 'Space Grotesk', sans-serif; font-size: 14px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .tv-pin { font-size: 14px; cursor: pointer; color: var(--mute); flex-shrink: 0; line-height: 1; padding: 2px 4px; border: none; background: transparent; }
-    .tv-pin.pinned { color: #f59e0b; }
-    .tv-pin:hover { opacity: 0.7; }
-    .tv-time { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); flex-shrink: 0; }
-    .tv-cat { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 3px; white-space: nowrap; flex-shrink: 0; color: #fff; font-weight: 600; }
-    .tv-tags { display: flex; gap: 4px; flex-shrink: 0; cursor: pointer; }
+    /* 追加フォーム */
+    .tk-add { padding: 10px; margin-bottom: 16px; }
+    .tk-add-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 8px; align-items: center; }
+    .tk-add-input { width: 100%; min-width: 0; height: 42px; padding: 0 12px; font-family: 'Space Grotesk', sans-serif; font-size: 14px; border: 1.5px solid rgba(26,24,20,0.2); border-radius: 8px; background: var(--paper); color: var(--ink); outline: none; }
+    .tk-add-input:focus { border-color: var(--ink); }
+    .tk-add-input::placeholder { color: var(--mute); }
+    .tk-add-more-btn { height: 42px; padding: 0 14px; border: 1.5px solid rgba(26,24,20,0.2); border-radius: 8px; background: transparent; color: var(--ink2); font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .tk-add-more-btn.active { background: var(--paper2); border-color: var(--ink); }
+    .tk-btn-accent { height: 42px; padding: 0 20px; border: none; border-radius: 8px; background: var(--accent); color: var(--paper); font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+    .tk-btn-accent:hover { opacity: 0.88; }
+    .tk-add-more { display: none; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; align-items: end; margin-top: 10px; }
+    .tk-add-more.open { display: grid; }
+    .tk-add-fld { display: flex; flex-direction: column; gap: 3px; min-width: 0; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink3); }
+    .tk-add-fld select, .tk-add-fld input { width: 100%; min-width: 0; height: 38px; padding: 0 8px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; border: 1.5px solid rgba(26,24,20,0.2); border-radius: 8px; background: var(--paper); color: var(--ink); }
+    .tk-add-check { grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--ink2); cursor: pointer; min-height: 32px; }
+
+    /* グループ見出し */
+    .tk-group { margin-bottom: 16px; }
+    .tk-group-hdr { display: flex; align-items: center; gap: 8px; padding: 0 4px 6px; }
+    .tk-group-mark { width: 4px; height: 16px; border-radius: 2px; background: var(--mute); }
+    .tk-group-hdr.danger .tk-group-mark { background: var(--red); }
+    .tk-group-label { font-family: 'Newsreader', serif; font-size: 18px; font-weight: 700; color: var(--ink); }
+    .tk-group-hdr.danger .tk-group-label, .tk-group-hdr.danger .tk-group-n { color: var(--red); }
+    .tk-group-n { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink3); }
+    .tk-group-card { overflow: hidden; }
+    .tk-more { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); padding: 6px 4px 0; }
+    .tk-empty { padding: 32px 20px; text-align: center; }
+    .tk-empty-title { font-family: 'Newsreader', serif; font-style: italic; font-size: 17px; color: var(--ink3); margin-bottom: 6px; }
+    .tk-empty-sub { font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--mute); }
+
+    /* 行 */
+    .tk-row { display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 6px; border-bottom: 1px solid rgba(26,24,20,0.08); border-left: 3px solid transparent; min-height: 56px; cursor: pointer; transition: background 0.12s; }
+    .tk-row:last-child { border-bottom: none; }
+    .tk-row:hover { background: rgba(26,24,20,0.03); }
+    .tk-row.sel { background: rgba(139,58,24,0.06); border-left-color: var(--accent); }
+    .tk-row.overdue { border-left-color: var(--red); }
+    .tk-row.done .tk-row-title { text-decoration: line-through; color: var(--ink3); }
+    .tk-row.done { opacity: 0.7; }
+    .tk-check { width: 40px; height: 40px; flex-shrink: 0; border: none; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+    .tk-check:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+    .tk-check-box { width: 20px; height: 20px; border: 1.8px solid var(--mute); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; line-height: 1; color: transparent; transition: all 0.15s; }
+    .tk-check:hover .tk-check-box { border-color: var(--ok); }
+    .tk-check.done .tk-check-box { background: var(--ok); border-color: var(--ok); color: #fff; }
+    .tk-check.big { width: 44px; height: 44px; }
+    .tk-check.big .tk-check-box { width: 24px; height: 24px; font-size: 15px; }
+    .tk-row-body { flex: 1 1 auto; min-width: 0; }
+    .tk-row-title { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tk-row-meta { display: flex; align-items: center; gap: 4px 8px; flex-wrap: wrap; margin-top: 3px; min-width: 0; }
+    .tk-chip { display: inline-flex; align-items: center; gap: 5px; font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink3); white-space: nowrap; }
+    .tk-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+    .tk-chip-pick { background: rgba(139,58,24,0.12); color: var(--accent); font-weight: 700; padding: 0 7px; border-radius: 10px; font-size: 11px; }
+    .tk-prio { font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: 700; color: var(--red); border: 1px solid rgba(139,58,24,0.5); border-radius: 10px; padding: 0 6px; }
+    .tk-time { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); }
+    .tk-tags { display: inline-flex; gap: 4px; flex-wrap: wrap; cursor: pointer; }
+    .tk-tag-add { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--mute); cursor: pointer; opacity: 0; transition: opacity 0.12s; }
+    .tk-row:hover .tk-tag-add, .tk-tag-add.always { opacity: 1; }
+    .tk-pick { flex-shrink: 0; height: 30px; padding: 0 10px; border: 1.5px solid rgba(26,24,20,0.25); border-radius: 16px; background: transparent; color: var(--ink2); font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+    .tk-pick:hover { border-color: var(--accent); color: var(--accent); }
+    .tk-pick.on { background: rgba(139,58,24,0.1); border-color: var(--accent); color: var(--accent); }
+    .tk-pin { flex-shrink: 0; width: 32px; height: 32px; border: none; background: transparent; font-size: 16px; line-height: 1; color: var(--mute); cursor: pointer; }
+    .tk-pin.pinned { color: #f59e0b; }
+    .tk-pin:hover { opacity: 0.7; }
+
+    /* 期限チップ */
+    .tk-due-wrap { position: relative; flex-shrink: 0; }
+    .tk-due { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); cursor: pointer; white-space: nowrap; padding: 1px 6px; border-radius: 10px; display: inline-block; background: rgba(26,24,20,0.05); }
+    .tk-due:hover { background: rgba(26,24,20,0.1); }
+    .tk-due-empty { background: transparent; border: 1px dashed rgba(26,24,20,0.25); color: var(--mute); }
+    .tk-due-none { opacity: 0; transition: opacity 0.12s; }
+    .tk-row:hover .tk-due-none { opacity: 1; }
+    .tk-due-overdue { background: rgba(139,58,24,0.12); color: var(--red); font-weight: 600; }
+    .tk-due-today { background: rgba(90,107,58,0.14); color: var(--ok); font-weight: 600; }
+    .tk-due-soon { color: var(--warn); font-weight: 600; }
+    .tk-due-input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; left: 0; top: 100%; border: none; padding: 0; }
+
+    /* 右の詳細パネル */
+    .tk-detail-panel { position: sticky; top: 66px; max-height: calc(100vh - 82px); overflow-y: auto; }
+    .tk-d-head { display: grid; grid-template-columns: 44px minmax(0, 1fr) 36px; align-items: center; gap: 4px; padding: 12px 14px 10px 8px; border-bottom: 1px solid rgba(26,24,20,0.1); }
+    .tk-d-title { width: 100%; min-width: 0; height: 40px; padding: 0 8px; font-family: 'Newsreader', serif; font-size: 20px; font-weight: 700; color: var(--ink); background: transparent; border: 1.5px solid transparent; border-radius: 8px; outline: none; }
+    .tk-d-title:hover { border-color: rgba(26,24,20,0.15); }
+    .tk-d-title:focus { border-color: var(--ink); background: var(--paper); }
+    .tk-d-close { width: 36px; height: 36px; flex-shrink: 0; border: none; background: transparent; color: var(--ink3); font-size: 16px; cursor: pointer; border-radius: 8px; }
+    .tk-d-close:hover { background: var(--paper2); }
+    .tk-d-body { padding: 8px 20px 4px; display: flex; flex-direction: column; }
+    .tk-d-row { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid rgba(26,24,20,0.07); }
+    .tk-d-row.col { grid-template-columns: minmax(0, 1fr); align-items: stretch; border-bottom: none; gap: 6px; }
+    .tk-d-lbl { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: var(--ink3); }
+    .tk-d-in { width: 100%; min-width: 0; height: 36px; padding: 0 8px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; border: 1.5px solid rgba(26,24,20,0.2); border-radius: 8px; background: var(--paper); color: var(--ink); outline: none; }
+    .tk-d-in:focus { border-color: var(--ink); }
+    .tk-d-due { display: grid; grid-template-columns: minmax(0, 1fr) 96px; gap: 6px; }
+    .tk-d-seg { align-items: stretch; }
+    .tk-d-seg .ui-seg-btn { flex: 1 1 0; justify-content: center; height: 32px; font-size: 13px; }
+    .tk-d-tags { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; cursor: pointer; min-height: 32px; }
+    .tk-d-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .tk-d-pill { padding: 4px 12px; }
+    .tk-d-hint { font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink3); }
+    .tk-d-hint.danger { color: var(--red); font-weight: 600; }
+    .tk-memo { width: 100%; min-height: 84px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--ink); border: 1.5px solid rgba(26,24,20,0.2); border-radius: 8px; padding: 8px 10px; background: var(--paper); outline: none; resize: vertical; line-height: 1.5; box-sizing: border-box; }
+    .tk-memo:focus { border-color: var(--ink); }
+    .tk-memo::placeholder { color: var(--mute); font-style: italic; }
+    .tk-d-foot { padding: 12px 20px 18px; }
+    .tk-d-del { width: 100%; height: 44px; border: 1.5px solid rgba(139,58,24,0.4); border-radius: 8px; background: transparent; color: var(--accent); font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .tk-d-del:hover { background: rgba(139,58,24,0.08); }
+    .tk-d-empty { padding: 26px 20px 8px; text-align: center; }
+    .tk-d-empty-text { font-family: 'Newsreader', serif; font-style: italic; font-size: 15px; color: var(--ink3); }
+    .tk-d-sec { padding: 14px 20px; border-top: 1px solid rgba(26,24,20,0.1); }
+    .tk-d-empty + .tk-d-sec { margin-top: 12px; }
+    .tk-d-sec-title { font-family: 'Newsreader', serif; font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .tk-up-item { display: flex; align-items: baseline; gap: 8px; padding: 5px 0; border-bottom: 1px dotted rgba(26,24,20,0.12); }
+    .tk-up-item:last-child { border-bottom: none; }
+    .tk-up-date { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); flex-shrink: 0; white-space: nowrap; }
+    .tk-up-title { font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--ink2); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    @media (max-width: 1180px) and (min-width: 641px) { .tk-stat-icon { display: none; } .tk-2col { grid-template-columns: minmax(0, 1fr) 340px; } }
+
+    /* ── タグのポップオーバー・編集シートのタグ（共通） ── */
     .tv-tag-chip { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 1px 6px; border-radius: 2px; white-space: nowrap; font-weight: 600; cursor: pointer; }
     .tv-tag-pop { display:none; position:fixed; background:var(--paper); border:1px solid var(--rule); border-radius:4px; padding:10px; width:220px; z-index:8000; box-shadow:0 4px 16px rgba(0,0,0,0.12); }
     .tv-tag-pop.open { display:block; }
@@ -73,19 +156,8 @@
     .tv-tag-pop-chip.sel { outline:2px solid var(--ink); }
     .tv-tag-pop-input-wrap { border-top:1px solid var(--rule); padding-top:8px; }
     .tv-tag-pop-input { width:100%; border:none; background:transparent; font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--ink); outline:none; }
-    .tv-due-wrap { position: relative; flex-shrink: 0; }
-    .tv-due { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); cursor: pointer; white-space: nowrap; padding: 2px 4px; border-radius: 3px; display: inline-block; }
-    @media (max-width: 640px) { .tv-due { padding: 8px 10px; margin: -6px -2px; font-size: 12px; } }
-    .tv-due:hover { background: rgba(26,24,20,0.06); }
-    .tv-due-empty { color: var(--mute); }
-    .tv-due-overdue { color: var(--accent); font-weight: 600; }
-    .tv-due-today { color: var(--ok); font-weight: 600; }
-    .tv-due-soon { color: var(--warn); font-weight: 600; }
-    .tv-due-input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; left: 0; top: 100%; border: none; padding: 0; }
-    .tv-add-row { display: flex; align-items: center; gap: 6px; padding: 8px 24px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--mute); cursor: pointer; transition: background 0.12s; border-bottom: 1px solid rgba(26,24,20,0.05); }
-    .tv-add-row:hover { background: rgba(26,24,20,0.04); color: var(--ink3); }
 
-    /* ── タグ色 (tv-) ── */
+    /* ── タグ色 ── */
     .tv-tag-chip.tag-重要 { background: rgba(220,38,38,0.12); color: #dc2626; }
     .tv-tag-chip.tag-手続き { background: rgba(37,99,235,0.12); color: #1d4ed8; }
     .tv-tag-chip.tag-準備 { background: rgba(234,88,12,0.12); color: #c2410c; }
@@ -98,31 +170,3 @@
     .tv-tag-chip.tag-経理 { background: rgba(4,120,87,0.12); color: #047857; }
     .tv-tag-chip.tag-買い物 { background: rgba(163,106,24,0.12); color: var(--warn); }
     .tv-tag-chip.tag-修理 { background: rgba(107,114,128,0.12); color: #6b7280; }
-
-    /* ── 右サイドバー ── */
-    .todo-sidebar-r { background: #fafafa; border-left: 1px solid var(--rule); overflow-y: auto; }
-    .trs-block { padding: 16px 16px 12px; border-bottom: 1px solid rgba(26,24,20,0.10); }
-    .trs-title { font-family: 'Newsreader', serif; font-size: 15px; font-weight: 700; font-style: italic; margin-bottom: 10px; display: flex; align-items: baseline; gap: 8px; }
-    .trs-donut-svg { width: 140px; height: 140px; display: block; margin: 0 auto; }
-    .trs-donut-num { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 26px; font-weight: 700; fill: var(--ink); }
-    .trs-donut-label { font-family: 'Space Grotesk', sans-serif; font-size: 11px; fill: var(--ink3); }
-    .trs-donut-empty { text-align: center; color: var(--mute); font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 20px 0; }
-    .trs-donut-legend { list-style: none; margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
-    .trs-donut-legend li { display: flex; align-items: center; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink2); }
-    .trs-donut-legend .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .trs-donut-legend .n { margin-left: auto; font-weight: 700; color: var(--ink3); }
-    .trs-tags { display: flex; flex-wrap: wrap; gap: 5px; }
-    .trs-tag-btn { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 2px 8px; border-radius: 3px; border: none; cursor: pointer; font-weight: 600; transition: opacity 0.12s; }
-    .trs-tag-btn:hover { opacity: 0.75; }
-    .trs-tag-btn.active { outline: 2px solid var(--ink); }
-
-    /* ── クイックメモ ── */
-    .tv-quick-memo { width: 100%; min-height: 80px; font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--ink); border: 1px solid rgba(26,24,20,0.15); border-radius: 4px; padding: 8px 10px; background: #fff; outline: none; resize: vertical; line-height: 1.5; box-sizing: border-box; }
-    .tv-quick-memo:focus { border-color: var(--ink3); }
-    .tv-quick-memo::placeholder { color: var(--mute); font-style: italic; }
-
-    /* ── 今後の予定 ── */
-    .tv-upcoming-item { display: flex; align-items: baseline; gap: 8px; padding: 5px 0; border-bottom: 1px dotted rgba(26,24,20,0.1); }
-    .tv-upcoming-item:last-child { border-bottom: none; }
-    .tv-upcoming-date { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink3); flex-shrink: 0; white-space: nowrap; }
-    .tv-upcoming-title { font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink2); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

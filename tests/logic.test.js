@@ -9,6 +9,29 @@ const plain = v => JSON.parse(JSON.stringify(v));
 const T = (id, title) => ({ id, title, done: false });
 const fill = o => Object.assign({ tasks: [], shopping: [], subs: [], txs: [], trips: [], meals: [], accounts: [], reflections: [], task_notes: {}, budgets: { base: { total: null, cats: {} }, months: {} }, tx_rules: { rules: [], categories: [] }, seed_flags: {} }, o);
 
+test('todayBucket: 期限切れ / 今日が期限 / 今日やる / 昨日の「今日やる」は失効 / 完了は除外', () => {
+  const today = '2026-11-14';
+  const b = o => A.todayBucket(Object.assign({ id: 1, title: 'x', done: false }, o), today);
+  assert.equal(b({ due: '2026-11-13' }), 'overdue');
+  assert.equal(b({ due: '2026-11-14' }), 'due');
+  assert.equal(b({ due: '2026-11-20', todayDate: today }), 'picked');
+  assert.equal(b({ todayDate: today }), 'picked');
+  assert.equal(b({ due: '2026-11-20', todayDate: '2026-11-13' }), null);
+  assert.equal(b({ due: '' }), null);
+  assert.equal(b({ due: '2026-11-13', done: true }), null);
+  assert.equal(b({ todayDate: today, done: true }), null);
+  assert.equal(b({ due: '2026-11-14', todayDate: today }), 'due');
+});
+
+test('classifyTask: 今日以前=today / 今週 / 後で / 未定 / 完了', () => {
+  const now = new Date('2026-11-14T00:00:00'), sun = new Date('2026-11-15T00:00:00');
+  assert.equal(A.classifyTask({ due: '2026-11-10' }, now, sun), 'today');
+  assert.equal(A.classifyTask({ due: '2026-11-15' }, now, sun), 'thisweek');
+  assert.equal(A.classifyTask({ due: '2026-11-30' }, now, sun), 'later');
+  assert.equal(A.classifyTask({ due: '' }, now, sun), 'undef');
+  assert.equal(A.classifyTask({ due: '2026-11-10', done: true }, now, sun), 'done');
+});
+
 test('mergeCollections: 両方の端末の追加・編集・削除を残す', () => {
   const base = fill({ tasks: [T(1, 'A'), T('b', 'B'), T('c', 'C')] });
   const local = fill({ tasks: [T(1, 'A-local'), T('c', 'C'), T('d', 'D')] });        // A 編集, B 削除, D 追加

@@ -7,7 +7,3 @@
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: var(--mute); }
 
-    /* ══ TODO 3カラムレイアウト ══ */
-    #page-todo { min-width: 1000px; }
-    #page-todo.active { display: block; }
-    .todo-app { display: grid; grid-template-columns: 260px minmax(0, 1fr) 280px; min-height: calc(100vh - 50px); }
