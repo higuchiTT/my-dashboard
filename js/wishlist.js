@@ -1,553 +1,457 @@
-// ── SHOPPING ──
-let expandedShopId = null;
-let shopDraft = null;
-let editingField = null; // {id, field}
-let newShopDraft = null;
+// ── WISHLIST（To-Do と同じ作り: 左にカード一覧、右に詳細パネル。スマホはカードをタップで編集シート） ──
 let shopSortMode = 'priority'; // 'priority' | 'month' | 'order'
-let shopViewMode = 'list';     // 'list' | 'plan'
-let candEditIdx = null;
 let _shopShowBought = false;
 try { _shopShowBought = localStorage.getItem('wishlist_show_bought') === '1'; } catch(e) {}
 
-function _shopToggleBought() {
-  _shopShowBought = !_shopShowBought;
-  try { localStorage.setItem('wishlist_show_bought', _shopShowBought ? '1' : '0'); } catch(e) {}
-  renderShopping();
-}
+// 画面の状態（保存しない）。month: null=絞り込みなし / 'none'=予定月が未定 / 'YYYY-MM'
+const wlState = { selectedId: null, status: null, category: '', month: null, candEdit: null, sheetOpen: false };
 
 const shopCategories = ['家具・インテリア','家電','アウトドア','その他'];
 const STATUS_ORDER = ['検討中', '保留中', '購入済み'];
 const PRIORITY_ORDER = ['high', 'mid', 'low'];
 const PRIORITY_LABELS = {high:'高', mid:'中', low:'低'};
+const WL_STATUS_CLS = {'検討中':'consider', '保留中':'hold', '購入済み':'bought'};
 
-// ── INLINE EDITING ──
-function startInline(e,field,id){
-  e.stopPropagation();
-  if(editingField&&String(editingField.id)===String(id)&&editingField.field===field)return;
-  editingField={id,field};
-  renderShopping();
-  setTimeout(()=>{const el=document.getElementById(`ied-${field}-${id}`);if(el){el.focus();if(el.select)el.select();}},0);
-}
-function saveInline(field,id){
-  const el=document.getElementById(`ied-${field}-${id}`);
-  if(!el)return;
-  const s=shopping.find(s=>String(s.id)===String(id));if(!s)return;
-  if(field==='name'){const v=el.value.trim();if(v)s.name=v;}
-  else if(field==='price')s.price=el.value?parseFloat(el.value):null;
-  else if(field==='memo')s.note=el.value;
-  editingField=null;saveShop();renderShopping();
-}
-function cancelInline(){editingField=null;renderShopping();}
-function saveShopMemo(id,val){const s=shopping.find(s=>String(s.id)===String(id));if(s){s.note=val;saveShop();}}
-function saveShopName(id,val){const s=shopping.find(s=>String(s.id)===String(id));if(s){const v=val.trim();if(v)s.name=v;saveShop();}}
-function inlineKeydown(e,field,id){
-  if(e.key==='Enter'){e.preventDefault();saveInline(field,id);}
-  if(e.key==='Escape'){e.stopPropagation();cancelInline();}
-}
-function changeCat(e,id){
-  e.stopPropagation();
-  const s=shopping.find(s=>String(s.id)===String(id));if(!s)return;
-  s.category=e.target.value;saveShop();renderShopping();
-}
-function changeShopStatus(e,id){
-  const s=shopping.find(s=>String(s.id)===String(id));if(!s)return;
-  s.status=e.target.value;
-  if(shopDraft&&String(shopDraft.id)===String(id))shopDraft.status=s.status;
-  saveShop();renderShopping();
-}
-function changeShopPriority(e,id){
-  e.stopPropagation();
-  const s=shopping.find(s=>String(s.id)===String(id));if(!s)return;
-  s.priority=e.target.value;
-  saveShop();renderShopping();
-}
-function changeShopTargetMonth(e,id){
-  e.stopPropagation();
-  const s=shopping.find(s=>String(s.id)===String(id));if(!s)return;
-  s.targetMonth=e.target.value||null;
-  saveShop();renderShopping();
-}
-
-// ── NEW ITEM DRAFT ──
-function startNewShopDraft(){
-  newShopDraft={name:'',category:shopCategories[0],price:null,status:'検討中',note:'',priority:'mid',targetMonth:null};
-  shopViewMode='list';
-  renderShopping();
-}
-function saveNewShopDraft(){
-  if(!newShopDraft)return;
-  const nameEl=document.getElementById('ndName');
-  const name=(nameEl?nameEl.value:'').trim();
-  if(!name){if(nameEl)nameEl.focus();return;}
-  const catEl=document.getElementById('ndCat');
-  const priceEl=document.getElementById('ndPrice');
-  const statusEl=document.getElementById('ndStatus');
-  const memoEl=document.getElementById('ndMemo');
-  const priEl=document.getElementById('ndPriority');
-  const tmEl=document.getElementById('ndTargetMonth');
-  const priceVal=priceEl&&priceEl.value?parseFloat(priceEl.value):null;
-  shopping.push({
-    id:crypto.randomUUID(),
-    name,
-    category:catEl?catEl.value:shopCategories[0],
-    price:priceVal,
-    status:statusEl?statusEl.value:'検討中',
-    candidates:[],
-    note:memoEl?memoEl.value.trim():'',
-    priority:priEl?priEl.value:'mid',
-    targetMonth:tmEl&&tmEl.value?tmEl.value:null
-  });
-  newShopDraft=null;saveShop();renderShopping();
-}
-function cancelNewShopDraft(){newShopDraft=null;renderShopping();}
-
-function delShopItem(id){
-  shopping=shopping.filter(s=>String(s.id)!==String(id));
-  if(String(expandedShopId)===String(id)){expandedShopId=null;shopDraft=null;candEditIdx=null;}
-  saveShop();renderShopping();
-}
-async function confirmDelShop(id){
-  const s=shopping.find(s=>String(s.id)===String(id));if(!s)return;
-  if(await uiConfirm(`「${s.name}」を削除しますか？`,{title:'アイテムの削除',danger:true}))delShopItem(id);
-}
 function saveShop(){localStorage.setItem('hd_shopping',JSON.stringify(shopping));saveToSupabase();}
-
-function toggleShopExpand(id){
-  if(String(expandedShopId)===String(id)){expandedShopId=null;shopDraft=null;candEditIdx=null;}
-  else{
-    expandedShopId=id;
-    const s=shopping.find(s=>String(s.id)===String(id));
-    if(s){
-      const copy=JSON.parse(JSON.stringify(s));
-      (copy.candidates||[]).forEach(c=>{if(!c.id)c.id=crypto.randomUUID();});
-      shopDraft=copy;
-    }
-    candEditIdx=null;
-  }
+function wlFind(id){ return shopping.find(s => String(s.id) === String(id)); }
+function wlIsMobile(){ return window.matchMedia('(max-width: 640px)').matches; }
+function _shopToggleBought(){
+  _shopShowBought = !_shopShowBought;
+  try { localStorage.setItem('wishlist_show_bought', _shopShowBought ? '1' : '0'); } catch(e) {}
   renderShopping();
 }
-function handleRowClick(e,id){
-  if(e.target.closest('button,select,input,textarea'))return;
-  if(editingField){cancelInline();return;}
-  toggleShopExpand(id);
-}
-function saveExpand(id){
-  if(!shopDraft)return;
-  const idx=shopping.findIndex(s=>String(s.id)===String(id));
-  if(idx>=0){
-    shopping[idx].candidates=shopDraft.candidates;
-    if(shopDraft.price!=null)shopping[idx].price=shopDraft.price;
-  }
-  expandedShopId=null;shopDraft=null;candEditIdx=null;
-  saveShop();renderShopping();
-}
-function cancelExpand(){expandedShopId=null;shopDraft=null;candEditIdx=null;renderShopping();}
 
-// ── VIEW / SORT ──
-function setShopSort(mode){shopSortMode=mode;renderShopping();}
-function setShopView(mode){
-  shopViewMode=mode;
-  if(mode!=='list'){expandedShopId=null;shopDraft=null;candEditIdx=null;}
-  renderShopping();
+// ── 純粋関数（画面に触らない。テスト対象） ──
+function wlYm(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; }
+function wlMonthLabel(ym, now){
+  if(!ym) return '未定';
+  const [y,m] = ym.split('-').map(Number);
+  const ny = (now || new Date()).getFullYear();
+  return y === ny ? `${m}月` : `${y}年${m}月`;
 }
-function goToShopItem(id){
-  shopViewMode='list';
-  renderShopping();
-  setTimeout(()=>toggleShopExpand(id),0);
-}
-
-// ── MONTH HELPERS ──
-function shopMonthOptions(current){
-  const now=new Date();
-  let opts=`<option value=""${!current?' selected':''}>未定</option>`;
-  for(let i=0;i<=11;i++){
-    const d=new Date(now.getFullYear(),now.getMonth()+i,1);
-    const val=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-    let label;
-    if(i===0)label=`今月（${d.getMonth()+1}月）`;
-    else if(d.getFullYear()!==now.getFullYear())label=`${d.getFullYear()}年${d.getMonth()+1}月`;
-    else label=`${d.getMonth()+1}月`;
-    opts+=`<option value="${val}"${current===val?' selected':''}>${label}</option>`;
+// 今月から6か月＋「未定」。購入済みは数えない
+function wlMonthStrip(items, now){
+  now = now || new Date();
+  const act = (items || []).filter(s => s.status !== '購入済み');
+  const make = (ym, list) => ({ ym, label: wlMonthLabel(ym, now), total: list.reduce((a, s) => a + (s.price || 0), 0), count: list.length });
+  const out = [];
+  for(let i = 0; i < 6; i++){
+    const ym = wlYm(new Date(now.getFullYear(), now.getMonth() + i, 1));
+    out.push(make(ym, act.filter(s => s.targetMonth === ym)));
   }
-  return opts;
+  out.push(make(null, act.filter(s => !s.targetMonth)));
+  return out;
 }
-function shopMonthLabel(ym){
-  if(!ym)return'未定';
-  const[y,m]=ym.split('-').map(Number);
-  const now=new Date();
-  if(y===now.getFullYear()&&m===now.getMonth()+1)return`今月（${m}月）`;
-  return y===now.getFullYear()?`${m}月`:`${y}年${m}月`;
-}
-function getThreeMonthTotal(){
-  const now=new Date();
-  let total=0;
-  for(let i=0;i<3;i++){
-    const d=new Date(now.getFullYear(),now.getMonth()+i,1);
-    const ym=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-    shopping.filter(s=>s.status!=='購入済み'&&s.targetMonth===ym).forEach(s=>{total+=(s.price||0);});
+function wlThreeMonthTotal(items, now){
+  now = now || new Date();
+  let total = 0;
+  for(let i = 0; i < 3; i++){
+    const ym = wlYm(new Date(now.getFullYear(), now.getMonth() + i, 1));
+    (items || []).filter(s => s.status !== '購入済み' && s.targetMonth === ym).forEach(s => { total += (s.price || 0); });
   }
   return total;
 }
-
-// ── SORT ──
-function getSortedItems(){
-  const all=[...shopping];
-  if(shopSortMode==='priority'){
-    return all.sort((a,b)=>{
-      const si=STATUS_ORDER.indexOf(a.status??''),sj=STATUS_ORDER.indexOf(b.status??'');
-      const sd=(si===-1?999:si)-(sj===-1?999:sj);if(sd!==0)return sd;
-      const pi=PRIORITY_ORDER.indexOf(a.priority??'mid'),pj=PRIORITY_ORDER.indexOf(b.priority??'mid');
-      const pd=(pi===-1?1:pi)-(pj===-1?1:pj);if(pd!==0)return pd;
-      return(a.name??'').localeCompare(b.name??'','ja');
-    });
-  }else if(shopSortMode==='month'){
-    return all.sort((a,b)=>{
-      const si=STATUS_ORDER.indexOf(a.status??''),sj=STATUS_ORDER.indexOf(b.status??'');
-      const sd=(si===-1?999:si)-(sj===-1?999:sj);if(sd!==0)return sd;
-      const am=a.targetMonth||'zzz',bm=b.targetMonth||'zzz';
-      if(am!==bm)return am.localeCompare(bm);
-      const pi=PRIORITY_ORDER.indexOf(a.priority??'mid'),pj=PRIORITY_ORDER.indexOf(b.priority??'mid');
-      return(pi===-1?1:pi)-(pj===-1?1:pj);
-    });
-  }else{
-    const groups={};STATUS_ORDER.forEach(st=>groups[st]=[]);
-    all.forEach(item=>{const st=item.status??'検討中';(groups[st]||(groups[st]=[])).push(item);});
-    return[...(groups['検討中']||[]),...(groups['保留中']||[]),...(groups['購入済み']||[])];
-  }
-}
-
-// ── CANDIDATE OPERATIONS ──
-function addCandDraft(){
-  if(!shopDraft)return;
-  if(!shopDraft.candidates)shopDraft.candidates=[];
-  shopDraft.candidates.push({id:crypto.randomUUID(),name:'',price:null,starred:false,pros:'',cons:'',memo:'',url:'',rating:0,chosen:false});
-  candEditIdx=shopDraft.candidates.length-1;
-  renderShopping();
-  setTimeout(()=>{const el=document.getElementById(`cte-name-${candEditIdx}`);if(el)el.focus();},0);
-}
-function delCandDraft(ci){
-  if(!shopDraft)return;
-  shopDraft.candidates.splice(ci,1);
-  if(candEditIdx===ci)candEditIdx=null;
-  else if(candEditIdx!==null&&candEditIdx>ci)candEditIdx--;
-  renderShopping();
-}
-function editCandInTable(ci){
-  candEditIdx=ci;
-  renderShopping();
-  setTimeout(()=>{const el=document.getElementById(`cte-name-${ci}`);if(el)el.focus();},0);
-}
-function cancelCandEdit(){candEditIdx=null;renderShopping();}
-function saveCandInTable(ci){
-  if(!shopDraft||!shopDraft.candidates[ci])return;
-  const c=shopDraft.candidates[ci];
-  const n=document.getElementById(`cte-name-${ci}`);
-  const p=document.getElementById(`cte-price-${ci}`);
-  const pros=document.getElementById(`cte-pros-${ci}`);
-  const cons=document.getElementById(`cte-cons-${ci}`);
-  const m=document.getElementById(`cte-memo-${ci}`);
-  const u=document.getElementById(`cte-url-${ci}`);
-  if(n)c.name=n.value.trim();
-  if(p)c.price=p.value?parseFloat(p.value):null;
-  if(pros)c.pros=pros.value.trim();
-  if(cons)c.cons=cons.value.trim();
-  if(m)c.memo=m.value.trim();
-  if(u)c.url=u.value.trim();
-  candEditIdx=null;renderShopping();
-}
-function setCandRatingDraft(candId,rating){
-  if(!shopDraft)return;
-  const c=shopDraft.candidates.find(c=>String(c.id)===String(candId));
-  if(!c)return;
-  c.rating=(c.rating===rating)?0:rating;
-  renderShopping();
-}
-async function chooseCandidate(itemId,candId){
-  if(!shopDraft)return;
-  const c=shopDraft.candidates.find(c=>String(c.id)===String(candId));
-  if(!c)return;
-  if(c.chosen){c.chosen=false;renderShopping();return;}
-  shopDraft.candidates.forEach(c2=>c2.chosen=false);
-  c.chosen=true;
-  if(c.price){
-    const ok=await uiConfirm(`予算を ¥${fmt(c.price)} にします`,{
-      title:`「${c.name}」に決定`,
-      okLabel:'予算も更新する',
-      cancelLabel:'候補だけ決定'
-    });
-    if(ok)shopDraft.price=c.price;
-  }
-  renderShopping();
-}
-
-// ── STARS ──
-function renderStars(rating,candId){
-  let html='';
-  for(let i=1;i<=5;i++){
-    html+=`<span class="cmp-star${i<=(rating||0)?' filled':''}" onclick="event.stopPropagation();setCandRatingDraft('${esc(String(candId))}',${i})">★</span>`;
-  }
-  return`<span class="cmp-stars">${html}</span>`;
-}
-
-// ── COMPARISON TABLE ──
-function buildComparisonTable(draft){
-  const cands=draft.candidates||[];
-  if(!cands.length){
-    return`<div class="expand-empty">候補がありません。「＋ 候補を追加」で候補を追加してください。</div>`;
-  }
-  const activePrices=cands.map(c=>c.price||0).filter(p=>p>0);
-  const minPrice=activePrices.length>1?Math.min(...activePrices):null;
-
-  const ROWS=[
-    {key:'name',  label:'候補名'},
-    {key:'price', label:'価格'},
-    {key:'rating',label:'評価'},
-    {key:'pros',  label:'良い点'},
-    {key:'cons',  label:'気になる点'},
-    {key:'memo',  label:'メモ'},
-    {key:'url',   label:'リンク'},
-    {key:'_act',  label:'操作'},
-  ];
-
-  let tableHtml='';
-  ROWS.forEach(({key,label})=>{
-    let rowHtml=`<div class="cmp-label">${label}</div>`;
-    cands.forEach((c,ci)=>{
-      const isChosen=!!c.chosen;
-      const isEd=candEditIdx===ci;
-      let cell='';
-
-      if(key==='name'){
-        if(isEd){
-          cell=`<input id="cte-name-${ci}" class="cte-in cte-in-title" type="text" value="${esc(c.name||'')}" placeholder="候補名" onclick="event.stopPropagation()">`;
-        }else{
-          cell=`<span class="cmp-cand-name">${esc(c.name||'（名前なし）')}</span>`;
-          if(isChosen)cell+=`<span class="cmp-chosen-badge">✓ 決定</span>`;
-        }
-      }else if(key==='price'){
-        if(isEd){
-          cell=`<input id="cte-price-${ci}" class="cte-in cte-in-num" type="number" value="${c.price||''}" placeholder="0" onclick="event.stopPropagation()">`;
-        }else if(c.price){
-          const isMin=minPrice!==null&&c.price===minPrice;
-          cell=`<span class="cmp-price${isMin?' cheapest':''}">¥${fmt(c.price)}</span>`;
-        }else{
-          cell=`<span class="cmp-empty">—</span>`;
-        }
-      }else if(key==='rating'){
-        cell=renderStars(c.rating||0,c.id);
-      }else if(key==='pros'||key==='cons'||key==='memo'){
-        const val=c[key]||'';
-        if(isEd){
-          cell=`<textarea id="cte-${key}-${ci}" class="cte-ta" rows="2" onclick="event.stopPropagation()">${esc(val)}</textarea>`;
-        }else{
-          cell=val?`<span class="cmp-text-val">${esc(val)}</span>`:`<span class="cmp-empty">—</span>`;
-        }
-      }else if(key==='url'){
-        if(isEd){
-          cell=`<input id="cte-url-${ci}" class="cte-in" type="url" value="${esc(c.url||'')}" placeholder="https://..." onclick="event.stopPropagation()">`;
-        }else if(c.url){
-          cell=`<a href="${esc(c.url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="cmp-link">↗ 開く</a>`;
-        }else{
-          cell=`<span class="cmp-empty">—</span>`;
-        }
-      }else if(key==='_act'){
-        if(isEd){
-          cell=`<button class="cmp-btn cmp-btn-save" onclick="event.stopPropagation();saveCandInTable(${ci})">保存</button><button class="cmp-btn" onclick="event.stopPropagation();cancelCandEdit()">キャンセル</button>`;
-        }else{
-          const chooseLabel=isChosen?'決定を取り消す':'これに決めた';
-          cell=`<button class="cmp-btn cmp-btn-choose${isChosen?' is-chosen':''}" onclick="event.stopPropagation();chooseCandidate('${esc(String(draft.id))}','${esc(String(c.id))}')">${chooseLabel}</button><button class="cmp-btn cmp-btn-edit" onclick="event.stopPropagation();editCandInTable(${ci})">編集</button><button class="cmp-btn cmp-btn-del" onclick="event.stopPropagation();delCandDraft(${ci})">削除</button>`;
-        }
-      }
-
-      rowHtml+=`<div class="cmp-cell cmp-cell-${key}${isChosen?' is-chosen':''}${isEd?' is-editing':''}">${cell}</div>`;
-    });
-    tableHtml+=`<div class="cmp-row cmp-row-${key}">${rowHtml}</div>`;
-  });
-
-  return`<div class="cmp-scroll-wrap"><div class="cmp-table">${tableHtml}</div></div>`;
-}
-
-// ── RENDER MAIN ──
-function renderShopping(){
-  const kentouItems=shopping.filter(s=>s.status==='検討中');
-  const horyuItems=shopping.filter(s=>s.status==='保留中');
-  const kentouAmt=kentouItems.reduce((s,i)=>s+(i.price||0),0);
-  const horyuAmt=horyuItems.reduce((s,i)=>s+(i.price||0),0);
-
-  const el1=document.getElementById('shopStatKentou');
-  const el2=document.getElementById('shopStatHoryu');
-  const el3=document.getElementById('shopStat3Mo');
-  if(el1)el1.textContent='¥'+fmt(kentouAmt)+'（'+kentouItems.length+'件）';
-  if(el2)el2.textContent='¥'+fmt(horyuAmt)+'（'+horyuItems.length+'件）';
-  if(el3)el3.textContent='¥'+fmt(getThreeMonthTotal());
-
-  // Update view seg active state
-  document.querySelectorAll('#shopViewSeg .ui-seg-btn').forEach(btn=>{
-    btn.classList.toggle('active',btn.dataset.view===shopViewMode);
-  });
-
-  // Show/hide sort selector (only relevant for list view)
-  const sortSel=document.getElementById('shopSortSel');
-  if(sortSel){
-    sortSel.style.display=shopViewMode==='plan'?'none':'';
-    sortSel.value=shopSortMode;
-  }
-  // Bought toggle
-  const boughtWrap=document.getElementById('shopBoughtToggleWrap');
-  if(boughtWrap&&shopViewMode==='list'){
-    const boughtCount=shopping.filter(s=>s.status==='購入済み').length;
-    if(_shopShowBought){
-      boughtWrap.innerHTML=`<button class="btn btn-ghost btn-sm" onclick="_shopToggleBought()">購入済みを隠す</button>`;
-    } else {
-      boughtWrap.innerHTML=boughtCount>0?`<button class="btn btn-ghost btn-sm" style="color:var(--ink3);" onclick="_shopToggleBought()">購入済み ${boughtCount} 件</button>`:'';
+function getThreeMonthTotal(){ return wlThreeMonthTotal(shopping, new Date()); }
+// f = {status, category, month, showBought}。status が空なら、購入済みは showBought のときだけ含める
+function wlFilterItems(items, f){
+  f = f || {};
+  return (items || []).filter(s => {
+    if(f.status){ if(s.status !== f.status) return false; }
+    else if(s.status === '購入済み' && !f.showBought) return false;
+    if(f.category && s.category !== f.category) return false;
+    if(f.month){
+      if(f.month === 'none'){ if(s.targetMonth) return false; }
+      else if(s.targetMonth !== f.month) return false;
     }
-  } else if(boughtWrap){
-    boughtWrap.innerHTML='';
+    return true;
+  });
+}
+function wlSortItems(items, mode){
+  const all = [...(items || [])];
+  const stIdx = s => { const i = STATUS_ORDER.indexOf(s.status ?? ''); return i === -1 ? 999 : i; };
+  const prIdx = s => { const i = PRIORITY_ORDER.indexOf(s.priority ?? 'mid'); return i === -1 ? 1 : i; };
+  if(mode === 'priority'){
+    return all.sort((a, b) => (stIdx(a) - stIdx(b)) || (prIdx(a) - prIdx(b)) || (a.name ?? '').localeCompare(b.name ?? '', 'ja'));
   }
+  if(mode === 'month'){
+    return all.sort((a, b) => {
+      const sd = stIdx(a) - stIdx(b); if(sd !== 0) return sd;
+      const am = a.targetMonth || 'zzz', bm = b.targetMonth || 'zzz';
+      if(am !== bm) return am.localeCompare(bm);
+      return prIdx(a) - prIdx(b);
+    });
+  }
+  const groups = {}; STATUS_ORDER.forEach(st => groups[st] = []);
+  all.forEach(item => { const st = item.status ?? '検討中'; (groups[st] || (groups[st] = [])).push(item); });
+  return [...(groups['検討中'] || []), ...(groups['保留中'] || []), ...(groups['購入済み'] || [])];
+}
+function getSortedItems(){ return wlSortItems(shopping, shopSortMode); }
 
-  const listArea=document.getElementById('shopListArea');
-  const planView=document.getElementById('shopPlanView');
-  if(listArea)listArea.style.display=shopViewMode==='list'?'':'none';
-  if(planView)planView.style.display=shopViewMode==='plan'?'':'none';
+function wlMonthOptions(current, now){
+  now = now || new Date();
+  let opts = `<option value=""${!current ? ' selected' : ''}>未定</option>`;
+  const seen = new Set();
+  for(let i = 0; i <= 11; i++){
+    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+    const val = wlYm(d); seen.add(val);
+    const label = i === 0 ? `今月（${d.getMonth()+1}月）` : (d.getFullYear() !== now.getFullYear() ? `${d.getFullYear()}年${d.getMonth()+1}月` : `${d.getMonth()+1}月`);
+    opts += `<option value="${val}"${current === val ? ' selected' : ''}>${label}</option>`;
+  }
+  if(current && !seen.has(current)) opts += `<option value="${esc(current)}" selected>${esc(wlMonthLabel(current, now))}</option>`;
+  return opts;
+}
 
-  if(shopViewMode==='plan'){
-    renderShopPlan();
+// ── 選択・シート ──
+function wlEnsureCandIds(s){ (s.candidates || []).forEach(c => { if(!c.id) c.id = crypto.randomUUID(); }); }
+function wlSelect(id){
+  const s = wlFind(id); if(!s) return;
+  wlEnsureCandIds(s);
+  wlState.selectedId = String(id);
+  wlState.candEdit = null;
+  if(wlIsMobile()){ wlOpenSheet(); return; }
+  wlRenderMain(); wlRenderDetail();
+}
+function wlDeselect(){ wlState.selectedId = null; wlState.candEdit = null; wlRenderMain(); wlRenderDetail(); }
+function wlOpenSheet(){
+  wlState.sheetOpen = true;
+  wlRenderDetail();
+  document.getElementById('wlSheetOverlay').classList.add('open');
+  document.addEventListener('keydown', _wlSheetKeydown);
+  wlRenderMain();
+}
+function wlCloseSheet(){
+  const ov = document.getElementById('wlSheetOverlay');
+  if(ov) ov.classList.remove('open');
+  document.removeEventListener('keydown', _wlSheetKeydown);
+  wlState.sheetOpen = false;
+  wlState.selectedId = null;
+  wlState.candEdit = null;
+  wlRenderMain();
+  wlRenderDetail();
+}
+function _wlSheetKeydown(e){ if(e.key === 'Escape') wlCloseSheet(); }
+function wlRoot(){ return document.getElementById(wlState.sheetOpen ? 'wlSheetBody' : 'wlDetail'); }
+
+// ── フィルタの操作 ──
+function wlSetStatusFilter(v){ wlState.status = v || null; renderShopping(); }
+function wlSetCatFilter(v){ wlState.category = v || ''; renderShopping(); }
+function wlSetSort(mode){ shopSortMode = mode; renderShopping(); }
+function wlToggleMonth(key){ wlState.month = wlState.month === key ? null : key; renderShopping(); }
+function setShopSort(mode){ wlSetSort(mode); }
+
+// ── 追加 ──
+function wlToggleAddMore(){
+  const f = document.getElementById('wlAddMore');
+  const open = f.classList.toggle('open');
+  const b = document.getElementById('wlAddMoreBtn'); if(b) b.classList.toggle('active', open);
+}
+function wlInitAddForm(){
+  const m = document.getElementById('wlAddMonth');
+  if(m && !m.options.length) m.innerHTML = wlMonthOptions('', new Date());
+  const c = document.getElementById('wlAddCat');
+  if(c && !c.options.length) c.innerHTML = shopCategories.map(x => `<option value="${esc(x)}">${esc(x)}</option>`).join('');
+}
+function wlAddItem(){
+  const nameEl = document.getElementById('wlAddName');
+  const name = nameEl.value.trim();
+  if(!name){ nameEl.focus(); return; }
+  const priceRaw = document.getElementById('wlAddPrice').value;
+  const price = priceRaw !== '' && isFinite(parseFloat(priceRaw)) ? parseFloat(priceRaw) : null;
+  const item = {
+    id: crypto.randomUUID(), name,
+    category: document.getElementById('wlAddCat').value || shopCategories[0],
+    price, status: '検討中', candidates: [], note: '',
+    priority: document.getElementById('wlAddPri').value || 'mid',
+    targetMonth: document.getElementById('wlAddMonth').value || null
+  };
+  shopping.push(item);
+  saveShop();
+  nameEl.value = '';
+  document.getElementById('wlAddPrice').value = '';
+  // 追加したものが絞り込みで隠れないようにする
+  if(!wlFilterItems([item], { status: wlState.status, category: wlState.category, month: wlState.month, showBought: _shopShowBought }).length){
+    wlState.status = null; wlState.category = ''; wlState.month = null;
+  }
+  if(!wlIsMobile()){ wlState.selectedId = String(item.id); wlState.candEdit = null; }
+  renderShopping();
+  nameEl.focus();
+}
+
+// ── 右パネル・シートでの編集（保存して一覧だけ描き直す。パネル自身は描き直さない = 入力中のフォーカスを奪わない） ──
+function wlCommit(withPanel){
+  saveShop();
+  wlRenderMain();
+  if(withPanel) wlRenderDetail();
+}
+function wlSetName(id, input){
+  const s = wlFind(id); if(!s) return;
+  const v = input.value.trim();
+  if(!v){ input.value = s.name; return; }
+  s.name = v; wlCommit(false);
+}
+function wlSetPrice(id, val){
+  const s = wlFind(id); if(!s) return;
+  const n = parseFloat(val);
+  s.price = (val !== '' && isFinite(n) && n >= 0) ? n : null;
+  wlCommit(false);
+}
+function wlSetNote(id, val){ const s = wlFind(id); if(!s) return; s.note = val; wlCommit(false); }
+function wlSetCategory(id, v){ const s = wlFind(id); if(!s) return; s.category = v; wlCommit(true); }
+function wlSetPriority(id, v){ const s = wlFind(id); if(!s) return; s.priority = v; wlCommit(true); }
+function wlSetMonth(id, v){ const s = wlFind(id); if(!s) return; s.targetMonth = v || null; wlCommit(true); }
+function wlSetStatus(id, v){ const s = wlFind(id); if(!s) return; s.status = v; wlCommit(true); }
+
+async function wlDelItem(id){
+  const s = wlFind(id); if(!s) return;
+  if(!await uiConfirm(`「${s.name}」を削除しますか？`, { title:'アイテムの削除', okLabel:'削除', danger:true })) return;
+  shopping = shopping.filter(x => String(x.id) !== String(id));
+  saveShop();
+  if(String(wlState.selectedId) === String(id)){ wlState.selectedId = null; wlState.candEdit = null; }
+  if(wlState.sheetOpen){ wlCloseSheet(); return; }
+  renderShopping();
+}
+
+// ── 候補の操作 ──
+function wlAddCand(){
+  if(!wlState.selectedId) return;
+  wlState.candEdit = 'new';
+  wlRenderDetail();
+  setTimeout(() => { const r = wlRoot(); const el = r && r.querySelector('[data-cf="name"]'); if(el) el.focus(); }, 0);
+}
+function wlEditCand(candId){
+  wlState.candEdit = String(candId);
+  wlRenderDetail();
+  setTimeout(() => { const r = wlRoot(); const el = r && r.querySelector('[data-cf="name"]'); if(el) el.focus(); }, 0);
+}
+function wlCancelCand(){ wlState.candEdit = null; wlRenderDetail(); }
+function wlSaveCand(itemId){
+  const s = wlFind(itemId); if(!s) return;
+  const r = wlRoot(); if(!r) return;
+  const v = k => { const el = r.querySelector(`[data-cf="${k}"]`); return el ? el.value : ''; };
+  const name = v('name').trim();
+  const p = parseFloat(v('price'));
+  const vals = { name, price: (v('price') !== '' && isFinite(p) && p >= 0) ? p : null, pros: v('pros').trim(), cons: v('cons').trim(), memo: v('memo').trim(), url: v('url').trim() };
+  if(!s.candidates) s.candidates = [];
+  if(wlState.candEdit === 'new'){
+    if(!name){ const el = r.querySelector('[data-cf="name"]'); if(el) el.focus(); return; }
+    s.candidates.push(Object.assign({ id: crypto.randomUUID(), starred: false, rating: 0, chosen: false }, vals));
   }else{
-    renderShopList();
+    const c = s.candidates.find(c => String(c.id) === wlState.candEdit);
+    if(c) Object.assign(c, vals);
+  }
+  wlState.candEdit = null;
+  wlCommit(true);
+}
+async function wlDelCand(itemId, candId){
+  const s = wlFind(itemId); if(!s) return;
+  const c = (s.candidates || []).find(c => String(c.id) === String(candId)); if(!c) return;
+  if(!await uiConfirm(`候補「${c.name || '（名前なし）'}」を削除しますか？`, { title:'候補の削除', okLabel:'削除', danger:true })) return;
+  s.candidates = s.candidates.filter(x => String(x.id) !== String(candId));
+  if(wlState.candEdit === String(candId)) wlState.candEdit = null;
+  wlCommit(true);
+}
+function wlRate(itemId, candId, n){
+  const s = wlFind(itemId); if(!s) return;
+  const c = (s.candidates || []).find(c => String(c.id) === String(candId)); if(!c) return;
+  c.rating = (c.rating === n) ? 0 : n;
+  wlCommit(true);
+}
+async function wlChoose(itemId, candId){
+  const s = wlFind(itemId); if(!s) return;
+  const c = (s.candidates || []).find(c => String(c.id) === String(candId)); if(!c) return;
+  if(c.chosen){ c.chosen = false; wlCommit(true); return; }
+  s.candidates.forEach(x => x.chosen = false);
+  c.chosen = true;
+  if(c.price){
+    const ok = await uiConfirm(`予算を ¥${fmt(c.price)} にします`, { title:`「${c.name}」に決定`, okLabel:'予算も更新する', cancelLabel:'候補だけ決定' });
+    if(ok) s.price = c.price;
+  }
+  wlCommit(true);
+}
+
+// ── 描画: 一覧側 ──
+function renderShopping(){
+  wlInitAddForm();
+  wlRenderMain();
+  wlRenderDetail();
+}
+
+function wlStatBlock(label, amount, unit, cls){
+  return `<div class="wl-stat-card ${cls}"><div class="wl-stat-label">${label}</div><div class="wl-stat-num-row"><span class="wl-stat-num">¥${fmt(amount)}</span>${unit ? `<span class="wl-stat-unit">${unit}</span>` : ''}</div></div>`;
+}
+
+function wlCardHTML(s, now){
+  const q = jsq(String(s.id));
+  const sel = String(wlState.selectedId) === String(s.id);
+  const cands = s.candidates || [];
+  const chosen = cands.find(c => c.chosen);
+  const pr = s.priority || 'mid';
+  const memo = String(s.note || '').split('\n')[0].trim();
+  const st = WL_STATUS_CLS[s.status] || 'consider';
+  return `<div class="ui-card wl-card wl-st-${st}${sel ? ' sel' : ''}" role="button" tabindex="0" onclick="wlSelect(${q})" onkeydown="if(event.key==='Enter'&&!event.isComposing){wlSelect(${q})}">
+    <div class="wl-card-top"><span class="wl-card-cat">${esc(s.category || '')}</span><span class="wl-badge wl-badge-st wl-bst-${st}">${esc(s.status || '')}</span></div>
+    <div class="wl-card-name">${esc(s.name)}</div>
+    <div class="wl-card-mid">
+      <span class="wl-card-tags"><span class="wl-badge wl-badge-pri wl-bpri-${esc(pr)}">優先 ${esc(PRIORITY_LABELS[pr] || '中')}</span><span class="wl-badge wl-badge-month">${esc(wlMonthLabel(s.targetMonth, now))}</span></span>
+      <span class="wl-card-price">${s.price ? '¥' + fmt(s.price) : '—'}</span>
+    </div>
+    ${(cands.length || chosen) ? `<div class="wl-card-cand">${cands.length ? `<span class="wl-cand-n">候補 ${cands.length}</span>` : ''}${chosen ? `<span class="wl-cand-chosen">決定: ${esc(chosen.name || '候補')}</span>` : ''}</div>` : ''}
+    ${memo ? `<div class="wl-card-memo">${esc(memo)}</div>` : ''}
+  </div>`;
+}
+
+function wlRenderMain(){
+  const now = new Date();
+  const kent = shopping.filter(s => s.status === '検討中');
+  const hor = shopping.filter(s => s.status === '保留中');
+  const sum = l => l.reduce((a, s) => a + (s.price || 0), 0);
+
+  // 1. サマリー
+  const statsEl = document.getElementById('wlStats');
+  if(statsEl) statsEl.innerHTML =
+    wlStatBlock('検討中', sum(kent), `（${kent.length}件）`, 'consider') +
+    wlStatBlock('保留中', sum(hor), `（${hor.length}件）`, 'hold') +
+    wlStatBlock('今後3か月の購入予定', wlThreeMonthTotal(shopping, now), '', 'plan');
+
+  // 2. 月ごとの帯
+  const strip = wlMonthStrip(shopping, now);
+  const monthsEl = document.getElementById('wlMonths');
+  if(monthsEl) monthsEl.innerHTML = strip.map((m, i) => {
+    const key = m.ym || 'none';
+    return `<button class="wl-month${wlState.month === key ? ' active' : ''}${m.count ? '' : ' empty'}${m.ym ? '' : ' undef'}" onclick="wlToggleMonth(${jsq(key)})" aria-pressed="${wlState.month === key}">
+      <span class="wl-month-label">${esc(m.label)}${i === 0 ? '<em>今月</em>' : ''}</span>
+      <span class="wl-month-total">${m.total ? '¥' + fmt(m.total) : '—'}</span>
+      <span class="wl-month-n">${m.count}件</span>
+    </button>`;
+  }).join('');
+
+  // 3. ステータスのピル・購入済み
+  const active = shopping.filter(s => s.status !== '購入済み');
+  const boughtN = shopping.length - active.length;
+  const views = [['検討中', '検討中', kent.length], ['保留中', '保留中', hor.length], [null, 'すべて', active.length]];
+  const viewsEl = document.getElementById('wlViews');
+  if(viewsEl) viewsEl.innerHTML = views.map(([v, label, n]) =>
+    `<button class="ui-pill wl-pill${wlState.status === v ? ' active' : ''}" onclick="wlSetStatusFilter(${v === null ? 'null' : jsq(v)})">${label} <span class="wl-pill-n">${n}</span></button>`
+  ).join('') + ((boughtN > 0 || _shopShowBought) ? `<button class="ui-pill wl-pill wl-pill-bought${_shopShowBought ? ' active' : ''}" onclick="_shopToggleBought()">購入済み ${boughtN} 件</button>` : '');
+
+  // 4. カテゴリ・並べ替え
+  const cats = [...new Set([...shopCategories, ...shopping.map(s => s.category).filter(Boolean)])];
+  if(wlState.category && !cats.includes(wlState.category)) cats.push(wlState.category);
+  const filtersEl = document.getElementById('wlFilters');
+  if(filtersEl) filtersEl.innerHTML = `<select class="wl-sel" onchange="wlSetCatFilter(this.value)" aria-label="カテゴリ">
+      <option value="">すべてのカテゴリ</option>
+      ${cats.map(c => `<option value="${esc(c)}"${wlState.category === c ? ' selected' : ''}>${esc(c)}（${shopping.filter(s => s.category === c && s.status !== '購入済み').length}）</option>`).join('')}
+    </select>
+    <select class="wl-sel" onchange="wlSetSort(this.value)" aria-label="並べ替え">
+      <option value="priority"${shopSortMode === 'priority' ? ' selected' : ''}>優先度順</option>
+      <option value="month"${shopSortMode === 'month' ? ' selected' : ''}>予定月順</option>
+      <option value="order"${shopSortMode === 'order' ? ' selected' : ''}>追加順</option>
+    </select>`;
+
+  // 5. カード
+  const items = wlFilterItems(wlSortItems(shopping, shopSortMode), { status: wlState.status, category: wlState.category, month: wlState.month, showBought: _shopShowBought });
+  const gridEl = document.getElementById('wlGrid');
+  if(gridEl){
+    if(items.length) gridEl.innerHTML = items.map(s => wlCardHTML(s, now)).join('');
+    else{
+      const filtered = wlState.status || wlState.category || wlState.month;
+      gridEl.innerHTML = `<div class="ui-card wl-empty"><div class="wl-empty-title">${filtered ? '条件に合うアイテムがありません' : (shopping.length ? 'アイテムがありません（購入済みは非表示）' : 'アイテムがありません')}</div></div>`;
+    }
   }
 }
 
-function renderShopList(){
-  const sorted=getSortedItems();
-  const displayItems=_shopShowBought?sorted:sorted.filter(s=>s.status!=='購入済み');
-  const statuses=['検討中','保留中','購入済み'];
-  const grid=document.getElementById('shopGrid');
-  if(!grid)return;
-
-  if(!displayItems.length&&!newShopDraft){
-    const hasHidden=!_shopShowBought&&sorted.some(s=>s.status==='購入済み');
-    grid.innerHTML=`<div style="grid-column:1/-1;padding:48px;text-align:center;color:var(--mute)">${hasHidden?'アイテムがありません（購入済みは非表示）':'アイテムがありません'}</div>`;
+// ── 描画: 詳細（PC は右パネル、スマホは編集シート。同じ中身） ──
+function wlRenderDetail(){
+  const el = wlRoot();
+  if(!el) return;
+  const s = wlState.selectedId != null ? wlFind(wlState.selectedId) : null;
+  if(!s){
+    wlState.selectedId = null;
+    if(wlState.sheetOpen){ wlCloseSheet(); return; }
+    el.innerHTML = `<div class="wl-d-empty"><div class="wl-d-empty-text">アイテムを選ぶと、ここで詳しく編集できます</div></div>`;
     return;
   }
-
-  const HDR=['','品名','カテゴリ','予算','優先度','予定月','ステータス','メモ',''].map(h=>`<div class="shop-hdr-cell">${h}</div>`).join('');
-
-  let newDraftRow='';
-  if(newShopDraft){
-    const nd=newShopDraft;
-    const catOptsNd=shopCategories.map(c=>`<option${nd.category===c?' selected':''}>${c}</option>`).join('');
-    const priOptsNd=Object.entries(PRIORITY_LABELS).map(([v,l])=>`<option value="${v}"${(nd.priority||'mid')===v?' selected':''}>${l}</option>`).join('');
-    newDraftRow=`<div class="shop-row-draft">
-      <div class="shop-cell nd-cell-handle"></div>
-      <div class="shop-cell nd-cell-name" onclick="event.stopPropagation()"><input class="shop-name-in" id="ndName" value="${esc(nd.name)}" placeholder="品名を入力" onclick="event.stopPropagation()" autofocus></div>
-      <div class="shop-cell nd-cell-cat" onclick="event.stopPropagation()"><select class="cat-sel" id="ndCat" onclick="event.stopPropagation()">${catOptsNd}</select></div>
-      <div class="shop-cell shop-cell-price nd-cell-price" onclick="event.stopPropagation()"><input type="number" class="inline-edit-num" id="ndPrice" value="${nd.price||''}" placeholder="金額" style="width:88px;text-align:right" onclick="event.stopPropagation()"></div>
-      <div class="shop-cell nd-cell-pri" onclick="event.stopPropagation()"><select class="priority-sel p-sel-${nd.priority||'mid'}" id="ndPriority" onclick="event.stopPropagation()">${priOptsNd}</select></div>
-      <div class="shop-cell nd-cell-month" onclick="event.stopPropagation()"><select class="month-sel" id="ndTargetMonth" onclick="event.stopPropagation()">${shopMonthOptions(nd.targetMonth)}</select></div>
-      <div class="shop-cell nd-cell-status" onclick="event.stopPropagation()"><select class="status-sel s-sel-${nd.status}" id="ndStatus" onclick="event.stopPropagation()">${statuses.map(st=>`<option${nd.status===st?' selected':''}>${st}</option>`).join('')}</select></div>
-      <div class="shop-cell nd-cell-memo" onclick="event.stopPropagation()"><input class="shop-memo-in" id="ndMemo" value="${esc(nd.note||'')}" placeholder="メモ" onclick="event.stopPropagation()" style="width:100%;min-width:0"></div>
-      <div class="shop-cell shop-cell-draft-act" onclick="event.stopPropagation()"><button class="btn btn-ghost btn-sm draft-btn-cancel" onclick="event.stopPropagation();cancelNewShopDraft()">キャンセル</button><button class="btn btn-primary btn-sm draft-btn-save" onclick="event.stopPropagation();saveNewShopDraft()">保存</button></div>
-    </div>`;
-  }
-
-  grid.innerHTML=HDR+displayItems.map(s=>{
-    const isExp=String(s.id)===String(expandedShopId);
-    const draft=isExp&&shopDraft?shopDraft:s;
-    const chosenCand=(draft.candidates||[]).find(c=>c.chosen);
-
-    const statusSel=`<select class="status-sel s-sel-${s.status}" onchange="changeShopStatus(event,'${esc(String(s.id))}')" onclick="event.stopPropagation()">${statuses.map(st=>`<option${s.status===st?' selected':''}>${st}</option>`).join('')}</select>`;
-    const catOpts=shopCategories.map(c=>`<option${s.category===c?' selected':''}>${c}</option>`).join('');
-    const catExtra=s.category&&!shopCategories.includes(s.category)?`<option selected>${esc(s.category)}</option>`:'';
-    const catSel=`<select class="cat-sel" onchange="changeCat(event,'${esc(String(s.id))}')" onclick="event.stopPropagation()">${catOpts}${catExtra}</select>`;
-    const priCur=s.priority||'mid';
-    const priOpts=Object.entries(PRIORITY_LABELS).map(([v,l])=>`<option value="${v}"${priCur===v?' selected':''}>${l}</option>`).join('');
-    const priSel=`<select class="priority-sel p-sel-${priCur}" onchange="changeShopPriority(event,'${esc(String(s.id))}')" onclick="event.stopPropagation()">${priOpts}</select>`;
-    const monthSel=`<select class="month-sel" onchange="changeShopTargetMonth(event,'${esc(String(s.id))}')" onclick="event.stopPropagation()">${shopMonthOptions(s.targetMonth)}</select>`;
-
-    const isEdPrice=editingField&&String(editingField.id)===String(s.id)&&editingField.field==='price';
-
-    let nameInner=`<input class="shop-name-in" value="${esc(s.name)}" onclick="event.stopPropagation()" oninput="saveShopName('${esc(String(s.id))}',this.value)">`;
-    if(chosenCand)nameInner+=`<span class="shop-chosen-badge">決定: ${esc(chosenCand.name||'候補')}</span>`;
-    const nameCell=`<div class="shop-cell shop-cell-name">${nameInner}</div>`;
-
-    const priceCell=isEdPrice
-      ?`<div class="shop-cell shop-cell-price"><div class="inline-edit-wrap"><input class="inline-edit-num" type="number" id="ied-price-${s.id}" value="${s.price||''}" placeholder="0" onclick="event.stopPropagation()" onkeydown="inlineKeydown(event,'price','${esc(String(s.id))}')"><button class="inline-ok" onclick="event.stopPropagation();saveInline('price','${esc(String(s.id))}')">✓</button><button class="inline-ng" onclick="event.stopPropagation();cancelInline()">✗</button></div></div>`
-      :`<div class="shop-cell shop-cell-price shop-cell-editable">${s.price?`<span class="price-sym" onclick="startInline(event,'price','${esc(String(s.id))}')">¥</span><span class="editable-text" onclick="startInline(event,'price','${esc(String(s.id))}')">${fmt(s.price)}</span>`:`<span class="editable-text" style="color:var(--mute)" onclick="startInline(event,'price','${esc(String(s.id))}')">—</span>`}<span class="edit-pencil" onclick="startInline(event,'price','${esc(String(s.id))}')">✏</span></div>`;
-
-    const memoCell=`<div class="shop-cell shop-cell-memo"><textarea class="shop-memo-in" rows="1" onclick="event.stopPropagation()" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px';saveShopMemo('${esc(String(s.id))}',this.value)" placeholder="メモ">${esc(s.note||'')}</textarea></div>`;
-
-    const row=`<div class="shop-row s-${s.status}${isExp?' expanded':''}" onclick="handleRowClick(event,'${esc(String(s.id))}')">
-      <div class="shop-chev-cell" onclick="event.stopPropagation();toggleShopExpand('${esc(String(s.id))}')"><span class="shop-chev">${isExp?'▲':'▼'}</span></div>
-      ${nameCell}
-      <div class="shop-cell shop-cell-cat">${catSel}</div>
-      ${priceCell}
-      <div class="shop-cell shop-cell-pri">${priSel}</div>
-      <div class="shop-cell shop-cell-month">${monthSel}</div>
-      <div class="shop-cell shop-cell-status">${statusSel}</div>
-      ${memoCell}
-      <div class="shop-cell shop-del-cell"><button class="shop-del-btn" onclick="event.stopPropagation();confirmDelShop('${esc(String(s.id))}')">削除</button></div>
-    </div>`;
-
-    if(!isExp)return row;
-
-    const candCount=(draft.candidates||[]).length;
-    const panel=`<div class="shop-expand-panel">
-      <div class="expand-cands-hdr">
-        <span class="expand-label"><span class="expand-label-ja">候補比較（${candCount}件）</span></span>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <button class="add-cand-btn" onclick="addCandDraft()">＋ 候補を追加</button>
-          <button class="cand-act cand-act-edit" onclick="cancelExpand()">キャンセル</button>
-          <button class="cand-act cand-act-del" onclick="saveExpand('${esc(String(s.id))}')">保存する</button>
-        </div>
-      </div>
-      ${buildComparisonTable(draft)}
-    </div>`;
-
-    return row+panel;
-  }).join('')+newDraftRow;
-
-  if(newShopDraft){setTimeout(()=>{const el=document.getElementById('ndName');if(el)el.focus();},0);}
-  setTimeout(()=>{document.querySelectorAll('.shop-memo-in').forEach(ta=>{ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';});},0);
+  el.innerHTML = wlDetailHTML(s, wlState.sheetOpen);
 }
 
-// ── PLAN VIEW ──
-function renderShopPlan(){
-  const planView=document.getElementById('shopPlanView');
-  if(!planView)return;
-  const now=new Date();
-  const activeItems=shopping.filter(s=>s.status!=='購入済み');
-
-  function sortByPriority(arr){
-    return arr.slice().sort((a,b)=>{
-      const pi=PRIORITY_ORDER.indexOf(a.priority??'mid'),pj=PRIORITY_ORDER.indexOf(b.priority??'mid');
-      return(pi===-1?1:pi)-(pj===-1?1:pj);
-    });
+function wlStarsHTML(itemQ, c){
+  let h = '';
+  for(let i = 1; i <= 5; i++){
+    h += `<button class="wl-star${i <= (c.rating || 0) ? ' filled' : ''}" onclick="event.stopPropagation();wlRate(${itemQ},${jsq(String(c.id))},${i})" aria-label="評価 ${i}">★</button>`;
   }
-  function buildPlanCard(items,label,isUndef){
-    const sorted=sortByPriority(items);
-    const total=sorted.reduce((sum,s)=>sum+(s.price||0),0);
-    const itemsHtml=sorted.map(s=>{
-      const pri=s.priority||'mid';
-      return`<div class="shop-plan-item" onclick="goToShopItem('${esc(String(s.id))}')" title="${esc(s.name)}"><span class="shop-pri-dot pri-${pri}"></span><span class="shop-plan-item-name">${esc(s.name)}</span><span class="shop-plan-item-price">${s.price?'¥'+fmt(s.price):''}</span></div>`;
-    }).join('');
-    return`<div class="shop-plan-card${!items.length?' is-empty':''}${isUndef?' shop-plan-card-undef':''}">
-      <div class="shop-plan-card-hdr">
-        <span class="shop-plan-month">${label}</span>
-        ${total?`<span class="shop-plan-total">¥${fmt(total)}</span>`:''}
+  return `<span class="wl-stars">${h}</span>`;
+}
+
+function wlCandFormHTML(itemQ, c){
+  c = c || {};
+  return `<div class="wl-cand wl-cand-form">
+    <label class="wl-cf"><span>候補名</span><input class="wl-d-in" data-cf="name" type="text" value="${esc(c.name || '')}" placeholder="候補名"></label>
+    <label class="wl-cf"><span>価格</span><input class="wl-d-in wl-num" data-cf="price" type="number" inputmode="numeric" min="0" value="${c.price != null && c.price !== '' ? esc(c.price) : ''}" placeholder="0"></label>
+    <label class="wl-cf"><span>良い点</span><textarea class="wl-memo wl-memo-sm" data-cf="pros" rows="2">${esc(c.pros || '')}</textarea></label>
+    <label class="wl-cf"><span>気になる点</span><textarea class="wl-memo wl-memo-sm" data-cf="cons" rows="2">${esc(c.cons || '')}</textarea></label>
+    <label class="wl-cf"><span>メモ</span><textarea class="wl-memo wl-memo-sm" data-cf="memo" rows="2">${esc(c.memo || '')}</textarea></label>
+    <label class="wl-cf"><span>リンク</span><input class="wl-d-in" data-cf="url" type="url" value="${esc(c.url || '')}" placeholder="https://..."></label>
+    <div class="wl-cand-acts"><button class="wl-btn wl-btn-primary" onclick="wlSaveCand(${itemQ})">保存</button><button class="wl-btn" onclick="wlCancelCand()">キャンセル</button></div>
+  </div>`;
+}
+
+function wlCandsHTML(s){
+  const itemQ = jsq(String(s.id));
+  const cands = s.candidates || [];
+  const prices = cands.map(c => c.price || 0).filter(p => p > 0);
+  const minPrice = prices.length > 1 ? Math.min(...prices) : null;
+  let body = cands.map(c => {
+    const cq = jsq(String(c.id));
+    if(wlState.candEdit === String(c.id)) return wlCandFormHTML(itemQ, c);
+    const chosen = !!c.chosen;
+    const isMin = minPrice !== null && c.price === minPrice;
+    const url = /^https?:\/\//i.test(c.url || '') ? c.url : '';
+    const row = (lbl, v) => v ? `<div class="wl-cand-row"><span class="wl-cand-lbl">${lbl}</span><span class="wl-cand-val">${esc(v)}</span></div>` : '';
+    return `<div class="wl-cand${chosen ? ' chosen' : ''}">
+      <div class="wl-cand-head">
+        <span class="wl-cand-name">${esc(c.name || '（名前なし）')}${chosen ? '<span class="wl-cand-badge">✓ 決定</span>' : ''}</span>
+        <span class="wl-cand-price${isMin ? ' cheapest' : ''}">${c.price ? '¥' + fmt(c.price) : '—'}</span>
       </div>
-      ${items.length?`<div class="shop-plan-items">${itemsHtml}</div>`:`<div class="shop-plan-none">予定なし</div>`}
+      <div class="wl-cand-stars">${wlStarsHTML(itemQ, c)}${url ? `<a class="wl-cand-link" href="${esc(url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ 開く</a>` : ''}</div>
+      ${row('良い点', c.pros)}${row('気になる点', c.cons)}${row('メモ', c.memo)}
+      <div class="wl-cand-acts">
+        <button class="wl-btn wl-btn-choose${chosen ? ' on' : ''}" onclick="wlChoose(${itemQ},${cq})">${chosen ? '決定を取り消す' : 'これに決めた'}</button>
+        <button class="wl-btn" onclick="wlEditCand(${cq})">編集</button>
+        <button class="wl-btn wl-btn-del" onclick="wlDelCand(${itemQ},${cq})">削除</button>
+      </div>
     </div>`;
-  }
+  }).join('');
+  if(wlState.candEdit === 'new') body += wlCandFormHTML(itemQ, null);
+  if(!body) body = '<div class="wl-d-hint">候補がありません。「＋ 候補を追加」で価格や良い点を比べられます。</div>';
+  return `<div class="wl-d-sec">
+    <div class="wl-d-sec-hdr"><h3 class="wl-d-sec-title">候補比較（${cands.length}件）</h3><button class="wl-btn" onclick="wlAddCand()">＋ 候補を追加</button></div>
+    ${body}
+  </div>`;
+}
 
-  const monthCards=[];
-  for(let i=0;i<12;i++){
-    const d=new Date(now.getFullYear(),now.getMonth()+i,1);
-    const ym=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-    const items=activeItems.filter(s=>s.targetMonth===ym);
-    monthCards.push(buildPlanCard(items,shopMonthLabel(ym),false));
-  }
-  const undefItems=activeItems.filter(s=>!s.targetMonth);
-  const undefCard=buildPlanCard(undefItems,'未定',true);
-
-  planView.innerHTML=`<div class="shop-plan-wrap"><div class="shop-plan-grid">${monthCards.join('')}${undefCard}</div></div>`;
+function wlDetailHTML(s, inSheet){
+  const q = jsq(String(s.id));
+  const now = new Date();
+  const cats = [...new Set([...shopCategories, s.category].filter(Boolean))];
+  const pr = s.priority || 'mid';
+  const segP = Object.entries(PRIORITY_LABELS).map(([v, l]) => `<button class="ui-seg-btn${pr === v ? ' active' : ''}" onclick="wlSetPriority(${q},'${v}')">${l}</button>`).join('');
+  const segS = STATUS_ORDER.map(st => `<button class="ui-seg-btn${s.status === st ? ' active' : ''}" onclick="wlSetStatus(${q},${jsq(st)})">${st}</button>`).join('');
+  return `<div class="wl-d-head${inSheet ? ' in-sheet' : ''}">
+      <input class="wl-d-title" type="text" value="${esc(s.name)}" onchange="wlSetName(${q},this)" onkeydown="if(event.key==='Enter'&&!event.isComposing)this.blur()" aria-label="品名">
+      ${inSheet ? '' : '<button class="wl-d-close" onclick="wlDeselect()" aria-label="閉じる">✕</button>'}
+    </div>
+    <div class="wl-d-body">
+      <div class="wl-d-row"><label class="wl-d-lbl">ステータス</label><div class="ui-seg wl-d-seg">${segS}</div></div>
+      <div class="wl-d-row"><label class="wl-d-lbl">予算</label>
+        <div class="wl-d-money"><span>¥</span><input class="wl-d-in wl-num" type="number" inputmode="numeric" min="0" value="${s.price ? esc(s.price) : ''}" placeholder="0" onchange="wlSetPrice(${q},this.value)"></div></div>
+      <div class="wl-d-row"><label class="wl-d-lbl">優先度</label><div class="ui-seg wl-d-seg">${segP}</div></div>
+      <div class="wl-d-row"><label class="wl-d-lbl">予定月</label>
+        <select class="wl-d-in" onchange="wlSetMonth(${q},this.value)">${wlMonthOptions(s.targetMonth, now)}</select></div>
+      <div class="wl-d-row"><label class="wl-d-lbl">カテゴリ</label>
+        <select class="wl-d-in" onchange="wlSetCategory(${q},this.value)">${cats.map(c => `<option value="${esc(c)}"${s.category === c ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></div>
+      <div class="wl-d-row col"><label class="wl-d-lbl">メモ</label>
+        <textarea class="wl-memo" rows="3" placeholder="メモ" onchange="wlSetNote(${q},this.value)">${esc(s.note || '')}</textarea></div>
+    </div>
+    ${wlCandsHTML(s)}
+    <div class="wl-d-foot"><button class="wl-d-del" onclick="wlDelItem(${q})">このアイテムを削除</button></div>`;
 }

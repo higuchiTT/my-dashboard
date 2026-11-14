@@ -32,6 +32,73 @@ test('classifyTask: 今日以前=today / 今週 / 後で / 未定 / 完了', () 
   assert.equal(A.classifyTask({ due: '2026-11-10', done: true }, now, sun), 'done');
 });
 
+const W = (id, o) => Object.assign({ id, name: 'item' + id, category: 'A', price: null, status: '検討中', candidates: [], note: '', priority: 'mid', targetMonth: null }, o);
+
+test('wlMonthStrip: 今月から6か月＋未定。購入済みは数えない。合計と件数', () => {
+  const now = new Date('2026-11-14T00:00:00');
+  const items = [
+    W(1, { price: 1000, targetMonth: '2026-11' }),
+    W(2, { price: 2500, targetMonth: '2026-11' }),
+    W(3, { price: 9999, targetMonth: '2026-11', status: '購入済み' }),
+    W(4, { price: 300, targetMonth: '2027-02' }),
+    W(5, { price: 700 }),
+    W(6, { targetMonth: '2027-06' }),   // 6か月より先は帯に出ない
+  ];
+  const s = plain(A.wlMonthStrip(items, now));
+  assert.equal(s.length, 7);
+  assert.deepEqual(s.map(m => m.ym), ['2026-11', '2026-12', '2027-01', '2027-02', '2027-03', '2027-04', null]);
+  assert.deepEqual(s[0], { ym: '2026-11', label: '11月', total: 3500, count: 2 });
+  assert.deepEqual(s[1], { ym: '2026-12', label: '12月', total: 0, count: 0 });
+  assert.equal(s[3].label, '2027年2月');
+  assert.equal(s[3].total, 300);
+  assert.deepEqual(s[6], { ym: null, label: '未定', total: 700, count: 1 });
+});
+
+test('wlFilterItems: ステータス / カテゴリ / 月 / 購入済みの表示', () => {
+  const items = [
+    W(1, { targetMonth: '2026-11' }),
+    W(2, { status: '保留中', category: 'B', targetMonth: '2026-12' }),
+    W(3, { status: '購入済み', targetMonth: '2026-11' }),
+    W(4, {}),
+  ];
+  const ids = f => plain(A.wlFilterItems(items, f).map(s => s.id));
+  assert.deepEqual(ids({}), [1, 2, 4]);
+  assert.deepEqual(ids({ showBought: true }), [1, 2, 3, 4]);
+  assert.deepEqual(ids({ status: '保留中' }), [2]);
+  assert.deepEqual(ids({ status: '検討中', showBought: true }), [1, 4]);
+  assert.deepEqual(ids({ category: 'B' }), [2]);
+  assert.deepEqual(ids({ month: '2026-11' }), [1]);
+  assert.deepEqual(ids({ month: '2026-11', showBought: true }), [1, 3]);
+  assert.deepEqual(ids({ month: 'none' }), [4]);
+});
+
+test('wlSortItems: 優先度順 / 予定月順 / 追加順（ステータスの並びは共通）', () => {
+  const items = [
+    W(1, { priority: 'low', targetMonth: '2026-12' }),
+    W(2, { priority: 'high', status: '保留中' }),
+    W(3, { priority: 'high', targetMonth: '2027-01' }),
+    W(4, { priority: 'mid', targetMonth: '2026-11' }),
+    W(5, { status: '購入済み', priority: 'high' }),
+  ];
+  const ids = m => plain(A.wlSortItems(items, m).map(s => s.id));
+  assert.deepEqual(ids('priority'), [3, 4, 1, 2, 5]);
+  assert.deepEqual(ids('month'), [4, 1, 3, 2, 5]);
+  assert.deepEqual(ids('order'), [1, 3, 4, 2, 5]);
+  assert.deepEqual(items.map(s => s.id), [1, 2, 3, 4, 5]); // 元の配列は変えない
+});
+
+test('wlThreeMonthTotal: 今月から3か月の予算合計（購入済み・範囲外は除く）', () => {
+  const now = new Date('2026-11-14T00:00:00');
+  const items = [
+    W(1, { price: 100, targetMonth: '2026-11' }),
+    W(2, { price: 200, targetMonth: '2027-01' }),
+    W(3, { price: 400, targetMonth: '2027-02' }),
+    W(4, { price: 800, targetMonth: '2026-12', status: '購入済み' }),
+    W(5, { targetMonth: '2026-12' }),
+  ];
+  assert.equal(A.wlThreeMonthTotal(items, now), 300);
+});
+
 test('mergeCollections: 両方の端末の追加・編集・削除を残す', () => {
   const base = fill({ tasks: [T(1, 'A'), T('b', 'B'), T('c', 'C')] });
   const local = fill({ tasks: [T(1, 'A-local'), T('c', 'C'), T('d', 'D')] });        // A 編集, B 削除, D 追加

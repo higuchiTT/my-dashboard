@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="css/food-list.css?v=df8145c1">
   <link rel="stylesheet" href="css/todo-list.css?v=cba4c8d7">
   <link rel="stylesheet" href="css/ledger.css?v=621633c1">
-  <link rel="stylesheet" href="css/wishlist.css?v=e4179203">
+  <link rel="stylesheet" href="css/wishlist.css?v=92ce6d61">
   <link rel="stylesheet" href="css/travel.css?v=acc0e59a">
   <link rel="stylesheet" href="css/ui.css?v=9b3587fd">
   <link rel="stylesheet" href="css/food.css?v=b5c1d3c9">
@@ -20,7 +20,7 @@
   <link rel="stylesheet" href="css/todo.css?v=7fccbce1">
   <link rel="stylesheet" href="css/feedback.css?v=b8c1df10">
   <link rel="stylesheet" href="css/accounts.css?v=8517bda7">
-  <link rel="stylesheet" href="css/responsive.css?v=976b11fb">
+  <link rel="stylesheet" href="css/responsive.css?v=0a65d4bd">
   <link rel="stylesheet" href="css/notes.css?v=8804453f">
   <link rel="stylesheet" href="css/food-tags.css?v=4bb375fa">
   <link rel="stylesheet" href="css/food-suggest.css?v=aa138220">
@@ -380,33 +380,45 @@
 <!-- ══ SHOPPING ══ -->
 <div class="page" id="page-shopping">
 
-  <div class="shop-summary">
-    <div class="shop-stat"><div class="shop-stat-label">検討中</div><div class="shop-stat-value" id="shopStatKentou" style="color:var(--warn)">¥0（0件）</div></div>
-    <div class="shop-stat"><div class="shop-stat-label">保留中</div><div class="shop-stat-value" id="shopStatHoryu" style="color:var(--ink3)">¥0（0件）</div></div>
-    <div class="shop-stat"><div class="shop-stat-label">今後3か月の購入予定</div><div class="shop-stat-value" id="shopStat3Mo" style="color:var(--ok)">¥0</div></div>
-  </div>
+  <div class="wl-page">
+    <div class="wl-2col">
 
-  <div class="page-bar">
-    <h2>ウィッシュリスト</h2>
-    <div class="shop-bar-right">
-      <div class="ui-seg" id="shopViewSeg">
-        <button class="ui-seg-btn active" data-view="list" onclick="setShopView('list')">一覧</button>
-        <button class="ui-seg-btn" data-view="plan" onclick="setShopView('plan')">月ごとの計画</button>
+      <!-- 左: カード一覧 -->
+      <div class="wl-main">
+        <div class="wl-header">
+          <span class="wl-header-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+          </span>
+          <h1 class="wl-header-title">ウィッシュリスト</h1>
+        </div>
+
+        <div class="wl-stats" id="wlStats"></div>
+        <div class="wl-months" id="wlMonths"></div>
+        <div class="wl-views" id="wlViews"></div>
+        <div class="wl-filters" id="wlFilters"></div>
+
+        <div class="ui-card wl-add">
+          <div class="wl-add-row">
+            <input type="text" id="wlAddName" class="wl-add-input" placeholder="ほしいものを追加（Enter で追加）" onkeydown="if(event.key==='Enter'&&!event.isComposing){event.preventDefault();wlAddItem();}">
+            <button class="wl-add-more-btn" id="wlAddMoreBtn" onclick="wlToggleAddMore()">詳細</button>
+            <button class="wl-btn-accent" onclick="wlAddItem()">追加</button>
+          </div>
+          <div class="wl-add-more" id="wlAddMore">
+            <label class="wl-add-fld"><span>カテゴリ</span><select id="wlAddCat"></select></label>
+            <label class="wl-add-fld"><span>予算（円）</span><input type="number" inputmode="numeric" min="0" id="wlAddPrice" placeholder="0"></label>
+            <label class="wl-add-fld"><span>予定月</span><select id="wlAddMonth"></select></label>
+            <label class="wl-add-fld"><span>優先度</span><select id="wlAddPri"><option value="mid">中</option><option value="high">高</option><option value="low">低</option></select></label>
+          </div>
+        </div>
+
+        <div class="wl-grid" id="wlGrid"></div>
       </div>
-      <select class="shop-sort-sel" id="shopSortSel" onchange="setShopSort(this.value)">
-        <option value="priority">優先度順</option>
-        <option value="month">予定月順</option>
-        <option value="order">追加順</option>
-      </select>
-      <span id="shopBoughtToggleWrap"></span>
-      <button class="btn btn-primary btn-sm" onclick="startNewShopDraft()">＋ 追加</button>
+
+      <!-- 右: 選んだアイテムの詳細（PC のみ） -->
+      <aside class="ui-card wl-detail-panel" id="wlDetail"></aside>
+
     </div>
   </div>
-
-  <div class="shop-content" id="shopListArea">
-    <div class="shop-grid" id="shopGrid"></div>
-  </div>
-  <div class="shop-plan-view" id="shopPlanView" style="display:none"></div>
 </div>
 
 <!-- ══ TRAVEL ══ -->
@@ -1109,7 +1121,7 @@
 <script src="js/ledger/transactions.js?v=663ae257"></script>
 <script src="js/ledger/quick.js?v=7ef476d8"></script>
 <script src="js/ledger/mail-import.js?v=38e05413"></script>
-<script src="js/wishlist.js?v=cf9f0b03"></script>
+<script src="js/wishlist.js?v=21cd26cd"></script>
 <script src="js/ledger/subs.js?v=3e1d587d"></script>
 <script src="js/travel.js?v=3f5277c8"></script>
 <script src="js/food/list.js?v=9af18293"></script>
@@ -1139,6 +1151,15 @@
     </div>
     <div class="ldr-modal-body" id="taskEditBody"></div>
     <div class="ldr-modal-ftr" id="taskEditFtr"></div>
+  </div>
+</div>
+<div id="wlSheetOverlay" class="ldr-modal-overlay" onclick="if(event.target===this)wlCloseSheet()">
+  <div id="wlSheetModal" class="ldr-modal" onclick="event.stopPropagation()" style="max-width:540px;">
+    <div class="ldr-modal-hdr">
+      <span class="ldr-modal-title">アイテムの編集</span>
+      <button class="ldr-modal-close" onclick="wlCloseSheet()">✕</button>
+    </div>
+    <div id="wlSheetBody" class="wl-sheet-body"></div>
   </div>
 </div>
 <div id="undoToast" class="undo-toast">
