@@ -3,6 +3,8 @@
     .hm-task-strip:hover { background:var(--paper3); }
     .hm-ts-num { font-family:'JetBrains Mono',monospace; font-weight:700; font-size:15px; color:var(--ink); }
     .hm-ts-od .hm-ts-num { color:var(--accent); }
+    .hm-ts-today { font-weight:700; color:var(--ink); }
+    .hm-ts-today .hm-ts-num { font-size:20px; color:var(--accent); }
     .hm-ts-sep { color:var(--mute); }
     .hm-ts-arrow { margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink3); letter-spacing:0.06em; }
     .hm-task-strip:hover .hm-ts-arrow { color:var(--accent); }

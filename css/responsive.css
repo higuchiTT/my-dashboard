@@ -82,6 +82,8 @@
       .tk-2col { grid-template-columns: minmax(0, 1fr); gap: 0; }
       /* 右パネルはなし（行のタップで編集シートを開く） */
       .tk-detail-panel { display: none; }
+      .tk-mob-extra { display: block; margin-top: 16px; }
+      .tk-mob-det-body .tk-memo { font-size: 16px; }
       .tk-header { margin-bottom: 12px; }
       .tk-header-icon svg { width: 28px; height: 28px; }
       .tk-header-title { font-size: 24px; }

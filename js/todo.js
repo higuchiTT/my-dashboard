@@ -395,7 +395,8 @@ function tkRenderPanel() {
   el.innerHTML = tkDetailHTML(t);
 }
 
-function tkEmptyPanelHTML() {
+// 今後の予定（右パネルの空表示とスマホの下部ブロックで共用）
+function tkUpcomingHTML() {
   const days7 = '日月火水木金土'.split('');
   const base = getTodayDate();
   const items = [];
@@ -406,19 +407,34 @@ function tkEmptyPanelHTML() {
       .sort((a, b) => (a.dueTime || '').localeCompare(b.dueTime || ''))
       .forEach(t => items.push({ date: d, task: t }));
   }
-  const upcoming = items.length
+  return items.length
     ? items.slice(0, 8).map(({ date, task: t }) => {
         const label = `${date.getMonth() + 1}/${date.getDate()}(${days7[date.getDay()]})${t.dueTime ? ' ' + t.dueTime : ''}`;
         return `<div class="tk-up-item"><span class="tk-up-date">${esc(label)}</span><span class="tk-up-title">${esc(t.title)}</span></div>`;
       }).join('')
     : '<div class="tk-d-hint">今後7日間の予定はありません</div>';
+}
+// クイックメモ（id は付けない: パネルとスマホ下部の両方に出るため。保存先は hd_quick_memo）
+function tkMemoHTML() {
+  return `<textarea class="tk-memo" placeholder="メモを追加" oninput="saveQuickMemo(this.value)">${esc(loadQuickMemo())}</textarea>`;
+}
+
+function tkEmptyPanelHTML() {
   return `<div class="tk-d-empty">
       <div class="tk-d-empty-text">タスクを選ぶと、ここで詳しく編集できます</div>
     </div>
-    <div class="tk-d-sec"><h3 class="tk-d-sec-title">今後の予定</h3>${upcoming}</div>
-    <div class="tk-d-sec"><h3 class="tk-d-sec-title">クイックメモ</h3>
-      <textarea class="tk-memo" id="tkQuickMemo" placeholder="メモを追加" oninput="saveQuickMemo(this.value)">${esc(loadQuickMemo())}</textarea>
-    </div>`;
+    <div class="tk-d-sec"><h3 class="tk-d-sec-title">今後の予定</h3>${tkUpcomingHTML()}</div>
+    <div class="tk-d-sec"><h3 class="tk-d-sec-title">クイックメモ</h3>${tkMemoHTML()}</div>`;
+}
+
+// スマホ（右パネルなし）用: リスト下部の折りたたみブロック。開閉状態は todoState に覚える
+function tkRenderMobExtra() {
+  const el = document.getElementById('tkMobExtra');
+  if (!el) return;
+  el.innerHTML = `<details class="ui-card tk-mob-det"${todoState.mobUp ? ' open' : ''} ontoggle="todoState.mobUp=this.open">
+      <summary>今後の予定</summary><div class="tk-mob-det-body">${tkUpcomingHTML()}</div></details>
+    <details class="ui-card tk-mob-det"${todoState.mobMemo ? ' open' : ''} ontoggle="todoState.mobMemo=this.open">
+      <summary>クイックメモ</summary><div class="tk-mob-det-body">${tkMemoHTML()}</div></details>`;
 }
 
 function tkDetailHTML(t) {
@@ -462,7 +478,7 @@ function tkDetailHTML(t) {
     <div class="tk-d-foot"><button class="tk-d-del" onclick="deleteTaskById(${q})">削除</button></div>`;
 }
 
-function renderTodayView() { tkRenderMain(); tkRenderPanel(); }
+function renderTodayView() { tkRenderMain(); tkRenderPanel(); tkRenderMobExtra(); }
 
 // ── 右パネルの編集（保存して一覧だけ描き直す。パネル自身は描き直さない = 入力中のフォーカスを奪わない） ──
 function tkCommit(withPanel) {

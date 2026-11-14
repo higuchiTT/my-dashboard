@@ -38,6 +38,8 @@ let todoState = {
   selectedId: null,      // PC の右パネルで開いているタスク
   showDone: false,       // 完了リストを開いているか
   addOpen: false,        // 追加フォームの詳細を開いているか
+  mobUp: false,          // スマホ下部「今後の予定」を開いているか
+  mobMemo: false,        // スマホ下部「クイックメモ」を開いているか
 };
 let vy = new Date().getFullYear(), vm = new Date().getMonth();
 const PAGE_TITLES = { home:'ホーム', todo:'TODO', finance:'家計 / 資産', shopping:'買い物リスト', travel:'旅行', food:'食事' };
