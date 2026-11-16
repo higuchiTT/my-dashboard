@@ -211,6 +211,38 @@
   color: var(--ink3);
 }
 
+/* ── 新しく試す ── */
+.fsg-nd-group .fsg-group-head { align-items: center; }
+.fsg-nd-reshuffle {
+  margin-left: auto;
+  min-height: 32px; padding: 0 14px;
+  border: 1.5px solid rgba(26,24,20,0.2); border-radius: 999px; background: transparent;
+  font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--ink2); cursor: pointer;
+}
+.fsg-nd-reshuffle:hover { border-color: var(--ink); color: var(--ink); }
+.fsg-nd-row {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(26,24,20,0.1);
+  min-width: 0;
+}
+.fsg-nd-top { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.fsg-nd-name { font-size: 15px; font-weight: 600; color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
+.fsg-nd-role { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ink3); flex-shrink: 0; }
+.fsg-nd-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.fsg-nd-row .fsg-weblinks { margin: 6px 0 2px; }
+.fsg-nd-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.fsg-nd-btn {
+  min-height: 32px; padding: 0 14px; border-radius: 999px;
+  border: 1.5px solid rgba(26,24,20,0.2); background: transparent;
+  font-family: 'Space Grotesk', sans-serif; font-size: 13px; color: var(--ink2); cursor: pointer;
+}
+.fsg-nd-btn:hover { border-color: var(--ink); color: var(--ink); }
+.fsg-nd-btn-main { border-color: var(--accent); background: var(--accent); color: var(--paper); font-weight: 600; }
+.fsg-nd-btn-main:hover { color: var(--paper); border-color: var(--accent); }
+@media (max-width: 640px) {
+  .fsg-nd-btn, .fsg-nd-reshuffle { min-height: 36px; }
+}
+
 /* ── Web recipe links ── */
 .fsg-weblinks {
   display: flex;

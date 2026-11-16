@@ -161,6 +161,207 @@ function rankRecipeWishes(wishes, home, buy) {
   return matched.concat(rest);
 }
 
+// ── 新しく試す（食べたことのない料理の提案） ─────────────────────────────────
+
+// 料理名の比較用: 前後の空白・途中の空白を消し、全角/半角・大文字小文字をそろえる
+function normDishName(s) {
+  return String(s == null ? '' : s).normalize('NFKC').replace(/[\s　]+/g, '').toLowerCase();
+}
+
+// 食材名の別表記（茄子/ナス など）を同じ名前にそろえる
+function _canonIngr(t) {
+  t = String(t);
+  for (const g of _FOOD_INGR_ALIAS_GROUPS) if (g.includes(t)) return g[0];
+  return t;
+}
+
+// meals から料理名の一覧（自炊・外食・総菜すべて）を取り出す
+function collectMealDishNames(meals) {
+  const names = [];
+  for (const m of (Array.isArray(meals) ? meals : [])) {
+    for (const s of ((m && m.sittings) || [])) {
+      for (const d of (s.dishes || [])) {
+        const n = String((d && d.name) || '').trim();
+        if (n) names.push(n);
+      }
+    }
+  }
+  return names;
+}
+
+/**
+ * Pure function: カタログから「まだ作っていない料理」を最大 count 件選ぶ。
+ * @param {Array} catalog   [{name, ings, role}]
+ * @param {Array} history   食べた料理の名前（文字列）の配列
+ * @param {Array} wishes    作りたいリスト（{name} の配列、または名前の配列）
+ * @param {Array} dismissed 「興味なし」にした料理名
+ * @param {Array} home      家にある食材
+ * @param {Array} buy       買って帰る食材
+ * @param {Function} rng    0以上1未満を返す関数（省略時 Math.random）
+ * @param {Array} exclude   直前に出した料理名（できれば避ける）
+ * @param {number} count    件数（既定 6）
+ * @returns {Array} [{name, ings, role, usedHome, usedBuy}]
+ */
+function pickNewDishes(catalog, history, wishes, dismissed, home, buy, rng, exclude, count) {
+  count = count == null ? 6 : count;
+  rng = typeof rng === 'function' ? rng : Math.random;
+  const skip = new Set();
+  for (const n of (Array.isArray(history) ? history : [])) skip.add(normDishName(n));
+  for (const w of (Array.isArray(wishes) ? wishes : [])) skip.add(normDishName(w && typeof w === 'object' ? w.name : w));
+  for (const n of (Array.isArray(dismissed) ? dismissed : [])) skip.add(normDishName(n));
+  skip.delete('');
+  const prev = new Set((Array.isArray(exclude) ? exclude : []).map(normDishName));
+  const homeSet = new Set((Array.isArray(home) ? home : []).map(_canonIngr));
+  const buySet  = new Set((Array.isArray(buy) ? buy : []).map(_canonIngr));
+
+  const seen = new Set();
+  const cands = [];
+  for (const d of (Array.isArray(catalog) ? catalog : [])) {
+    if (!d || !d.name) continue;
+    const key = normDishName(d.name);
+    if (skip.has(key) || seen.has(key)) continue;
+    seen.add(key);
+    const ings = Array.isArray(d.ings) ? d.ings : [];
+    const usedHome = ings.filter(t => homeSet.has(_canonIngr(t)));
+    const usedBuy  = ings.filter(t => !homeSet.has(_canonIngr(t)) && buySet.has(_canonIngr(t)));
+    const score = usedHome.length * 2 + usedBuy.length;
+    cands.push({
+      item: { name: d.name, ings: ings.slice(), role: d.role || 'その他', usedHome, usedBuy },
+      matched: score > 0,
+      fresh: !prev.has(key),
+      // 一致が多いほど前に来るが、少しだけ揺らして毎回同じ並びにならないようにする
+      sortKey: score + rng() * 1.5
+    });
+  }
+  // 直前に出していないもの → 食材が一致するもの → 揺らしたスコア順
+  cands.sort((a, b) =>
+    (b.fresh - a.fresh) || (b.matched - a.matched) || (b.sortKey - a.sortKey));
+
+  // 役割が偏らないよう、まず各役割 2 件までで選び、足りなければ残りから埋める
+  const picked = [];
+  const used = new Set();
+  const perRole = {};
+  for (const c of cands) {
+    if (picked.length >= count) break;
+    const r = c.item.role;
+    if ((perRole[r] || 0) >= 2) continue;
+    perRole[r] = (perRole[r] || 0) + 1;
+    picked.push(c); used.add(c);
+  }
+  for (const c of cands) {
+    if (picked.length >= count) break;
+    if (!used.has(c)) { picked.push(c); used.add(c); }
+  }
+  return picked.map(c => c.item);
+}
+
+// 興味なしにした料理名（端末内のみ。Supabase に列を足したら同期できる）
+let _foodDishDismissed = (() => {
+  try { const v = JSON.parse(localStorage.getItem('food_dish_dismissed') || '[]'); return Array.isArray(v) ? v : []; }
+  catch (e) { return []; }
+})();
+function _saveFoodDishDismissed() {
+  try { localStorage.setItem('food_dish_dismissed', JSON.stringify(_foodDishDismissed)); } catch (e) {}
+}
+
+let _foodNewDishNames = null; // 今出している料理名（カタログ順ではなく表示順）
+let _foodNewDishKey = '';     // 食材の選択が変わったら選び直すための印
+
+function _foodNewDishPick(excludeNames, keepNames) {
+  const { home, buy } = _foodSuggestPantry;
+  const keep = keepNames || [];
+  const items = pickNewDishes(FOOD_DISH_CATALOG,
+    collectMealDishNames(meals).concat(keep), recipeWishes, _foodDishDismissed,
+    home, buy, Math.random, excludeNames || [], 6 - keep.length);
+  return items.map(i => i.name);
+}
+
+// 画面に出す料理の一覧（食材の選択が変わったら選び直す）
+function _foodNewDishCurrent() {
+  const { home, buy } = _foodSuggestPantry;
+  const key = home.join(',') + '|' + buy.join(',');
+  if (!_foodNewDishNames || key !== _foodNewDishKey) {
+    _foodNewDishKey = key;
+    _foodNewDishNames = _foodNewDishPick([]);
+  }
+  // 作りたい・興味なし・記録で対象外になったものは落として補充する
+  const ok = new Set(pickNewDishes(FOOD_DISH_CATALOG, collectMealDishNames(meals), recipeWishes,
+    _foodDishDismissed, [], [], () => 0, [], 100000).map(i => normDishName(i.name)));
+  const kept = _foodNewDishNames.filter(n => ok.has(normDishName(n)));
+  if (kept.length !== _foodNewDishNames.length || kept.length < 6) {
+    _foodNewDishNames = kept.concat(_foodNewDishPick([], kept));
+  }
+  return _foodNewDishNames
+    .map(n => FOOD_DISH_CATALOG.find(d => d.name === n))
+    .filter(Boolean)
+    .map(d => {
+      const hs = new Set(home.map(_canonIngr)), bs = new Set(buy.map(_canonIngr));
+      return { ...d,
+        usedHome: d.ings.filter(t => hs.has(_canonIngr(t))),
+        usedBuy:  d.ings.filter(t => !hs.has(_canonIngr(t)) && bs.has(_canonIngr(t))) };
+    });
+}
+
+function _foodNewDishReshuffle() {
+  const prev = _foodNewDishNames || [];
+  _foodNewDishNames = _foodNewDishPick(prev);
+  _renderFoodSuggestResults();
+}
+
+function _foodNewDishAddWish(name) {
+  const d = FOOD_DISH_CATALOG.find(x => x.name === String(name));
+  if (!d) return;
+  if (!recipeWishes.some(w => normDishName(w.name) === normDishName(d.name))) {
+    const tags = d.ings.slice();
+    if (['主菜', '副菜', '汁物'].includes(d.role)) tags.push(d.role); // 役割も付けて、作りたいの並びで役割が分かるようにする
+    recipeWishes.push({ id: crypto.randomUUID(), name: d.name, url: '', tags, createdAt: new Date().toISOString() });
+    _saveRecipeWishes();
+  }
+  _renderFoodSuggestModal();
+}
+
+function _foodNewDishDismiss(name) {
+  name = String(name);
+  if (!_foodDishDismissed.some(n => normDishName(n) === normDishName(name))) {
+    _foodDishDismissed.push(name);
+    _saveFoodDishDismissed();
+  }
+  _renderFoodSuggestResults();
+}
+
+function _foodNewDishGroupHTML() {
+  const items = _foodNewDishCurrent();
+  if (!items.length) return '';
+  const rows = items.map(d => {
+    const hint = [
+      ...d.usedHome.map(t => `<span class="fsg-ingr-chip fsg-ingr-home">${esc(t)}</span>`),
+      ...d.usedBuy.map(t => `<span class="fsg-ingr-chip fsg-ingr-buy">${esc(t)}</span>`)
+    ].join('');
+    const others = d.ings.filter(t => !d.usedHome.includes(t) && !d.usedBuy.includes(t))
+      .map(t => `<span class="fsg-ingr-chip">${esc(t)}</span>`).join('');
+    const n = jsq(d.name);
+    return `<div class="fsg-nd-row" onclick="event.stopPropagation()">
+      <div class="fsg-nd-top">
+        <span class="fsg-nd-name">${esc(d.name)}</span>
+        <span class="fsg-nd-role">${esc(d.role)}</span>
+      </div>
+      <div class="fsg-nd-chips">${hint}${others}</div>
+      ${_foodSuggestWebLinksHTML(d.name, '')}
+      <div class="fsg-nd-actions">
+        <button type="button" class="fsg-nd-btn fsg-nd-btn-main" onclick="event.stopPropagation();_foodNewDishAddWish(${n})">＋作りたい</button>
+        <button type="button" class="fsg-nd-btn" onclick="event.stopPropagation();_foodNewDishDismiss(${n})">興味なし</button>
+      </div>
+    </div>`;
+  }).join('');
+  return `<div class="fsg-group fsg-nd-group">
+    <div class="fsg-group-head">
+      <span class="fsg-group-title">新しく試す</span><span class="fsg-group-count">${items.length}件</span>
+      <button type="button" class="fsg-nd-reshuffle" onclick="event.stopPropagation();_foodNewDishReshuffle()">別の案</button>
+    </div>
+    ${rows}
+  </div>`;
+}
+
 // ── Pantry state ──────────────────────────────────────────────────────────────
 
 let _foodSuggestPantry = { home: [], buy: [] };
@@ -534,7 +735,7 @@ function _renderFoodSuggestResults() {
 
   if (!hasPantry) {
     container.innerHTML = wishHTML +
-      `<div class="fsg-empty">家にある食材を選ぶと、過去の献立から提案します</div>`;
+      `<div class="fsg-empty">家にある食材を選ぶと、過去の献立から提案します</div>` + _foodNewDishGroupHTML();
     fillSignedUrls(container);
     _foodSuggestBindCarousels(container);
     return;
@@ -545,7 +746,7 @@ function _renderFoodSuggestResults() {
 
   if (suggestions.length === 0) {
     container.innerHTML = wishHTML +
-      `<div class="fsg-empty">この食材を使った料理の記録がまだありません</div>${webLinksHTML}`;
+      `<div class="fsg-empty">この食材を使った料理の記録がまだありません</div>${webLinksHTML}` + _foodNewDishGroupHTML();
     fillSignedUrls(container);
     _foodSuggestBindCarousels(container);
     return;
@@ -557,7 +758,7 @@ function _renderFoodSuggestResults() {
     return items.length ? groupHTML(g, gi, items) : '';
   }).join('');
 
-  container.innerHTML = wishHTML + webLinksHTML + groupsHTML;
+  container.innerHTML = wishHTML + webLinksHTML + groupsHTML + _foodNewDishGroupHTML();
 
   fillSignedUrls(container);
   _foodSuggestBindCarousels(container);
@@ -592,7 +793,7 @@ function _foodSuggestWebLinksHTML(query, label) {
   if (!query) return '';
   const q = encodeURIComponent(query);
   return `<div class="fsg-weblinks">
-    <span class="fsg-weblinks-label">${esc(label)}</span>
+    ${label ? `<span class="fsg-weblinks-label">${esc(label)}</span>` : ''}
     ${FOOD_RECIPE_SITES.map(s => `<a class="fsg-weblink" href="${esc(s.url + q)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${esc(s.name)} ↗</a>`).join('')}
   </div>`;
 }

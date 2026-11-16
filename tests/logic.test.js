@@ -465,6 +465,65 @@ test('rankRecipeWishes: 一致するものが先、一致しないものも後�
   assert.deepEqual(plain(A.rankRecipeWishes([{ id: 'x', name: ' ', tags: [] }, null], [], [])), []);
 });
 
+test('pickNewDishes: 食べた・作りたい・興味なしを表記ゆれ込みで除く', () => {
+  const cat = [
+    { name: '豚の生姜焼き', ings: ['豚肉'], role: '主菜' },
+    { name: 'ポテトサラダ', ings: ['じゃがいも'], role: '副菜' },
+    { name: 'かきたま汁', ings: ['卵'], role: '汁物' },
+    { name: 'オムライス', ings: ['卵'], role: 'その他' },
+    { name: 'ラタトゥイユ', ings: ['ナス'], role: '副菜' }
+  ];
+  const r = plain(A.pickNewDishes(cat, [' 豚の 生姜焼き '], [{ name: 'ポテトサラダ' }], ['ｵﾑﾗｲｽ'], [], [], () => 0.5, [], 6));
+  assert.deepEqual(r.map(x => x.name).sort(), ['かきたま汁', 'ラタトゥイユ'].sort());
+  // 全角英数・半角の違い
+  const cat2 = [{ name: 'Ａ定食', ings: [], role: '主菜' }, { name: 'B', ings: [], role: '主菜' }];
+  assert.deepEqual(plain(A.pickNewDishes(cat2, ['a定食'], [], [], [], [], () => 0, [], 6)).map(x => x.name), ['B']);
+  assert.equal(A.normDishName(' ハンバーグ　ステーキ '), A.normDishName('ハンバーグステーキ'));
+});
+
+test('pickNewDishes: 家にある食材に合う料理が先、件数と役割の混ぜ方', () => {
+  const cat = [];
+  for (let i = 0; i < 10; i++) cat.push({ name: '主' + i, ings: ['鶏肉'], role: '主菜' });
+  cat.push({ name: '副X', ings: ['ナス'], role: '副菜' });
+  cat.push({ name: '汁X', ings: ['豆腐'], role: '汁物' });
+  const r = plain(A.pickNewDishes(cat, [], [], [], ['ナス'], ['豆腐'], () => 0.3, [], 6));
+  assert.equal(r.length, 6);
+  assert.equal(r[0].name, '副X');
+  assert.deepEqual(r[0].usedHome, ['ナス']);
+  assert.equal(r[1].name, '汁X');
+  assert.deepEqual(r[1].usedBuy, ['豆腐']);
+  assert.ok(r.filter(x => x.role === '主菜').length <= 4);
+  // 食材の別表記（茄子 = ナス）でも一致する
+  const r2 = plain(A.pickNewDishes(cat, [], [], [], ['茄子'], [], () => 0.3, [], 3));
+  assert.equal(r2[0].name, '副X');
+  // 候補が少なければ少ないまま
+  assert.equal(A.pickNewDishes(cat.slice(0, 2), [], [], [], [], [], undefined, [], 6).length, 2);
+});
+
+test('pickNewDishes: 別の案は直前の組み合わせを避ける（足りなければ許す）', () => {
+  const cat = [];
+  for (let i = 0; i < 12; i++) cat.push({ name: 'D' + i, ings: [], role: i % 2 ? '主菜' : '副菜' });
+  let seed = 1;
+  const rng = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  const first = plain(A.pickNewDishes(cat, [], [], [], [], [], rng, [], 6)).map(x => x.name);
+  const second = plain(A.pickNewDishes(cat, [], [], [], [], [], rng, first, 6)).map(x => x.name);
+  assert.equal(second.length, 6);
+  assert.equal(second.filter(n => first.includes(n)).length, 0);
+  // 候補が 8 件しかなければ、避けきれない分だけ重なる
+  const small = cat.slice(0, 8);
+  const s2 = plain(A.pickNewDishes(small, [], [], [], [], [], rng, first.filter(n => small.some(d => d.name === n)), 6));
+  assert.equal(s2.length, 6);
+});
+
+test('FOOD_DISH_CATALOG: 形式が正しく、料理名の重複がない', () => {
+  const cat = plain(A.FOOD_DISH_CATALOG);
+  assert.ok(cat.length >= 200);
+  for (const d of cat) {
+    assert.ok(d.name && Array.isArray(d.ings) && ['主菜', '副菜', '汁物', 'その他'].includes(d.role), d.name);
+  }
+  assert.equal(new Set(cat.map(d => A.normDishName(d.name))).size, cat.length);
+});
+
 test('rankRecipeWishes: 古い形式（ingredients / role）の項目も読める', () => {
   const ws = [{ id: 'o', name: 'O', ingredients: ['鮭'], role: '主菜', createdAt: '2026-11-01T00:00:00Z' }];
   const r = plain(A.rankRecipeWishes(ws, ['鮭'], []));
