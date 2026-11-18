@@ -481,6 +481,22 @@ test('pickNewDishes: 食べた・作りたい・興味なしを表記ゆれ込�
   assert.equal(A.normDishName(' ハンバーグ　ステーキ '), A.normDishName('ハンバーグステーキ'));
 });
 
+test('pickNewDishes: 興味なしは {name} オブジェクトでも文字列でも除く', () => {
+  const cat = [{ name: 'オムライス', ings: [], role: 'その他' }, { name: 'かきたま汁', ings: [], role: '汁物' }];
+  const dis = [{ id: 'dd:オムライス', name: 'オムライス', at: '2026-11-18T00:00:00Z' }];
+  assert.deepEqual(plain(A.pickNewDishes(cat, [], [], dis, [], [], () => 0, [], 6)).map(x => x.name), ['かきたま汁']);
+});
+
+test('normalizeDishDismissed: 文字列→オブジェクト、重複・空を除く、既存の at は保つ', () => {
+  const r = plain(A.normalizeDishDismissed(['ｵﾑﾗｲｽ', ' オムライス ', '', null, { name: 'かきたま汁', at: 'T1' }, { id: 'x', name: 'Ａ定食' }]));
+  assert.deepEqual(r, [
+    { id: 'dd:' + A.normDishName('オムライス'), name: 'ｵﾑﾗｲｽ', at: '' },
+    { id: 'dd:かきたま汁', name: 'かきたま汁', at: 'T1' },
+    { id: 'dd:a定食', name: 'Ａ定食', at: '' }
+  ]);
+  assert.deepEqual(plain(A.normalizeDishDismissed(undefined)), []);
+});
+
 test('pickNewDishes: 家にある食材に合う料理が先、件数と役割の混ぜ方', () => {
   const cat = [];
   for (let i = 0; i < 10; i++) cat.push({ name: '主' + i, ings: ['鶏肉'], role: '主菜' });

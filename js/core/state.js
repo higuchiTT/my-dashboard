@@ -23,6 +23,10 @@ let reflections = (()=>{ try{ return JSON.parse(localStorage.getItem('reflection
 let recipeWishes = (()=>{ try{ const v = JSON.parse(localStorage.getItem('food_recipe_wishes')||'[]'); return Array.isArray(v) ? v : []; }catch(e){ return []; } })();
 // サーバーの user_data に recipe_wishes 列があるときだけ true（無い間は保存データに含めない）
 let _recipeWishesColumn = false;
+// Food 献立提案の「興味なし」料理。{id:'dd:'+正規化した名前, name, at}。読み込み時の形そろえは js/food/suggest.js の normalizeDishDismissed
+let _foodDishDismissed = (()=>{ try{ const v = JSON.parse(localStorage.getItem('food_dish_dismissed')||'[]'); return Array.isArray(v) ? v : []; }catch(e){ return []; } })();
+// サーバーの user_data に dish_dismissed 列があるときだけ true
+let _dishDismissedColumn = false;
 let notesFilter = { tag: null, search: '' };
 let notesVisibleCount = 50;
 let notesNewTags = [];

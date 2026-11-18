@@ -41,22 +41,28 @@ function _collectSeedFlags() {
 function _snapshotCollections() {
   return JSON.parse(JSON.stringify({
     tasks, task_notes: taskNotes, shopping, subs, txs, trips, meals,
-    budgets, accounts, tx_rules: txRules, reflections, recipe_wishes: recipeWishes, seed_flags: _collectSeedFlags()
+    budgets, accounts, tx_rules: txRules, reflections, recipe_wishes: recipeWishes, dish_dismissed: _foodDishDismissed, seed_flags: _collectSeedFlags()
   }));
 }
 
 function _localCollections() {
   return { tasks, task_notes: taskNotes, shopping, subs, txs, trips, meals,
-    budgets, accounts, tx_rules: txRules, reflections, recipe_wishes: recipeWishes, seed_flags: _collectSeedFlags() };
+    budgets, accounts, tx_rules: txRules, reflections, recipe_wishes: recipeWishes, dish_dismissed: _foodDishDismissed, seed_flags: _collectSeedFlags() };
 }
 
-// recipe_wishes 列がまだ無いサーバーに送ると保存全体が失敗するので、列があると確認できたときだけ付ける
+// 後から足した列（recipe_wishes / dish_dismissed）がまだ無いサーバーに送ると保存全体が失敗するので、
+// 列があると確認できたときだけ付ける。新しい列はここに1行足す
+const _OPTIONAL_COLS = [
+  { col: 'recipe_wishes', get: () => recipeWishes,      seen: () => _recipeWishesColumn,  mark: () => { _recipeWishesColumn = true; } },
+  { col: 'dish_dismissed', get: () => _foodDishDismissed, seen: () => _dishDismissedColumn, mark: () => { _dishDismissedColumn = true; } }
+];
 function _withOptionalCols(payload) {
-  if (_recipeWishesColumn) payload.recipe_wishes = recipeWishes;
+  for (const o of _OPTIONAL_COLS) if (o.seen()) payload[o.col] = o.get();
   return payload;
 }
 function _noteServerColumns(row) {
-  if (row && typeof row === 'object' && 'recipe_wishes' in row) _recipeWishesColumn = true;
+  if (!row || typeof row !== 'object') return;
+  for (const o of _OPTIONAL_COLS) if (o.col in row) o.mark();
 }
 
 function _extractSnapshot(row) {
@@ -73,6 +79,7 @@ function _extractSnapshot(row) {
     tx_rules:    (row.tx_rules && typeof row.tx_rules==='object') ? row.tx_rules : {rules:[]},
     reflections: Array.isArray(row.reflections) ? row.reflections : [],
     recipe_wishes: Array.isArray(row.recipe_wishes) ? row.recipe_wishes : [],
+    dish_dismissed: Array.isArray(row.dish_dismissed) ? row.dish_dismissed : [],
     seed_flags:  row.seed_flags  || {}
   };
 }
@@ -90,6 +97,7 @@ function _applyCollections(c) {
   if (c.tx_rules && typeof c.tx_rules==='object' && !Array.isArray(c.tx_rules)) { txRules = c.tx_rules; localStorage.setItem('ledger_tx_rules', JSON.stringify(txRules)); }
   if (Array.isArray(c.reflections)){ reflections = c.reflections; localStorage.setItem('reflections', JSON.stringify(reflections)); }
   if (Array.isArray(c.recipe_wishes)){ recipeWishes = c.recipe_wishes; localStorage.setItem('food_recipe_wishes', JSON.stringify(recipeWishes)); }
+  if (Array.isArray(c.dish_dismissed)){ _foodDishDismissed = normalizeDishDismissed(c.dish_dismissed); localStorage.setItem('food_dish_dismissed', JSON.stringify(_foodDishDismissed)); }
   if (c.seed_flags) Object.entries(c.seed_flags).forEach(([k,v]) => localStorage.setItem(k, v));
 }
 
@@ -175,6 +183,7 @@ function mergeCollections(base, local, server) {
     tx_rules:    { rules: mergeArrayById(b.tx_rules && b.tx_rules.rules, l.tx_rules && l.tx_rules.rules, s.tx_rules && s.tx_rules.rules), categories: mergeArrayById(b.tx_rules && b.tx_rules.categories, l.tx_rules && l.tx_rules.categories, s.tx_rules && s.tx_rules.categories) },
     reflections: mergeArrayById(b.reflections, l.reflections, s.reflections),
     recipe_wishes: mergeArrayById(b.recipe_wishes, l.recipe_wishes, s.recipe_wishes),
+    dish_dismissed: mergeArrayById(b.dish_dismissed, l.dish_dismissed, s.dish_dismissed),
     seed_flags:  mergeObjKeysDeep(b.seed_flags,  l.seed_flags,  s.seed_flags),
   };
 }
@@ -296,9 +305,13 @@ async function syncFromSupabase(userId) {
     if (Array.isArray(data.reflections)) { reflections = data.reflections; localStorage.setItem('reflections', JSON.stringify(reflections)); }
     _noteServerColumns(data);
     if (Array.isArray(data.recipe_wishes)) { recipeWishes = data.recipe_wishes; localStorage.setItem('food_recipe_wishes', JSON.stringify(recipeWishes)); }
+    // 列を足した直後はサーバーが空なので、この端末で先に付けた「興味なし」を消さない（次の保存で送られる）
+    if (Array.isArray(data.dish_dismissed) && (data.dish_dismissed.length || !_foodDishDismissed.length)) { _foodDishDismissed = normalizeDishDismissed(data.dish_dismissed); localStorage.setItem('food_dish_dismissed', JSON.stringify(_foodDishDismissed)); }
     if (data.seed_flags) Object.entries(data.seed_flags).forEach(([k,v]) => localStorage.setItem(k,v));
     _serverUpdatedAt = data.updated_at || null;
     _baseSnapshot    = _snapshotCollections();
+    // 上で残したこの端末だけの「興味なし」は、サーバーに無い「新しく足したもの」として次の保存で送る
+    if (Array.isArray(data.dish_dismissed)) _baseSnapshot.dish_dismissed = normalizeDishDismissed(data.dish_dismissed);
     _syncReady = true;
     return true;
   } catch (e) {

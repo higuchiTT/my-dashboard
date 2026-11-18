@@ -194,7 +194,7 @@ function collectMealDishNames(meals) {
  * @param {Array} catalog   [{name, ings, role}]
  * @param {Array} history   食べた料理の名前（文字列）の配列
  * @param {Array} wishes    作りたいリスト（{name} の配列、または名前の配列）
- * @param {Array} dismissed 「興味なし」にした料理名
+ * @param {Array} dismissed 「興味なし」にした料理（{name} の配列、または名前の配列）
  * @param {Array} home      家にある食材
  * @param {Array} buy       買って帰る食材
  * @param {Function} rng    0以上1未満を返す関数（省略時 Math.random）
@@ -208,7 +208,7 @@ function pickNewDishes(catalog, history, wishes, dismissed, home, buy, rng, excl
   const skip = new Set();
   for (const n of (Array.isArray(history) ? history : [])) skip.add(normDishName(n));
   for (const w of (Array.isArray(wishes) ? wishes : [])) skip.add(normDishName(w && typeof w === 'object' ? w.name : w));
-  for (const n of (Array.isArray(dismissed) ? dismissed : [])) skip.add(normDishName(n));
+  for (const n of (Array.isArray(dismissed) ? dismissed : [])) skip.add(normDishName(n && typeof n === 'object' ? n.name : n));
   skip.delete('');
   const prev = new Set((Array.isArray(exclude) ? exclude : []).map(normDishName));
   const homeSet = new Set((Array.isArray(home) ? home : []).map(_canonIngr));
@@ -255,14 +255,33 @@ function pickNewDishes(catalog, history, wishes, dismissed, home, buy, rng, excl
   return picked.map(c => c.item);
 }
 
-// 興味なしにした料理名（端末内のみ。Supabase に列を足したら同期できる）
-let _foodDishDismissed = (() => {
-  try { const v = JSON.parse(localStorage.getItem('food_dish_dismissed') || '[]'); return Array.isArray(v) ? v : []; }
-  catch (e) { return []; }
-})();
-function _saveFoodDishDismissed() {
+/**
+ * Pure function: 興味なしの一覧を {id, name, at} の形にそろえる。
+ * 古い形式（料理名の文字列）も受け付ける。名前が空のもの・同じ名前（表記ゆれ含む）の重複は除く。
+ */
+function normalizeDishDismissed(list) {
+  const out = [], seen = new Set();
+  for (const x of (Array.isArray(list) ? list : [])) {
+    const name = String(x && typeof x === 'object' ? (x.name == null ? '' : x.name) : (x == null ? '' : x)).trim();
+    const key = normDishName(name);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push({ id: 'dd:' + key, name, at: (x && typeof x === 'object' && x.at) ? String(x.at) : '' });
+  }
+  return out;
+}
+
+// 興味なしにした料理（Supabase の dish_dismissed 列で端末間同期。state.js で宣言）
+function _saveFoodDishDismissedLocal() {
   try { localStorage.setItem('food_dish_dismissed', JSON.stringify(_foodDishDismissed)); } catch (e) {}
 }
+function _saveFoodDishDismissed() {
+  _saveFoodDishDismissedLocal();
+  saveToSupabase();
+}
+// 読み込み時に古い形式（文字列の配列）を新しい形に直す（同期はしない）
+_foodDishDismissed = normalizeDishDismissed(_foodDishDismissed);
+_saveFoodDishDismissedLocal();
 
 let _foodNewDishNames = null; // 今出している料理名（カタログ順ではなく表示順）
 let _foodNewDishKey = '';     // 食材の選択が変わったら選び直すための印
@@ -322,8 +341,8 @@ function _foodNewDishAddWish(name) {
 
 function _foodNewDishDismiss(name) {
   name = String(name);
-  if (!_foodDishDismissed.some(n => normDishName(n) === normDishName(name))) {
-    _foodDishDismissed.push(name);
+  if (!_foodDishDismissed.some(x => normDishName(x.name) === normDishName(name))) {
+    _foodDishDismissed.push({ id: 'dd:' + normDishName(name), name, at: new Date().toISOString() });
     _saveFoodDishDismissed();
   }
   _renderFoodSuggestResults();

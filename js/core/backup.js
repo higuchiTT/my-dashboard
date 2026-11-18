@@ -20,7 +20,7 @@ function downloadBackup() {
   const backup = {
     app: 'my-dashboard', version: 1, exportedAt: new Date().toISOString(),
     data: { tasks, task_notes: taskNotes, shopping, subs, txs, trips, meals,
-      budgets, accounts, tx_rules: txRules, reflections, recipe_wishes: recipeWishes, seed_flags: _collectSeedFlags() }
+      budgets, accounts, tx_rules: txRules, reflections, recipe_wishes: recipeWishes, dish_dismissed: _foodDishDismissed, seed_flags: _collectSeedFlags() }
   };
   const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
   const url  = URL.createObjectURL(blob);
@@ -80,6 +80,7 @@ async function doRestore() {
     tx_rules:    (d.tx_rules && typeof d.tx_rules==='object') ? d.tx_rules : txRules,
     reflections: Array.isArray(d.reflections) ? d.reflections : reflections,
     recipe_wishes: Array.isArray(d.recipe_wishes) ? d.recipe_wishes : recipeWishes,
+    dish_dismissed: Array.isArray(d.dish_dismissed) ? d.dish_dismissed : _foodDishDismissed,
     seed_flags:  d.seed_flags || {}
   });
   rerenderAll();
