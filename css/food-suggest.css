@@ -156,7 +156,8 @@
 }
 
 /* ── Add input ── */
-.fsg-add-row { display: flex; }
+.fsg-add-row { display: flex; gap: 6px; margin: 0; }
+.fsg-add-btn { flex: 0 0 auto; white-space: nowrap; min-height: 32px; }
 .fsg-add-input {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 12px;
@@ -166,6 +167,7 @@
   color: var(--ink);
   outline: none;
   width: 100%;
+  min-height: 32px;
   border-radius: 4px;
 }
 .fsg-add-input:focus { border-color: var(--ink); }
@@ -241,6 +243,8 @@
 .fsg-nd-btn-main:hover { color: var(--paper); border-color: var(--accent); }
 @media (max-width: 640px) {
   .fsg-nd-btn, .fsg-nd-reshuffle { min-height: 36px; }
+  .fsg-add-input { font-size: 16px; min-height: 40px; }
+  .fsg-add-btn { min-height: 40px; }
 }
 
 /* ── Web recipe links ── */

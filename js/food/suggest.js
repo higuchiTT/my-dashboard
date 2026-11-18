@@ -474,23 +474,23 @@ function _renderFoodSuggestModal() {
       <div class="fsg-section-label">家にある食材</div>
       <div class="fsg-chips-row">${chipsHTML(home, 'home')}</div>
       <div class="fsg-candidates">${candidatePillsHTML('home')}</div>
-      <div class="fsg-add-row">
-        <input type="text" class="fsg-add-input" id="fsgAddHome"
+      <form class="fsg-add-row" onsubmit="event.preventDefault();_foodSuggestAddFromInput('home')" onclick="event.stopPropagation()">
+        <input type="text" class="fsg-add-input" id="fsgAddHome" enterkeyhint="done" autocomplete="off"
           placeholder="食材名を入力…（Enter で追加）"
-          onkeydown="if(event.key==='Enter'){event.preventDefault();_foodSuggestAddFromInput('home')}"
           oninput="event.stopPropagation()">
-      </div>
+        <button type="submit" class="btn btn-sm fsg-add-btn">追加</button>
+      </form>
     </div>
     <div class="fsg-section">
       <div class="fsg-section-label">買って帰る食材</div>
       <div class="fsg-chips-row">${chipsHTML(buy, 'buy')}</div>
       <div class="fsg-candidates">${candidatePillsHTML('buy')}</div>
-      <div class="fsg-add-row">
-        <input type="text" class="fsg-add-input" id="fsgAddBuy"
+      <form class="fsg-add-row" onsubmit="event.preventDefault();_foodSuggestAddFromInput('buy')" onclick="event.stopPropagation()">
+        <input type="text" class="fsg-add-input" id="fsgAddBuy" enterkeyhint="done" autocomplete="off"
           placeholder="食材名を入力…（Enter で追加）"
-          onkeydown="if(event.key==='Enter'){event.preventDefault();_foodSuggestAddFromInput('buy')}"
           oninput="event.stopPropagation()">
-      </div>
+        <button type="submit" class="btn btn-sm fsg-add-btn">追加</button>
+      </form>
     </div>
     <div class="fsg-actions-row">
       <button type="button" class="btn btn-ghost btn-sm"
