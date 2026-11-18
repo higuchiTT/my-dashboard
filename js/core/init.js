@@ -69,6 +69,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('topDate').textContent = fmtFull(new Date());
   rerenderAll();
   restoreLdrGuide(); restoreLdrSubtab();
+  // 再読み込みの前に開いていたタブへ戻す（新しく開いたときは Home のまま）
+  let _lastPage = null; try { _lastPage = sessionStorage.getItem('last_page'); } catch(e) {}
+  if (_lastPage && _lastPage !== 'home') nav(_lastPage);
   qxHandleHash(); // #add=expense ならクイック入力シートを開く（データ読み込み後）
 });
 
